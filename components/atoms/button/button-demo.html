@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Component Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+            },
+            neutral: {
+              50: '#FAFAFA',
+              100: '#F5F5F5',
+              700: '#404040',
+              800: '#262626',
+              900: '#171717',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-neutral-50 p-8">
+  <div class="max-w-4xl mx-auto space-y-12">
+    
+    <!-- Header -->
+    <header>
+      <h1 class="text-4xl font-bold mb-2">Button Component</h1>
+      <p class="text-neutral-700">Atomic Design: Atom</p>
+    </header>
+
+    <!-- Variants -->
+    <section class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-bold mb-4">Variants（バリアント）</h2>
+      <div class="flex flex-wrap gap-4">
+        
+        <!-- Primary -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-500 active:bg-primary-700 focus:ring-primary-500">
+          Primary
+        </button>
+
+        <!-- Secondary -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-neutral-800 text-white hover:bg-neutral-700 active:bg-neutral-900 focus:ring-neutral-500">
+          Secondary
+        </button>
+
+        <!-- Tertiary -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-transparent text-primary-600 border border-primary-600 hover:bg-primary-50 active:bg-primary-100 focus:ring-primary-500">
+          Tertiary
+        </button>
+
+        <!-- Quaternary -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-transparent text-neutral-800 hover:bg-neutral-100 active:bg-neutral-200 focus:ring-neutral-500">
+          Quaternary
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Sizes -->
+    <section class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-bold mb-4">Sizes（サイズ）</h2>
+      <div class="flex flex-wrap items-center gap-4">
+        
+        <!-- Small -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-3 py-1 text-sm gap-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-500 active:bg-primary-700 focus:ring-primary-500">
+          Small
+        </button>
+
+        <!-- Medium -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-500 active:bg-primary-700 focus:ring-primary-500">
+          Medium
+        </button>
+
+        <!-- Large -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-6 py-3 text-lg gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-500 active:bg-primary-700 focus:ring-primary-500">
+          Large
+        </button>
+
+      </div>
+    </section>
+
+    <!-- States -->
+    <section class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-bold mb-4">States（状態）</h2>
+      <div class="flex flex-wrap gap-4">
+        
+        <!-- Default -->
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-500 active:bg-primary-700 focus:ring-primary-500">
+          Default
+        </button>
+
+        <!-- Disabled -->
+        <button disabled class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-primary-600 text-white">
+          Disabled
+        </button>
+
+        <!-- Loading -->
+        <button disabled class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-primary-600 text-white">
+          <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>読み込み中...</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Full Width -->
+    <section class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-bold mb-4">Full Width（全幅）</h2>
+      <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-500 active:bg-primary-700 focus:ring-primary-500 w-full">
+        ログイン
+      </button>
+    </section>
+
+    <!-- Practical Example -->
+    <section class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-bold mb-4">実践例: モーダルのボタン配置</h2>
+      <div class="flex justify-end gap-3">
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-neutral-800 text-white hover:bg-neutral-700 active:bg-neutral-900 focus:ring-neutral-500">
+          キャンセル
+        </button>
+        <button class="inline-flex items-center justify-center font-medium rounded px-4 py-2 text-base gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-500 active:bg-primary-700 focus:ring-primary-500">
+          保存
+        </button>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

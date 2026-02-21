@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$description": "Border radius tokens",
+  "radius": {
+    "none": "0",
+    "sm": "4px",
+    "DEFAULT": "8px",
+    "md": "12px",
+    "lg": "16px",
+    "full": "9999px"
+  }
+}

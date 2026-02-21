@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$description": "Animation tokens. Reference: principles/motion/animation.md",
+  "duration": {
+    "fast": "100ms",
+    "DEFAULT": "200ms",
+    "slow": "300ms",
+    "slower": "500ms"
+  },
+  "easing": {
+    "ease-out": "cubic-bezier(0, 0, 0.2, 1)",
+    "ease-in": "cubic-bezier(0.4, 0, 1, 1)",
+    "ease-in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
+    "linear": "linear"
+  }
+}

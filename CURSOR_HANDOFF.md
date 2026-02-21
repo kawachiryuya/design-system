@@ -58,7 +58,17 @@
 
 ---
 
-## 🚀 Storybook の起動
+## 🌐 公開 Storybook（Vercel）
+
+**URL: https://design-system-storybook-murex.vercel.app**
+
+- GitHub の `main` ブランチに push するたびに自動で最新版に更新される
+- GitHub: https://github.com/kawachiryuya/design-system（Private）
+- AI にコンポーネントを参照させるときはこの URL を渡すだけでよい
+
+---
+
+## 🚀 Storybook のローカル起動
 
 ```bash
 cd /path/to/designSystem

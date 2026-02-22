@@ -51,7 +51,7 @@
    ├── web/ (3ファイル)
    └── mobile/ (3ファイル)
 
-✅ README.md / MASTER_PLAN.md / IDEAL_STRUCTURE.md (3ファイル)
+✅ README.md / MASTER_PLAN.md (2ファイル)
 ```
 
 **進捗**: 実用的なデザインシステムとして完成。コンポーネント開発に即座に適用可能。
@@ -313,7 +313,7 @@ principles/
 ✅ content/typography/             (4ファイル)
 ✅ color/                          (6ファイル)
 ✅ patterns/atomic-design-implementation.md
-✅ README.md / MASTER_PLAN.md / IDEAL_STRUCTURE.md
+✅ README.md / MASTER_PLAN.md
 ```
 
 ### ✅ Phase 2: Essential（完了）
@@ -378,9 +378,8 @@ principles/
 ### 新しいドキュメントを作成する前に
 
 1. **このマスタープランを確認**: 該当する原則がすでに存在しないか・依存関係を確認
-2. **IDEAL_STRUCTURE.mdを確認**: 想定ファイル構成・サイズを確認
-3. **依存先ドキュメントを読む**: スコープの重複を避ける
-4. **作成後にこのファイルを更新**: ✅→✅に変更
+2. **依存先ドキュメントを読む**: スコープの重複を避ける
+3. **作成後にこのファイルを更新**: ✅→✅に変更
 
 ### ドキュメント構成テンプレート
 

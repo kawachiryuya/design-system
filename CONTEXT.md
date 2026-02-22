@@ -87,12 +87,22 @@ nvm install --lts
 
 ---
 
+## 🌍 このデザインシステムを使ったプロジェクト
+
+### ポートフォリオサイト（公開済み）
+
+- **公開 URL**: https://kawachi-portfolio.vercel.app
+- **リポジトリ**: https://github.com/kawachiryuya/portfolio（Private）
+- `main` ブランチへの push で自動デプロイ
+- Next.js 16 + Tailwind CSS v3 + デザイントークンを流用
+
+---
+
 ## 🎯 次に進むべきこと
 
-### Phase E: Organisms（未着手）
+### Phase E: Organisms（必要に応じて追加）
 
-Molecule を複数組み合わせた複雑なセクション:
-- **Header** — ロゴ + ナビゲーション + SearchBar + ユーザーメニュー
+ポートフォリオや新規プロジェクトで必要になったタイミングで追加予定:
 - **Modal / Dialog** — オーバーレイ + Card + フォーカストラップ
 - **Toast** — Alert ベースの画面端通知
 - **DataTable** — テーブル + Pagination + SearchBar + EmptyState

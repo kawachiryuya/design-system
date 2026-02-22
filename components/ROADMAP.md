@@ -13,7 +13,7 @@
 `tokens/` に配置済み（spacing / colors / typography / shadows / radius / breakpoints / animation）
 
 ### Phase B: Atom コンポーネント（18個）
-`components/atoms/` に配置済み。詳細は `ATOMS_LIST.md` を参照。
+`components/atoms/` に配置済み。
 
 ### Phase C: Storybook
 - ローカル: `npm run storybook` → http://localhost:6006
@@ -52,10 +52,13 @@ Molecule を複数組み合わせた複雑なセクション。
 | Toast | Alert ベースの画面端通知 |
 | DataTable | テーブル + Pagination + SearchBar + EmptyState |
 
-### Phase F: ポートフォリオサイト（未着手）
+### Phase F: ポートフォリオサイト ✅
 
-このデザインシステムを使って実際のサイトを構築する。
-`designSystem/` と並列に `portfolio/` ディレクトリを作成予定。
+このデザインシステムを基盤として構築・Vercel 公開済み。
+
+- **公開 URL**: https://kawachi-portfolio.vercel.app（自動デプロイ）
+- **リポジトリ**: https://github.com/kawachiryuya/portfolio（Private）
+- **ディレクトリ**: `designSystem/` と並列の `portfolio/`
 
 ---
 

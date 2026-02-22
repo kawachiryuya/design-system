@@ -60,7 +60,7 @@ designSystem/
 │   ├── breakpoints.json     ── レスポンシブ
 │   └── animation.json       ── アニメーション
 │
-├── components/              # React コンポーネント（Atom 18 + Molecule 2）
+├── components/              # React コンポーネント（Atom 18 + Molecule 8）
 │   ├── atoms/               ── Atom（これ以上分解できない最小要素）
 │   │   ├── button/          ── Button
 │   │   ├── Input/           ── Input
@@ -221,6 +221,16 @@ principles/
 - **実装済みコンポーネント**: 26個（Atom × 18 + Molecule × 8）
 - **Story ファイル**: 26個（全コンポーネントをカバー）
 - **アクセシビリティ**: 全コンポーネントで ARIA 属性・キーボード操作対応
+
+---
+
+---
+
+## 🌍 このデザインシステムを使ったプロジェクト
+
+| プロジェクト | URL | リポジトリ |
+|---|---|---|
+| ポートフォリオサイト | https://kawachi-portfolio.vercel.app | https://github.com/kawachiryuya/portfolio（Private） |
 
 ---
 

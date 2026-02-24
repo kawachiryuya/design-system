@@ -52,12 +52,11 @@ export const AllVariants: Story = {
   ),
 };
 
-export const AllSizes: Story = {
+export const States: Story = {
   render: () => (
     <div className="flex flex-wrap gap-3 items-center">
-      <Button size="small">Small</Button>
-      <Button size="medium">Medium</Button>
-      <Button size="large">Large</Button>
+      <Button isLoading>保存中...</Button>
+      <Button disabled>無効</Button>
     </div>
   ),
 };
@@ -67,29 +66,6 @@ export const WithIcon: Story = {
     <div className="flex flex-wrap gap-3 items-center">
       <Button icon={<SaveIcon />}>左アイコン</Button>
       <Button icon={<SaveIcon />} iconPosition="right">右アイコン</Button>
-    </div>
-  ),
-};
-
-export const Loading: Story = {
-  args: { isLoading: true, children: '保存中...' },
-};
-
-export const Disabled: Story = {
-  args: { disabled: true },
-};
-
-export const FullWidth: Story = {
-  args: { fullWidth: true, children: 'ログイン' },
-  decorators: [(Story) => <div className="w-80"><Story /></div>],
-};
-
-export const ModalButtons: Story = {
-  name: '実践例: モーダルのボタン配置',
-  render: () => (
-    <div className="flex justify-end gap-3">
-      <Button variant="secondary">キャンセル</Button>
-      <Button variant="primary">保存</Button>
     </div>
   ),
 };

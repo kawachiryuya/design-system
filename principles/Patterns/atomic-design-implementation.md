@@ -1,173 +1,192 @@
-# Atomic Design実装の原則
+# Atomic Design コンポーネント階層ガイド
 
-## メタ情報
-- カテゴリ: パターン原則（実装）
-- 適用範囲: 全階層（Atom〜Page）
-- ステータス: Approved
-- 最終更新: 2026-02-24
+最終更新: 2026-02-24
 
-## 原則の定義
-
-**Atomic Designの階層構造を正しく理解し、各階層の責任範囲を明確にすることで、再利用可能で保守性の高いコンポーネントシステムを構築する**
-
-## 背景と目的
-
-Atomic Designを理解せずに実装すると、以下の問題が発生します：
-
-- **階層の混乱**: ButtonにCardの機能を持たせる等、責任範囲が不明確
-- **再利用性の低下**: 特定のコンテキストに依存したコンポーネントが増える
-- **保守性の悪化**: 変更の影響範囲が予測できない
-
-## Atomic Design階層の定義
-
-```
-Pages（ページ）
-  ↓ 使用
-Templates（テンプレート）
-  ↓ 使用
-Organisms（有機体）
-  ↓ 使用
-Molecules（分子）
-  ↓ 使用
-Atoms（原子）
-```
-
-**依存関係のルール**:
-- 上位階層は下位階層を使用できる
-- 下位階層は上位階層を使用してはいけない
-- 同階層同士の依存は避ける（例外あり）
+UIを5つの階層に分けて設計・実装する方法論です。PM・Designer・Engineer の共通言語として使います。
 
 ---
 
-## Atoms（原子）
+## 30秒で理解する全体像
 
-**これ以上分解できない最小のUI要素**
+予約サービスの「予約確認画面」を例に、全階層を示します。
 
-### 判断基準
+```
+予約確認画面（Page）
+└── 予約確認レイアウト（Template）
+    ├── ヘッダー（Organism）
+    ├── 予約情報カード（Organism）← ドメイン依存
+    │   ├── ラベル+値セット（Molecule）← ドメイン非依存
+    │   │   ├── "予約番号" テキスト（Atom）
+    │   │   └── "XXXX" テキスト（Atom）
+    │   └── カード枠（Molecule）
+    └── 支払い情報カード（Organism）← ドメイン依存
+        ├── ラベル+値セット（Molecule）
+        │   ├── "お支払い金額" テキスト（Atom）
+        │   └── "1,000円" テキスト（Atom）
+        └── VISA アイコン（Atom）+ "下4桁 1234" テキスト（Atom）
+```
+
+**最も重要な判断基準:**
+
+> **「別のサービス・別のプロジェクトにそのまま持っていけるか？」**
+>
+> - 持っていける → Molecule 以下
+> - 持っていけない（特定の業務知識が必要）→ Organism 以上
+
+---
+
+## 各階層の定義
+
+### Atom（原子）— レゴの1ブロック
+
+**これ以上分解できない最小のUI要素。**
+
+どんな画面でも、どんなサービスでも使える汎用パーツです。
+
+| こういうもの | 例 |
+|---|---|
+| テキスト表示 | 見出し、本文、キャプション |
+| 入力欄 | テキスト入力、チェックボックス、トグル |
+| 操作ボタン | ボタン、リンク |
+| 装飾・表示 | アイコン、バッジ、アバター、区切り線 |
+
+**判断チェックリスト:**
 
 - [ ] これ以上分解すると意味を失う
-- [ ] 単一の責任を持つ
-- [ ] 他のAtomsに依存しない
-- [ ] 再利用性が非常に高い
-
-### 典型例
-
-- `Button` — クリック可能な要素。バリアント・サイズ・状態（loading/disabled）を持つ
-- `Input` — テキスト入力フィールド。ラベルやエラーメッセージは含まない（Moleculeで組み合わせる）
-- `Icon` — アイコン画像の表示・サイズ・色
-- `Typography` — テキストスタイルの適用（h1〜h6, body, caption等）
-- `Badge`, `Spinner`, `Avatar`, `Divider` など
+- [ ] 1つの役割だけを持っている
+- [ ] 他のAtomに依存しない
 
 ---
 
-## Molecules（分子）
+### Molecule（分子）— どんな作品にも使えるパーツ
 
-**複数のAtomsを組み合わせて、単一の機能を提供する**
+**複数のAtomを組み合わせた、汎用的な機能のまとまり。**
 
-### 判断基準
+ポイントは **ドメイン非依存** であること。「検索」「入力フォーム」「カード枠」など、業務内容を問わず使い回せるものです。
 
-- [ ] 2つ以上のAtomsで構成される
-- [ ] 単一の機能を完結して提供する
-- [ ] ドメイン非依存（別サービスでもそのまま使い回せる）
-- [ ] 他のMoleculesに依存しない
+| こういうもの | 構成 |
+|---|---|
+| 入力フィールド | ラベル + 入力欄 + エラーメッセージ |
+| 検索バー | 入力欄 + ボタン |
+| カード | 白背景 + 枠線の汎用コンテナ |
+| ラベル+値セット | 小テキスト "お名前" + 大テキスト "田中太郎" |
+| タブ、ページネーション、パンくずリスト | |
 
-### 典型例
+**判断チェックリスト:**
 
-- `FormField` — Label + Input + エラーメッセージ
-- `SearchBar` — Input + Button
-- `Card` — 汎用カードレイアウト
-- `Breadcrumb`, `Tabs`, `Pagination`, `Alert` など
+- [ ] 2つ以上のAtomで構成されている
+- [ ] 1つの機能を完結して提供する
+- [ ] **別サービスにそのまま持っていける（ドメイン非依存）**
 
 ---
 
-## Organisms（有機体）
+### Organism（有機体）— 特定の目的を持った機能ブロック
 
-**Molecules/Atomsで構成される、独立した機能ブロック**
+**Molecule や Atom を組み合わせた、業務知識を持つ独立ブロック。**
 
-### 判断基準
+「何のためのUIか」が決まっている時点で Organism です。見た目が Molecule と同じでも、中身に業務固有の意味があれば Organism になります。
+
+| こういうもの | なぜ Organism か |
+|---|---|
+| ヘッダー | 「サイトナビゲーション」という目的がある |
+| 支払い情報カード | 「支払い」というドメイン知識が必要 |
+| 予約情報カード | 「予約」というドメイン知識が必要 |
+| 商品カード | 「商品」というドメイン知識が必要 |
+| モーダル、データテーブル | |
+
+**判断チェックリスト:**
 
 - [ ] 独立した機能ブロックとして成立する
-- [ ] ページ内で再利用可能
-- [ ] コンテキストを持つ（特定のドメイン知識がある）
-- [ ] Molecules/Atomsで構成される
-
-### 典型例
-
-- `Header` — ナビゲーション・ロゴ・アクション
-- `PaymentSummaryCard` — 支払い金額・クレジットカード情報（「支払い」ドメインを持つ）
-- `ReservationCard` — 予約番号・日時（「予約」ドメインを持つ）
-- `Modal`, `DataTable`, `Toast` など
+- [ ] **特定の業務知識（ドメイン）を持っている**
+- [ ] Molecule や Atom で構成されている
 
 ---
 
-## Templates（テンプレート）
+### Template（テンプレート）— 間取り図
 
-**Organismsを配置したページ構造（実コンテンツなし）**
+**Organism をどこに配置するかを決めたページの骨格。実際のデータは入っていない状態。**
 
-- レイアウトグリッドとブレークポイント対応を定義
-- 実際のデータは含まない
-
-### 典型例
-
-- `DashboardTemplate` — Header + Sidebar + コンテンツエリア（slot）
-- `ArticleTemplate` — タイトルエリア・本文エリア・関連記事エリア
+- 「ヘッダーは上、サイドバーは左、メインコンテンツは右」のようなレイアウト定義
+- レスポンシブ対応（PC / タブレット / スマホでの配置変更）もここ
 
 ---
 
-## Pages（ページ）
+### Page（ページ）— 完成した部屋
 
-**Templateに実際のコンテンツを流し込んだ完成形**
+**Template に実際のデータを流し込んだ完成形。**
 
-- 実際のデータを含む
-- ユーザーフローの一部
-- 固有のURL
+- ユーザーが実際に目にする画面そのもの
+- URL を持つ
 
 ---
 
-## 階層判断のフローチャート
+## Molecule と Organism の境界
+
+ここが最も迷いやすいポイントです。
+
+### 見た目が同じでも階層が違う例
+
+白背景＋グレー枠線のカードUIを考えます。
+
+| パターン | 中身 | 階層 | 理由 |
+|---|---|---|---|
+| 汎用カード | タイトル + 本文 + ボタン（何にでも使える） | Molecule | ドメイン非依存 |
+| 支払い情報カード | 支払い金額 + VISA下4桁（「支払い」前提） | Organism | ドメイン依存 |
+| 予約情報カード | 予約番号 + 日時（「予約」前提） | Organism | ドメイン依存 |
+
+**見た目（箱のスタイル）ではなく、「何のための箱か」で階層が決まります。**
+
+### 迷った時の問いかけ
+
+1. **この UI パーツを、全く別のサービスにコピーしてそのまま使えるか？**
+   - Yes → Molecule
+   - No → Organism
+
+2. **このパーツの中身を説明する時に、業務用語（支払い、予約、商品…）が出てくるか？**
+   - 出てくる → Organism
+   - 出てこない → Molecule
+
+---
+
+## 階層判断フローチャート
 
 ```
-コンポーネントを作りたい
+UIパーツを作りたい
   ↓
 これ以上分解できない？
   Yes → Atom
-  No ↓
+  No  ↓
 
-Atomの組み合わせで単一機能？ かつ ドメイン非依存？
+複数の Atom の組み合わせ？ かつ 別サービスでも使える？
   Yes → Molecule
-  No ↓
+  No  ↓
 
-独立した機能ブロック？ドメイン知識を持つ？
+特定の業務知識を持った独立ブロック？
   Yes → Organism
-  No ↓
+  No  ↓
 
 ページ全体のレイアウト構造？
   Yes → Template
-  No ↓
+  No  ↓
 
-実際のコンテンツを含むページ？
+実際のデータを含む完成画面？
   Yes → Page
 ```
-
-### 早わかり判断基準
-
-> **「別のサービス・別のプロジェクトにそのままコピーして使えるか？」**
->
-> - Yes → Molecule 以下
-> - No（ドメイン知識が必要）→ Organism 以上
-
-| コンポーネント例 | 別サービスで使える？ | 階層 |
-|---|---|---|
-| FormField（ラベル + 入力） | Yes | Molecule |
-| SearchBar（入力 + ボタン） | Yes | Molecule |
-| 支払い情報カード | No（「支払い」ドメインが必要） | Organism |
-| 予約情報カード | No（「予約」ドメインが必要） | Organism |
 
 ---
 
 ## よくある間違いと解決策
 
-### 間違い1: Atomが大きすぎる
+### 間違い1: Atom に機能を詰め込みすぎ
+
+**NG**: ボタン1つに「確認ダイアログ表示」「ツールチップ」まで含める
+
+**OK**: ボタンはシンプルに保ち、確認ダイアログは上位の Organism で実装する
+
+Atom は「押せる」「入力できる」「表示する」だけに専念させます。
+
+<details>
+<summary>Engineer 向け: コード例</summary>
 
 ```tsx
 // ❌ Buttonが複雑すぎる
@@ -176,16 +195,55 @@ Atomの組み合わせで単一機能？ かつ ドメイン非依存？
   confirmDialog={{ title: "保存しますか？", message: "取り消せません" }}
 />
 
-// ✅ Buttonはシンプルに。機能は上位階層で
-<ConfirmButton onConfirm={handleSave} confirmTitle="保存しますか？">
+// ✅ Buttonはシンプルに。確認は上位階層で
+<ConfirmButton onConfirm={handleSave}>
   <Button icon={<SaveIcon />}>保存</Button>
 </ConfirmButton>
 ```
 
-### 間違い2: 階層をスキップ
+</details>
+
+### 間違い2: Molecule にドメイン知識を入れてしまう
+
+**NG**: 「商品入力フィールド」という Molecule を作る（商品という概念が前提になっている）
+
+**OK**: 汎用の「入力フィールド」を Molecule として作り、「商品フォーム」という Organism の中で使う
+
+Molecule は業務用語から自由にしておきます。
+
+<details>
+<summary>Engineer 向け: コード例</summary>
 
 ```tsx
-// ❌ OrganismがAtomを大量に直接使用
+// ❌ Moleculeが「商品」ドメインに依存
+const ProductFormField = ({ product }) => { ... };
+
+// ✅ Moleculeは汎用、ドメインはOrganismで
+const FormField = ({ label, value, onChange }) => { ... };
+
+const ProductForm = ({ product, onChange }) => (
+  <form>
+    <FormField label="商品名" value={product.name} onChange={...} />
+    <FormField label="価格"   value={product.price} onChange={...} />
+  </form>
+);
+```
+
+</details>
+
+### 間違い3: 階層をスキップして Atom を大量に並べる
+
+**NG**: ヘッダー（Organism）の中にボタンを5つ直接並べる
+
+**OK**: ナビゲーション（Molecule）とアクションボタン群（Molecule）にまとめてからヘッダーに配置する
+
+中間の Molecule を挟むことで、各パーツが独立してテスト・再利用できるようになります。
+
+<details>
+<summary>Engineer 向け: コード例</summary>
+
+```tsx
+// ❌ Organism が Atom を大量に直接使用
 const Header = () => (
   <header>
     <Button>Home</Button>
@@ -196,7 +254,7 @@ const Header = () => (
   </header>
 );
 
-// ✅ Moleculeを経由する
+// ✅ Molecule を経由する
 const Navigation = () => (
   <nav>
     <Button>Home</Button>
@@ -214,48 +272,26 @@ const Header = () => (
 );
 ```
 
-### 間違い3: コンテキスト依存が強すぎる
-
-```tsx
-// ❌ MoleculeがドメインオブジェクトのProductに依存
-const ProductFormField = ({ product }) => { ... };
-
-// ✅ MoleculeはドメインフリーにしてOrganismでドメインを扱う
-const FormField = ({ label, value, onChange }) => { ... };
-
-const ProductForm = ({ product, onChange }) => (
-  <form>
-    <FormField label="商品名" value={product.name} onChange={...} />
-    <FormField label="価格"   value={product.price} onChange={...} />
-  </form>
-);
-```
+</details>
 
 ---
 
-## 測定方法
+## レビュー時の確認ポイント
 
-### チェックリスト
+デザインレビューやコードレビューで使える3つの問い:
 
-- [ ] 各コンポーネントが適切な階層に配置されている
-- [ ] 依存関係が下位階層のみ（上位・同階層に依存していない）
-- [ ] Atomsが単一責任を持つ
-- [ ] Moleculesが単一機能を提供し、ドメイン非依存
-- [ ] Organismsがドメイン知識を持つ
-- [ ] 命名規則に従っている
+1. **このパーツはもっと分解できるか？** → できるなら下の階層へ
+2. **別サービスにそのまま持っていけるか？** → No なら Organism 以上
+3. **業務用語なしで説明できるか？** → できないなら Organism 以上
 
-### 命名規則
+---
 
-```
-Atoms    : 機能を表す名詞           例: Button, Input, Icon
-Molecules: 機能を表す複合名詞       例: SearchBar, FormField
-Organisms: ドメインを表す名詞       例: Header, ProductCard, PaymentSummaryCard
-Templates: 用途 + Template         例: DashboardTemplate
-Pages    : 用途 + Page             例: ProductListPage
-```
+## 命名ルール
 
-### レビュー時の質問
-
-1. **このコンポーネントは分解できるか？** → Yes なら下位階層へ
-2. **上位階層に依存していないか？** → していれば設計を見直す
-3. **別サービスでそのまま使えるか？** → No なら Organism 以上
+| 階層 | 命名パターン | 例 |
+|---|---|---|
+| Atom | 機能を表す名詞 | Button, Input, Icon |
+| Molecule | 機能を表す複合名詞 | SearchBar, FormField, Card |
+| Organism | 業務ドメイン＋名詞 | Header, ProductCard, PaymentSummaryCard |
+| Template | 用途 + Template | DashboardTemplate |
+| Page | 用途 + Page | ProductListPage |

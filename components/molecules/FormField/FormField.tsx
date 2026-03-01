@@ -96,7 +96,6 @@ export const FormField: React.FC<FormFieldProps> = ({
 
       <div
         role="group"
-        aria-labelledby={undefined}
         aria-describedby={
           [error && errorMessage ? errorId : null, helpText && !error ? helpId : null]
             .filter(Boolean)

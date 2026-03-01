@@ -73,6 +73,32 @@ export const WithoutParts: Story = {
   ),
 };
 
+export const LongContent: Story = {
+  name: '長いコンテンツ（折り返し・スクロールなし）',
+  render: () => (
+    <Card variant="outlined">
+      <Card.Header>コンテンツが長い場合の挙動</Card.Header>
+      <Card.Body>
+        <p className="text-sm text-neutral-600">
+          デザインシステムは、チーム全体が共有できる単一の真実を提供します。
+          デザイナーとエンジニアが共通の語彙を持つことで、コラボレーションが円滑になります。
+          Atomic Designの考え方に基づいてAtoms・Molecules・Organismsと段階的に積み上げることで、
+          再利用性と一貫性を両立した設計が可能になります。
+          また、デザイントークンを使用することで、カラー・スペーシング・タイポグラフィなどの
+          基本的な要素を一元管理し、変更に強いシステムを構築できます。
+        </p>
+        <p className="text-sm text-neutral-600 mt-3">
+          とても長い単語なしのテキスト：aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        </p>
+      </Card.Body>
+      <Card.Footer>
+        <Button size="small" variant="tertiary">キャンセル</Button>
+        <Button size="small">保存</Button>
+      </Card.Footer>
+    </Card>
+  ),
+};
+
 export const BlogCard: Story = {
   name: '実践例: ブログカード',
   render: () => (

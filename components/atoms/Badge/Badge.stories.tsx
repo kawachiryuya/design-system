@@ -77,6 +77,17 @@ export const WithDot: Story = {
   ),
 };
 
+export const LongLabel: Story = {
+  name: '長いラベルテキスト',
+  render: () => (
+    <div className="flex flex-wrap gap-3">
+      <Badge variant="primary" appearance="soft">とても長いラベルテキストが入る場合</Badge>
+      <Badge variant="success" dot>非常に長い説明文のあるバッジ</Badge>
+      <Badge variant="neutral" appearance="outline">Long English text badge example</Badge>
+    </div>
+  ),
+};
+
 export const StatusBadges: Story = {
   name: '実践例: ステータス表示',
   render: () => (

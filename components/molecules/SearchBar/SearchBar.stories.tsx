@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 import { SearchBar } from './SearchBar';
 
@@ -159,5 +160,37 @@ export const TableFilter: Story = {
         </ul>
       </div>
     );
+  },
+};
+
+export const ClearInteraction: Story = {
+  name: '入力→クリアボタンでリセット',
+  render: () => {
+    const [value, setValue] = useState('');
+    return (
+      <div className="w-80">
+        <SearchBar value={value} onChange={setValue} placeholder="検索..." />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('searchbox');
+
+    // 初期状態：空
+    await expect(input).toHaveValue('');
+
+    // テキストを入力
+    await userEvent.click(input);
+    await userEvent.type(input, 'デザイン');
+    await expect(input).toHaveValue('デザイン');
+
+    // クリアボタンが表示されたことを確認してクリック
+    const clearBtn = canvas.getByRole('button', { name: '検索をクリア' });
+    await userEvent.click(clearBtn);
+
+    // 入力がリセットされ、フォーカスが戻ること
+    await expect(input).toHaveValue('');
+    await expect(input).toHaveFocus();
   },
 };

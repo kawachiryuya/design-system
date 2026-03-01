@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 import { Tabs } from './Tabs';
 import { Badge } from '../../atoms/Badge/Badge';
@@ -96,6 +97,28 @@ export const Controlled: Story = {
 export const KeyboardNav: Story = {
   name: 'キーボード操作（← → Home End）',
   args: { defaultActiveId: 'overview' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 初期状態：「概要」タブが選択されている
+    const firstTab = canvas.getByRole('tab', { name: '概要' });
+    await expect(firstTab).toHaveAttribute('aria-selected', 'true');
+
+    // タブをクリックしてフォーカス → ArrowRight で次のタブへ
+    await userEvent.click(firstTab);
+    await userEvent.keyboard('{ArrowRight}');
+    const membersTab = canvas.getByRole('tab', { name: 'メンバー' });
+    await expect(membersTab).toHaveAttribute('aria-selected', 'true');
+
+    // End キーで最後の有効タブ（設定）へ
+    await userEvent.keyboard('{End}');
+    const settingsTab = canvas.getByRole('tab', { name: '設定' });
+    await expect(settingsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Home キーで最初のタブへ戻る
+    await userEvent.keyboard('{Home}');
+    await expect(firstTab).toHaveAttribute('aria-selected', 'true');
+  },
 };
 
 export const ProfileTabs: Story = {

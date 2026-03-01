@@ -108,7 +108,8 @@ export const Avatar: React.FC<AvatarProps> = ({
     className,
   ].join(' ');
 
-  const ariaLabel = name || alt || 'ユーザーアバター';
+  const baseLabel = name || alt || 'ユーザーアバター';
+  const ariaLabel = status ? `${baseLabel}（${statusLabelMap[status]}）` : baseLabel;
 
   return (
     <span className={containerClass} role="img" aria-label={ariaLabel}>
@@ -138,6 +139,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         </svg>
       )}
 
+      {/* ステータスドットは aria-label を外側コンテナに統合済みのため aria-hidden */}
       {status && (
         <span
           className={[
@@ -151,8 +153,7 @@ export const Avatar: React.FC<AvatarProps> = ({
             sizes.statusDot,
             statusColorMap[status],
           ].join(' ')}
-          role="img"
-          aria-label={statusLabelMap[status]}
+          aria-hidden="true"
         />
       )}
     </span>

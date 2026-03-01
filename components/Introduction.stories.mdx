@@ -1,0 +1,73 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction" />
+
+<div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '720px', margin: '0 auto', padding: '40px 24px', color: '#171717' }}>
+
+# Design System
+
+Atomic Design をベースに構築したコンポーネントライブラリです。
+一貫したUI・アクセシビリティ・開発体験を目的として設計しています。
+
+---
+
+## このStorybookの構成
+
+| カテゴリ | 内容 |
+|---------|------|
+| **Tokens** | カラー・タイポグラフィ・スペーシングのデザイントークン可視化 |
+| **Atoms** | Button・Input・Badgeなど、最小単位のUI部品（18コンポーネント） |
+| **Molecules** | FormField・Card・Tabsなど、Atomを組み合わせた複合コンポーネント（8コンポーネント） |
+
+---
+
+## Atomic Design の考え方
+
+このシステムは **Atoms → Molecules → Organisms** の順に積み上げる設計を採用しています。
+
+- **Atoms**：それ以上分解できない最小のUI部品。Buttonひとつ、Inputひとつ。
+- **Molecules**：2〜3個のAtomを組み合わせた、意味のある単位。FormField（Label + Input + ErrorMessage）など。
+- **Organisms**（将来）：ページを構成するセクション単位。Header・Modalなど、プロダクト依存度が高いもの。
+
+上位レイヤーほど「文脈」を持ちます。Atomsは再利用性が最大、Organismsは具体的なユースケースに対応します。
+
+---
+
+## デザイントークン
+
+すべてのコンポーネントは `tokens/` ディレクトリの JSON ファイルを参照しています。
+Tailwind CSS の設定にも統合済みです。
+
+- **Colors** — プライマリ・ニュートラル・セマンティックカラー
+- **Typography** — フォントサイズ・ウェイト・行間
+- **Spacing** — 8px ベースのスペーシングスケール
+- **Shadows / Radius / Animation** — エレベーション・角丸・モーション
+
+→ サイドバーの **Tokens** カテゴリで視覚的に確認できます。
+
+---
+
+## アクセシビリティへの取り組み
+
+すべてのコンポーネントで以下を考慮しています。
+
+- **ARIA属性**：role・aria-label・aria-invalid などを適切に付与
+- **キーボード操作**：Tab・Enter・矢印キーによる操作対応
+- **色コントラスト**：WCAG 2.1 AA 基準（4.5:1以上）を遵守
+- **a11y アドオン**：各Storyの「Accessibility」タブで検証結果を確認できます
+
+---
+
+## 開発環境
+
+```bash
+# Storybook 起動
+npm run storybook
+
+# 静的ビルド
+npm run build-storybook
+```
+
+**技術スタック：** React 18 · TypeScript · Tailwind CSS · Vite · Storybook 8
+
+</div>

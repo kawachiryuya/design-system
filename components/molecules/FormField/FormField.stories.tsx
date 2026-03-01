@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 import { FormField } from './FormField';
 import { Radio, RadioGroup } from '../../atoms/Radio/Radio';
@@ -61,6 +62,14 @@ export const ErrorState: Story = {
       </RadioGroup>
     </FormField>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // エラーメッセージが role="alert" で表示されていること
+    const errorMessage = canvas.getByRole('alert');
+    await expect(errorMessage).toBeVisible();
+    await expect(errorMessage).toHaveTextContent('配送方法を選択してください');
+  },
 };
 
 export const WithRenderProp: Story = {
@@ -136,5 +145,21 @@ export const RegistrationForm: Story = {
         <Button type="submit" fullWidth>登録する</Button>
       </form>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 同意せずに送信 → バリデーションエラーが表示される
+    const submitBtn = canvas.getByRole('button', { name: '登録する' });
+    await userEvent.click(submitBtn);
+
+    const errorMessage = await canvas.findByRole('alert');
+    await expect(errorMessage).toBeVisible();
+    await expect(errorMessage).toHaveTextContent('続けるには利用規約への同意が必要です');
+
+    // 同意チェックボックスをオンにするとエラーが消える
+    const agreeCheckbox = canvas.getByRole('checkbox');
+    await userEvent.click(agreeCheckbox);
+    await expect(errorMessage).not.toBeVisible();
   },
 };

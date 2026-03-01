@@ -110,8 +110,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             id={selectId}
             disabled={disabled}
             required={required}
-            aria-invalid={error || undefined}
-            aria-required={required || undefined}
+            aria-invalid={error ? true : undefined}
+            aria-required={required ? true : undefined}
             aria-describedby={describedBy}
             className={selectClasses}
             {...props}

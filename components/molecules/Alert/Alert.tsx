@@ -154,7 +154,7 @@ export const Alert: React.FC<AlertProps> = ({
           onClick={onClose}
           className={[
             'flex-shrink-0 self-start -mt-0.5 -mr-0.5 p-1 rounded',
-            'transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1',
+            'transition-colors focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-1',
             config.closeBtn,
           ].join(' ')}
         >

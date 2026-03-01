@@ -60,35 +60,35 @@ designSystem/
 │   ├── breakpoints.json     ── レスポンシブ
 │   └── animation.json       ── アニメーション
 │
-├── components/              # React コンポーネント（Atom 18 + Molecule 8）
-│   ├── atoms/               ── Atom（これ以上分解できない最小要素）
-│   │   ├── button/          ── Button
-│   │   ├── Input/           ── Input
-│   │   ├── Label/           ── Label
-│   │   ├── Icon/            ── Icon
-│   │   ├── Typography/      ── Typography
-│   │   ├── Checkbox/        ── Checkbox
-│   │   ├── Radio/           ── Radio + RadioGroup
-│   │   ├── Select/          ── Select
-│   │   ├── Textarea/        ── Textarea
-│   │   ├── Switch/          ── Switch
-│   │   ├── Badge/           ── Badge
-│   │   ├── Spinner/         ── Spinner
-│   │   ├── Link/            ── Link
-│   │   ├── Avatar/          ── Avatar
-│   │   ├── Divider/         ── Divider
-│   │   ├── Skeleton/        ── Skeleton
-│   │   ├── ProgressBar/     ── ProgressBar
-│   │   └── Image/           ── Image
-│   └── molecules/           ── Molecule（Atom を組み合わせた複合コンポーネント）
-│       ├── FormField/       ── FormField
-│       ├── SearchBar/       ── SearchBar
-│       ├── Card/            ── Card（Header/Body/Footer）
-│       ├── Alert/           ── Alert
-│       ├── EmptyState/      ── EmptyState
-│       ├── Breadcrumb/      ── Breadcrumb
-│       ├── Tabs/            ── Tabs
-│       └── Pagination/      ── Pagination
+├── components/              # React コンポーネント（Primitives 11 + Composites 15）
+│   ├── primitives/            ── Primitives（単一HTML要素ラッパー）
+│   │   ├── Button/            ── Button
+│   │   ├── Divider/           ── Divider
+│   │   ├── Icon/              ── Icon
+│   │   ├── Image/             ── Image
+│   │   ├── Input/             ── Input
+│   │   ├── Label/             ── Label
+│   │   ├── Link/              ── Link
+│   │   ├── Skeleton/          ── Skeleton
+│   │   ├── Spinner/           ── Spinner
+│   │   ├── Textarea/          ── Textarea
+│   │   └── Typography/        ── Typography
+│   └── composites/            ── Composites（複合コンポーネント）
+│       ├── Alert/             ── Alert
+│       ├── Avatar/            ── Avatar
+│       ├── Badge/             ── Badge
+│       ├── Breadcrumb/        ── Breadcrumb
+│       ├── Card/              ── Card（Header/Body/Footer）
+│       ├── Checkbox/          ── Checkbox
+│       ├── EmptyState/        ── EmptyState
+│       ├── FormField/         ── FormField
+│       ├── Pagination/        ── Pagination
+│       ├── ProgressBar/       ── ProgressBar
+│       ├── Radio/             ── Radio + RadioGroup
+│       ├── SearchBar/         ── SearchBar
+│       ├── Select/            ── Select
+│       ├── Switch/            ── Switch
+│       └── Tabs/              ── Tabs
 │
 ├── package.json
 ├── tsconfig.json
@@ -101,51 +101,41 @@ designSystem/
 
 ## 🧩 コンポーネント一覧
 
-### Phase B-1: 基本 Atom（5個）
+### Primitives（11個）
 
 | コンポーネント | 主要 Props | 用途 |
 |--------------|-----------|------|
 | **Button** | variant / size / isLoading / icon | 全アクション |
+| **Divider** | orientation / label / color | 区切り線 |
+| **Icon** | size / color / label | SVG アイコンラッパー |
+| **Image** | aspectRatio / objectFit / rounded / fallback | 画像 |
 | **Input** | type / size / error / leadingIcon | テキスト入力 |
 | **Label** | required / optional / disabled | フォームラベル |
-| **Icon** | size / color / label | SVG アイコンラッパー |
+| **Link** | external / color / underline / disabled | テキストリンク |
+| **Skeleton** | variant / lines / animated | ローディングプレースホルダー |
+| **Spinner** | size / color / label | ローディング |
+| **Textarea** | maxLength / currentLength / resize | 長文入力 |
 | **Typography** | variant / as / color / truncate | テキスト全般 |
 
-### Phase B-2: フォーム + ステータス Atom（7個）
-
-| コンポーネント | 主要 Props | 用途 |
-|--------------|-----------|------|
-| **Checkbox** | indeterminate / error / description | 複数選択 |
-| **Radio** + RadioGroup | inline / error / legend | 単一選択 |
-| **Select** | size / error / fullWidth | ドロップダウン選択 |
-| **Textarea** | maxLength / currentLength / resize | 長文入力 |
-| **Switch** | role="switch" / labelPosition | ON/OFF 切替 |
-| **Badge** | variant / appearance / dot | ステータス表示 |
-| **Spinner** | size / color / label | ローディング |
-
-### Phase B-3: メディア + レイアウト Atom（6個）
-
-| コンポーネント | 主要 Props | 用途 |
-|--------------|-----------|------|
-| **Link** | external / color / underline / disabled | テキストリンク |
-| **Avatar** | src / name / size / shape / status | ユーザーアバター |
-| **Divider** | orientation / label / color | 区切り線 |
-| **Skeleton** | variant / lines / animated | ローディングプレースホルダー |
-| **ProgressBar** | value / color / showValue / indeterminate | 進捗表示 |
-| **Image** | aspectRatio / objectFit / rounded / fallback | 画像 |
-
-### Phase D: Molecule（8個）
+### Composites（15個）
 
 | コンポーネント | 組み合わせ | 用途 |
 |--------------|-----------|------|
-| **FormField** | Label + children slot + helpText/error | RadioGroup・Checkbox グループ等の汎用フィールドラッパー |
-| **SearchBar** | SearchIcon + Input + ClearButton | 検索フィールド（Enter で実行・Escape でクリア）|
-| **Card** | Header / Body / Footer スロット | 汎用カードコンテナ（ブログ・統計・プロフィール等） |
 | **Alert** | アイコン + タイトル + 本文 + 閉じるボタン | インラインアラート（success/error/warning/info）|
-| **EmptyState** | アイコン + タイトル + 説明 + アクション | データなし・エラー・検索結果ゼロの画面 |
+| **Avatar** | src / name / size / shape / status | ユーザーアバター |
+| **Badge** | variant / appearance / dot | ステータス表示 |
 | **Breadcrumb** | リンクリスト + セパレーター | パンくずナビゲーション（chevron/slash/dot）|
-| **Tabs** | tablist + tabpanel + キーボード操作 | タブ切り替え（underline/pill・制御/非制御）|
+| **Card** | Header / Body / Footer スロット | 汎用カードコンテナ（ブログ・統計・プロフィール等） |
+| **Checkbox** | indeterminate / error / description | 複数選択 |
+| **EmptyState** | アイコン + タイトル + 説明 + アクション | データなし・エラー・検索結果ゼロの画面 |
+| **FormField** | Label + children slot + helpText/error | RadioGroup・Checkbox グループ等の汎用フィールドラッパー |
 | **Pagination** | ページボタン + 省略記号 + 前後ボタン | ページネーション（最初・最後ボタン対応）|
+| **ProgressBar** | value / color / showValue / indeterminate | 進捗表示 |
+| **Radio** + RadioGroup | inline / error / legend | 単一選択 |
+| **SearchBar** | SearchIcon + Input + ClearButton | 検索フィールド（Enter で実行・Escape でクリア）|
+| **Select** | size / error / fullWidth | ドロップダウン選択 |
+| **Switch** | role="switch" / labelPosition | ON/OFF 切替 |
+| **Tabs** | tablist + tabpanel + キーボード操作 | タブ切り替え（underline/pill・制御/非制御）|
 
 ---
 
@@ -155,11 +145,9 @@ designSystem/
 |---------|------|------|
 | Phase 1〜4 | 原則ドキュメント（62ファイル） | ✅ 完了 |
 | Phase A | デザイントークン（JSON × 7） | ✅ 完了 |
-| Phase B-1 | 基本 Atom × 5 + Stories | ✅ 完了 |
-| Phase B-2 | フォーム・ステータス Atom × 7 + Stories | ✅ 完了 |
+| Phase B | Primitives × 11 + Stories | ✅ 完了 |
 | Phase C | Storybook セットアップ・アクセシビリティ統合 | ✅ 完了 |
-| Phase B-3 | メディア・レイアウト Atom × 6 + Stories | ✅ 完了 |
-| Phase D | Molecule × 8（FormField / SearchBar / Card / Alert / EmptyState / Breadcrumb / Tabs / Pagination） | ✅ 完了 |
+| Phase D | Composites × 15 + Stories | ✅ 完了 |
 | Phase E | Organisms（Header / Modal / Toast 等） | ⬜ 未着手 |
 
 ---
@@ -188,6 +176,8 @@ designSystem/
 新しいプロジェクトの UI を構築してください。
 
 コンポーネントは components/ にあります。
+  - primitives/: 単一HTML要素ラッパー（Button, Input, Typography 等）
+  - composites/: 複合コンポーネント（Card, FormField, Tabs 等）
 デザイントークンは tokens/ の JSON と tailwind.config.js に定義されています。
 デザイン原則は principles/ を参照してください。
 
@@ -207,7 +197,7 @@ principles/
 ### Storybook での確認方法
 
 1. `npm run storybook` で起動
-2. 左サイドバーで `Atoms/` を展開
+2. 左サイドバーで `Primitives/` または `Composites/` を展開
 3. コンポーネントを選択
 4. **Controls パネル** で Props をリアルタイム変更
 5. **Accessibility パネル** でアクセシビリティ違反を確認
@@ -218,7 +208,7 @@ principles/
 
 - **原則ドキュメント**: 62ファイル（約15,000行）
 - **デザイントークン**: 7ファイル
-- **実装済みコンポーネント**: 26個（Atom × 18 + Molecule × 8）
+- **実装済みコンポーネント**: 26個（Primitives × 11 + Composites × 15）
 - **Story ファイル**: 26個（全コンポーネントをカバー）
 - **アクセシビリティ**: 全コンポーネントで ARIA 属性・キーボード操作対応
 

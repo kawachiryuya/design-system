@@ -1,7 +1,7 @@
 # Cursor 作業再開ガイド
 
 **最終更新**: 2026年2月21日  
-**前回まで**: Phase B-1 / B-2 / B-3 Atom（18個）+ Phase D Molecule（8個）完了
+**前回まで**: Primitives（11個）+ Composites（15個）完了、primitives/composites 構造へ再構成済み
 
 ---
 
@@ -16,39 +16,35 @@
 **Phase A: デザイントークン（7ファイル）**
 - `tokens/` に配置済み（spacing/colors/typography/shadows/radius/breakpoints/animation）
 
-**Phase B-1: Atom（5個）**
-- `components/atoms/button/` — Button（variant/size/isLoading/icon/fullWidth）
-- `components/atoms/Input/` — Input（type/size/error/icon/label/helpText）
-- `components/atoms/Label/` — Label（required/optional/disabled）
-- `components/atoms/Icon/` — Icon（size/color/label/aria）
-- `components/atoms/Typography/` — Typography（variant/as/color/truncate）
+**Primitives（11個）**
+- `components/primitives/Button/` — Button（variant/size/isLoading/icon/fullWidth）
+- `components/primitives/Divider/` — Divider（orientation/label/color/weight）
+- `components/primitives/Icon/` — Icon（size/color/label/aria）
+- `components/primitives/Image/` — Image（aspectRatio/objectFit/rounded/lazy/fallback）
+- `components/primitives/Input/` — Input（type/size/error/icon/label/helpText）
+- `components/primitives/Label/` — Label（required/optional/disabled）
+- `components/primitives/Link/` — Link（external/color/underline/disabled）
+- `components/primitives/Skeleton/` — Skeleton（variant/lines/animated）
+- `components/primitives/Spinner/` — Spinner（size/color/label）
+- `components/primitives/Textarea/` — Textarea（maxLength/currentLength/resize）
+- `components/primitives/Typography/` — Typography（variant/as/color/truncate）
 
-**Phase B-2: Atom（7個）**
-- `components/atoms/Checkbox/` — Checkbox（indeterminate/error/description）
-- `components/atoms/Radio/` — Radio + RadioGroup（inline/error/legend）
-- `components/atoms/Select/` — Select（size/error/fullWidth/placeholder）
-- `components/atoms/Textarea/` — Textarea（maxLength/currentLength/resize）
-- `components/atoms/Switch/` — Switch（role="switch"/labelPosition）
-- `components/atoms/Badge/` — Badge（variant/appearance/dot）
-- `components/atoms/Spinner/` — Spinner（size/color/label）
-
-**Phase B-3: Atom（6個）**
-- `components/atoms/Link/` — Link（external/color/underline/disabled）
-- `components/atoms/Avatar/` — Avatar（src/name/size/shape/status + イニシャルフォールバック）
-- `components/atoms/Divider/` — Divider（orientation/label/color/weight）
-- `components/atoms/Skeleton/` — Skeleton（variant/lines/animated）
-- `components/atoms/ProgressBar/` — ProgressBar（value/color/size/showValue/indeterminate）
-- `components/atoms/Image/` — Image（aspectRatio/objectFit/rounded/lazy/fallback）
-
-**Phase D: Molecule（8個）**
-- `components/molecules/FormField/` — FormField（Label + children slot + helpText/error の汎用ラッパー）
-- `components/molecules/SearchBar/` — SearchBar（SearchIcon + Input + ClearButton + LoadingSpinner）
-- `components/molecules/Card/` — Card（elevated/outlined/flat + Header/Body/Footer スロット）
-- `components/molecules/Alert/` — Alert（success/error/warning/info/neutral + 閉じるボタン）
-- `components/molecules/EmptyState/` — EmptyState（アイコン + タイトル + 説明 + アクション）
-- `components/molecules/Breadcrumb/` — Breadcrumb（chevron/slash/dot セパレーター + aria-current）
-- `components/molecules/Tabs/` — Tabs（underline/pill + キーボード操作 + バッジ + 制御/非制御）
-- `components/molecules/Pagination/` — Pagination（省略記号 + 最初・最後ボタン + サイズ）
+**Composites（15個）**
+- `components/composites/Alert/` — Alert（success/error/warning/info/neutral + 閉じるボタン）
+- `components/composites/Avatar/` — Avatar（src/name/size/shape/status + イニシャルフォールバック）
+- `components/composites/Badge/` — Badge（variant/appearance/dot）
+- `components/composites/Breadcrumb/` — Breadcrumb（chevron/slash/dot セパレーター + aria-current）
+- `components/composites/Card/` — Card（elevated/outlined/flat + Header/Body/Footer スロット）
+- `components/composites/Checkbox/` — Checkbox（indeterminate/error/description）
+- `components/composites/EmptyState/` — EmptyState（アイコン + タイトル + 説明 + アクション）
+- `components/composites/FormField/` — FormField（Label + children slot + helpText/error の汎用ラッパー）
+- `components/composites/Pagination/` — Pagination（省略記号 + 最初・最後ボタン + サイズ）
+- `components/composites/ProgressBar/` — ProgressBar（value/color/size/showValue/indeterminate）
+- `components/composites/Radio/` — Radio + RadioGroup（inline/error/legend）
+- `components/composites/SearchBar/` — SearchBar（SearchIcon + Input + ClearButton + LoadingSpinner）
+- `components/composites/Select/` — Select（size/error/fullWidth/placeholder）
+- `components/composites/Switch/` — Switch（role="switch"/labelPosition）
+- `components/composites/Tabs/` — Tabs（underline/pill + キーボード操作 + バッジ + 制御/非制御）
 
 **Phase C: Storybook セットアップ（完了）**
 - `package.json` / `tsconfig.json` / `vite.config.ts` / `postcss.config.js`
@@ -100,12 +96,10 @@ nvm install --lts
 
 ## 🎯 次に進むべきこと
 
-### Phase E: Organisms（必要に応じて追加）
+### 複雑なパターンについて
 
-ポートフォリオや新規プロジェクトで必要になったタイミングで追加予定:
-- **Modal / Dialog** — オーバーレイ + Card + フォーカストラップ
-- **Toast** — Alert ベースの画面端通知
-- **DataTable** — テーブル + Pagination + SearchBar + EmptyState
+このデザインシステムは Primitives + Composites のみを提供する。
+Modal / Dialog、Toast、DataTable などの複雑な UI パターンは、プロダクト側で Primitives と Composites を組み合わせて構築する。
 
 ---
 
@@ -118,34 +112,34 @@ designSystem/
 │   ├── preview.ts
 │   └── tailwind.css
 ├── components/
-│   ├── atoms/           ← Atom（18個）
-│   │   ├── button/      ── Button
-│   │   ├── Input/       ── Input
-│   │   ├── Label/       ── Label
-│   │   ├── Icon/        ── Icon
-│   │   ├── Typography/  ── Typography
-│   │   ├── Checkbox/    ── Checkbox
-│   │   ├── Radio/       ── Radio + RadioGroup
-│   │   ├── Select/      ── Select
-│   │   ├── Textarea/    ── Textarea
-│   │   ├── Switch/      ── Switch
-│   │   ├── Badge/       ── Badge
-│   │   ├── Spinner/     ── Spinner
-│   │   ├── Link/        ── Link
-│   │   ├── Avatar/      ── Avatar
-│   │   ├── Divider/     ── Divider
-│   │   ├── Skeleton/    ── Skeleton
-│   │   ├── ProgressBar/ ── ProgressBar
-│   │   └── Image/       ── Image
-│   └── molecules/       ← Molecule（8個）
-│       ├── FormField/   ── FormField
-│       ├── SearchBar/   ── SearchBar
-│       ├── Card/        ── Card
-│       ├── Alert/       ── Alert
-│       ├── EmptyState/  ── EmptyState
-│       ├── Breadcrumb/  ── Breadcrumb
-│       ├── Tabs/        ── Tabs
-│       └── Pagination/  ── Pagination
+│   ├── primitives/        ← Primitives（11個）
+│   │   ├── Button/        ── Button
+│   │   ├── Divider/       ── Divider
+│   │   ├── Icon/          ── Icon
+│   │   ├── Image/         ── Image
+│   │   ├── Input/         ── Input
+│   │   ├── Label/         ── Label
+│   │   ├── Link/          ── Link
+│   │   ├── Skeleton/      ── Skeleton
+│   │   ├── Spinner/       ── Spinner
+│   │   ├── Textarea/      ── Textarea
+│   │   └── Typography/    ── Typography
+│   └── composites/        ← Composites（15個）
+│       ├── Alert/         ── Alert
+│       ├── Avatar/        ── Avatar
+│       ├── Badge/         ── Badge
+│       ├── Breadcrumb/    ── Breadcrumb
+│       ├── Card/          ── Card
+│       ├── Checkbox/      ── Checkbox
+│       ├── EmptyState/    ── EmptyState
+│       ├── FormField/     ── FormField
+│       ├── Pagination/    ── Pagination
+│       ├── ProgressBar/   ── ProgressBar
+│       ├── Radio/         ── Radio + RadioGroup
+│       ├── SearchBar/     ── SearchBar
+│       ├── Select/        ── Select
+│       ├── Switch/        ── Switch
+│       └── Tabs/          ── Tabs
 ├── principles/
 ├── tokens/
 ├── package.json
@@ -184,32 +178,30 @@ designSystem/
 ## 🚨 ディレクトリ規則
 
 ```
-Atom     → components/atoms/ComponentName/
-Molecule → components/molecules/ComponentName/
-Organism → components/organisms/ComponentName/  （将来）
+Primitive → components/primitives/ComponentName/
+Composite → components/composites/ComponentName/
 ```
 
 ### 次のコンポーネントを作るときのプロンプト例
 
 ```
-このデザインシステムに新しい Molecule コンポーネント「XXX」を追加してください。
+このデザインシステムに新しい Composite コンポーネント「XXX」を追加してください。
 
 【ディレクトリ規則】
-- Atom  → components/atoms/XXX/
-- Molecule → components/molecules/XXX/
-- Organism → components/organisms/XXX/（将来）
+- Primitive → components/primitives/XXX/
+- Composite → components/composites/XXX/
 
 【参照ファイル】
-- components/atoms/button/Button.tsx（Atom の実装パターン）
-- components/molecules/Card/Card.tsx（Molecule の実装パターン）
-- components/molecules/Card/Card.stories.tsx（Story パターン）
+- components/primitives/Button/Button.tsx（Primitive の実装パターン）
+- components/composites/Card/Card.tsx（Composite の実装パターン）
+- components/composites/Card/Card.stories.tsx（Story パターン）
 - principles/（関連する原則ドキュメント）
 
 【作成するファイル】
-- components/molecules/XXX/XXX.tsx
-- components/molecules/XXX/XXX.stories.tsx
-- components/molecules/XXX/XXX.md
-- components/molecules/XXX/index.ts
+- components/composites/XXX/XXX.tsx
+- components/composites/XXX/XXX.stories.tsx
+- components/composites/XXX/XXX.md
+- components/composites/XXX/index.ts
 ```
 
 ---

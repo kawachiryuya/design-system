@@ -6,8 +6,7 @@ import { Meta } from '@storybook/blocks';
 
 # Design System
 
-Atomic Design をベースに構築したコンポーネントライブラリです。
-一貫したUI・アクセシビリティ・開発体験を目的として設計しています。
+一貫したUI・アクセシビリティ・開発体験を目的として構築したコンポーネントライブラリです。
 
 ---
 
@@ -16,20 +15,20 @@ Atomic Design をベースに構築したコンポーネントライブラリで
 | カテゴリ | 内容 |
 |---------|------|
 | **Tokens** | カラー・タイポグラフィ・スペーシングのデザイントークン可視化 |
-| **Atoms** | Button・Input・Badgeなど、最小単位のUI部品（18コンポーネント） |
-| **Molecules** | FormField・Card・Tabsなど、Atomを組み合わせた複合コンポーネント（8コンポーネント） |
+| **Primitives** | Button・Input・Labelなど、単一HTML要素のラッパー（11コンポーネント） |
+| **Components** | Card・Tabs・FormFieldなど、複数要素を組み合わせた複合コンポーネント（15コンポーネント） |
 
 ---
 
-## Atomic Design の考え方
+## 設計思想：Primitives / Composites
 
-このシステムは **Atoms → Molecules → Organisms** の順に積み上げる設計を採用しています。
+Atomic Design の「依存方向の制約」を継承しつつ、分類の曖昧さを排除した構造です。
 
-- **Atoms**：それ以上分解できない最小のUI部品。Buttonひとつ、Inputひとつ。
-- **Molecules**：2〜3個のAtomを組み合わせた、意味のある単位。FormField（Label + Input + ErrorMessage）など。
-- **Organisms**（将来）：ページを構成するセクション単位。Header・Modalなど、プロダクト依存度が高いもの。
+- **Primitives**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
+- **Composites**：Primitives や複数要素を組み合わせた複合コンポーネント。Primitives のみ import 可。
 
-上位レイヤーほど「文脈」を持ちます。Atomsは再利用性が最大、Organismsは具体的なユースケースに対応します。
+マルチプロダクト・マルチプラットフォーム展開を見据え、React 実装に依存しない分類名を採用しています。
+デザインシステムは「部品の提供」に徹し、ビジネスロジックや部品の組み立てはプロダクト側に委ねます。
 
 ---
 

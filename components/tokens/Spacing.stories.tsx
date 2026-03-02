@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import spacingToken from '../../tokens/spacing.json';
 
 const meta: Meta = {
   title: 'Tokens/Spacing',
@@ -10,33 +11,31 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const SPACING_SCALE: { key: string; value: string }[] = [
-  { key: '0', value: '0px' },
-  { key: '1', value: '4px' },
-  { key: '2', value: '8px' },
-  { key: '3', value: '12px' },
-  { key: '4', value: '16px' },
-  { key: '5', value: '20px' },
-  { key: '6', value: '24px' },
-  { key: '8', value: '32px' },
-  { key: '10', value: '40px' },
-  { key: '12', value: '48px' },
-  { key: '16', value: '64px' },
-  { key: '20', value: '80px' },
-  { key: '24', value: '96px' },
-];
+const SPACING_SCALE = Object.entries(spacingToken.spacing).map(([key, value]) => ({ key, value }));
 
-const SEMANTIC_COMPONENT: { key: string; value: string; desc: string }[] = [
-  { key: 'component.tight', value: '4px', desc: 'アイコンとテキストの間など、最小の間隔' },
-  { key: 'component.default', value: '8px', desc: 'ボタン内パディング（垂直）など、標準の間隔' },
-  { key: 'component.comfortable', value: '12px', desc: '余裕を持たせたコンポーネント内間隔' },
-];
+const SEMANTIC_DESCRIPTIONS: Record<string, string> = {
+  tight: 'アイコンとテキストの間など、最小の間隔',
+  default: 'ボタン内パディング（垂直）など、標準の間隔',
+  comfortable: '余裕を持たせたコンポーネント内間隔',
+};
 
-const SEMANTIC_SECTION: { key: string; value: string; desc: string }[] = [
-  { key: 'section.small', value: '32px', desc: 'セクション間の最小マージン' },
-  { key: 'section.default', value: '48px', desc: 'セクション間の標準マージン' },
-  { key: 'section.large', value: '64px', desc: 'ページ内の大きなセクション区切り' },
-];
+const SEMANTIC_COMPONENT = Object.entries(spacingToken.semantic.component).map(([key, value]) => ({
+  key: `component.${key}`,
+  value,
+  desc: SEMANTIC_DESCRIPTIONS[key] ?? '',
+}));
+
+const SEMANTIC_SECTION_DESCRIPTIONS: Record<string, string> = {
+  small: 'セクション間の最小マージン',
+  default: 'セクション間の標準マージン',
+  large: 'ページ内の大きなセクション区切り',
+};
+
+const SEMANTIC_SECTION = Object.entries(spacingToken.semantic.section).map(([key, value]) => ({
+  key: `section.${key}`,
+  value,
+  desc: SEMANTIC_SECTION_DESCRIPTIONS[key] ?? '',
+}));
 
 export const Scale: Story = {
   name: 'スペーシングスケール',
@@ -68,8 +67,11 @@ export const Scale: Story = {
                   transition: 'width 0.2s',
                 }}
               />
-              <span style={{ fontSize: '12px', fontFamily: 'monospace', color: '#737373' }}>
+              <span style={{ fontSize: '12px', fontFamily: 'monospace', color: '#737373', flexShrink: 0 }}>
                 {s.value}
+              </span>
+              <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3' }}>
+                p-{s.key} / gap-{s.key} / m-{s.key}
               </span>
             </div>
           );
@@ -115,7 +117,7 @@ export const Semantic: Story = {
               <div
                 style={{
                   height: '16px',
-                  width: Math.max(px * 2, 2),
+                  width: Math.max(px, 2),
                   backgroundColor: '#818CF8',
                   borderRadius: '3px',
                   flexShrink: 0,

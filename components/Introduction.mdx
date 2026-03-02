@@ -16,19 +16,33 @@ import { Meta } from '@storybook/blocks';
 |---------|------|
 | **Tokens** | カラー・タイポグラフィ・スペーシングのデザイントークン可視化 |
 | **Primitives** | Button・Input・Labelなど、単一HTML要素のラッパー（11コンポーネント） |
-| **Components** | Card・Tabs・FormFieldなど、複数要素を組み合わせた複合コンポーネント（15コンポーネント） |
+| **Composites** | Card・Tabs・FormFieldなど、複数要素を組み合わせた複合コンポーネント（15コンポーネント） |
+| **Patterns** | Modal・Toastなど、Compositesを組み合わせたセクション単位のパターン（準備中） |
+| **[Product名]** | プロダクト固有のコンポーネント（任意） |
 
 ---
 
-## 設計思想：Primitives / Composites
+## 設計思想：4層構造と依存ルール
 
 Atomic Design の「依存方向の制約」を継承しつつ、分類の曖昧さを排除した構造です。
 
 - **Primitives**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
-- **Composites**：Primitives や複数要素を組み合わせた複合コンポーネント。Primitives のみ import 可。
+- **Composites**：Primitives を組み合わせた複合コンポーネント。Primitives のみ import 可。
+- **Patterns**：Composites を組み合わせたセクション単位のパターン。Composites + Primitives を import 可。
+- **プロダクト層**：すべてを import 可。デザインシステム外で管理。
 
-マルチプロダクト・マルチプラットフォーム展開を見据え、React 実装に依存しない分類名を採用しています。
-デザインシステムは「部品の提供」に徹し、ビジネスロジックや部品の組み立てはプロダクト側に委ねます。
+```
+Primitives    他のコンポーネントを import しない
+    ↑
+Composites    Primitives のみ import 可
+    ↑
+Patterns      Composites + Primitives を import 可
+    ↑
+プロダクト層   すべてを import 可（デザインシステム外）
+```
+
+Patterns は「複数プロダクトで再利用される汎用パターン」のみ採用し、ビジネスロジックを含みません。
+プロダクト固有のコンポーネントは **[Product名]** カテゴリとして同じ Storybook 上で確認できます。
 
 ---
 

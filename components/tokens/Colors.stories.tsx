@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import colorsToken from '../../tokens/colors.json';
 
 const meta: Meta = {
   title: 'Tokens/Colors',
@@ -14,62 +15,22 @@ type Shade = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800
 
 const SHADES: Shade[] = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
 
-const PALETTES: { name: string; label: string; colors: Record<Shade, string> }[] = [
-  {
-    name: 'primary',
-    label: 'Primary (Indigo)',
-    colors: {
-      '50': '#EEF2FF', '100': '#E0E7FF', '200': '#C7D2FE', '300': '#A5B4FC',
-      '400': '#818CF8', '500': '#6366F1', '600': '#4F46E5', '700': '#4338CA',
-      '800': '#3730A3', '900': '#312E81',
-    },
-  },
-  {
-    name: 'neutral',
-    label: 'Neutral (Gray)',
-    colors: {
-      '50': '#FAFAFA', '100': '#F5F5F5', '200': '#E5E5E5', '300': '#D4D4D4',
-      '400': '#A3A3A3', '500': '#737373', '600': '#525252', '700': '#404040',
-      '800': '#262626', '900': '#171717',
-    },
-  },
-  {
-    name: 'success',
-    label: 'Success (Green)',
-    colors: {
-      '50': '#F0FDF4', '100': '#DCFCE7', '200': '#BBF7D0', '300': '#86EFAC',
-      '400': '#4ADE80', '500': '#22C55E', '600': '#16A34A', '700': '#15803D',
-      '800': '#166534', '900': '#14532D',
-    },
-  },
-  {
-    name: 'error',
-    label: 'Error (Red)',
-    colors: {
-      '50': '#FEF2F2', '100': '#FEE2E2', '200': '#FECACA', '300': '#FCA5A5',
-      '400': '#F87171', '500': '#EF4444', '600': '#DC2626', '700': '#B91C1C',
-      '800': '#991B1B', '900': '#7F1D1D',
-    },
-  },
-  {
-    name: 'warning',
-    label: 'Warning (Orange)',
-    colors: {
-      '50': '#FFFBEB', '100': '#FEF3C7', '200': '#FDE68A', '300': '#FCD34D',
-      '400': '#FBBF24', '500': '#F59E0B', '600': '#D97706', '700': '#B45309',
-      '800': '#92400E', '900': '#78350F',
-    },
-  },
-  {
-    name: 'info',
-    label: 'Info (Blue)',
-    colors: {
-      '50': '#EFF6FF', '100': '#DBEAFE', '200': '#BFDBFE', '300': '#93C5FD',
-      '400': '#60A5FA', '500': '#3B82F6', '600': '#2563EB', '700': '#1D4ED8',
-      '800': '#1E40AF', '900': '#1E3A8A',
-    },
-  },
-];
+const PALETTE_LABELS: Record<string, string> = {
+  primary: 'Primary (Indigo)',
+  neutral: 'Neutral (Gray)',
+  success: 'Success (Green)',
+  error: 'Error (Red)',
+  warning: 'Warning (Orange)',
+  info: 'Info (Blue)',
+};
+
+const PALETTES = Object.entries(colorsToken)
+  .filter(([key]) => key in PALETTE_LABELS)
+  .map(([name, colors]) => ({
+    name,
+    label: PALETTE_LABELS[name],
+    colors: colors as Record<Shade, string>,
+  }));
 
 function isDark(hex: string): boolean {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -120,9 +81,12 @@ export const Palettes: Story = {
   name: 'パレット一覧',
   render: () => (
     <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 24px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
         Color Palettes
       </h2>
+      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373' }}>
+        6系統 × 10段階のカラーパレット。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>colors</code> に統合済み。
+      </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
         {PALETTES.map((palette) => (
           <PaletteBlock key={palette.name} palette={palette} />
@@ -136,15 +100,17 @@ export const Semantic: Story = {
   name: 'セマンティックカラー',
   render: () => {
     const semanticColors = [
-      { role: 'Primary — アクション・リンク・フォーカス', color: '#4F46E5', token: 'primary.600', usage: 'CTA, フォーカスリング, リンク' },
-      { role: 'Success — 成功・完了', color: '#16A34A', token: 'success.600', usage: '保存完了, バリデーション成功' },
-      { role: 'Error — エラー・失敗', color: '#DC2626', token: 'error.600', usage: 'フォームエラー, 削除, 警告' },
-      { role: 'Warning — 注意', color: '#D97706', token: 'warning.600', usage: '注意喚起, 非推奨の操作' },
-      { role: 'Info — 情報', color: '#2563EB', token: 'info.600', usage: 'ヘルプテキスト, ステータス情報' },
-      { role: 'Neutral — テキスト・ボーダー', color: '#171717', token: 'neutral.900', usage: '本文テキスト' },
-      { role: 'Neutral — サブテキスト', color: '#737373', token: 'neutral.500', usage: 'ヘルプテキスト, プレースホルダー' },
-      { role: 'Neutral — ボーダー', color: '#D4D4D4', token: 'neutral.300', usage: '区切り線, 入力枠' },
-      { role: 'Neutral — 背景', color: '#FAFAFA', token: 'neutral.50', usage: 'ページ背景, カード背景' },
+      { role: 'Primary — アクション・リンク・フォーカス', token: 'primary.600', tw: 'primary-600', color: colorsToken.primary['600'], usage: 'CTA, フォーカスリング, リンク' },
+      { role: 'Success — 成功・完了', token: 'success.600', tw: 'success-600', color: colorsToken.success['600'], usage: '保存完了, バリデーション成功' },
+      { role: 'Error — エラー・失敗', token: 'error.600', tw: 'error-600', color: colorsToken.error['600'], usage: 'フォームエラー, 削除, 警告' },
+      { role: 'Warning — 注意', token: 'warning.600', tw: 'warning-600', color: colorsToken.warning['600'], usage: '注意喚起, 非推奨の操作' },
+      { role: 'Info — 情報', token: 'info.600', tw: 'info-600', color: colorsToken.info['600'], usage: 'ヘルプテキスト, ステータス情報' },
+      { role: 'Neutral — テキスト', token: 'neutral.900', tw: 'neutral-900', color: colorsToken.neutral['900'], usage: '本文テキスト' },
+      { role: 'Neutral — サブテキスト', token: 'neutral.500', tw: 'neutral-500', color: colorsToken.neutral['500'], usage: 'ヘルプテキスト, プレースホルダー' },
+      { role: 'Neutral — ボーダー', token: 'neutral.300', tw: 'neutral-300', color: colorsToken.neutral['300'], usage: '区切り線, 入力枠' },
+      { role: 'Neutral — 背景', token: 'neutral.50', tw: 'neutral-50', color: colorsToken.neutral['50'], usage: 'ページ背景, カード背景' },
+      { role: 'Base — 白', token: 'base.white', tw: 'white', color: colorsToken.base.white, usage: 'カード背景, テキスト（ダーク上）' },
+      { role: 'Base — 黒', token: 'base.black', tw: 'black', color: colorsToken.base.black, usage: '最大コントラストのテキスト' },
     ];
 
     return (
@@ -173,7 +139,7 @@ export const Semantic: Story = {
                   borderRadius: '6px',
                   backgroundColor: item.color,
                   flexShrink: 0,
-                  border: item.color === '#FAFAFA' ? '1px solid #E5E5E5' : 'none',
+                  border: (item.color === colorsToken.neutral['50'] || item.color === colorsToken.base.white) ? '1px solid #E5E5E5' : 'none',
                 }}
               />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -205,6 +171,9 @@ export const Semantic: Story = {
               }}>
                 {item.color}
               </code>
+              <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3', flexShrink: 0 }}>
+                bg-{item.tw} / text-{item.tw}
+              </span>
             </div>
           ))}
         </div>

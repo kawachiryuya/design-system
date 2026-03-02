@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 import { Pagination } from './Pagination';
 
 const meta: Meta<typeof Pagination> = {
-  title: 'Components/Pagination',
+  title: 'Composites/Pagination',
   component: Pagination,
   tags: ['autodocs'],
   argTypes: {
@@ -23,7 +24,22 @@ const meta: Meta<typeof Pagination> = {
 export default meta;
 type Story = StoryObj<typeof Pagination>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 初期状態：5ページ目
+    await expect(canvas.getByLabelText('5ページ目')).toHaveAttribute('aria-current', 'page');
+
+    // 次のページボタンで6ページ目へ
+    await userEvent.click(canvas.getByLabelText('次のページ'));
+    await expect(canvas.getByLabelText('6ページ目')).toHaveAttribute('aria-current', 'page');
+
+    // 前のページボタンで5ページ目へ戻る
+    await userEvent.click(canvas.getByLabelText('前のページ'));
+    await expect(canvas.getByLabelText('5ページ目')).toHaveAttribute('aria-current', 'page');
+  },
+};
 
 export const WithEdges: Story = {
   args: { showEdges: true },

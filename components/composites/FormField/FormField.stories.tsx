@@ -7,7 +7,7 @@ import { Checkbox } from '../Checkbox/Checkbox';
 import { Button } from '../../primitives/Button/Button';
 
 const meta: Meta<typeof FormField> = {
-  title: 'Components/FormField',
+  title: 'Composites/FormField',
   component: FormField,
   tags: ['autodocs'],
   argTypes: {

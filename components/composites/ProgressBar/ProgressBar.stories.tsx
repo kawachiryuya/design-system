@@ -4,7 +4,7 @@ import { ProgressBar } from './ProgressBar';
 import { Button } from '../../primitives/Button/Button';
 
 const meta: Meta<typeof ProgressBar> = {
-  title: 'Components/ProgressBar',
+  title: 'Composites/ProgressBar',
   component: ProgressBar,
   tags: ['autodocs'],
   argTypes: {

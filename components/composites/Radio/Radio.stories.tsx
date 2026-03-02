@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 import { Radio, RadioGroup } from './Radio';
 
 const meta: Meta<typeof RadioGroup> = {
-  title: 'Components/Radio',
+  title: 'Composites/Radio',
   component: RadioGroup,
   tags: ['autodocs'],
   argTypes: {
@@ -29,6 +30,26 @@ export const Default: Story = {
       <Radio name="plan-default" value="enterprise" label="エンタープライズ" />
     </RadioGroup>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 初期状態：フリープランが選択されている
+    const free = canvas.getByLabelText('フリープラン');
+    const pro = canvas.getByLabelText('プロプラン');
+    await expect(free).toBeChecked();
+    await expect(pro).not.toBeChecked();
+
+    // プロプランをクリック
+    await userEvent.click(pro);
+    await expect(pro).toBeChecked();
+    await expect(free).not.toBeChecked();
+
+    // エンタープライズをクリック
+    const enterprise = canvas.getByLabelText('エンタープライズ');
+    await userEvent.click(enterprise);
+    await expect(enterprise).toBeChecked();
+    await expect(pro).not.toBeChecked();
+  },
 };
 
 export const WithDescription: Story = {

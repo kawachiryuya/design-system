@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { Select } from './Select';
 
 const prefectures = [
@@ -10,7 +11,7 @@ const prefectures = [
 ];
 
 const meta: Meta<typeof Select> = {
-  title: 'Components/Select',
+  title: 'Composites/Select',
   component: Select,
   tags: ['autodocs'],
   argTypes: {
@@ -36,7 +37,20 @@ const meta: Meta<typeof Select> = {
 export default meta;
 type Story = StoryObj<typeof Select>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const select = canvas.getByLabelText('都道府県');
+
+    // 東京都を選択
+    await userEvent.selectOptions(select, 'tokyo');
+    await expect(select).toHaveValue('tokyo');
+
+    // 大阪府に変更
+    await userEvent.selectOptions(select, 'osaka');
+    await expect(select).toHaveValue('osaka');
+  },
+};
 
 export const Required: Story = {
   args: { required: true },

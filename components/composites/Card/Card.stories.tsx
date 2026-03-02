@@ -6,7 +6,7 @@ import { Avatar } from '../Avatar/Avatar';
 import { Image } from '../../primitives/Image/Image';
 
 const meta: Meta<typeof Card> = {
-  title: 'Components/Card',
+  title: 'Composites/Card',
   component: Card,
   tags: ['autodocs'],
   argTypes: {

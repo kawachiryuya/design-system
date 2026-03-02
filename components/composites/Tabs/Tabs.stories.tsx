@@ -41,7 +41,7 @@ const sampleTabs = [
 ];
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Components/Tabs',
+  title: 'Composites/Tabs',
   component: Tabs,
   tags: ['autodocs'],
   argTypes: {

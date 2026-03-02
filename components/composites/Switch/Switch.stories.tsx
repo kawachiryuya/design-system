@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 import { Switch } from './Switch';
 
 const meta: Meta<typeof Switch> = {
-  title: 'Components/Switch',
+  title: 'Composites/Switch',
   component: Switch,
   tags: ['autodocs'],
   argTypes: {
@@ -23,7 +24,27 @@ const meta: Meta<typeof Switch> = {
 export default meta;
 type Story = StoryObj<typeof Switch>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => {
+    const [checked, setChecked] = useState(false);
+    return <Switch label="ダークモード" checked={checked} onChange={setChecked} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toggle = canvas.getByRole('switch');
+
+    // 初期状態：OFF
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+
+    // クリックで ON
+    await userEvent.click(toggle);
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+
+    // 再クリックで OFF
+    await userEvent.click(toggle);
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+  },
+};
 
 export const Checked: Story = {
   args: { checked: true, onChange: () => {} },

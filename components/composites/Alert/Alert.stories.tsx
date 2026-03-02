@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 import { Alert } from './Alert';
 import { Button } from '../../primitives/Button/Button';
 import { Link } from '../../primitives/Link/Link';
 
 const meta: Meta<typeof Alert> = {
-  title: 'Components/Alert',
+  title: 'Composites/Alert',
   component: Alert,
   tags: ['autodocs'],
   argTypes: {
@@ -61,6 +62,20 @@ export const Dismissible: Story = {
       </div>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // アラートが表示されている
+    await expect(canvas.getByRole('alert')).toBeInTheDocument();
+
+    // 閉じるボタンをクリック
+    const closeButton = canvas.getByRole('button', { name: '閉じる' });
+    await userEvent.click(closeButton);
+
+    // アラートが消え、代替テキストが表示される
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    await expect(canvas.getByText('アラートを閉じました')).toBeInTheDocument();
+  },
 };
 
 export const WithoutIcon: Story = {
@@ -92,3 +107,4 @@ export const FormErrors: Story = {
     </Alert>
   ),
 };
+

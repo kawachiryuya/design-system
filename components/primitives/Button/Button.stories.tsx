@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, within, fn } from '@storybook/test';
 import { Button } from './Button';
 
 const SaveIcon = () => (
@@ -39,7 +40,17 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: { onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button');
+
+    // クリックでハンドラーが呼ばれる
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+};
 
 export const AllVariants: Story = {
   render: () => (
@@ -59,6 +70,32 @@ export const States: Story = {
       <Button disabled>無効</Button>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const buttons = canvas.getAllByRole('button');
+
+    // loading ボタン: disabled + 「読み込み中...」テキスト
+    await expect(buttons[0]).toBeDisabled();
+    await expect(canvas.getByText('読み込み中...')).toBeInTheDocument();
+
+    // disabled ボタン: disabled 属性
+    await expect(buttons[1]).toBeDisabled();
+  },
+};
+
+export const AllSizes: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-3 items-center">
+      <Button size="small">Small</Button>
+      <Button size="medium">Medium</Button>
+      <Button size="large">Large</Button>
+    </div>
+  ),
+};
+
+export const FullWidth: Story = {
+  args: { fullWidth: true, children: 'ログイン' },
+  decorators: [(Story) => <div className="w-80"><Story /></div>],
 };
 
 export const WithIcon: Story = {
@@ -69,3 +106,4 @@ export const WithIcon: Story = {
     </div>
   ),
 };
+

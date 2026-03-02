@@ -76,10 +76,10 @@
 | Pagination | `components/composites/Pagination/Pagination.md` |
 | Tabs | `components/composites/Tabs/Tabs.md` |
 
-### Phase SB-3: トークン可視化の拡充
+### Phase SB-3: トークン可視化の拡充 ✅
 
-`tokens/` に定義されている 7 トークンのうち、Story があるのは 3 つ（Colors / Typography / Spacing）のみ。
-残り 3 トークンの Story を追加し、デザイントークンの全体像を Storybook 上で確認可能にする。
+`tokens/` の残り 3 トークン（Shadows / Radius / Animation）の Story を追加。
+デザイントークンの全体像が Storybook 上で確認可能に。
 
 | ファイル | 内容 |
 |---------|------|

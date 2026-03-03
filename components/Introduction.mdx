@@ -12,13 +12,36 @@ import { Meta } from '@storybook/blocks';
 
 ## このStorybookの構成
 
-| カテゴリ | 内容 |
-|---------|------|
-| **Tokens** | カラー・タイポグラフィ・スペーシング・シャドウ・角丸・アニメーションのデザイントークン可視化 |
-| **Primitives** | Button・Input・Labelなど、単一HTML要素のラッパー（11コンポーネント） |
-| **Composites** | Card・Tabs・FormFieldなど、複数要素を組み合わせた複合コンポーネント（15コンポーネント） |
-| **Patterns** | Modal・Toastなど、Compositesを組み合わせたセクション単位のパターン（準備中） |
-| **[Product名]** | プロダクト固有のコンポーネント（任意） |
+<table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+  <thead>
+    <tr style={{ borderBottom: '2px solid #E5E5E5' }}>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600, width: '140px' }}>カテゴリ</th>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600 }}>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Tokens</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>カラー・タイポグラフィ・スペーシング・シャドウ・角丸・アニメーションのデザイントークン可視化</td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Primitives</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Button・Input・Labelなど、単一HTML要素のラッパー（11コンポーネント）</td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Composites</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Card・Tabs・FormFieldなど、複数要素を組み合わせた複合コンポーネント（15コンポーネント）</td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Patterns</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Modal・Toastなど、Compositesを組み合わせたセクション単位のパターン（準備中）</td>
+    </tr>
+    <tr>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>[Product名]</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>プロダクト固有のコンポーネント（任意）</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -66,12 +89,37 @@ Tailwind CSS の設定にも統合済みです。
 
 各コンポーネントの Story を開くと、画面下部に 4 つのタブが表示されます。
 
-| タブ | 概要 | 誰が使うか |
-|------|------|-----------|
-| **Controls** | props（色・サイズ・状態など）をリアルタイムに切り替えて見た目を確認できる | デザイナー・PM・エンジニア |
-| **Actions** | ボタンクリックや入力変更などのイベント発火ログを表示する | 主にエンジニア |
-| **Interactions** | 操作テスト（クリック→状態変化など）をステップごとに自動実行し、結果を表示する。全ステップが緑なら「正常に動作している」と判断できる | 全員 |
-| **Accessibility** | axe-core によるアクセシビリティ自動検証。コントラスト不足や ARIA 属性の漏れを検出する | 全員 |
+<table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+  <thead>
+    <tr style={{ borderBottom: '2px solid #E5E5E5' }}>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600, width: '120px' }}>タブ</th>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600 }}>概要</th>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600, width: '140px' }}>誰が使うか</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Controls</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>props（色・サイズ・状態など）をリアルタイムに切り替えて見た目を確認できる</td>
+      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>デザイナー・PM・エンジニア</td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Actions</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>ボタンクリックや入力変更などのイベント発火ログを表示する</td>
+      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>主にエンジニア</td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Interactions</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>操作テスト（クリック→状態変化など）をステップごとに自動実行し、結果を表示する。全ステップが緑なら「正常に動作している」と判断できる</td>
+      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>全員</td>
+    </tr>
+    <tr>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Accessibility</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>axe-core によるアクセシビリティ自動検証。コントラスト不足や ARIA 属性の漏れを検出する</td>
+      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>全員</td>
+    </tr>
+  </tbody>
+</table>
 
 - Controls と Actions は Storybook の標準機能
 - Interactions と Accessibility は品質保証のために追加導入したアドオン

@@ -112,10 +112,10 @@ export const Palettes: Story = {
             <p style={{ margin: '8px 0 2px', fontSize: '13px', fontWeight: 600, color: '#404040' }}>
               {item.label}
             </p>
-            <p style={{ margin: 0, fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3' }}>
+            <p style={{ margin: 0, fontSize: '11px', fontFamily: 'monospace', color: '#737373' }}>
               {item.hex}
             </p>
-            <p style={{ margin: '2px 0 0', fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3' }}>
+            <p style={{ margin: '2px 0 0', fontSize: '11px', fontFamily: 'monospace', color: '#737373' }}>
               bg-{item.tw}
             </p>
           </div>
@@ -230,11 +230,11 @@ function SemanticTokenRow({ name, entry, cssPrefix, twPrefix }: { name: string; 
         {twClass}
       </code>
       {/* CSS var */}
-      <code style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3', whiteSpace: 'nowrap' }}>
+      <code style={{ fontSize: '11px', fontFamily: 'monospace', color: '#737373', whiteSpace: 'nowrap' }}>
         {cssVar}
       </code>
       {/* Resolved value */}
-      <code style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3', textAlign: 'right', whiteSpace: 'nowrap', minWidth: '80px' }}>
+      <code style={{ fontSize: '11px', fontFamily: 'monospace', color: '#737373', textAlign: 'right', whiteSpace: 'nowrap', minWidth: '80px' }}>
         {resolved}
       </code>
     </div>

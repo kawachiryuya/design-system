@@ -68,9 +68,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       'block',
       'rounded',
       'border',
-      'bg-white',
-      'text-neutral-800',
-      'placeholder:text-neutral-400',
+      'bg-surface',
+      'text-onSurface',
+      'placeholder:text-onSurface-subtle',
       'transition-all',
       'duration-200',
       'focus:outline-none',
@@ -78,23 +78,23 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       'focus:ring-offset-0',
       'disabled:opacity-50',
       'disabled:cursor-not-allowed',
-      'disabled:bg-neutral-100',
+      'disabled:bg-surface-disabled',
       fullWidth ? 'w-full' : '',
     ];
 
     // State styles
     const stateStyles = error
       ? [
-          'border-error-500',
-          'focus:border-error-500',
-          'focus:ring-error-300',
-          'bg-error-50',
+          'border-border-error',
+          'focus:border-border-error',
+          'focus:ring-border-error',
+          'bg-surface-error',
         ]
       : [
-          'border-neutral-300',
-          'hover:border-neutral-400',
-          'focus:border-primary-600',
-          'focus:ring-primary-300',
+          'border-border',
+          'hover:border-border-strong',
+          'focus:border-border-focus',
+          'focus:ring-border-focus',
         ];
 
     // Size styles (tokens/spacing.json)
@@ -161,11 +161,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-neutral-700"
+            className="text-sm font-medium text-onSurface"
           >
             {label}
             {required && (
-              <span className="ml-1 text-error-500" aria-label="必須">
+              <span className="ml-1 text-onSurface-error" aria-label="必須">
                 *
               </span>
             )}
@@ -176,7 +176,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {leadingIcon && (
             <span
-              className={`absolute ${leadingIconPosition} top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none ${iconSizeClass}`}
+              className={`absolute ${leadingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none ${iconSizeClass}`}
             >
               {leadingIcon}
             </span>
@@ -197,7 +197,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           {trailingIcon && (
             <span
-              className={`absolute ${trailingIconPosition} top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none ${iconSizeClass}`}
+              className={`absolute ${trailingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none ${iconSizeClass}`}
             >
               {trailingIcon}
             </span>
@@ -208,7 +208,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {error && errorMessage && (
           <p
             id={errorId}
-            className="text-sm text-error-600"
+            className="text-sm text-onSurface-error"
             role="alert"
           >
             {errorMessage}
@@ -217,7 +217,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         {/* Help text（エラー時は非表示） */}
         {!error && helpText && (
-          <p id={helpId} className="text-sm text-neutral-500">
+          <p id={helpId} className="text-sm text-onSurface-muted">
             {helpText}
           </p>
         )}

@@ -6,7 +6,7 @@ import React from 'react';
  */
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** ボタンのバリアント（優先度） */
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'quaternary';
+  variant?: 'primary' | 'secondary' | 'tertiary';
   /** ボタンのサイズ */
   size?: 'small' | 'medium' | 'large';
   /** ローディング状態 */
@@ -61,39 +61,32 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       'focus:ring-offset-2',
       'disabled:opacity-50',
       'disabled:cursor-not-allowed',
+      // State overlay — inset box-shadow で背景色を維持したまま透過レイヤーを重ねる
+      // disabled 時は無効（shadow-none で上書き）
+      'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
+      'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
+      'disabled:hover:shadow-none',
+      'disabled:active:shadow-none',
     ];
 
     // Variant styles
     const variantStyles = {
       primary: [
-        'bg-primary-600',
-        'text-white',
-        'hover:bg-primary-500',
-        'active:bg-primary-700',
-        'focus:ring-primary-500',
+        'bg-surface-primary',
+        'text-onSurface-inverse',
+        'focus:ring-border-focus',
       ],
       secondary: [
-        'bg-neutral-800',
-        'text-white',
-        'hover:bg-neutral-700',
-        'active:bg-neutral-900',
-        'focus:ring-neutral-500',
+        'bg-surface',
+        'text-onSurface-primary',
+        'border',
+        'border-primary-600',
+        'focus:ring-border-focus',
       ],
       tertiary: [
         'bg-transparent',
-        'text-primary-600',
-        'border',
-        'border-primary-600',
-        'hover:bg-primary-50',
-        'active:bg-primary-100',
-        'focus:ring-primary-500',
-      ],
-      quaternary: [
-        'bg-transparent',
-        'text-neutral-800',
-        'hover:bg-neutral-100',
-        'active:bg-neutral-200',
-        'focus:ring-neutral-500',
+        'text-onSurface-primary',
+        'focus:ring-border-focus',
       ],
     };
 
@@ -104,18 +97,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         'py-1',  // 4px
         'text-sm', // 14px
         'gap-1', // 4px (アイコンとテキストの間)
+        'min-w-16', // 64px — 短いラベルでも潰れない
       ],
       medium: [
         'px-4',  // 16px
         'py-2',  // 8px
         'text-base', // 16px
         'gap-2', // 8px
+        'min-w-20', // 80px
       ],
       large: [
         'px-6',  // 24px
         'py-3',  // 12px
         'text-lg', // 18px
         'gap-2', // 8px
+        'min-w-24', // 96px
       ],
     };
 
@@ -144,37 +140,32 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={buttonClasses}
         {...props}
       >
-        {isLoading ? (
-          <>
-            <svg
-              className="animate-spin h-4 w-4"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-            <span>読み込み中...</span>
-          </>
-        ) : (
-          <>
-            {iconPosition === 'left' && iconElement}
-            {children}
-            {iconPosition === 'right' && iconElement}
-          </>
+        {isLoading && (
+          <svg
+            className="animate-spin h-4 w-4 flex-shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
         )}
+        {!isLoading && iconPosition === 'left' && iconElement}
+        {children}
+        {!isLoading && iconPosition === 'right' && iconElement}
       </button>
     );
   }

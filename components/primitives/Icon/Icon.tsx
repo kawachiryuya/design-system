@@ -8,7 +8,7 @@ export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
   /** アイコンのサイズ（principles/Typography/iconography/sizes.md） */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   /** アイコンの色（セマンティックカラー） */
-  color?: 'inherit' | 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'disabled';
+  color?: 'inherit' | 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'info' | 'disabled';
   /**
    * アクセシブルなラベル（aria-label）。
    * 装飾目的のみのアイコンは省略し、aria-hidden が自動で true になる。
@@ -29,15 +29,16 @@ const sizePx = {
   '2xl': 48,
 } as const;
 
-/** カラー → Tailwind クラスのマップ（tokens/colors.json） */
+/** カラー → Tailwind クラスのマップ（semantic-colors.json） */
 const colorClass = {
   inherit:  'text-current',
-  neutral:  'text-neutral-700',
-  primary:  'text-primary-600',
-  success:  'text-success-600',
-  error:    'text-error-600',
-  warning:  'text-warning-600',
-  disabled: 'text-neutral-400',
+  neutral:  'text-onSurface',
+  primary:  'text-onSurface-primary',
+  success:  'text-onSurface-success',
+  error:    'text-onSurface-error',
+  warning:  'text-onSurface-warning',
+  info:     'text-onSurface-info',
+  disabled: 'text-onSurface-disabled',
 } as const;
 
 /**

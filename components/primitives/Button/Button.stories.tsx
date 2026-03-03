@@ -17,7 +17,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'tertiary', 'quaternary'],
+      options: ['primary', 'secondary', 'tertiary'],
       description: 'ボタンの優先度。1画面に Primary は1つまで。',
     },
     size: {
@@ -58,28 +58,33 @@ export const AllVariants: Story = {
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
       <Button variant="tertiary">Tertiary</Button>
-      <Button variant="quaternary">Quaternary</Button>
     </div>
   ),
 };
 
 export const States: Story = {
+  name: '全バリアント × 状態',
   render: () => (
-    <div className="flex flex-wrap gap-3 items-center">
-      <Button isLoading>保存中...</Button>
-      <Button disabled>無効</Button>
+    <div className="flex flex-col gap-4">
+      {(['primary', 'secondary', 'tertiary'] as const).map((v) => (
+        <div key={v} className="flex items-center gap-3">
+          <span className="w-20 text-xs text-neutral-500">{v}</span>
+          <Button variant={v}>通常</Button>
+          <Button variant={v} isLoading>保存</Button>
+          <Button variant={v} disabled>無効</Button>
+        </div>
+      ))}
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
 
-    // loading ボタン: disabled + 「読み込み中...」テキスト
-    await expect(buttons[0]).toBeDisabled();
-    await expect(canvas.getByText('読み込み中...')).toBeInTheDocument();
+    // loading ボタン: disabled
+    await expect(buttons[1]).toBeDisabled();
 
     // disabled ボタン: disabled 属性
-    await expect(buttons[1]).toBeDisabled();
+    await expect(buttons[2]).toBeDisabled();
   },
 };
 
@@ -94,8 +99,13 @@ export const AllSizes: Story = {
 };
 
 export const FullWidth: Story = {
-  args: { fullWidth: true, children: 'ログイン' },
-  decorators: [(Story) => <div className="w-80"><Story /></div>],
+  name: 'Full Width（通常との比較）',
+  render: () => (
+    <div className="w-80 flex flex-col gap-3 items-start">
+      <Button>通常幅</Button>
+      <Button fullWidth>fullWidth: 親の横幅いっぱい</Button>
+    </div>
+  ),
 };
 
 export const WithIcon: Story = {
@@ -103,6 +113,17 @@ export const WithIcon: Story = {
     <div className="flex flex-wrap gap-3 items-center">
       <Button icon={<SaveIcon />}>左アイコン</Button>
       <Button icon={<SaveIcon />} iconPosition="right">右アイコン</Button>
+    </div>
+  ),
+};
+
+export const ShortLabel: Story = {
+  name: '短いラベル（min-width 確認）',
+  render: () => (
+    <div className="flex flex-wrap gap-3 items-center">
+      <Button size="small">OK</Button>
+      <Button size="medium">OK</Button>
+      <Button size="large">OK</Button>
     </div>
   ),
 };

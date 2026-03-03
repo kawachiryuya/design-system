@@ -54,24 +54,9 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     };
 
     const colorStyles = {
-      primary: [
-        'text-primary-600',
-        'hover:text-primary-500',
-        'active:text-primary-700',
-        'focus:ring-primary-300',
-      ],
-      neutral: [
-        'text-neutral-800',
-        'hover:text-neutral-600',
-        'active:text-neutral-900',
-        'focus:ring-neutral-300',
-      ],
-      muted: [
-        'text-neutral-500',
-        'hover:text-neutral-700',
-        'active:text-neutral-800',
-        'focus:ring-neutral-300',
-      ],
+      primary: 'text-onSurface-primary',
+      neutral: 'text-onSurface',
+      muted:   'text-onSurface-muted',
     };
 
     const underlineStyles = {
@@ -87,8 +72,11 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       'rounded-sm',
       'transition-colors',
       'duration-200',
+      'hover:bg-state-hover',
+      'active:bg-state-active',
       'focus:outline-none',
       'focus:ring-2',
+      'focus:ring-border-focus',
       'focus:ring-offset-1',
     ];
 
@@ -99,7 +87,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     const classes = [
       ...baseStyles,
       sizeStyles[size],
-      ...colorStyles[color],
+      colorStyles[color],
       underlineStyles[underline],
       ...disabledStyles,
       className,

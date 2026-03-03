@@ -28,7 +28,7 @@ const meta: Meta<typeof Icon> = {
     },
     color: {
       control: 'select',
-      options: ['inherit', 'neutral', 'primary', 'success', 'error', 'warning', 'disabled'],
+      options: ['inherit', 'neutral', 'primary', 'success', 'error', 'warning', 'info', 'disabled'],
     },
     label: { control: 'text', description: 'aria-label。省略すると aria-hidden="true"（装飾）' },
   },
@@ -60,7 +60,7 @@ export const AllSizes: Story = {
 export const AllColors: Story = {
   render: () => (
     <div className="flex gap-6 items-center">
-      {(['neutral', 'primary', 'success', 'error', 'warning', 'disabled'] as const).map((color) => (
+      {(['neutral', 'primary', 'success', 'error', 'warning', 'info', 'disabled'] as const).map((color) => (
         <div key={color} className="flex flex-col items-center gap-2">
           <Icon size="lg" color={color}><HomePath /></Icon>
           <span className="text-xs text-neutral-500">{color}</span>
@@ -104,7 +104,7 @@ export const IconButton: Story = {
   name: '実践例: アイコンボタン（タッチターゲット 44px）',
   render: () => (
     <button type="button" aria-label="検索"
-      className="w-11 h-11 flex items-center justify-center rounded hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300">
+      className="w-11 h-11 flex items-center justify-center rounded hover:bg-state-hover active:bg-state-active transition-colors focus:outline-none focus:ring-2 focus:ring-border-focus">
       <Icon size="md" color="neutral"><SearchPath /></Icon>
     </button>
   ),

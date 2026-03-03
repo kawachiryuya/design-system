@@ -63,15 +63,15 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     }[resize];
 
     const stateStyles = error
-      ? 'border-error-500 focus:border-error-500 focus:ring-error-300 bg-error-50'
-      : 'border-neutral-300 hover:border-neutral-400 focus:border-primary-600 focus:ring-primary-300 bg-white';
+      ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error'
+      : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
 
     const textareaClasses = [
       'block',
       'rounded',
       'border',
-      'text-neutral-800',
-      'placeholder:text-neutral-400',
+      'text-onSurface',
+      'placeholder:text-onSurface-subtle',
       'px-3',
       'py-2',
       'text-base',
@@ -81,7 +81,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       'focus:outline-none',
       'focus:ring-2',
       'focus:ring-offset-0',
-      disabled ? 'opacity-50 cursor-not-allowed bg-neutral-100' : '',
+      disabled ? 'opacity-50 cursor-not-allowed bg-surface-disabled' : '',
       fullWidth ? 'w-full' : '',
       resizeClass,
       stateStyles,
@@ -104,14 +104,14 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
           <div className="flex items-center justify-between">
-            <label htmlFor={textareaId} className="text-sm font-medium text-neutral-700">
+            <label htmlFor={textareaId} className="text-sm font-medium text-onSurface">
               {label}
               {required && (
-                <span className="ml-1 text-error-500" aria-label="必須">*</span>
+                <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
               )}
             </label>
             {showCounter && (
-              <span className={`text-xs ${isOverLimit ? 'text-error-600 font-medium' : 'text-neutral-400'}`}>
+              <span className={`text-xs ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-subtle'}`}>
                 {currentLength ?? 0}/{maxLength}
               </span>
             )}
@@ -130,10 +130,10 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && errorMessage && (
-          <p id={errorId} className="text-sm text-error-600" role="alert">{errorMessage}</p>
+          <p id={errorId} className="text-sm text-onSurface-error" role="alert">{errorMessage}</p>
         )}
         {!error && helpText && (
-          <p id={helpId} className="text-sm text-neutral-500">{helpText}</p>
+          <p id={helpId} className="text-sm text-onSurface-muted">{helpText}</p>
         )}
       </div>
     );

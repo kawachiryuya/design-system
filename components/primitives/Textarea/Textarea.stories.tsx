@@ -81,8 +81,13 @@ export const NoResize: Story = {
 };
 
 export const FullWidth: Story = {
-  args: { fullWidth: true },
-  decorators: [(Story) => <div className="w-96"><Story /></div>],
+  name: 'Full Width（通常との比較）',
+  render: () => (
+    <div className="w-96 flex flex-col gap-3 items-start">
+      <Textarea placeholder="通常幅" rows={3} />
+      <Textarea placeholder="fullWidth: 親の横幅いっぱい" fullWidth rows={3} />
+    </div>
+  ),
 };
 
 export const ContactForm: Story = {

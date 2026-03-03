@@ -145,88 +145,190 @@ export const Palettes: Story = {
   ),
 };
 
+/* ─── Semantic Colors ─── */
+
+import semanticTokens from '../../tokens/semantic-colors.json';
+
+type SemanticEntry = { value: string; description: string };
+
+function resolveColor(ref: string): string {
+  if (ref === 'white') return colorsToken.base.white;
+  if (ref === 'black') return colorsToken.base.black;
+  const alphaMatch = ref.match(/^(black|white)\/(\d+)$/);
+  if (alphaMatch) {
+    const base = alphaMatch[1] === 'black' ? '0, 0, 0' : '255, 255, 255';
+    return `rgba(${base}, ${parseInt(alphaMatch[2], 10) / 100})`;
+  }
+  const [palette, shade] = ref.split('-');
+  const p = colorsToken[palette as keyof typeof colorsToken];
+  if (p && typeof p === 'object' && shade in p) {
+    return (p as Record<string, string>)[shade];
+  }
+  return ref;
+}
+
+function isLightColor(ref: string): boolean {
+  if (ref === 'white' || ref.endsWith('-50') || ref.endsWith('-100')) return true;
+  if (ref.startsWith('black/') || ref.startsWith('white/')) return true;
+  return false;
+}
+
+type CategoryConfig = {
+  key: string;
+  label: string;
+  description: string;
+  cssPrefix: string;
+  twPrefix: string;
+};
+
+const CATEGORIES: CategoryConfig[] = [
+  { key: 'background', label: 'Background', description: 'ページ最下層の背景色。ダークモード時に切り替わる基盤レイヤー。', cssPrefix: '--color-bg', twPrefix: 'bg-background' },
+  { key: 'surface', label: 'Surface', description: 'カード・モーダル等のコンポーネント背景。background の上に載るレイヤー。', cssPrefix: '--color-surface', twPrefix: 'bg-surface' },
+  { key: 'onSurface', label: 'On Surface', description: 'テキスト・アイコンの色。surface / background 上に配置される前景要素。', cssPrefix: '--color-on', twPrefix: 'text-onSurface' },
+  { key: 'border', label: 'Border', description: 'ボーダー・区切り線・フォーカスリング。', cssPrefix: '--color-border', twPrefix: 'border-border' },
+  { key: 'state', label: 'State', description: 'hover / active / dragged の透過オーバーレイレイヤー。色定義ではなく透過で表現。', cssPrefix: '--color-state', twPrefix: 'bg-state' },
+];
+
+function SemanticTokenRow({ name, entry, cssPrefix, twPrefix }: { name: string; entry: SemanticEntry; cssPrefix: string; twPrefix: string }) {
+  const resolved = resolveColor(entry.value);
+  const light = isLightColor(entry.value);
+  const isTransparent = entry.value.includes('/');
+  const cssVar = `${cssPrefix}-${name}`;
+  const twClass = name === 'default' ? twPrefix : `${twPrefix}-${name}`;
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '40px 1fr auto auto auto',
+        gap: '12px',
+        alignItems: 'center',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        border: '1px solid #E5E5E5',
+        backgroundColor: '#FFFFFF',
+      }}
+    >
+      {/* Swatch */}
+      <div style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '6px', overflow: 'hidden', border: light ? '1px solid #E5E5E5' : 'none' }}>
+        {isTransparent && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'repeating-conic-gradient(#E5E5E5 0% 25%, #FFFFFF 0% 50%)',
+            backgroundSize: '8px 8px',
+          }} />
+        )}
+        <div style={{ position: 'absolute', inset: 0, backgroundColor: resolved }} />
+      </div>
+      {/* Name + description */}
+      <div style={{ minWidth: 0 }}>
+        <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#171717' }}>{name}</p>
+        <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#737373' }}>{entry.description}</p>
+      </div>
+      {/* Tailwind class */}
+      <code style={{ fontSize: '12px', fontFamily: 'monospace', backgroundColor: '#F5F5F5', padding: '3px 8px', borderRadius: '4px', color: '#525252', whiteSpace: 'nowrap' }}>
+        {twClass}
+      </code>
+      {/* CSS var */}
+      <code style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3', whiteSpace: 'nowrap' }}>
+        {cssVar}
+      </code>
+      {/* Resolved value */}
+      <code style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3', textAlign: 'right', whiteSpace: 'nowrap', minWidth: '80px' }}>
+        {resolved}
+      </code>
+    </div>
+  );
+}
+
+function SemanticCategory({ config }: { config: CategoryConfig }) {
+  const tokens = semanticTokens[config.key as keyof typeof semanticTokens] as Record<string, SemanticEntry>;
+
+  return (
+    <div style={{ marginBottom: '40px' }}>
+      <h3 style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 600, color: '#171717' }}>
+        {config.label}
+      </h3>
+      <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#737373' }}>
+        {config.description}
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {Object.entries(tokens).map(([name, entry]) => (
+          <SemanticTokenRow key={name} name={name} entry={entry} cssPrefix={config.cssPrefix} twPrefix={config.twPrefix} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export const Semantic: Story = {
   name: 'セマンティックカラー',
-  render: () => {
-    const semanticColors = [
-      { role: 'Primary — アクション・リンク・フォーカス', token: 'primary.600', tw: 'primary-600', color: colorsToken.primary['600'], usage: 'CTA, フォーカスリング, リンク' },
-      { role: 'Success — 成功・完了', token: 'success.600', tw: 'success-600', color: colorsToken.success['600'], usage: '保存完了, バリデーション成功' },
-      { role: 'Error — エラー・失敗', token: 'error.600', tw: 'error-600', color: colorsToken.error['600'], usage: 'フォームエラー, 削除, 警告' },
-      { role: 'Warning — 注意', token: 'warning.600', tw: 'warning-600', color: colorsToken.warning['600'], usage: '注意喚起, 非推奨の操作' },
-      { role: 'Info — 情報', token: 'info.600', tw: 'info-600', color: colorsToken.info['600'], usage: 'ヘルプテキスト, ステータス情報' },
-      { role: 'Neutral — テキスト', token: 'neutral.900', tw: 'neutral-900', color: colorsToken.neutral['900'], usage: '本文テキスト' },
-      { role: 'Neutral — サブテキスト', token: 'neutral.500', tw: 'neutral-500', color: colorsToken.neutral['500'], usage: 'ヘルプテキスト, プレースホルダー' },
-      { role: 'Neutral — ボーダー', token: 'neutral.300', tw: 'neutral-300', color: colorsToken.neutral['300'], usage: '区切り線, 入力枠' },
-      { role: 'Neutral — 背景', token: 'neutral.50', tw: 'neutral-50', color: colorsToken.neutral['50'], usage: 'ページ背景, カード背景' },
-      { role: 'Base — 白', token: 'base.white', tw: 'white', color: colorsToken.base.white, usage: 'カード背景, テキスト（ダーク上）' },
-      { role: 'Base — 黒', token: 'base.black', tw: 'black', color: colorsToken.base.black, usage: '最大コントラストのテキスト' },
-    ];
+  render: () => (
+    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '900px' }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
+        Semantic Colors
+      </h2>
+      <p style={{ margin: '0 0 32px', fontSize: '14px', color: '#737373', lineHeight: 1.6 }}>
+        用途別に分類したセマンティックカラートークン。
+        第1軸 <strong>WHERE</strong>（どこに塗るか）× 第2軸 <strong>WHAT</strong>（どんな意図か）で構成。
+        CSS custom properties で定義し、ダークモード切り替えに対応可能。
+      </p>
 
-    return (
-      <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-        <h2 style={{ margin: '0 0 24px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-          Semantic Colors
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {semanticColors.map((item) => (
-            <div
-              key={item.token}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: '1px solid #E5E5E5',
-                backgroundColor: '#FFFFFF',
-              }}
-            >
-              <div
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '6px',
-                  backgroundColor: item.color,
-                  flexShrink: 0,
-                  border: (item.color === colorsToken.neutral['50'] || item.color === colorsToken.base.white) ? '1px solid #E5E5E5' : 'none',
-                }}
-              />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 600, color: '#171717' }}>
-                  {item.role}
-                </p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#737373' }}>
-                  用途: {item.usage}
-                </p>
-              </div>
-              <code style={{
-                fontSize: '12px',
-                fontFamily: 'monospace',
-                backgroundColor: '#F5F5F5',
-                padding: '3px 8px',
-                borderRadius: '4px',
-                color: '#525252',
-                flexShrink: 0,
-              }}>
-                {item.token}
-              </code>
-              <code style={{
-                fontSize: '12px',
-                fontFamily: 'monospace',
-                color: '#A3A3A3',
-                flexShrink: 0,
-                minWidth: '80px',
-                textAlign: 'right',
-              }}>
-                {item.color}
-              </code>
-              <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3', flexShrink: 0 }}>
-                bg-{item.tw} / text-{item.tw}
-              </span>
-            </div>
-          ))}
+      {CATEGORIES.map((config) => (
+        <SemanticCategory key={config.key} config={config} />
+      ))}
+
+      {/* Usage Example */}
+      <h3 style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600, color: '#171717' }}>
+        Usage Example — Alert コンポーネント
+      </h3>
+      <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+        {/* Live demo using CSS vars */}
+        <div style={{
+          backgroundColor: 'var(--color-surface-error)',
+          border: '1px solid var(--color-border-error)',
+          borderRadius: '8px',
+          padding: '16px',
+          minWidth: '320px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span style={{ color: 'var(--color-on-error)', fontSize: '16px' }}>&#9888;</span>
+            <p style={{ margin: 0, fontWeight: 600, fontSize: '14px', color: 'var(--color-on-error)' }}>
+              エラーが発生しました
+            </p>
+          </div>
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-on-default)' }}>
+            入力内容を確認してください。
+          </p>
         </div>
+
+        {/* Mapping table */}
+        <table style={{ fontSize: '13px', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'left', padding: '6px 16px 6px 0', borderBottom: '1px solid #E5E5E5', color: '#737373', fontWeight: 500 }}>要素</th>
+              <th style={{ textAlign: 'left', padding: '6px 0', borderBottom: '1px solid #E5E5E5', color: '#737373', fontWeight: 500 }}>Tailwind クラス</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { element: '背景', tw: 'bg-surface-error' },
+              { element: 'ボーダー', tw: 'border-border-error' },
+              { element: 'アイコン・タイトル', tw: 'text-onSurface-error' },
+              { element: '本文テキスト', tw: 'text-onSurface' },
+            ].map((row) => (
+              <tr key={row.element}>
+                <td style={{ padding: '6px 16px 6px 0', color: '#171717' }}>{row.element}</td>
+                <td style={{ padding: '6px 0' }}>
+                  <code style={{ fontSize: '12px', fontFamily: 'monospace', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px', color: '#525252' }}>
+                    {row.tw}
+                  </code>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    );
-  },
+    </div>
+  ),
 };

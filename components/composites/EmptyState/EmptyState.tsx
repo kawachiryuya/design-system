@@ -39,7 +39,7 @@ const DefaultIcon = () => (
     strokeWidth="1.5"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="w-full h-full text-neutral-300"
+    className="w-full h-full text-onSurface-disabled"
     aria-hidden="true"
   >
     <rect x="8" y="16" width="48" height="36" rx="4"/>
@@ -94,11 +94,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       </div>
 
       <div className={['flex flex-col', size === 'sm' ? 'gap-1' : 'gap-2'].join(' ')}>
-        <p className={['font-semibold text-neutral-700', s.title].join(' ')}>
+        <p className={['font-semibold text-onSurface', s.title].join(' ')}>
           {title}
         </p>
         {description && (
-          <p className={['text-neutral-500 max-w-sm', s.desc].join(' ')}>
+          <p className={['text-onSurface-muted max-w-sm', s.desc].join(' ')}>
             {description}
           </p>
         )}

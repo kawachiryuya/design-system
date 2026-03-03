@@ -27,17 +27,17 @@ export interface BreadcrumbProps {
 const ChevronSeparator = () => (
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
-    className="text-neutral-400 flex-shrink-0">
+    className="text-onSurface-subtle flex-shrink-0">
     <polyline points="9 18 15 12 9 6"/>
   </svg>
 );
 
 const SlashSeparator = () => (
-  <span aria-hidden="true" className="text-neutral-300 select-none">/</span>
+  <span aria-hidden="true" className="text-onSurface-disabled select-none">/</span>
 );
 
 const DotSeparator = () => (
-  <span aria-hidden="true" className="text-neutral-300 select-none">·</span>
+  <span aria-hidden="true" className="text-onSurface-disabled select-none">·</span>
 );
 
 const separatorMap = {
@@ -79,15 +79,15 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               {isCurrent ? (
                 <span
                   aria-current="page"
-                  className="text-sm text-neutral-500 font-normal truncate max-w-[200px]"
+                  className="text-sm text-onSurface-muted font-normal truncate max-w-[200px]"
                 >
                   {item.label}
                 </span>
               ) : (
                 <a
                   href={item.href}
-                  className="text-sm text-neutral-700 hover:text-primary-600 transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-primary-300 rounded-sm
+                  className="text-sm text-onSurface hover:text-onSurface-primary transition-colors
+                    focus:outline-none focus:ring-2 focus:ring-border-focus rounded-sm
                     truncate max-w-[200px]"
                 >
                   {item.label}

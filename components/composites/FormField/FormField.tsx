@@ -106,7 +106,7 @@ export const FormField: React.FC<FormFieldProps> = ({
       </div>
 
       {helpText && !error && (
-        <p id={helpId} className="text-xs text-neutral-500 leading-relaxed">
+        <p id={helpId} className="text-xs text-onSurface-muted leading-relaxed">
           {helpText}
         </p>
       )}
@@ -115,7 +115,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         <p
           id={errorId}
           role="alert"
-          className="flex items-center gap-1 text-xs text-error-600 leading-relaxed"
+          className="flex items-center gap-1 text-xs text-onSurface-error leading-relaxed"
         >
           <svg
             width="12"

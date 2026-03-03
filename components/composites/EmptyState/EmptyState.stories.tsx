@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const SearchIcon = () => (
   <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5"
-    strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-neutral-300" aria-hidden="true">
+    strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-onSurface-disabled" aria-hidden="true">
     <circle cx="28" cy="28" r="18"/>
     <path d="m50 50-12-12"/>
     <line x1="28" y1="20" x2="28" y2="36"/>
@@ -15,7 +15,7 @@ const SearchIcon = () => (
 
 const ErrorIcon = () => (
   <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5"
-    strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-error-300" aria-hidden="true">
+    strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-onSurface-error" aria-hidden="true">
     <circle cx="32" cy="32" r="24"/>
     <line x1="32" y1="20" x2="32" y2="36"/>
     <circle cx="32" cy="44" r="1" fill="currentColor"/>
@@ -24,7 +24,7 @@ const ErrorIcon = () => (
 
 const FolderIcon = () => (
   <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5"
-    strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-neutral-300" aria-hidden="true">
+    strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-onSurface-disabled" aria-hidden="true">
     <path d="M56 52H8a4 4 0 0 1-4-4V20a4 4 0 0 1 4-4h16l8 8h24a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4z"/>
   </svg>
 );
@@ -43,7 +43,7 @@ const meta: Meta<typeof EmptyState> = {
     description: 'まだアイテムが登録されていません。',
     size: 'md',
   },
-  decorators: [(Story) => <div className="w-96 border border-neutral-200 rounded-lg"><Story /></div>],
+  decorators: [(Story) => <div className="w-96 border border-border-muted rounded-lg"><Story /></div>],
 };
 
 export default meta;
@@ -66,7 +66,7 @@ export const WithBothActions: Story = {
 
 export const AllSizes: Story = {
   render: () => (
-    <div className="flex flex-col divide-y divide-neutral-100 w-96 border border-neutral-200 rounded-lg">
+    <div className="flex flex-col divide-y divide-border-muted w-96 border border-border-muted rounded-lg">
       <EmptyState size="sm" title="Small" description="コンパクトな表示" action={{ label: '追加' }} />
       <EmptyState size="md" title="Medium（デフォルト）" description="標準サイズ" action={{ label: '追加' }} />
       <EmptyState size="lg" title="Large" description="フルページ向け" action={{ label: '追加' }} />
@@ -81,7 +81,7 @@ export const NoResults: Story = {
     return (
       <div className="w-96 space-y-3">
         <SearchBar value={query} onChange={setQuery} fullWidth placeholder="検索..." />
-        <div className="border border-neutral-200 rounded-lg">
+        <div className="border border-border-muted rounded-lg">
           <EmptyState
             icon={<SearchIcon />}
             title={`「${query}」に一致する結果がありません`}

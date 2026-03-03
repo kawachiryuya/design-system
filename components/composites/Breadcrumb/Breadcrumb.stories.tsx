@@ -31,7 +31,7 @@ export const AllSeparators: Story = {
     <div className="flex flex-col gap-5">
       {(['chevron', 'slash', 'dot'] as const).map((sep) => (
         <div key={sep}>
-          <p className="text-xs text-neutral-400 mb-1">separator="{sep}"</p>
+          <p className="text-xs text-onSurface-subtle mb-1">separator="{sep}"</p>
           <Breadcrumb items={sampleItems} separator={sep} />
         </div>
       ))}

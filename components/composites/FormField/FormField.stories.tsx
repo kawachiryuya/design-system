@@ -108,10 +108,10 @@ export const RegistrationForm: Story = {
 
     return (
       <form
-        className="w-96 space-y-6 p-6 border border-neutral-200 rounded-lg"
+        className="w-96 space-y-6 p-6 border border-border-muted rounded-lg"
         onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
       >
-        <h2 className="text-lg font-semibold text-neutral-800">会員登録</h2>
+        <h2 className="text-lg font-semibold text-onSurface">会員登録</h2>
 
         <FormField label="性別" optional>
           <div className="flex gap-6">

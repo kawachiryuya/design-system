@@ -87,9 +87,9 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'focus:outline-none',
       'focus:ring-2',
       'focus:ring-offset-2',
-      'focus:ring-primary-500',
+      'focus:ring-border-focus',
       trackSize,
-      checked ? 'bg-primary-600' : 'bg-neutral-300',
+      checked ? 'bg-surface-primary' : 'bg-border-default',
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
     ]
       .filter(Boolean)
@@ -99,7 +99,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'pointer-events-none',
       'inline-block',
       'rounded-full',
-      'bg-white',
+      'bg-surface',
       'shadow',
       'ring-0',
       'transition-transform',
@@ -117,7 +117,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           <label
             htmlFor={switchId}
             className={`${labelSize} font-medium leading-tight select-none ${
-              disabled ? 'text-neutral-400' : 'text-neutral-700 cursor-pointer'
+              disabled ? 'text-onSurface-disabled' : 'text-onSurface cursor-pointer'
             }`}
             onClick={!disabled ? handleClick : undefined}
           >
@@ -125,7 +125,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           </label>
         )}
         {description && (
-          <span className="text-xs text-neutral-500 leading-normal">{description}</span>
+          <span className="text-xs text-onSurface-muted leading-normal">{description}</span>
         )}
       </div>
     );

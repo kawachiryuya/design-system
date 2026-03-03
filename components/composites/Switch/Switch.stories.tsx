@@ -102,7 +102,7 @@ export const SettingsPanel: Story = {
     ];
 
     return (
-      <div className="w-80 divide-y divide-neutral-200">
+      <div className="w-80 divide-y divide-border-muted">
         {items.map(({ key, label, description }) => (
           <div key={key} className="py-4 first:pt-0 last:pb-0">
             <Switch label={label} description={description} labelPosition="left"

@@ -47,7 +47,7 @@ export const NoAnimation: Story = {
 export const CardSkeleton: Story = {
   name: '実践例: カードのスケルトン',
   render: () => (
-    <div className="w-72 p-4 border border-neutral-200 rounded-lg space-y-4">
+    <div className="w-72 p-4 border border-border-muted rounded-lg space-y-4">
       <Skeleton variant="rectangular" height={160} className="rounded-md" />
       <div className="flex items-center gap-3">
         <Skeleton variant="circular" width={36} height={36} />
@@ -68,7 +68,7 @@ export const CardSkeleton: Story = {
 export const UserListSkeleton: Story = {
   name: '実践例: ユーザーリストのスケルトン',
   render: () => (
-    <div className="w-80 divide-y divide-neutral-100">
+    <div className="w-80 divide-y divide-border-muted">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="flex items-center gap-3 py-3 px-1">
           <Skeleton variant="circular" width={40} height={40} />

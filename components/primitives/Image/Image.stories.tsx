@@ -38,7 +38,7 @@ export const AllAspectRatios: Story = {
       {(['square', 'video', 'portrait', 'wide'] as const).map((ratio) => (
         <div key={ratio}>
           <Image src={SAMPLE_IMG} alt="風景" aspectRatio={ratio} rounded="md" />
-          <p className="text-xs text-neutral-500 mt-1 text-center">{ratio}</p>
+          <p className="text-xs text-onSurface-muted mt-1 text-center">{ratio}</p>
         </div>
       ))}
     </div>
@@ -51,7 +51,7 @@ export const AllObjectFit: Story = {
       {(['cover', 'contain', 'fill'] as const).map((fit) => (
         <div key={fit} className="flex-1">
           <Image src={SAMPLE_IMG} alt="風景" aspectRatio="square" objectFit={fit} />
-          <p className="text-xs text-neutral-500 mt-1 text-center">{fit}</p>
+          <p className="text-xs text-onSurface-muted mt-1 text-center">{fit}</p>
         </div>
       ))}
     </div>
@@ -65,7 +65,7 @@ export const Rounded: Story = {
         <div key={r} className="flex flex-col items-center gap-1">
           <Image src={PORTRAIT_IMG} alt="プロフィール" aspectRatio="square"
             rounded={r} className="w-16" />
-          <span className="text-xs text-neutral-500">{r}</span>
+          <span className="text-xs text-onSurface-muted">{r}</span>
         </div>
       ))}
     </div>
@@ -83,7 +83,7 @@ export const CustomFallback: Story = {
     src: 'https://invalid-url.example.com/image.jpg',
     alt: '存在しない画像',
     fallback: (
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-100 text-neutral-400 gap-2">
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-disabled text-onSurface-disabled gap-2">
         <span className="text-3xl">🖼️</span>
         <span className="text-xs">画像を読み込めませんでした</span>
       </div>
@@ -99,14 +99,14 @@ export const Decorative: Story = {
 export const BlogCard: Story = {
   name: '実践例: ブログカードのサムネイル',
   render: () => (
-    <article className="w-72 border border-neutral-200 rounded-lg overflow-hidden">
+    <article className="w-72 border border-border-muted rounded-lg overflow-hidden">
       <Image src={SAMPLE_IMG} alt="山岳地帯の風景" aspectRatio="video" />
       <div className="p-4 space-y-2">
-        <p className="text-xs text-neutral-500">2026.02.21</p>
-        <h3 className="text-base font-medium text-neutral-800 leading-snug">
+        <p className="text-xs text-onSurface-muted">2026.02.21</p>
+        <h3 className="text-base font-medium text-onSurface leading-snug">
           デザインシステム構築のすすめ
         </h3>
-        <p className="text-sm text-neutral-600 line-clamp-2">
+        <p className="text-sm text-onSurface-muted line-clamp-2">
           一貫したUIを素早く組み立てるための基盤として、デザインシステムが果たす役割を解説します。
         </p>
       </div>

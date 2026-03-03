@@ -1,18 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Input } from './Input';
-
-const SearchIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-  </svg>
-);
-
-const MailIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-    <polyline points="22,6 12,13 2,6"/>
-  </svg>
-);
+import { Icon } from '../Icon';
 
 const meta: Meta<typeof Input> = {
   title: 'Primitives/Input',
@@ -71,8 +59,8 @@ export const ErrorState: Story = {
 export const WithIcons: Story = {
   render: () => (
     <div className="flex flex-col gap-4 w-72">
-      <Input label="検索" placeholder="検索..." leadingIcon={<SearchIcon />} />
-      <Input label="メール" type="email" placeholder="example@email.com" trailingIcon={<MailIcon />} />
+      <Input label="検索" placeholder="検索..." leadingIcon={<Icon name="search" />} />
+      <Input label="メール" type="email" placeholder="example@email.com" trailingIcon={<Icon name="info" />} />
     </div>
   ),
 };

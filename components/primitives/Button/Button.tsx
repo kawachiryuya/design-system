@@ -129,7 +129,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // アイコンの順序を決定
     const iconElement = icon && (
-      <span className="flex-shrink-0">{icon}</span>
+      <span className="flex-shrink-0 flex items-center">{icon}</span>
     );
 
     return (

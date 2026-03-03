@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '../../primitives/Icon';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /**
@@ -56,11 +57,13 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const errorId = selectId ? `${selectId}-error` : undefined;
     const helpId = selectId ? `${selectId}-help` : undefined;
 
-    const sizeStyles = {
-      small: 'px-3 py-1 text-sm',
-      medium: 'px-3 py-2 text-base',
-      large: 'px-4 py-3 text-lg',
+    const sizeConfig = {
+      small: { style: 'pl-3 pr-8 py-1 text-sm', iconSize: 'sm' as const, iconRight: 'right-2' },
+      medium: { style: 'pl-3 pr-10 py-2 text-base', iconSize: 'sm' as const, iconRight: 'right-3' },
+      large: { style: 'pl-4 pr-12 py-3 text-lg', iconSize: 'md' as const, iconRight: 'right-3' },
     }[size];
+
+    const sizeStyles = sizeConfig.style;
 
     const stateStyles = error
       ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted'
@@ -73,14 +76,13 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       'text-onSurface',
       'appearance-none',
       'cursor-pointer',
-      'pr-10',
       'transition-all',
       'duration-200',
       'focus:outline-none',
       'focus:ring-2',
       'focus:ring-offset-0',
+      'w-full',
       disabled ? 'opacity-50 cursor-not-allowed bg-surface-disabled' : '',
-      fullWidth ? 'w-full' : '',
       sizeStyles,
       stateStyles,
       className,
@@ -125,10 +127,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {children}
           </select>
           {/* カスタム下矢印アイコン */}
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-subtle">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+          <span className={`absolute ${sizeConfig.iconRight} top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-subtle flex items-center justify-center`}>
+            <Icon name="expand_more" size={sizeConfig.iconSize} />
           </span>
         </div>
         <FormMessage

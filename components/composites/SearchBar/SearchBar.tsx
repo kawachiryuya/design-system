@@ -1,4 +1,5 @@
 import React, { useId, useRef } from 'react';
+import { Icon } from '../../primitives/Icon';
 
 /**
  * SearchBar Props
@@ -31,44 +32,10 @@ export interface SearchBarProps {
   className?: string;
 }
 
-const SearchIcon = () => (
+const LoadingSpinner: React.FC<{ size: number }> = ({ size }) => (
   <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <circle cx="11" cy="11" r="8" />
-    <path d="m21 21-4.35-4.35" />
-  </svg>
-);
-
-const ClearIcon = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-);
-
-const LoadingSpinner = () => (
-  <svg
-    width="16"
-    height="16"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -116,20 +83,26 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     small: {
       container: 'h-8',
       input: 'text-sm pl-8 pr-8',
-      icon: 'left-2.5',
+      icon: 'left-2',
       trailing: 'right-2',
+      iconSize: 'sm' as const,
+      spinnerPx: 16,
     },
     medium: {
       container: 'h-10',
-      input: 'text-base pl-10 pr-10',
-      icon: 'left-3',
-      trailing: 'right-2.5',
+      input: 'text-base pl-8 pr-10',
+      icon: 'left-2',
+      trailing: 'right-3',
+      iconSize: 'sm' as const,
+      spinnerPx: 20,
     },
     large: {
       container: 'h-12',
-      input: 'text-lg pl-12 pr-12',
-      icon: 'left-3.5',
+      input: 'text-lg pl-10 pr-12',
+      icon: 'left-3',
       trailing: 'right-3',
+      iconSize: 'md' as const,
+      spinnerPx: 20,
     },
   };
 
@@ -179,6 +152,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     'disabled:bg-surface-disabled',
     'disabled:text-onSurface-disabled',
     'disabled:cursor-not-allowed',
+    '[&::-webkit-search-cancel-button]:appearance-none',
+    '[&::-webkit-search-decoration]:appearance-none',
     s.container,
     s.input,
   ].join(' ');
@@ -209,7 +184,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className={containerClass}>
       {/* 検索アイコン */}
       <span className={leadingClass}>
-        <SearchIcon />
+        <Icon name="search" size={s.iconSize} />
       </span>
 
       <input
@@ -230,16 +205,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {/* トレイリング: ローディング or クリアボタン */}
       <span className={trailingClass}>
         {isLoading ? (
-          <LoadingSpinner />
+          <LoadingSpinner size={s.spinnerPx} />
         ) : value && !disabled ? (
           <button
             type="button"
             aria-label="検索をクリア"
             onClick={handleClear}
-            className="text-onSurface-subtle hover:text-onSurface-muted transition-colors
+            className="flex items-center justify-center text-onSurface-subtle hover:text-onSurface-muted transition-colors
               focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded-sm"
           >
-            <ClearIcon />
+            <Icon name="close" size={s.iconSize} />
           </button>
         ) : null}
       </span>

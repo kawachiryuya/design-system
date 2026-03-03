@@ -1,12 +1,15 @@
 import React from 'react';
+import { getIconDef, type IconRenderMode } from './iconRegistry';
 
 /**
  * Icon Props
  * Reference: principles/Typography/iconography/
  */
 export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
+  /** レジストリからアイコンを取得（children と排他） */
+  name?: string;
   /** アイコンのサイズ（principles/Typography/iconography/sizes.md） */
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   /** アイコンの色（セマンティックカラー） */
   color?: 'inherit' | 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'info' | 'disabled';
   /**
@@ -15,18 +18,18 @@ export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
    * インタラクティブ要素やテキストなしで意味を伝える場合は必ず指定する。
    */
   label?: string;
-  /** SVGアイコンのchildren */
-  children: React.ReactNode;
+  /** レンダリングモード: fill=Material Icons, stroke=Heroicons系。name 指定時はレジストリから自動判定。 */
+  variant?: IconRenderMode;
+  /** SVGアイコンのchildren（name と排他） */
+  children?: React.ReactNode;
 }
 
 /** サイズ → px 値のマップ（principles/Typography/iconography/sizes.md） */
 const sizePx = {
-  xs:  12,
-  sm:  16,
-  md:  20,
-  lg:  24,
-  xl:  32,
-  '2xl': 48,
+  sm:  20,
+  md:  24,
+  lg:  32,
+  xl:  48,
 } as const;
 
 /** カラー → Tailwind クラスのマップ（semantic-colors.json） */
@@ -47,30 +50,39 @@ const colorClass = {
  * Atomic Design: Atom
  *
  * SVGアイコンのラッパー。サイズ・カラー・アクセシビリティを統一的に管理する。
- * アイコンライブラリは Heroicons (Outline) を推奨。
+ * Material Symbols Outlined を推奨アイコンソースとし、カスタム SVG も利用可能。
  *
  * @example
- * // 装飾アイコン（aria-hidden）
+ * // レジストリからアイコンを取得
+ * <Icon name="search" size="md" />
+ *
+ * // カスタム SVG（stroke 系）
  * <Icon size="md"><path d="..." /></Icon>
  *
- * // 意味を持つアイコン（aria-label あり）
- * <Icon size="md" label="検索"><path d="..." /></Icon>
+ * // カスタム SVG（fill 系）
+ * <Icon size="md" variant="fill"><path d="..." /></Icon>
  *
  * // カラー指定
- * <Icon size="md" color="error"><path d="..." /></Icon>
+ * <Icon name="error" size="md" color="error" />
  */
 export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
   (
     {
+      name,
       size = 'md',
       color = 'inherit',
       label,
+      variant,
       children,
       className = '',
       ...props
     },
     ref
   ) => {
+    const def = name ? getIconDef(name) : undefined;
+    const resolvedLabel = label ?? def?.label;
+    const mode = def?.mode ?? variant ?? 'stroke';
+    const viewBox = def?.viewBox ?? '0 0 24 24';
     const px = sizePx[size];
 
     const iconClasses = [
@@ -82,26 +94,29 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
       .filter(Boolean)
       .join(' ');
 
+    const fillProps =
+      mode === 'fill'
+        ? { fill: 'currentColor', stroke: 'none' as const }
+        : { fill: 'none' as const, stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+
     return (
       <svg
         ref={ref}
         xmlns="http://www.w3.org/2000/svg"
         width={px}
         height={px}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        viewBox={viewBox}
+        {...fillProps}
         className={iconClasses}
-        aria-hidden={label ? undefined : true}
-        aria-label={label}
-        role={label ? 'img' : undefined}
+        aria-hidden={resolvedLabel ? undefined : true}
+        aria-label={resolvedLabel}
+        role={resolvedLabel ? 'img' : undefined}
         focusable="false"
         {...props}
       >
-        {children}
+        {def
+          ? def.paths.map((d, i) => <path key={i} d={d} />)
+          : children}
       </svg>
     );
   }

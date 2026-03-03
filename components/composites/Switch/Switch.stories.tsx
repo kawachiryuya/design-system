@@ -56,6 +56,12 @@ export const WithDescription: Story = {
     description: 'キャンペーンやお知らせをメールで受け取ります',
     checked: true,
     onChange: () => {},
+    labelPosition: 'left',
+  },
+  decorators: [(Story) => <div className="w-80"><Story /></div>],
+  render: (args) => {
+    const [checked, setChecked] = useState(args.checked);
+    return <Switch {...args} checked={checked} onChange={setChecked} className="w-full justify-between" />;
   },
 };
 
@@ -64,13 +70,18 @@ export const LabelLeft: Story = {
 };
 
 export const AllSizes: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Switch size="small" label="Small" defaultChecked onChange={() => {}} />
-      <Switch size="medium" label="Medium（デフォルト）" defaultChecked onChange={() => {}} />
-      <Switch size="large" label="Large" defaultChecked onChange={() => {}} />
-    </div>
-  ),
+  render: () => {
+    const [s1, setS1] = useState(true);
+    const [s2, setS2] = useState(true);
+    const [s3, setS3] = useState(true);
+    return (
+      <div className="flex flex-col gap-4">
+        <Switch size="small" label="Small" checked={s1} onChange={setS1} />
+        <Switch size="medium" label="Medium（デフォルト）" checked={s2} onChange={setS2} />
+        <Switch size="large" label="Large" checked={s3} onChange={setS3} />
+      </div>
+    );
+  },
 };
 
 export const Disabled: Story = {
@@ -106,7 +117,8 @@ export const SettingsPanel: Story = {
         {items.map(({ key, label, description }) => (
           <div key={key} className="py-4 first:pt-0 last:pb-0">
             <Switch label={label} description={description} labelPosition="left"
-              checked={settings[key]} onChange={() => toggle(key)} />
+              checked={settings[key]} onChange={() => toggle(key)}
+              className="w-full justify-between" />
           </div>
         ))}
       </div>

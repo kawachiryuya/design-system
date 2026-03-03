@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '../../primitives/Icon';
 
 /**
  * Pagination Props
@@ -22,34 +23,6 @@ export interface PaginationProps {
   /** 追加CSSクラス */
   className?: string;
 }
-
-const ChevronLeft = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <polyline points="15 18 9 12 15 6"/>
-  </svg>
-);
-
-const ChevronRight = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <polyline points="9 18 15 12 9 6"/>
-  </svg>
-);
-
-const ChevronsLeft = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/>
-  </svg>
-);
-
-const ChevronsRight = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/>
-  </svg>
-);
 
 /** 表示するページ番号の配列を生成（省略符号は null で表現） */
 function buildPages(current: number, total: number, maxVisible: number): (number | null)[] {
@@ -140,7 +113,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={() => onPageChange(1)}
           className={navBtn(currentPage === 1)}
         >
-          <ChevronsLeft />
+          <Icon name="first_page" size="sm" />
         </button>
       )}
 
@@ -151,7 +124,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         onClick={() => onPageChange(currentPage - 1)}
         className={navBtn(currentPage === 1)}
       >
-        <ChevronLeft />
+        <Icon name="chevron_left" size="sm" />
       </button>
 
       {pages.map((page, i) =>
@@ -180,7 +153,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         onClick={() => onPageChange(currentPage + 1)}
         className={navBtn(currentPage === totalPages)}
       >
-        <ChevronRight />
+        <Icon name="chevron_right" size="sm" />
       </button>
 
       {showEdges && (
@@ -191,7 +164,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={() => onPageChange(totalPages)}
           className={navBtn(currentPage === totalPages)}
         >
-          <ChevronsRight />
+          <Icon name="last_page" size="sm" />
         </button>
       )}
     </nav>

@@ -66,14 +66,14 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     // Track sizes
     const trackSize = {
       small: 'w-8 h-4',
-      medium: 'w-11 h-6',
-      large: 'w-14 h-8',
+      medium: 'w-[44px] h-6',
+      large: 'w-[56px] h-8',
     }[size];
 
     // Thumb sizes and positions
-    const thumbSize = { small: 'w-3 h-3', medium: 'w-4 h-4 sm:w-5 h-5', large: 'w-6 h-6' }[size];
-    const thumbOff = { small: 'translate-x-0.5', medium: 'translate-x-0.5', large: 'translate-x-1' }[size];
-    const thumbOn = { small: 'translate-x-4', medium: 'translate-x-5', large: 'translate-x-6' }[size];
+    const thumbSize = { small: 'w-3 h-3', medium: 'w-5 h-5', large: 'w-6 h-6' }[size];
+    const thumbOff = { small: 'translate-x-[2px]', medium: 'translate-x-[2px]', large: 'translate-x-1' }[size];
+    const thumbOn = { small: 'translate-x-[18px]', medium: 'translate-x-[22px]', large: 'translate-x-[28px]' }[size];
 
     const labelSize = { small: 'text-sm', medium: 'text-sm', large: 'text-base' }[size];
 
@@ -89,7 +89,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'focus-visible:ring-offset-2',
       'focus-visible:ring-border-focus',
       trackSize,
-      checked ? 'bg-surface-primary' : 'bg-border-default',
+      checked ? 'bg-surface-primary' : 'bg-neutral-300',
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
     ]
       .filter(Boolean)
@@ -112,7 +112,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       .join(' ');
 
     const labelEl = (label || description) && (
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col gap-[2px]">
         {label && (
           <label
             htmlFor={switchId}
@@ -131,7 +131,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     );
 
     return (
-      <div className={`inline-flex items-start gap-3 ${className}`}>
+      <div className={`inline-flex ${description ? 'items-start' : 'items-center'} gap-3 ${className}`}>
         {labelPosition === 'left' && labelEl}
         <button
           ref={ref}

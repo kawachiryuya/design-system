@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Icon } from '../Icon';
 
 /**
  * Image Props
@@ -47,18 +48,7 @@ const roundedStyles = {
 
 const FallbackPlaceholder: React.FC = () => (
   <div className="absolute inset-0 flex items-center justify-center bg-surface-disabled">
-    <svg
-      className="w-10 h-10 text-onSurface-disabled"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      aria-hidden="true"
-    >
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <circle cx="8.5" cy="8.5" r="1.5" />
-      <polyline points="21 15 16 10 5 21" />
-    </svg>
+    <Icon name="image" size="xl" color="disabled" />
   </div>
 );
 

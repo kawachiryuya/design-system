@@ -34,8 +34,16 @@ export const Default: Story = {};
 
 export const WithValue: Story = {
   render: () => {
-    const [value, setValue] = useState('デザインシステム');
-    return <SearchBar value={value} onChange={setValue} placeholder="検索..." />;
+    const [v1, setV1] = useState('Small value');
+    const [v2, setV2] = useState('Medium value');
+    const [v3, setV3] = useState('Large value');
+    return (
+      <div className="flex flex-col gap-3 w-80">
+        <SearchBar size="small" value={v1} onChange={setV1} placeholder="検索..." />
+        <SearchBar size="medium" value={v2} onChange={setV2} placeholder="検索..." />
+        <SearchBar size="large" value={v3} onChange={setV3} placeholder="検索..." />
+      </div>
+    );
   },
 };
 
@@ -56,8 +64,16 @@ export const AllSizes: Story = {
 
 export const Loading: Story = {
   render: () => {
-    const [value, setValue] = useState('React hooks');
-    return <SearchBar value={value} onChange={setValue} isLoading placeholder="検索..." />;
+    const [v1, setV1] = useState('Small loading');
+    const [v2, setV2] = useState('Medium loading');
+    const [v3, setV3] = useState('Large loading');
+    return (
+      <div className="flex flex-col gap-3 w-80">
+        <SearchBar size="small" value={v1} onChange={setV1} isLoading placeholder="検索..." />
+        <SearchBar size="medium" value={v2} onChange={setV2} isLoading placeholder="検索..." />
+        <SearchBar size="large" value={v3} onChange={setV3} isLoading placeholder="検索..." />
+      </div>
+    );
   },
 };
 

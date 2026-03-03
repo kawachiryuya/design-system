@@ -129,13 +129,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       .filter(Boolean)
       .join(' ');
 
-    // Icon size per input size
-    const iconSizeClass = {
-      small: 'w-4 h-4',
-      medium: 'w-5 h-5',
-      large: 'w-6 h-6',
-    }[size];
-
     // Icon container positioning
     const leadingIconPosition = {
       small: 'left-2',
@@ -177,7 +170,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {leadingIcon && (
             <span
-              className={`absolute ${leadingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none ${iconSizeClass}`}
+              className={`absolute ${leadingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none flex items-center justify-center`}
             >
               {leadingIcon}
             </span>
@@ -198,7 +191,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           {trailingIcon && (
             <span
-              className={`absolute ${trailingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none ${iconSizeClass}`}
+              className={`absolute ${trailingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none flex items-center justify-center`}
             >
               {trailingIcon}
             </span>

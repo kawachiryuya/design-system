@@ -45,7 +45,7 @@ Primitives のみ import 可。Composites 同士は実装内で import しない
 |---|---|
 | フォーム入力 | Checkbox, Radio, Select, Switch（input + label + description） |
 | 表示系 | Avatar, Badge, ProgressBar（複数要素の組み合わせ） |
-| 構造系 | Card, Alert, Tabs, FormField, Breadcrumb, Pagination |
+| 構造系 | Card, Alert, Tabs, Breadcrumb, Pagination |
 | 状態系 | EmptyState, SearchBar |
 
 **判断チェックリスト:**
@@ -156,5 +156,5 @@ UIパーツを作りたい
 | 階層 | 命名パターン | 例 |
 |---|---|---|
 | Primitive | 機能を表す名詞 | Button, Input, Icon, Label |
-| Composite | 機能を表す複合名詞 | SearchBar, FormField, Card, Tabs |
+| Composite | 機能を表す複合名詞 | SearchBar, CheckboxGroup, Card, Tabs |
 | プロダクト側 | 業務ドメイン＋名詞 | ProductCard, PaymentSummary, LoginForm |

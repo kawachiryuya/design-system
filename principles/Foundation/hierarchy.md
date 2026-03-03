@@ -227,7 +227,7 @@ Tertiary Button:
 
 複数Atomsを組み合わせた際のヒエラルキー。
 
-- FormField: ラベル > 入力フィールド > ヘルプテキスト > エラーメッセージ
+- CheckboxGroup / RadioGroup: ラベル（legend） > 選択肢 > ヘルプテキスト > エラーメッセージ
 - SearchField: 入力フィールド > 検索ボタン
 
 ### Organisms（機能ブロック）

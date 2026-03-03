@@ -55,7 +55,7 @@ export const Dismissible: Story = {
       </Alert>
     ) : (
       <div className="flex items-center gap-3">
-        <p className="text-sm text-neutral-500">アラートを閉じました</p>
+        <p className="text-sm text-onSurface-muted">アラートを閉じました</p>
         <Button size="small" variant="tertiary" onClick={() => setVisible(true)}>
           再表示
         </Button>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormMessage } from '../../_internal/FormMessage';
 
 /**
  * Input Props
@@ -88,7 +89,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           'border-border-error',
           'focus:border-border-error',
           'focus:ring-border-error',
-          'bg-surface-error',
+          'bg-surface-error-muted',
         ]
       : [
           'border-border',
@@ -204,23 +205,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {/* Error message */}
-        {error && errorMessage && (
-          <p
-            id={errorId}
-            className="text-sm text-onSurface-error"
-            role="alert"
-          >
-            {errorMessage}
-          </p>
-        )}
-
-        {/* Help text（エラー時は非表示） */}
-        {!error && helpText && (
-          <p id={helpId} className="text-sm text-onSurface-muted">
-            {helpText}
-          </p>
-        )}
+        <FormMessage
+          helpText={helpText}
+          helpId={helpId}
+          error={error}
+          errorMessage={errorMessage}
+          errorId={errorId}
+        />
       </div>
     );
   }

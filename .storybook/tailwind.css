@@ -11,24 +11,32 @@
     --color-surface-overlay:  rgba(0, 0, 0, 0.5);
     --color-surface-primary:   #008965;   /* primary-600 */
     --color-surface-secondary: #E4FCF2;   /* primary-50 */
-    --color-surface-success:   #E8FBE8;   /* success-50 */
-    --color-surface-error:     #FFECE9;   /* error-50 */
-    --color-surface-warning:   #FFF2E0;   /* warning-50 */
-    --color-surface-info:      #E8F7FF;   /* info-50 */
+    --color-surface-success:        #399E43; /* success-500 — bars, dots, checked */
+    --color-surface-success-muted:  #E8FBE8; /* success-50  — Alert bg etc. */
+    --color-surface-error:          #DE4E4B; /* error-500   — bars, dots, checked */
+    --color-surface-error-muted:    #FFECE9; /* error-50    — Alert bg etc. */
+    --color-surface-warning:        #D38E2E; /* warning-400 — bars, dots */
+    --color-surface-warning-muted:  #FFF2E0; /* warning-50  — Alert bg etc. */
+    --color-surface-info:           #398AD6; /* info-500    — bars, dots */
+    --color-surface-info-muted:     #E8F7FF; /* info-50     — Alert bg etc. */
     --color-surface-disabled:  #F5F5F5;   /* neutral-100 */
     --color-surface-skeleton:  #E5E5E5;   /* neutral-200 */
+    --color-surface-neutral:   #A3A3A3;   /* neutral-400  — offline indicator, muted fill */
 
     /* ── onSurface (text / icon) ── */
     --color-on-default:   #171717;   /* neutral-900 */
     --color-on-muted:     #737373;   /* neutral-500 */
     --color-on-subtle:    #A3A3A3;   /* neutral-400 */
     --color-on-primary:   #008965;   /* primary-600 */
-    --color-on-success:   #258732;   /* success-600 */
-    --color-on-error:     #C13B3B;   /* error-600 */
-    --color-on-warning:   #A55F00;   /* warning-600 */
-    --color-on-info:      #2775BB;   /* info-600 */
+    --color-on-success:   #166D23;   /* success-700 */
+    --color-on-error:     #9F2A2B;   /* error-700 */
+    --color-on-warning:   #874A00;   /* warning-700 */
+    --color-on-info:      #185D9A;   /* info-700 */
     --color-on-disabled:  #A3A3A3;   /* neutral-400 */
     --color-on-inverse:   #FFFFFF;
+
+    /* ── surface (additional) ── */
+    --color-surface-inset: #F5F5F5;            /* neutral-100 — recessed/inset surfaces */
 
     /* ── border ── */
     --color-border-default:  #D4D4D4;   /* neutral-300 */
@@ -38,6 +46,10 @@
     --color-border-primary:  #008965;   /* primary-600 */
     --color-border-error:    #C13B3B;   /* error-600 */
     --color-border-disabled: #E5E5E5;   /* neutral-200 */
+    --color-border-success-muted: #B0E4B1;   /* success-200 — colored container borders */
+    --color-border-error-muted:   #FFBBB3;   /* error-200 */
+    --color-border-warning-muted: #F8CB99;   /* warning-200 */
+    --color-border-info-muted:    #AED9FF;   /* info-200 */
 
     /* ── state (transparency layers) ── */
     --color-state-hover:   rgba(0, 0, 0, 0.08);

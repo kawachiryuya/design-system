@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormMessage } from '../../_internal/FormMessage';
 
 /**
  * Radio Props
@@ -27,6 +28,8 @@ export interface RadioGroupProps {
   error?: boolean;
   /** エラーメッセージ */
   errorMessage?: string;
+  /** ヘルプテキスト */
+  helpText?: string;
   /** 必須 */
   required?: boolean;
   /** 横並び */
@@ -74,11 +77,11 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       'transition-all',
       'duration-150',
       'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-offset-1',
+      'focus-visible:ring-2',
+      'focus-visible:ring-offset-1',
       error
-        ? 'border-error-500 focus:ring-error-300 checked:bg-error-500'
-        : 'border-neutral-400 focus:ring-primary-300 checked:bg-primary-600 checked:border-primary-600',
+        ? 'border-border-error focus-visible:ring-border-error checked:bg-surface-error'
+        : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-surface-primary',
       disabled ? 'opacity-50 cursor-not-allowed' : '',
     ]
       .filter(Boolean)
@@ -101,14 +104,14 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
               <label
                 htmlFor={inputId}
                 className={`${labelSize} font-medium leading-tight select-none ${
-                  disabled ? 'text-neutral-400 cursor-not-allowed' : 'text-neutral-700 cursor-pointer'
+                  disabled ? 'text-onSurface-disabled cursor-not-allowed' : 'text-onSurface cursor-pointer'
                 }`}
               >
                 {label}
               </label>
             )}
             {description && (
-              <span className="text-xs text-neutral-500 leading-normal">{description}</span>
+              <span className="text-xs text-onSurface-muted leading-normal">{description}</span>
             )}
           </div>
         )}
@@ -129,31 +132,41 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   children,
   error = false,
   errorMessage,
+  helpText,
   required = false,
   inline = false,
   className = '',
 }) => {
   const errorId = `radiogroup-${legend.replace(/\s+/g, '-').toLowerCase()}-error`;
+  const helpId = `radiogroup-${legend.replace(/\s+/g, '-').toLowerCase()}-help`;
 
   return (
     <fieldset
       className={`border-0 p-0 m-0 ${className}`}
-      aria-describedby={error && errorMessage ? errorId : undefined}
+      aria-describedby={
+        [error && errorMessage ? errorId : null, !error && helpText ? helpId : null]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
     >
-      <legend className="text-sm font-medium text-neutral-700 mb-2">
+      <legend className="text-sm font-medium text-onSurface mb-2">
         {legend}
         {required && (
-          <span className="ml-1 text-error-500" aria-label="必須">*</span>
+          <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
         )}
       </legend>
       <div className={inline ? 'flex flex-wrap gap-4' : 'flex flex-col gap-2'}>
         {children}
       </div>
-      {error && errorMessage && (
-        <p id={errorId} className="mt-1 text-sm text-error-600" role="alert">
-          {errorMessage}
-        </p>
-      )}
+      <div className="mt-1">
+        <FormMessage
+          helpText={helpText}
+          helpId={helpId}
+          error={error}
+          errorMessage={errorMessage}
+          errorId={errorId}
+        />
+      </div>
     </fieldset>
   );
 };

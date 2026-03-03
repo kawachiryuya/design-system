@@ -57,8 +57,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       'transition-all',
       'duration-200', // 200ms (tokens/animation.json)
       'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-offset-2',
+      'focus-visible:ring-2',
+      'focus-visible:ring-offset-2',
       'disabled:opacity-50',
       'disabled:cursor-not-allowed',
       // State overlay — inset box-shadow で背景色を維持したまま透過レイヤーを重ねる
@@ -74,19 +74,19 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       primary: [
         'bg-surface-primary',
         'text-onSurface-inverse',
-        'focus:ring-border-focus',
+        'focus-visible:ring-border-focus',
       ],
       secondary: [
         'bg-surface',
         'text-onSurface-primary',
         'border',
         'border-primary-600',
-        'focus:ring-border-focus',
+        'focus-visible:ring-border-focus',
       ],
       tertiary: [
         'bg-transparent',
         'text-onSurface-primary',
-        'focus:ring-border-focus',
+        'focus-visible:ring-border-focus',
       ],
     };
 

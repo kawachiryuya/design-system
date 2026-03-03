@@ -119,13 +119,13 @@ export const StepProgress: Story = {
           {steps.map((step, i) => (
             <button key={step} type="button" onClick={() => setCurrent(i + 1)}
               className={`text-xs font-medium ${
-                i + 1 <= current ? 'text-primary-600' : 'text-neutral-400'
+                i + 1 <= current ? 'text-onSurface-primary' : 'text-onSurface-subtle'
               }`}>
               {step}
             </button>
           ))}
         </div>
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm text-onSurface-muted">
           ステップ {current}/{steps.length}: <strong>{steps[current - 1]}</strong>
         </p>
         <div className="flex gap-2">

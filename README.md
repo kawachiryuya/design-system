@@ -79,9 +79,8 @@ designSystem/
 │       ├── Badge/             ── Badge
 │       ├── Breadcrumb/        ── Breadcrumb
 │       ├── Card/              ── Card（Header/Body/Footer）
-│       ├── Checkbox/          ── Checkbox
+│       ├── Checkbox/          ── Checkbox + CheckboxGroup
 │       ├── EmptyState/        ── EmptyState
-│       ├── FormField/         ── FormField
 │       ├── Pagination/        ── Pagination
 │       ├── ProgressBar/       ── ProgressBar
 │       ├── Radio/             ── Radio + RadioGroup
@@ -126,9 +125,8 @@ designSystem/
 | **Badge** | variant / appearance / dot | ステータス表示 |
 | **Breadcrumb** | リンクリスト + セパレーター | パンくずナビゲーション（chevron/slash/dot）|
 | **Card** | Header / Body / Footer スロット | 汎用カードコンテナ（ブログ・統計・プロフィール等） |
-| **Checkbox** | indeterminate / error / description | 複数選択 |
+| **Checkbox** + CheckboxGroup | indeterminate / error / description | 複数選択（グループ: fieldset + legend + helpText/error）|
 | **EmptyState** | アイコン + タイトル + 説明 + アクション | データなし・エラー・検索結果ゼロの画面 |
-| **FormField** | Label + children slot + helpText/error | RadioGroup・Checkbox グループ等の汎用フィールドラッパー |
 | **Pagination** | ページボタン + 省略記号 + 前後ボタン | ページネーション（最初・最後ボタン対応）|
 | **ProgressBar** | value / color / showValue / indeterminate | 進捗表示 |
 | **Radio** + RadioGroup | inline / error / legend | 単一選択 |
@@ -177,7 +175,7 @@ designSystem/
 
 コンポーネントは components/ にあります。
   - primitives/: 単一HTML要素ラッパー（Button, Input, Typography 等）
-  - composites/: 複合コンポーネント（Card, FormField, Tabs 等）
+  - composites/: 複合コンポーネント（Card, CheckboxGroup, Tabs 等）
 デザイントークンは tokens/ の JSON と tailwind.config.js に定義されています。
 デザイン原則は principles/ を参照してください。
 

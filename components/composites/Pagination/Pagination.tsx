@@ -108,7 +108,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   const btnBase = [
     'inline-flex items-center justify-center rounded font-medium',
     'transition-colors duration-150',
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1',
+    'focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-1',
     'px-1',
     s,
   ].join(' ');
@@ -118,16 +118,16 @@ export const Pagination: React.FC<PaginationProps> = ({
     return [
       btnBase,
       isActive
-        ? 'bg-primary-600 text-white pointer-events-none'
-        : 'text-neutral-700 hover:bg-neutral-100',
+        ? 'bg-surface-primary text-onSurface-inverse pointer-events-none'
+        : 'text-onSurface hover:bg-state-hover',
     ].join(' ');
   };
 
   const navBtn = (disabled: boolean) => [
     btnBase,
     disabled
-      ? 'text-neutral-300 cursor-not-allowed'
-      : 'text-neutral-600 hover:bg-neutral-100',
+      ? 'text-onSurface-disabled cursor-not-allowed'
+      : 'text-onSurface-muted hover:bg-state-hover',
   ].join(' ');
 
   return (
@@ -156,7 +156,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {pages.map((page, i) =>
         page === null ? (
-          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-neutral-400', s].join(' ')}>
+          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-subtle', s].join(' ')}>
             …
           </span>
         ) : (

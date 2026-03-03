@@ -137,7 +137,7 @@ export const WithIcon: Story = {};
 | Skeleton | ⬜ |
 | ProgressBar | ⬜ |
 | Image | ⬜ |
-| FormField | ⬜ |
+| CheckboxGroup | ⬜ |
 | SearchBar | ⬜ |
 | Card | ⬜ |
 | Alert | ⬜ |

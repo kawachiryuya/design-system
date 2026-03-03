@@ -35,9 +35,8 @@
 - `components/composites/Badge/` — Badge（variant/appearance/dot）
 - `components/composites/Breadcrumb/` — Breadcrumb（chevron/slash/dot セパレーター + aria-current）
 - `components/composites/Card/` — Card（elevated/outlined/flat + Header/Body/Footer スロット）
-- `components/composites/Checkbox/` — Checkbox（indeterminate/error/description）
+- `components/composites/Checkbox/` — Checkbox + CheckboxGroup（indeterminate/error/description + fieldset グループ）
 - `components/composites/EmptyState/` — EmptyState（アイコン + タイトル + 説明 + アクション）
-- `components/composites/FormField/` — FormField（Label + children slot + helpText/error の汎用ラッパー）
 - `components/composites/Pagination/` — Pagination（省略記号 + 最初・最後ボタン + サイズ）
 - `components/composites/ProgressBar/` — ProgressBar（value/color/size/showValue/indeterminate）
 - `components/composites/Radio/` — Radio + RadioGroup（inline/error/legend）
@@ -130,9 +129,8 @@ designSystem/
 │       ├── Badge/         ── Badge
 │       ├── Breadcrumb/    ── Breadcrumb
 │       ├── Card/          ── Card
-│       ├── Checkbox/      ── Checkbox
+│       ├── Checkbox/      ── Checkbox + CheckboxGroup
 │       ├── EmptyState/    ── EmptyState
-│       ├── FormField/     ── FormField
 │       ├── Pagination/    ── Pagination
 │       ├── ProgressBar/   ── ProgressBar
 │       ├── Radio/         ── Radio + RadioGroup

@@ -64,7 +64,7 @@ export const AllSizes: Story = {
       {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
         <div key={size} className="flex flex-col items-center gap-2">
           <Avatar size={size} name="田中 太郎" src="https://i.pravatar.cc/150?img=5" />
-          <span className="text-xs text-neutral-500">{size}</span>
+          <span className="text-xs text-onSurface-muted">{size}</span>
         </div>
       ))}
     </div>
@@ -76,11 +76,11 @@ export const AllShapes: Story = {
     <div className="flex gap-6 items-center">
       <div className="flex flex-col items-center gap-2">
         <Avatar shape="circle" size="lg" name="田中 太郎" src="https://i.pravatar.cc/150?img=7" />
-        <span className="text-xs text-neutral-500">circle</span>
+        <span className="text-xs text-onSurface-muted">circle</span>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Avatar shape="square" size="lg" name="田中 太郎" src="https://i.pravatar.cc/150?img=7" />
-        <span className="text-xs text-neutral-500">square</span>
+        <span className="text-xs text-onSurface-muted">square</span>
       </div>
     </div>
   ),
@@ -93,7 +93,7 @@ export const WithStatus: Story = {
         <div key={status} className="flex flex-col items-center gap-2">
           <Avatar size="lg" name="田中 太郎" status={status}
             src="https://i.pravatar.cc/150?img=8" />
-          <span className="text-xs text-neutral-500">{status}</span>
+          <span className="text-xs text-onSurface-muted">{status}</span>
         </div>
       ))}
     </div>
@@ -103,11 +103,11 @@ export const WithStatus: Story = {
 export const UserCard: Story = {
   name: '実践例: ユーザーカード',
   render: () => (
-    <div className="flex items-center gap-3 p-4 rounded-lg border border-neutral-200 w-64">
+    <div className="flex items-center gap-3 p-4 rounded-lg border border-border-muted w-64">
       <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="md" status="online" />
       <div className="min-w-0">
-        <p className="text-sm font-medium text-neutral-800 truncate">鈴木 花子</p>
-        <p className="text-xs text-neutral-500 truncate">suzuki@example.com</p>
+        <p className="text-sm font-medium text-onSurface truncate">鈴木 花子</p>
+        <p className="text-xs text-onSurface-muted truncate">suzuki@example.com</p>
       </div>
     </div>
   ),
@@ -124,10 +124,10 @@ export const AvatarGroup: Story = {
         { name: 'Dave' },
       ].map(({ src, name }) => (
         <Avatar key={name} src={src} name={name} size="sm"
-          className="ring-2 ring-white" />
+          className="ring-2 ring-surface" />
       ))}
-      <span className="w-8 h-8 rounded-full bg-neutral-200 ring-2 ring-white
-        flex items-center justify-center text-xs text-neutral-600 font-medium flex-shrink-0">
+      <span className="w-8 h-8 rounded-full bg-surface-skeleton ring-2 ring-surface
+        flex items-center justify-center text-xs text-onSurface-muted font-medium flex-shrink-0">
         +5
       </span>
     </div>

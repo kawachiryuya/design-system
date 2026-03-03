@@ -67,12 +67,18 @@ module.exports = {
           overlay:  'var(--color-surface-overlay)',
           primary:   'var(--color-surface-primary)',
           secondary: 'var(--color-surface-secondary)',
-          success:   'var(--color-surface-success)',
-          error:     'var(--color-surface-error)',
-          warning:   'var(--color-surface-warning)',
-          info:      'var(--color-surface-info)',
+          success:         'var(--color-surface-success)',
+          'success-muted': 'var(--color-surface-success-muted)',
+          error:           'var(--color-surface-error)',
+          'error-muted':   'var(--color-surface-error-muted)',
+          warning:         'var(--color-surface-warning)',
+          'warning-muted': 'var(--color-surface-warning-muted)',
+          info:            'var(--color-surface-info)',
+          'info-muted':    'var(--color-surface-info-muted)',
           disabled:  'var(--color-surface-disabled)',
           skeleton:  'var(--color-surface-skeleton)',
+          neutral:   'var(--color-surface-neutral)',
+          inset:     'var(--color-surface-inset)',
         },
         state: {
           hover:   'var(--color-state-hover)',
@@ -107,15 +113,28 @@ module.exports = {
           primary:  'var(--color-border-primary)',
           error:    'var(--color-border-error)',
           disabled: 'var(--color-border-disabled)',
+          'success-muted': 'var(--color-border-success-muted)',
+          'error-muted':   'var(--color-border-error-muted)',
+          'warning-muted': 'var(--color-border-warning-muted)',
+          'info-muted':    'var(--color-border-info-muted)',
         },
       },
 
-      // ring-border-*
+      // ring-border-*, ring-surface
       ringColor: {
         border: {
           focus:   'var(--color-border-focus)',
           primary: 'var(--color-border-primary)',
           error:   'var(--color-border-error)',
+        },
+        surface: 'var(--color-surface-default)',
+      },
+
+      // divide-border-*
+      divideColor: {
+        border: {
+          DEFAULT: 'var(--color-border-default)',
+          muted:   'var(--color-border-muted)',
         },
       },
     },

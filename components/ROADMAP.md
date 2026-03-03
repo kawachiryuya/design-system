@@ -26,7 +26,7 @@
 
 | コンポーネント | 概要 |
 |---|---|
-| FormField | Label + 任意のフォームコントロール + helpText / error のラッパー |
+| CheckboxGroup | fieldset + legend + helpText / error のチェックボックスグループラッパー |
 | SearchBar | SearchIcon + Input + ClearButton + LoadingSpinner |
 | Card | elevated / outlined / flat + Header / Body / Footer スロット |
 | Alert | success / error / warning / info / neutral + 閉じるボタン |
@@ -59,7 +59,7 @@
 | 中 | Radio | 選択切替・グループ内移動 |
 | 中 | Pagination | ページ遷移・省略記号の挙動 |
 
-※ 既存: Checkbox, FormField, Tabs, SearchBar（変更なし）
+※ 既存: Checkbox, CheckboxGroup, Tabs, SearchBar（変更なし）
 
 **Button Story 補完**
 - `AllSizes` — small / medium / large の横並び比較

@@ -75,7 +75,7 @@ const LoadingSpinner = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="animate-spin text-neutral-400"
+    className="animate-spin text-onSurface-subtle"
     aria-hidden="true"
   >
     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
@@ -166,18 +166,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     'w-full',
     'rounded',
     'border',
-    'border-neutral-300',
-    'bg-white',
-    'text-neutral-800',
-    'placeholder:text-neutral-400',
+    'border-border',
+    'bg-surface',
+    'text-onSurface',
+    'placeholder:text-onSurface-subtle',
     'transition-all',
     'duration-200',
     'focus:outline-none',
-    'focus:border-primary-500',
+    'focus:border-border-focus',
     'focus:ring-2',
-    'focus:ring-primary-200',
-    'disabled:bg-neutral-50',
-    'disabled:text-neutral-400',
+    'focus:ring-border-focus',
+    'disabled:bg-surface-disabled',
+    'disabled:text-onSurface-disabled',
     'disabled:cursor-not-allowed',
     s.container,
     s.input,
@@ -186,7 +186,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const leadingClass = [
     'absolute',
     'pointer-events-none',
-    'text-neutral-400',
+    'text-onSurface-subtle',
     'flex',
     'items-center',
     'justify-center',
@@ -236,8 +236,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             type="button"
             aria-label="検索をクリア"
             onClick={handleClear}
-            className="text-neutral-400 hover:text-neutral-600 transition-colors
-              focus:outline-none focus:ring-2 focus:ring-primary-300 rounded-sm"
+            className="text-onSurface-subtle hover:text-onSurface-muted transition-colors
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded-sm"
           >
             <ClearIcon />
           </button>

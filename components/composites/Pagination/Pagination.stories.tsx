@@ -91,12 +91,12 @@ export const ArticleListExample: Story = {
 
     return (
       <div className="w-96 space-y-4">
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-onSurface-muted">
           全 {total} 件中 {(page - 1) * perPage + 1}〜{Math.min(page * perPage, total)} 件を表示
         </p>
-        <ul className="divide-y divide-neutral-100 border border-neutral-200 rounded-lg">
+        <ul className="divide-y divide-border-muted border border-border-muted rounded-lg">
           {items.map((title) => (
-            <li key={title} className="px-4 py-3 text-sm text-neutral-700">{title}</li>
+            <li key={title} className="px-4 py-3 text-sm text-onSurface">{title}</li>
           ))}
         </ul>
         <div className="flex justify-center">

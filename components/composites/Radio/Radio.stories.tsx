@@ -75,6 +75,16 @@ export const Inline: Story = {
   ),
 };
 
+export const WithHelpText: Story = {
+  render: () => (
+    <RadioGroup legend="配送方法" helpText="変更はリアルタイムで反映されます">
+      <Radio name="delivery-help" value="standard" label="標準配送（3〜5日）" defaultChecked />
+      <Radio name="delivery-help" value="express" label="速達（翌日）" />
+      <Radio name="delivery-help" value="pickup" label="店頭受取" />
+    </RadioGroup>
+  ),
+};
+
 export const ErrorState: Story = {
   render: () => (
     <RadioGroup legend="配送方法" required error errorMessage="配送方法を選択してください">
@@ -126,7 +136,7 @@ export const Controlled: Story = {
               checked={plan === v} onChange={(e) => setPlan(e.target.value)} />
           ))}
         </RadioGroup>
-        <p className="text-sm text-neutral-500">選択中: <strong>{plan}</strong></p>
+        <p className="text-sm text-onSurface-muted">選択中: <strong>{plan}</strong></p>
       </div>
     );
   },

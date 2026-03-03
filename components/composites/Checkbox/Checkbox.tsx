@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormMessage } from '../../_internal/FormMessage';
 
 /**
  * Checkbox Props
@@ -68,11 +69,11 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       'transition-all',
       'duration-150',
       'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-offset-1',
+      'focus-visible:ring-2',
+      'focus-visible:ring-offset-1',
       error
-        ? 'border-error-500 focus:ring-error-300 checked:bg-error-500'
-        : 'border-neutral-400 focus:ring-primary-300 checked:bg-primary-600 checked:border-primary-600',
+        ? 'border-border-error focus-visible:ring-border-error checked:bg-surface-error'
+        : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-surface-primary',
       disabled ? 'opacity-50 cursor-not-allowed' : '',
     ]
       .filter(Boolean)
@@ -97,26 +98,102 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 <label
                   htmlFor={inputId}
                   className={`${labelSize} font-medium leading-tight select-none ${
-                    disabled ? 'text-neutral-400 cursor-not-allowed' : 'text-neutral-700 cursor-pointer'
+                    disabled ? 'text-onSurface-disabled cursor-not-allowed' : 'text-onSurface cursor-pointer'
                   }`}
                 >
                   {label}
                 </label>
               )}
               {description && (
-                <span className="text-xs text-neutral-500 leading-normal">{description}</span>
+                <span className="text-xs text-onSurface-muted leading-normal">{description}</span>
               )}
             </div>
           )}
         </div>
-        {error && errorMessage && (
-          <p id={errorId} className="text-sm text-error-600 ml-7" role="alert">
-            {errorMessage}
-          </p>
-        )}
+        <div className="ml-7">
+          <FormMessage error={error} errorMessage={errorMessage} errorId={errorId} />
+        </div>
       </div>
     );
   }
 );
 
 Checkbox.displayName = 'Checkbox';
+
+/**
+ * CheckboxGroup Props
+ */
+export interface CheckboxGroupProps {
+  /** グループのラベル */
+  legend: string;
+  /** チェックボックスの選択肢 */
+  children: React.ReactNode;
+  /** エラー状態 */
+  error?: boolean;
+  /** エラーメッセージ */
+  errorMessage?: string;
+  /** ヘルプテキスト */
+  helpText?: string;
+  /** 必須 */
+  required?: boolean;
+  /** 横並び */
+  inline?: boolean;
+  className?: string;
+}
+
+/**
+ * CheckboxGroup Component
+ *
+ * Checkbox をグルーピングし、アクセシブルな fieldset でラップする。
+ *
+ * @example
+ * <CheckboxGroup legend="通知設定" helpText="複数選択できます">
+ *   <Checkbox label="メール" />
+ *   <Checkbox label="プッシュ" />
+ * </CheckboxGroup>
+ */
+export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
+  legend,
+  children,
+  error = false,
+  errorMessage,
+  helpText,
+  required = false,
+  inline = false,
+  className = '',
+}) => {
+  const errorId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-error`;
+  const helpId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-help`;
+
+  return (
+    <fieldset
+      className={`border-0 p-0 m-0 ${className}`}
+      aria-describedby={
+        [error && errorMessage ? errorId : null, !error && helpText ? helpId : null]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
+    >
+      <legend className="text-sm font-medium text-onSurface mb-2">
+        {legend}
+        {required && (
+          <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
+        )}
+      </legend>
+      <div className={inline ? 'flex flex-wrap gap-4' : 'flex flex-col gap-2'}>
+        {children}
+      </div>
+      <div className="mt-1">
+        <FormMessage
+          helpText={helpText}
+          helpId={helpId}
+          error={error}
+          errorMessage={errorMessage}
+          errorId={errorId}
+        />
+      </div>
+    </fieldset>
+  );
+};
+
+CheckboxGroup.displayName = 'CheckboxGroup';

@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormMessage } from '../../_internal/FormMessage';
 
 /**
  * Textarea Props
@@ -63,7 +64,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     }[resize];
 
     const stateStyles = error
-      ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error'
+      ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted'
       : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
 
     const textareaClasses = [
@@ -129,12 +130,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           className={textareaClasses}
           {...props}
         />
-        {error && errorMessage && (
-          <p id={errorId} className="text-sm text-onSurface-error" role="alert">{errorMessage}</p>
-        )}
-        {!error && helpText && (
-          <p id={helpId} className="text-sm text-onSurface-muted">{helpText}</p>
-        )}
+        <FormMessage
+          helpText={helpText}
+          helpId={helpId}
+          error={error}
+          errorMessage={errorMessage}
+          errorId={errorId}
+        />
       </div>
     );
   }

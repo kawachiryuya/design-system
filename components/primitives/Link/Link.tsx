@@ -75,9 +75,9 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       'hover:bg-state-hover',
       'active:bg-state-active',
       'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-border-focus',
-      'focus:ring-offset-1',
+      'focus-visible:ring-2',
+      'focus-visible:ring-border-focus',
+      'focus-visible:ring-offset-1',
     ];
 
     const disabledStyles = disabled

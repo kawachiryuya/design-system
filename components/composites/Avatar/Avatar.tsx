@@ -30,10 +30,10 @@ const sizeMap = {
 };
 
 const statusColorMap = {
-  online: 'bg-success-500',
-  offline: 'bg-neutral-400',
-  busy: 'bg-error-500',
-  away: 'bg-warning-400',
+  online: 'bg-surface-success',
+  offline: 'bg-surface-neutral',
+  busy: 'bg-surface-error',
+  away: 'bg-surface-warning',
 };
 
 const statusLabelMap = {
@@ -55,11 +55,11 @@ function getInitials(name: string): string {
 /** イニシャル背景色を名前から決定論的に選択 */
 function getInitialsBgColor(name: string): string {
   const colors = [
-    'bg-primary-500',
-    'bg-info-500',
-    'bg-success-600',
-    'bg-warning-600',
-    'bg-error-500',
+    'bg-surface-primary',
+    'bg-surface-info',
+    'bg-surface-success',
+    'bg-surface-warning',
+    'bg-surface-error',
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -104,7 +104,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     'select-none',
     sizes.container,
     shapeClass,
-    showInitials ? getInitialsBgColor(name) : 'bg-neutral-200',
+    showInitials ? getInitialsBgColor(name) : 'bg-surface-skeleton',
     className,
   ].join(' ');
 
@@ -122,7 +122,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         />
       ) : showInitials ? (
         <span
-          className={`font-semibold text-white leading-none ${sizes.text}`}
+          className={`font-semibold text-onSurface-inverse leading-none ${sizes.text}`}
           aria-hidden="true"
         >
           {getInitials(name)}
@@ -130,7 +130,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       ) : (
         // 画像もnameもない場合はプレースホルダーアイコン
         <svg
-          className="w-1/2 h-1/2 text-neutral-500"
+          className="w-1/2 h-1/2 text-onSurface-muted"
           viewBox="0 0 24 24"
           fill="currentColor"
           aria-hidden="true"
@@ -148,7 +148,7 @@ export const Avatar: React.FC<AvatarProps> = ({
             'right-0',
             'block',
             'ring-2',
-            'ring-white',
+            'ring-surface',
             'rounded-full',
             sizes.statusDot,
             statusColorMap[status],

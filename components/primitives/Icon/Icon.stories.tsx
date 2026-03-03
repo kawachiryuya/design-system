@@ -104,7 +104,7 @@ export const IconButton: Story = {
   name: '実践例: アイコンボタン（タッチターゲット 44px）',
   render: () => (
     <button type="button" aria-label="検索"
-      className="w-11 h-11 flex items-center justify-center rounded hover:bg-state-hover active:bg-state-active transition-colors focus:outline-none focus:ring-2 focus:ring-border-focus">
+      className="w-11 h-11 flex items-center justify-center rounded hover:bg-state-hover active:bg-state-active transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus">
       <Icon size="md" color="neutral"><SearchPath /></Icon>
     </button>
   ),

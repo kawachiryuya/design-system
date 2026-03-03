@@ -88,7 +88,7 @@ export const WithSearchCallback: Story = {
           placeholder="Enter で検索実行..."
         />
         {result !== null && (
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm text-onSurface-muted">
             検索クエリ: <strong>{result || '（空）'}</strong>
           </p>
         )}
@@ -121,13 +121,13 @@ export const HeaderSearch: Story = {
         <SearchBar value={value} onChange={handleChange} isLoading={isLoading}
           fullWidth placeholder="記事を検索..." />
         {results.length > 0 && (
-          <ul className="absolute top-full mt-1 w-full bg-white border border-neutral-200
+          <ul className="absolute top-full mt-1 w-full bg-surface border border-border-muted
             rounded shadow-sm z-10 overflow-hidden">
             {results.map((r) => (
               <li key={r}>
                 <button type="button" onClick={() => { setValue(r); setResults([]); }}
-                  className="w-full text-left px-3 py-2 text-sm text-neutral-700
-                    hover:bg-neutral-50 transition-colors">
+                  className="w-full text-left px-3 py-2 text-sm text-onSurface
+                    hover:bg-state-hover transition-colors">
                   {r}
                 </button>
               </li>
@@ -150,12 +150,12 @@ export const TableFilter: Story = {
       <div className="w-80 space-y-3">
         <SearchBar value={query} onChange={setQuery} size="small"
           fullWidth placeholder="ユーザーを検索..." />
-        <ul className="divide-y divide-neutral-100 border border-neutral-200 rounded">
+        <ul className="divide-y divide-border-muted border border-border-muted rounded">
           {filtered.length > 0
             ? filtered.map((name) => (
-                <li key={name} className="px-3 py-2 text-sm text-neutral-700">{name}</li>
+                <li key={name} className="px-3 py-2 text-sm text-onSurface">{name}</li>
               ))
-            : <li className="px-3 py-4 text-sm text-neutral-400 text-center">見つかりませんでした</li>
+            : <li className="px-3 py-4 text-sm text-onSurface-subtle text-center">見つかりませんでした</li>
           }
         </ul>
       </div>

@@ -53,17 +53,17 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   };
 
   const colorStyles = {
-    primary: 'bg-primary-600',
-    success: 'bg-success-500',
-    error: 'bg-error-500',
-    warning: 'bg-warning-400',
+    primary: 'bg-surface-primary',
+    success: 'bg-surface-success',
+    error: 'bg-surface-error',
+    warning: 'bg-surface-warning',
   };
 
   const trackClass = [
     'w-full',
     'overflow-hidden',
     'rounded-full',
-    'bg-neutral-200',
+    'bg-surface-skeleton',
     sizeStyles[size],
     className,
   ].join(' ');
@@ -84,10 +84,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       {(label || showValue) && (
         <div className="flex justify-between items-center mb-1">
           {label && (
-            <span className="text-sm text-neutral-700">{label}</span>
+            <span className="text-sm text-onSurface">{label}</span>
           )}
           {showValue && !indeterminate && (
-            <span className="text-sm text-neutral-500 ml-auto">
+            <span className="text-sm text-onSurface-muted ml-auto">
               {percentage}%
             </span>
           )}

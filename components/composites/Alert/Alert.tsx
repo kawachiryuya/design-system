@@ -23,9 +23,9 @@ export interface AlertProps {
 
 const variantConfig = {
   success: {
-    container: 'bg-success-50 border border-success-200 text-success-800',
+    container: 'bg-surface-success-muted border border-border-success-muted text-onSurface-success',
     icon: 'text-success-500',
-    title: 'text-success-800',
+    title: 'text-onSurface-success',
     closeBtn: 'text-success-600 hover:text-success-800 hover:bg-success-100',
     Icon: () => (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -36,9 +36,9 @@ const variantConfig = {
     ),
   },
   error: {
-    container: 'bg-error-50 border border-error-200 text-error-800',
+    container: 'bg-surface-error-muted border border-border-error-muted text-onSurface-error',
     icon: 'text-error-500',
-    title: 'text-error-800',
+    title: 'text-onSurface-error',
     closeBtn: 'text-error-600 hover:text-error-800 hover:bg-error-100',
     Icon: () => (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -50,9 +50,9 @@ const variantConfig = {
     ),
   },
   warning: {
-    container: 'bg-warning-50 border border-warning-200 text-warning-800',
+    container: 'bg-surface-warning-muted border border-border-warning-muted text-onSurface-warning',
     icon: 'text-warning-600',
-    title: 'text-warning-800',
+    title: 'text-onSurface-warning',
     closeBtn: 'text-warning-700 hover:text-warning-900 hover:bg-warning-100',
     Icon: () => (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -64,9 +64,9 @@ const variantConfig = {
     ),
   },
   info: {
-    container: 'bg-info-50 border border-info-200 text-info-800',
+    container: 'bg-surface-info-muted border border-border-info-muted text-onSurface-info',
     icon: 'text-info-500',
-    title: 'text-info-800',
+    title: 'text-onSurface-info',
     closeBtn: 'text-info-600 hover:text-info-800 hover:bg-info-100',
     Icon: () => (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -78,9 +78,9 @@ const variantConfig = {
     ),
   },
   neutral: {
-    container: 'bg-neutral-100 border border-neutral-200 text-neutral-800',
-    icon: 'text-neutral-500',
-    title: 'text-neutral-800',
+    container: 'bg-surface-inset border border-border-muted text-onSurface',
+    icon: 'text-onSurface-muted',
+    title: 'text-onSurface',
     closeBtn: 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-200',
     Icon: () => (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -154,7 +154,7 @@ export const Alert: React.FC<AlertProps> = ({
           onClick={onClose}
           className={[
             'flex-shrink-0 self-start -mt-0.5 -mr-0.5 p-1 rounded',
-            'transition-colors focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-1',
+            'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-1',
             config.closeBtn,
           ].join(' ')}
         >

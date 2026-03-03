@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormMessage } from '../../_internal/FormMessage';
 
 /**
  * Select Props
@@ -62,14 +63,14 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     }[size];
 
     const stateStyles = error
-      ? 'border-error-500 focus:border-error-500 focus:ring-error-300 bg-error-50'
-      : 'border-neutral-300 hover:border-neutral-400 focus:border-primary-600 focus:ring-primary-300 bg-white';
+      ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted'
+      : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
 
     const selectClasses = [
       'block',
       'rounded',
       'border',
-      'text-neutral-800',
+      'text-onSurface',
       'appearance-none',
       'cursor-pointer',
       'pr-10',
@@ -78,7 +79,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       'focus:outline-none',
       'focus:ring-2',
       'focus:ring-offset-0',
-      disabled ? 'opacity-50 cursor-not-allowed bg-neutral-100' : '',
+      disabled ? 'opacity-50 cursor-not-allowed bg-surface-disabled' : '',
       fullWidth ? 'w-full' : '',
       sizeStyles,
       stateStyles,
@@ -97,10 +98,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
-          <label htmlFor={selectId} className="text-sm font-medium text-neutral-700">
+          <label htmlFor={selectId} className="text-sm font-medium text-onSurface">
             {label}
             {required && (
-              <span className="ml-1 text-error-500" aria-label="必須">*</span>
+              <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
             )}
           </label>
         )}
@@ -124,18 +125,19 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {children}
           </select>
           {/* カスタム下矢印アイコン */}
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-subtle">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </span>
         </div>
-        {error && errorMessage && (
-          <p id={errorId} className="text-sm text-error-600" role="alert">{errorMessage}</p>
-        )}
-        {!error && helpText && (
-          <p id={helpId} className="text-sm text-neutral-500">{helpText}</p>
-        )}
+        <FormMessage
+          helpText={helpText}
+          helpId={helpId}
+          error={error}
+          errorMessage={errorMessage}
+          errorId={errorId}
+        />
       </div>
     );
   }

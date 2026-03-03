@@ -285,8 +285,8 @@ export const Semantic: Story = {
       <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
         {/* Live demo using CSS vars */}
         <div style={{
-          backgroundColor: 'var(--color-surface-error)',
-          border: '1px solid var(--color-border-error)',
+          backgroundColor: 'var(--color-surface-error-muted)',
+          border: '1px solid var(--color-border-error-muted)',
           borderRadius: '8px',
           padding: '16px',
           minWidth: '320px',
@@ -312,10 +312,9 @@ export const Semantic: Story = {
           </thead>
           <tbody>
             {[
-              { element: '背景', tw: 'bg-surface-error' },
-              { element: 'ボーダー', tw: 'border-border-error' },
-              { element: 'アイコン・タイトル', tw: 'text-onSurface-error' },
-              { element: '本文テキスト', tw: 'text-onSurface' },
+              { element: '背景', tw: 'bg-surface-error-muted' },
+              { element: 'ボーダー', tw: 'border-border-error-muted' },
+              { element: 'タイトル・本文', tw: 'text-onSurface-error' },
             ].map((row) => (
               <tr key={row.element}>
                 <td style={{ padding: '6px 16px 6px 0', color: '#171717' }}>{row.element}</td>
@@ -332,3 +331,4 @@ export const Semantic: Story = {
     </div>
   ),
 };
+

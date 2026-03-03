@@ -45,8 +45,8 @@ export const AllSizes: Story = {
   ),
 };
 
-export const WithFormField: Story = {
-  name: '実践例: フォームフィールドとの組み合わせ',
+export const WithFormControl: Story = {
+  name: '実践例: フォームコントロールとの組み合わせ',
   render: () => (
     <div className="flex flex-col gap-4 w-80">
       <div className="flex flex-col gap-1">

@@ -42,7 +42,7 @@ export const BorderRadius: Story = {
               style={{
                 width: '80px',
                 height: '80px',
-                backgroundColor: '#4F46E5',
+                backgroundColor: '#008965',
                 borderRadius: r.value === '9999px' ? '9999px' : r.value,
               }}
             />

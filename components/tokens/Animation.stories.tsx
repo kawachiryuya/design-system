@@ -39,7 +39,7 @@ function AnimatedBar({ duration, easing }: { duration: string; easing: string })
         style={{
           width: '40px',
           height: '8px',
-          backgroundColor: '#4F46E5',
+          backgroundColor: '#008965',
           borderRadius: '4px',
           transition: `transform ${duration} ${easing}`,
           position: 'absolute',

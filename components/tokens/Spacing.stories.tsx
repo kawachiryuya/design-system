@@ -61,7 +61,7 @@ export const Scale: Story = {
                 style={{
                   height: '20px',
                   width: Math.max(px, 2),
-                  backgroundColor: '#4F46E5',
+                  backgroundColor: '#008965',
                   borderRadius: '3px',
                   flexShrink: 0,
                   transition: 'width 0.2s',
@@ -118,7 +118,7 @@ export const Semantic: Story = {
                 style={{
                   height: '16px',
                   width: Math.max(px, 2),
-                  backgroundColor: '#818CF8',
+                  backgroundColor: '#30B792',
                   borderRadius: '3px',
                   flexShrink: 0,
                 }}
@@ -160,7 +160,7 @@ export const Semantic: Story = {
                 style={{
                   height: '16px',
                   width: Math.max(px, 2),
-                  backgroundColor: '#6366F1',
+                  backgroundColor: '#00A079',
                   borderRadius: '3px',
                   flexShrink: 0,
                 }}

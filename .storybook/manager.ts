@@ -9,9 +9,9 @@ const theme = create({
   brandUrl: 'https://design-system-storybook-murex.vercel.app',
   brandTarget: '_self',
 
-  // Colors — primary 600 (#4F46E5 indigo)
-  colorPrimary: '#4F46E5',
-  colorSecondary: '#4F46E5',
+  // Colors — primary 600 (#008965 teal)
+  colorPrimary: '#008965',
+  colorSecondary: '#008965',
 
   // UI
   appBg: '#FAFAFA',
@@ -27,8 +27,8 @@ const theme = create({
 
   // Toolbar
   barTextColor: '#525252',
-  barHoverColor: '#4F46E5',
-  barSelectedColor: '#4F46E5',
+  barHoverColor: '#008965',
+  barSelectedColor: '#008965',
   barBg: '#FFFFFF',
 
   // Form

@@ -72,6 +72,7 @@ module.exports = {
           warning:   'var(--color-surface-warning)',
           info:      'var(--color-surface-info)',
           disabled:  'var(--color-surface-disabled)',
+          skeleton:  'var(--color-surface-skeleton)',
         },
         state: {
           hover:   'var(--color-state-hover)',

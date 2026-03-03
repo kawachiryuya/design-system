@@ -38,7 +38,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   className = '',
 }) => {
   const baseStyles = [
-    'bg-neutral-200',
+    'bg-surface-skeleton',
     animated ? 'animate-pulse' : '',
   ];
 

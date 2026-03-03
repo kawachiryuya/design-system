@@ -16,6 +16,7 @@
     --color-surface-warning:   #FFF2E0;   /* warning-50 */
     --color-surface-info:      #E8F7FF;   /* info-50 */
     --color-surface-disabled:  #F5F5F5;   /* neutral-100 */
+    --color-surface-skeleton:  #E5E5E5;   /* neutral-200 */
 
     /* ── onSurface (text / icon) ── */
     --color-on-default:   #171717;   /* neutral-900 */

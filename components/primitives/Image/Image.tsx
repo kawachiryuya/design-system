@@ -46,9 +46,9 @@ const roundedStyles = {
 };
 
 const FallbackPlaceholder: React.FC = () => (
-  <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
+  <div className="absolute inset-0 flex items-center justify-center bg-surface-raised">
     <svg
-      className="w-10 h-10 text-neutral-300"
+      className="w-10 h-10 text-onSurface-subtle"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -89,7 +89,7 @@ export const Image: React.FC<ImageProps> = ({
   const containerClass = [
     'relative',
     'overflow-hidden',
-    'bg-neutral-100',
+    'bg-surface-raised',
     aspectRatioStyles[aspectRatio],
     roundedStyles[rounded],
     className,

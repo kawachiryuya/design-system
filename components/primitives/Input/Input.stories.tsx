@@ -81,16 +81,6 @@ export const Disabled: Story = {
   args: { disabled: true, label: 'ユーザー名' },
 };
 
-export const FullWidth: Story = {
-  name: 'Full Width（通常との比較）',
-  render: () => (
-    <div className="w-96 flex flex-col gap-3 items-start">
-      <Input placeholder="通常幅" />
-      <Input placeholder="fullWidth: 親の横幅いっぱい" fullWidth />
-    </div>
-  ),
-};
-
 export const LoginForm: Story = {
   name: '実践例: ログインフォーム',
   render: () => (

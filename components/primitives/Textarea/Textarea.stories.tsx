@@ -80,16 +80,6 @@ export const NoResize: Story = {
   args: { resize: 'none', helpText: 'サイズは固定です' },
 };
 
-export const FullWidth: Story = {
-  name: 'Full Width（通常との比較）',
-  render: () => (
-    <div className="w-96 flex flex-col gap-3 items-start">
-      <Textarea placeholder="通常幅" rows={3} />
-      <Textarea placeholder="fullWidth: 親の横幅いっぱい" fullWidth rows={3} />
-    </div>
-  ),
-};
-
 export const ContactForm: Story = {
   name: '実践例: お問い合わせフォーム',
   render: () => {

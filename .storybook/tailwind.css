@@ -9,12 +9,13 @@
     --color-surface-default:  #FFFFFF;
     --color-surface-raised:   #FAFAFA;          /* neutral-50 */
     --color-surface-overlay:  rgba(0, 0, 0, 0.5);
-    --color-surface-primary:  #E4FCF2;   /* primary-50 */
-    --color-surface-success:  #E8FBE8;   /* success-50 */
-    --color-surface-error:    #FFECE9;   /* error-50 */
-    --color-surface-warning:  #FFF2E0;   /* warning-50 */
-    --color-surface-info:     #E8F7FF;   /* info-50 */
-    --color-surface-disabled: #F5F5F5;   /* neutral-100 */
+    --color-surface-primary:   #008965;   /* primary-600 */
+    --color-surface-secondary: #E4FCF2;   /* primary-50 */
+    --color-surface-success:   #E8FBE8;   /* success-50 */
+    --color-surface-error:     #FFECE9;   /* error-50 */
+    --color-surface-warning:   #FFF2E0;   /* warning-50 */
+    --color-surface-info:      #E8F7FF;   /* info-50 */
+    --color-surface-disabled:  #F5F5F5;   /* neutral-100 */
 
     /* ── onSurface (text / icon) ── */
     --color-on-default:   #171717;   /* neutral-900 */
@@ -41,6 +42,7 @@
     --color-state-hover:   rgba(0, 0, 0, 0.08);
     --color-state-active:  rgba(0, 0, 0, 0.12);
     --color-state-dragged: rgba(0, 0, 0, 0.16);
+
   }
 }
 

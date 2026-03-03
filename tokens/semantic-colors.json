@@ -8,12 +8,13 @@
     "default":  { "value": "white",       "description": "カード・モーダル" },
     "raised":   { "value": "neutral-50",  "description": "入れ子サーフェス" },
     "overlay":  { "value": "black/50",    "description": "モーダルオーバーレイ" },
-    "primary":  { "value": "primary-50",  "description": "選択状態・アクティブ項目" },
-    "success":  { "value": "success-50",  "description": "成功Alert等" },
-    "error":    { "value": "error-50",    "description": "エラーAlert等" },
-    "warning":  { "value": "warning-50",  "description": "警告Alert等" },
-    "info":     { "value": "info-50",     "description": "情報Alert等" },
-    "disabled": { "value": "neutral-100", "description": "非活性エリア" }
+    "primary":   { "value": "primary-600", "description": "主要アクション（Primaryボタン等）" },
+    "secondary": { "value": "primary-50",  "description": "選択状態・アクティブ項目" },
+    "success":   { "value": "success-50",  "description": "成功Alert等" },
+    "error":     { "value": "error-50",    "description": "エラーAlert等" },
+    "warning":   { "value": "warning-50",  "description": "警告Alert等" },
+    "info":      { "value": "info-50",     "description": "情報Alert等" },
+    "disabled":  { "value": "neutral-100", "description": "非活性エリア" }
   },
   "onSurface": {
     "default":  { "value": "neutral-900", "description": "主テキスト" },

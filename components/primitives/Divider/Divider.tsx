@@ -9,8 +9,6 @@ export interface DividerProps {
   orientation?: 'horizontal' | 'vertical';
   /** 中央に表示するラベルテキスト（horizontal のみ） */
   label?: string;
-  /** 線の色 */
-  color?: 'neutral' | 'primary';
   /** 線の太さ */
   weight?: 'thin' | 'normal';
   /** 追加CSSクラス */
@@ -26,28 +24,16 @@ export interface DividerProps {
  * <Divider />
  * <Divider label="または" />
  * <Divider orientation="vertical" />
- * <Divider color="primary" />
  */
 export const Divider: React.FC<DividerProps> = ({
   orientation = 'horizontal',
   label,
-  color = 'neutral',
   weight = 'thin',
   className = '',
 }) => {
-  const colorStyles = {
-    neutral: 'border-neutral-200',
-    primary: 'border-primary-200',
-  };
-
-  const weightStyles = {
-    thin: 'border-0',
-    normal: 'border-0',
-  };
-
-  const borderClass = [colorStyles[color]].join(' ');
-  const heightClass = weight === 'thin' ? 'border-t' : 'border-t-2';
-  const heightVerticalClass = weight === 'thin' ? 'border-l' : 'border-l-2';
+  const borderColor = 'border-border-muted';
+  const hBorderClass = weight === 'thin' ? 'border-t' : 'border-t-2';
+  const vBorderClass = weight === 'thin' ? 'border-l' : 'border-l-2';
 
   if (orientation === 'vertical') {
     return (
@@ -55,12 +41,9 @@ export const Divider: React.FC<DividerProps> = ({
         role="separator"
         aria-orientation="vertical"
         className={[
-          'inline-block',
           'self-stretch',
-          'h-auto',
-          'min-h-full',
-          heightVerticalClass,
-          borderClass,
+          vBorderClass,
+          borderColor,
           className,
         ].join(' ')}
       />
@@ -74,11 +57,11 @@ export const Divider: React.FC<DividerProps> = ({
         aria-label={label}
         className={['flex', 'items-center', 'gap-3', className].join(' ')}
       >
-        <div className={['flex-1', heightClass, borderClass].join(' ')} />
-        <span className="text-sm text-neutral-500 whitespace-nowrap select-none">
+        <div className={['flex-1', hBorderClass, borderColor].join(' ')} />
+        <span className="text-sm text-onSurface-muted whitespace-nowrap select-none">
           {label}
         </span>
-        <div className={['flex-1', heightClass, borderClass].join(' ')} />
+        <div className={['flex-1', hBorderClass, borderColor].join(' ')} />
       </div>
     );
   }
@@ -88,9 +71,9 @@ export const Divider: React.FC<DividerProps> = ({
       role="separator"
       className={[
         'w-full',
-        heightClass,
-        borderClass,
-        weightStyles[weight],
+        'border-0',
+        hBorderClass,
+        borderColor,
         'm-0',
         className,
       ].join(' ')}

@@ -17,7 +17,7 @@ const meta: Meta<typeof Typography> = {
     },
     color: {
       control: 'select',
-      options: ['default', 'muted', 'disabled', 'primary', 'error', 'success', 'warning'],
+      options: ['default', 'muted', 'subtle', 'disabled', 'primary', 'success', 'error', 'warning', 'info', 'inherit'],
     },
     truncate: { control: 'boolean' },
     children: { control: 'text' },
@@ -60,7 +60,7 @@ export const AllColors: Story = {
   name: '全カラー',
   render: () => (
     <div className="flex flex-col gap-3">
-      {(['default', 'muted', 'disabled', 'primary', 'error', 'success', 'warning'] as const).map((color) => (
+      {(['default', 'muted', 'subtle', 'disabled', 'primary', 'success', 'error', 'warning', 'info'] as const).map((color) => (
         <Typography key={color} variant="body" color={color}>
           {color} — テキストカラーのサンプル文字列
         </Typography>
@@ -70,8 +70,13 @@ export const AllColors: Story = {
 };
 
 export const PolymorphicExample: Story = {
-  name: 'ポリモーフィック: visual=h2 / semantic=p',
-  args: { variant: 'h2', as: 'p', children: '見た目はH2、実際はp要素' },
+  name: 'ポリモーフィック: as で文書構造を制御',
+  render: () => (
+    <nav className="flex flex-col gap-3 w-64">
+      <Typography variant="body-sm" as="h2">サイドバーメニュー</Typography>
+      <Typography variant="caption" color="muted">見た目は小さいが、文書構造上は h2</Typography>
+    </nav>
+  ),
 };
 
 export const Truncated: Story = {

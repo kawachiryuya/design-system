@@ -50,9 +50,9 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
     }[size];
 
     const strokeColor = {
-      primary: 'text-primary-600',
-      neutral: 'text-neutral-600',
-      white:   'text-white',
+      primary: 'text-onSurface-primary',
+      neutral: 'text-onSurface-muted',
+      white:   'text-onSurface-inverse',
     }[color];
 
     const wrapperClasses = ['inline-flex', 'items-center', 'justify-center', className]

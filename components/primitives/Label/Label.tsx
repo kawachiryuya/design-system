@@ -63,8 +63,8 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
 
     // State styles
     const stateStyles = disabled
-      ? ['text-neutral-400', 'cursor-not-allowed']
-      : ['text-neutral-700'];
+      ? ['text-onSurface-disabled', 'cursor-not-allowed']
+      : ['text-onSurface'];
 
     const labelClasses = [
       ...baseStyles,
@@ -87,7 +87,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         {/* 必須マーク（required と optional は排他的。required を優先） */}
         {required && !optional && (
           <span
-            className="text-error-500 font-normal"
+            className="text-onSurface-error font-normal"
             aria-label="必須"
           >
             *
@@ -96,7 +96,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
 
         {/* 任意マーク */}
         {optional && !required && (
-          <span className="text-neutral-400 font-normal text-xs">
+          <span className="text-onSurface-subtle font-normal text-xs">
             （任意）
           </span>
         )}

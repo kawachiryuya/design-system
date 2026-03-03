@@ -24,10 +24,12 @@ export type TypographyColor =
   | 'default'
   | 'muted'
   | 'subtle'
+  | 'disabled'
   | 'primary'
   | 'success'
   | 'error'
   | 'warning'
+  | 'info'
   | 'inherit';
 
 /** HTML要素の型（as prop） */
@@ -148,15 +150,17 @@ const variantStyles: Record<TypographyVariant, string[]> = {
   ],
 };
 
-/** カラー → Tailwind クラスのマップ（tokens/colors.json） */
+/** カラー → Tailwind クラスのマップ（semantic-colors.json） */
 const colorStyles: Record<TypographyColor, string> = {
-  default:  'text-neutral-800',
-  muted:    'text-neutral-600',
-  subtle:   'text-neutral-400',
-  primary:  'text-primary-600',
-  success:  'text-success-600',
-  error:    'text-error-600',
-  warning:  'text-warning-600',
+  default:  'text-onSurface',
+  muted:    'text-onSurface-muted',
+  subtle:   'text-onSurface-subtle',
+  disabled: 'text-onSurface-disabled',
+  primary:  'text-onSurface-primary',
+  success:  'text-onSurface-success',
+  error:    'text-onSurface-error',
+  warning:  'text-onSurface-warning',
+  info:     'text-onSurface-info',
   inherit:  'text-inherit',
 };
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Divider } from './Divider';
 
@@ -7,33 +8,39 @@ const meta: Meta<typeof Divider> = {
   tags: ['autodocs'],
   argTypes: {
     orientation: { control: 'radio', options: ['horizontal', 'vertical'] },
-    color: { control: 'radio', options: ['neutral', 'primary'] },
     weight: { control: 'radio', options: ['thin', 'normal'] },
     label: { control: 'text' },
   },
   args: {
     orientation: 'horizontal',
-    color: 'neutral',
     weight: 'thin',
   },
-  decorators: [(Story) => <div className="w-80 p-4"><Story /></div>],
 };
 
 export default meta;
 type Story = StoryObj<typeof Divider>;
 
-export const Default: Story = {};
+/** 上下にテキストを配置して区切り線の視認性を確保する共通デコレータ */
+const withContext = (Story: React.FC) => (
+  <div className="w-80 flex flex-col gap-3">
+    <span className="text-sm text-neutral-600">上のコンテンツ</span>
+    <Story />
+    <span className="text-sm text-neutral-600">下のコンテンツ</span>
+  </div>
+);
+
+export const Default: Story = {
+  decorators: [withContext],
+};
 
 export const WithLabel: Story = {
   args: { label: 'または' },
-};
-
-export const PrimaryColor: Story = {
-  args: { color: 'primary' },
+  decorators: [withContext],
 };
 
 export const NormalWeight: Story = {
   args: { weight: 'normal' },
+  decorators: [withContext],
 };
 
 export const Vertical: Story = {

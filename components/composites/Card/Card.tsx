@@ -8,19 +8,27 @@ import React from 'react';
  */
 export interface CardProps {
   /** 外観バリアント */
-  variant?: 'elevated' | 'outlined' | 'flat';
+  variant?: 'elevated' | 'outlined' | 'filled';
   /** パディング */
   padding?: 'none' | 'sm' | 'md' | 'lg';
   /** クリック可能（ホバー・フォーカス状態を付与） */
   clickable?: boolean;
   /** onClick ハンドラー */
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onClick?: React.MouseEventHandler<HTMLElement>;
+  /** リンク先 URL（指定時は <a> でレンダリング） */
+  href?: string;
+  /** リンクの target 属性 */
+  target?: string;
+  /** リンクの rel 属性 */
+  rel?: string;
   /** 追加CSSクラス */
   className?: string;
   children: React.ReactNode;
 }
 
 export interface CardHeaderProps {
+  /** ボーダー表示 */
+  divider?: boolean;
   className?: string;
   children: React.ReactNode;
 }
@@ -33,6 +41,8 @@ export interface CardBodyProps {
 export interface CardFooterProps {
   /** フッター内のアクションを右端に揃える */
   justify?: 'start' | 'end' | 'between';
+  /** ボーダー表示 */
+  divider?: boolean;
   className?: string;
   children: React.ReactNode;
 }
@@ -45,9 +55,9 @@ const paddingStyles = {
 };
 
 const variantStyles = {
-  elevated: 'bg-white shadow-md rounded-lg',
-  outlined: 'bg-white border border-neutral-200 rounded-lg',
-  flat: 'bg-neutral-50 rounded-lg',
+  elevated: 'bg-surface shadow-md rounded-lg',
+  outlined: 'bg-surface border border-border-muted rounded-lg',
+  filled: 'bg-surface-inset border border-border-muted rounded-lg',
 };
 
 /**
@@ -73,31 +83,50 @@ export const Card: React.FC<CardProps> & {
   padding = 'none',
   clickable = false,
   onClick,
+  href,
+  target,
+  rel,
   className = '',
   children,
 }) => {
-  const isInteractive = clickable || !!onClick;
+  const isLink = !!href;
+  const isInteractive = isLink || clickable || !!onClick;
 
   const classes = [
     'overflow-hidden',
     variantStyles[variant],
     paddingStyles[padding],
     isInteractive
-      ? 'cursor-pointer transition-shadow duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400'
+      ? 'cursor-pointer transition-shadow duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
       : '',
+    isLink ? 'block no-underline text-inherit' : '',
     className,
   ].filter(Boolean).join(' ');
+
+  if (isLink) {
+    return (
+      <a
+        className={classes}
+        href={href}
+        target={target}
+        rel={target === '_blank' ? (rel ?? 'noopener noreferrer') : rel}
+        onClick={onClick}
+      >
+        {children}
+      </a>
+    );
+  }
 
   return (
     <div
       className={classes}
       onClick={onClick}
-      role={isInteractive ? 'button' : undefined}
-      tabIndex={isInteractive ? 0 : undefined}
-      onKeyDown={isInteractive ? (e) => {
+      role={clickable || onClick ? 'button' : undefined}
+      tabIndex={clickable || onClick ? 0 : undefined}
+      onKeyDown={clickable || onClick ? (e) => {
         if ((e.key === 'Enter' || e.key === ' ') && onClick) {
           e.preventDefault();
-          onClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+          onClick(e as unknown as React.MouseEvent<HTMLElement>);
         }
       } : undefined}
     >
@@ -106,8 +135,12 @@ export const Card: React.FC<CardProps> & {
   );
 };
 
-const CardHeader: React.FC<CardHeaderProps> = ({ className = '', children }) => (
-  <div className={['px-4 py-3 border-b border-neutral-200 font-medium text-neutral-800', className].join(' ')}>
+const CardHeader: React.FC<CardHeaderProps> = ({ divider = true, className = '', children }) => (
+  <div className={[
+    'px-4 py-3 font-medium text-onSurface',
+    divider ? 'border-b border-border-muted' : '',
+    className,
+  ].filter(Boolean).join(' ')}>
     {children}
   </div>
 );
@@ -124,12 +157,13 @@ const justifyStyles = {
   between: 'justify-between',
 };
 
-const CardFooter: React.FC<CardFooterProps> = ({ justify = 'end', className = '', children }) => (
+const CardFooter: React.FC<CardFooterProps> = ({ justify = 'end', divider = true, className = '', children }) => (
   <div className={[
-    'px-4 py-3 border-t border-neutral-200 flex items-center gap-2',
+    'px-4 py-3 flex items-center gap-2',
+    divider ? 'border-t border-border-muted' : '',
     justifyStyles[justify],
     className,
-  ].join(' ')}>
+  ].filter(Boolean).join(' ')}>
     {children}
   </div>
 );

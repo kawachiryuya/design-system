@@ -87,17 +87,13 @@ export const AnimatedDemo: Story = {
         <ProgressBar value={Math.round(progress)} color={color}
           label={progress >= 100 ? 'アップロード完了' : 'ファイルをアップロード中...'}
           showValue />
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-end">
+          <Button size="small" variant="tertiary" onClick={() => { setProgress(0); setRunning(false); }}>
+            リセット
+          </Button>
           <Button size="small" onClick={() => { setProgress(0); setRunning(true); }}
             disabled={running}>
             開始
-          </Button>
-          <Button size="small" variant="secondary" onClick={() => setRunning(false)}
-            disabled={!running}>
-            一時停止
-          </Button>
-          <Button size="small" variant="tertiary" onClick={() => { setProgress(0); setRunning(false); }}>
-            リセット
           </Button>
         </div>
       </div>
@@ -114,6 +110,9 @@ export const StepProgress: Story = {
 
     return (
       <div className="w-80 space-y-4">
+        <p className="text-sm text-onSurface-muted">
+          ステップ {current}/{steps.length}: <strong>{steps[current - 1]}</strong>
+        </p>
         <ProgressBar value={progress} size="sm" color="primary" />
         <div className="flex justify-between">
           {steps.map((step, i) => (
@@ -125,10 +124,7 @@ export const StepProgress: Story = {
             </button>
           ))}
         </div>
-        <p className="text-sm text-onSurface-muted">
-          ステップ {current}/{steps.length}: <strong>{steps[current - 1]}</strong>
-        </p>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-end">
           <Button size="small" variant="tertiary" disabled={current === 1}
             onClick={() => setCurrent((c) => c - 1)}>戻る</Button>
           <Button size="small" disabled={current === steps.length}

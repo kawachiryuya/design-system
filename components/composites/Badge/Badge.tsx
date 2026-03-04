@@ -88,14 +88,14 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
         ? outlineStyles[variant!]
         : softStyles[variant!];
 
-    const sizeStyle = size === 'small' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs';
+    const sizeStyle = size === 'small' ? 'px-2 py-[2px] text-xs' : 'px-[10px] py-1 text-xs';
 
     const badgeClasses = [
       'inline-flex',
       'items-center',
-      'gap-1.5',
+      'gap-[6px]',
       'font-medium',
-      'rounded-full',
+      'rounded',
       'leading-none',
       'whitespace-nowrap',
       sizeStyle,
@@ -111,7 +111,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       <span ref={ref} className={badgeClasses} {...props}>
         {dot && (
           <span
-            className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+            className={`inline-block w-[6px] h-[6px] rounded-full flex-shrink-0 ${
               appearance === 'solid' ? 'bg-white/70' : dotColors[v]
             }`}
             aria-hidden="true"

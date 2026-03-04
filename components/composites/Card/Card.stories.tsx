@@ -2,15 +2,13 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Card } from './Card';
 import { Button } from '../../primitives/Button/Button';
 import { Badge } from '../Badge/Badge';
-import { Avatar } from '../Avatar/Avatar';
-import { Image } from '../../primitives/Image/Image';
 
 const meta: Meta<typeof Card> = {
   title: 'Composites/Card',
   component: Card,
   tags: ['autodocs'],
   argTypes: {
-    variant: { control: 'radio', options: ['elevated', 'outlined', 'flat'] },
+    variant: { control: 'radio', options: ['elevated', 'outlined', 'filled'] },
     padding: { control: 'radio', options: ['none', 'sm', 'md', 'lg'] },
     clickable: { control: 'boolean' },
   },
@@ -26,9 +24,25 @@ export const Default: Story = {
     <Card {...args}>
       <Card.Header>カードタイトル</Card.Header>
       <Card.Body>
-        <p className="text-sm text-neutral-600">ここにコンテンツが入ります。</p>
+        <p className="text-sm text-onSurface-muted">ここにコンテンツが入ります。</p>
       </Card.Body>
       <Card.Footer>
+        <Button size="small" variant="tertiary">キャンセル</Button>
+        <Button size="small">保存</Button>
+      </Card.Footer>
+    </Card>
+  ),
+};
+
+export const WithoutDivider: Story = {
+  name: 'Header/Footer ボーダーなし',
+  render: (args) => (
+    <Card {...args}>
+      <Card.Header divider={false}>カードタイトル</Card.Header>
+      <Card.Body>
+        <p className="text-sm text-onSurface-muted">divider=false で Header/Footer のボーダーを非表示にできます。</p>
+      </Card.Body>
+      <Card.Footer divider={false}>
         <Button size="small" variant="tertiary">キャンセル</Button>
         <Button size="small">保存</Button>
       </Card.Footer>
@@ -39,11 +53,11 @@ export const Default: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-col gap-4 w-80">
-      {(['elevated', 'outlined', 'flat'] as const).map((variant) => (
+      {(['elevated', 'outlined', 'filled'] as const).map((variant) => (
         <Card key={variant} variant={variant}>
           <Card.Body>
-            <p className="text-sm font-medium text-neutral-800">{variant}</p>
-            <p className="text-xs text-neutral-500 mt-1">カードのバリアントサンプル</p>
+            <p className="text-sm font-medium text-onSurface">{variant}</p>
+            <p className="text-xs text-onSurface-subtle mt-1">カードのバリアントサンプル</p>
           </Card.Body>
         </Card>
       ))}
@@ -56,8 +70,20 @@ export const Clickable: Story = {
   render: (args) => (
     <Card {...args} onClick={() => alert('カードをクリック')}>
       <Card.Body>
-        <p className="text-sm font-medium text-neutral-800">クリック可能なカード</p>
-        <p className="text-xs text-neutral-500 mt-1">Hover / Focus でシャドウが変化します</p>
+        <p className="text-sm font-medium text-onSurface">クリック可能なカード</p>
+        <p className="text-xs text-onSurface-subtle mt-1">onClick でハンドラーを指定</p>
+      </Card.Body>
+    </Card>
+  ),
+};
+
+export const LinkCard: Story = {
+  name: 'リンクカード（href）',
+  render: () => (
+    <Card variant="outlined" href="#" target="_blank">
+      <Card.Body>
+        <p className="text-sm font-medium text-onSurface">リンクカード</p>
+        <p className="text-xs text-onSurface-subtle mt-1">href を指定すると &lt;a&gt; でレンダリングされます</p>
       </Card.Body>
     </Card>
   ),
@@ -68,7 +94,7 @@ export const WithoutParts: Story = {
   args: { padding: 'md' },
   render: (args) => (
     <Card {...args}>
-      <p className="text-sm text-neutral-700">シンプルなテキストカード。</p>
+      <p className="text-sm text-onSurface">シンプルなテキストカード。</p>
     </Card>
   ),
 };
@@ -79,7 +105,7 @@ export const LongContent: Story = {
     <Card variant="outlined">
       <Card.Header>コンテンツが長い場合の挙動</Card.Header>
       <Card.Body>
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm text-onSurface-muted">
           デザインシステムは、チーム全体が共有できる単一の真実を提供します。
           デザイナーとエンジニアが共通の語彙を持つことで、コラボレーションが円滑になります。
           Atomic Designの考え方に基づいてAtoms・Molecules・Organismsと段階的に積み上げることで、
@@ -87,7 +113,7 @@ export const LongContent: Story = {
           また、デザイントークンを使用することで、カラー・スペーシング・タイポグラフィなどの
           基本的な要素を一元管理し、変更に強いシステムを構築できます。
         </p>
-        <p className="text-sm text-neutral-600 mt-3">
+        <p className="text-sm text-onSurface-muted mt-3">
           とても長い単語なしのテキスト：aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
         </p>
       </Card.Body>
@@ -99,57 +125,39 @@ export const LongContent: Story = {
   ),
 };
 
-export const BlogCard: Story = {
-  name: '実践例: ブログカード',
+export const NoticeCard: Story = {
+  name: '実践例: お知らせカード',
   render: () => (
-    <Card variant="outlined" clickable>
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&auto=format&fit=crop"
-        alt="山の風景" aspectRatio="video" />
+    <Card variant="outlined" href="#">
+      <Card.Header divider={false}>
+        <div className="flex items-center justify-between">
+          <span>メンテナンスのお知らせ</span>
+          <Badge variant="warning" appearance="soft" size="small">重要</Badge>
+        </div>
+      </Card.Header>
       <Card.Body>
-        <div className="flex items-center justify-between mb-2">
-          <Badge variant="primary" appearance="soft" size="small">デザイン</Badge>
-          <span className="text-xs text-neutral-400">2026.02.21</span>
-        </div>
-        <h3 className="text-base font-semibold text-neutral-800 leading-snug mb-1">
-          デザインシステム構築のすすめ
-        </h3>
-        <p className="text-sm text-neutral-600 line-clamp-2">
-          一貫したUIを素早く組み立てるための基盤として、デザインシステムが果たす役割を解説します。
+        <p className="text-sm text-onSurface-muted">
+          3月10日 02:00〜06:00 の間、サーバーメンテナンスを実施します。
         </p>
+        <p className="text-xs text-onSurface-subtle mt-2">2026.03.04</p>
       </Card.Body>
-      <Card.Footer justify="between">
-        <div className="flex items-center gap-2">
-          <Avatar src="https://i.pravatar.cc/150?img=5" name="田中 太郎" size="xs" />
-          <span className="text-xs text-neutral-500">田中 太郎</span>
-        </div>
-        <span className="text-xs text-neutral-400">5 min read</span>
-      </Card.Footer>
     </Card>
   ),
 };
 
-export const ProfileCard: Story = {
-  name: '実践例: プロフィールカード',
+export const ActionCard: Story = {
+  name: '実践例: アクション付きカード',
   render: () => (
-    <Card variant="elevated">
-      <Card.Body className="flex flex-col items-center text-center gap-3 py-6">
-        <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="xl" status="online" />
-        <div>
-          <p className="font-semibold text-neutral-800">鈴木 花子</p>
-          <p className="text-sm text-neutral-500">UI デザイナー</p>
-        </div>
-        <div className="flex gap-6 text-center">
-          {[['48', '記事'], ['1.2k', 'フォロワー'], ['320', 'いいね']].map(([num, label]) => (
-            <div key={label}>
-              <p className="font-semibold text-neutral-800">{num}</p>
-              <p className="text-xs text-neutral-500">{label}</p>
-            </div>
-          ))}
-        </div>
+    <Card variant="outlined">
+      <Card.Header>プロジェクト設定</Card.Header>
+      <Card.Body>
+        <p className="text-sm text-onSurface-muted">
+          プロジェクトの表示名や説明を変更できます。
+        </p>
       </Card.Body>
-      <Card.Footer justify="between">
-        <Button variant="tertiary" size="small" className="flex-1">メッセージ</Button>
-        <Button size="small" className="flex-1">フォロー</Button>
+      <Card.Footer>
+        <Button size="small" variant="tertiary">キャンセル</Button>
+        <Button size="small">保存</Button>
       </Card.Footer>
     </Card>
   ),
@@ -166,8 +174,8 @@ export const StatCard: Story = {
         { label: '平均セッション', value: '8m 32s', change: '+1m 12s', up: true },
       ].map(({ label, value, change, up }) => (
         <Card key={label} variant="outlined" padding="md">
-          <p className="text-xs text-neutral-500">{label}</p>
-          <p className="text-xl font-bold text-neutral-800 mt-1">{value}</p>
+          <p className="text-xs text-onSurface-subtle">{label}</p>
+          <p className="text-xl font-bold text-onSurface mt-1">{value}</p>
           <p className={`text-xs mt-1 ${up ? 'text-success-600' : 'text-error-600'}`}>{change}</p>
         </Card>
       ))}

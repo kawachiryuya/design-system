@@ -2,7 +2,7 @@
 
 **分類**: Composite
 
-キーボード操作に対応したタブナビゲーション。underline / pill の2バリアント、制御・非制御の両モードに対応。
+キーボード操作に対応したタブナビゲーション。制御・非制御の両モードに対応。
 
 ---
 
@@ -16,7 +16,6 @@
 | `defaultActiveId` | `string` | 最初のタブ | 初期アクティブタブのID（非制御） |
 | `activeId` | `string` | - | アクティブタブのID（制御） |
 | `onChange` | `(id: string) => void` | - | タブ切り替え時のコールバック |
-| `variant` | `'underline' \| 'pill'` | `'underline'` | 外観バリアント |
 | `ariaLabel` | `string` | `'タブナビゲーション'` | タブリストの aria-label |
 | `className` | `string` | `''` | 追加CSSクラス |
 
@@ -60,12 +59,6 @@ const [activeTab, setActiveTab] = useState('profile');
 />
 ```
 
-### Pill バリアント
-
-```tsx
-<Tabs variant="pill" tabs={[...]} />
-```
-
 ### バッジ付き
 
 ```tsx
@@ -78,11 +71,6 @@ const [activeTab, setActiveTab] = useState('profile');
 ---
 
 ## デザイン原則
-
-### バリアントの使い分け
-
-- **underline**: ページ内のセクション切り替え（デフォルト）
-- **pill**: コンテンツのフィルタリング、よりカジュアルな切り替え
 
 ### 使用ガイドライン
 
@@ -120,19 +108,20 @@ const [activeTab, setActiveTab] = useState('profile');
 
 | トークン | 使用箇所 |
 |---------|---------|
-| `colors.primary` | アクティブタブ（underline のボーダー、pill の背景） |
-| `colors.neutral` | 非アクティブタブのテキスト・ボーダー |
-| `animation.duration.DEFAULT` | transition-colors（200ms） |
-| `radius.full` | pill バリアントの角丸 |
+| `surface-primary` | アクティブタブの下線 |
+| `onSurface-primary` | アクティブタブのテキスト |
+| `onSurface-muted` | 非アクティブタブのテキスト |
+| `onSurface-disabled` | 無効タブのテキスト |
+| `border-muted` | タブリストの下線 |
+| `surface-skeleton` | バッジの背景 |
+| `border-focus` | フォーカスリング |
 
 ### Tailwind クラス
 
 ```
-underline アクティブ: text-primary-600 after:bg-primary-600
-underline 非アクティブ: text-neutral-500 hover:text-neutral-700
-pill アクティブ: bg-primary-600 text-white shadow-sm
-pill 非アクティブ: text-neutral-600 hover:bg-neutral-100
-バッジ: text-xs font-semibold px-1.5 py-0.5 rounded-full
+アクティブ: text-onSurface-primary after:bg-surface-primary
+非アクティブ: text-onSurface-muted hover:text-onSurface
+バッジ: bg-surface-skeleton text-onSurface-muted rounded
 ```
 
 ---
@@ -141,4 +130,6 @@ pill 非アクティブ: text-neutral-600 hover:bg-neutral-100
 
 | 日付 | バージョン | 変更内容 |
 |------|-----------|----------|
+| 2026-03-05 | 1.2.0 | pill バリアント削除、spacing 修正、バッジ 3桁対応 |
+| 2026-03-04 | 1.1.0 | セマンティックカラートークンに移行 |
 | 2026-02-19 | 1.0.0 | 初版作成 |

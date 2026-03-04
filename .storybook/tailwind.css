@@ -36,7 +36,7 @@
     --color-on-inverse:   #FFFFFF;
 
     /* ── surface (additional) ── */
-    --color-surface-inset: #F5F5F5;            /* neutral-100 — recessed/inset surfaces */
+    --color-surface-inset: #FAFAFA;             /* neutral-50 — recessed/inset surfaces */
 
     /* ── border ── */
     --color-border-default:  #D4D4D4;   /* neutral-300 */
@@ -61,3 +61,8 @@
 
 @tailwind components;
 @tailwind utilities;
+
+@keyframes indeterminate {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}

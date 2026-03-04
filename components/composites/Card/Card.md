@@ -12,10 +12,14 @@
 
 | Prop | Type | Default | 説明 |
 |------|------|---------|------|
-| `variant` | `'elevated' \| 'outlined' \| 'flat'` | `'outlined'` | 外観バリアント |
+| `variant` | `'elevated' \| 'outlined' \| 'filled'` | `'outlined'` | 外観バリアント |
+
 | `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'none'` | パディング |
 | `clickable` | `boolean` | `false` | クリック可能（ホバー・フォーカス状態を付与） |
 | `onClick` | `React.MouseEventHandler` | - | onClick ハンドラー |
+| `href` | `string` | - | リンク先 URL（指定時は `<a>` でレンダリング） |
+| `target` | `string` | - | リンクの target 属性 |
+| `rel` | `string` | - | リンクの rel 属性（`target="_blank"` 時は自動で `noopener noreferrer`） |
 | `className` | `string` | `''` | 追加CSSクラス |
 | `children` | `React.ReactNode` | **必須** | カードの内容 |
 
@@ -25,6 +29,7 @@
 |------|------|---------|------|
 | `className` | `string` | `''` | 追加CSSクラス |
 | `children` | `React.ReactNode` | **必須** | スロットの内容 |
+| `divider` | `boolean` | `true` | Header/Footer のみ。ボーダーの表示 |
 | `justify` | `'start' \| 'end' \| 'between'` | `'end'` | Footer のみ。アクションの配置 |
 
 ---
@@ -39,7 +44,19 @@ import { Card } from '@/components/Card';
 <Card variant="outlined">
   <Card.Header>タイトル</Card.Header>
   <Card.Body>本文コンテンツ</Card.Body>
-  <Card.Footer justify="end">
+  <Card.Footer>
+    <Button>保存</Button>
+  </Card.Footer>
+</Card>
+```
+
+### ボーダー付き Header/Footer
+
+```tsx
+<Card variant="outlined">
+  <Card.Header divider>タイトル</Card.Header>
+  <Card.Body>コンテンツ</Card.Body>
+  <Card.Footer divider justify="end">
     <Button>保存</Button>
   </Card.Footer>
 </Card>
@@ -54,8 +71,21 @@ import { Card } from '@/components/Card';
 // ボーダー（outlined）
 <Card variant="outlined">...</Card>
 
-// フラット（flat）
-<Card variant="flat">...</Card>
+// フラット（filled）
+<Card variant="filled">...</Card>
+```
+
+### リンクカード
+
+```tsx
+<Card href="/detail" variant="outlined">
+  <Card.Body>クリックで詳細へ</Card.Body>
+</Card>
+
+// 外部リンク（自動で rel="noopener noreferrer"）
+<Card href="https://example.com" target="_blank">
+  <Card.Body>外部サイトへ</Card.Body>
+</Card>
 ```
 
 ### クリック可能なカード
@@ -74,18 +104,29 @@ import { Card } from '@/components/Card';
 
 - **elevated**: 重要度が高い情報、ダッシュボードのウィジェット
 - **outlined**: 一般的な情報のグルーピング（デフォルト）
-- **flat**: 背景と同化させたい控えめなグルーピング
+- **filled**: 薄い背景色＋ボーダーで控えめに区切るグルーピング
 
 ### スロット構成
 
 - Header / Body / Footer はすべて任意。必要なスロットのみ使用する
 - Footer にはアクションボタンを配置し、`justify` で揃え方を制御する
+- `divider` はセクション間の区切りが必要な場合のみ使用する
+
+### href vs clickable
+
+- **href**: ナビゲーション用途。`<a>` としてレンダリングされ、リンクセマンティクスを持つ
+- **clickable + onClick**: アクション用途。`<div role="button">` としてレンダリング
 
 参照: [principles/patterns/data-display.md](../../principles/patterns/data-display.md)
 
 ---
 
 ## アクセシビリティ
+
+### リンクカード
+
+- `href` が指定された場合、`<a>` でレンダリングされネイティブなリンクセマンティクスを持つ
+- `target="_blank"` 時は自動で `rel="noopener noreferrer"` を付与
 
 ### インタラクティブなカード
 
@@ -118,12 +159,12 @@ import { Card } from '@/components/Card';
 
 ```
 基本: overflow-hidden rounded-lg
-elevated: bg-white shadow-md
-outlined: bg-white border border-neutral-200
-flat: bg-neutral-50
-Header: px-4 py-3 border-b font-medium
+elevated: bg-surface shadow-md
+outlined: bg-surface border border-border-muted
+filled: bg-surface-inset border border-border-muted
+Header: px-4 py-3 font-medium (divider: + border-b border-border-muted)
 Body: p-4
-Footer: px-4 py-3 border-t flex items-center gap-2
+Footer: px-4 py-3 flex items-center gap-2 (divider: + border-t border-border-muted)
 ```
 
 ---
@@ -132,4 +173,5 @@ Footer: px-4 py-3 border-t flex items-center gap-2
 
 | 日付 | バージョン | 変更内容 |
 |------|-----------|----------|
+| 2026-03-04 | 1.1.0 | href prop 追加、Header/Footer ボーダー任意化 |
 | 2026-02-19 | 1.0.0 | 初版作成 |

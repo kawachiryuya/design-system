@@ -29,8 +29,6 @@ export interface TabsProps {
   activeId?: string;
   /** タブ切り替え時のコールバック */
   onChange?: (id: string) => void;
-  /** 外観バリアント */
-  variant?: 'underline' | 'pill';
   /** タブリスト全体のaria-label */
   ariaLabel?: string;
   /** 追加CSSクラス（コンテナ） */
@@ -61,7 +59,6 @@ export const Tabs: React.FC<TabsProps> = ({
   defaultActiveId,
   activeId: controlledId,
   onChange,
-  variant = 'underline',
   ariaLabel = 'タブナビゲーション',
   className = '',
 }) => {
@@ -110,29 +107,15 @@ export const Tabs: React.FC<TabsProps> = ({
   const tabButtonClass = (tab: TabItem) => {
     const isActive = tab.id === currentId;
 
-    if (variant === 'underline') {
-      return [
-        'relative px-4 py-2.5 text-sm font-medium transition-colors duration-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1',
-        'whitespace-nowrap',
-        tab.disabled
-          ? 'text-neutral-300 cursor-not-allowed'
-          : isActive
-            ? 'text-primary-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-600 after:rounded-full'
-            : 'text-neutral-500 hover:text-neutral-700',
-      ].join(' ');
-    }
-
-    // pill variant
     return [
-      'px-4 py-1.5 text-sm font-medium rounded-full transition-colors duration-200',
-      'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1',
+      'relative px-4 py-2 text-sm font-medium transition-colors duration-200',
+      'focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-1',
       'whitespace-nowrap',
       tab.disabled
-        ? 'text-neutral-300 cursor-not-allowed'
+        ? 'text-onSurface-disabled cursor-not-allowed'
         : isActive
-          ? 'bg-primary-600 text-white shadow-sm'
-          : 'text-neutral-600 hover:bg-neutral-100',
+          ? 'text-onSurface-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-surface-primary after:rounded-full'
+          : 'text-onSurface-muted hover:text-onSurface',
     ].join(' ');
   };
 
@@ -141,16 +124,11 @@ export const Tabs: React.FC<TabsProps> = ({
   return (
     <div className={['w-full', className].join(' ')}>
       {/* タブリスト */}
-      <div
-        className={variant === 'underline'
-          ? 'border-b border-neutral-200 overflow-x-auto'
-          : 'flex bg-neutral-100 rounded-full p-1 gap-1 overflow-x-auto'
-        }
-      >
+      <div className="border-b border-border-muted overflow-x-auto">
         <div
           role="tablist"
           aria-label={ariaLabel}
-          className={variant === 'underline' ? 'flex -mb-px' : 'flex'}
+          className="flex -mb-px"
         >
           {tabs.map((tab, index) => (
             <button
@@ -167,15 +145,10 @@ export const Tabs: React.FC<TabsProps> = ({
               onClick={() => !tab.disabled && handleSelect(tab.id)}
               onKeyDown={(e) => handleKeyDown(e, index)}
             >
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1">
                 {tab.label}
                 {tab.badge !== undefined && (
-                  <span className={[
-                    'text-xs font-semibold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center',
-                    tab.id === currentId && variant === 'pill'
-                      ? 'bg-white/30 text-white'
-                      : 'bg-neutral-200 text-neutral-600',
-                  ].join(' ')}>
+                  <span className="text-xs font-semibold px-[6px] py-[2px] rounded min-w-5 text-center leading-none bg-surface-skeleton text-onSurface-muted">
                     {tab.badge}
                   </span>
                 )}

@@ -11,7 +11,7 @@ const meta: Meta<typeof Badge> = {
       options: ['neutral', 'primary', 'success', 'error', 'warning', 'info'],
     },
     appearance: { control: 'radio', options: ['solid', 'soft', 'outline'] },
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['small', 'medium'] },
     dot: { control: 'boolean' },
     children: { control: 'text' },
   },
@@ -61,7 +61,6 @@ export const AllSizes: Story = {
     <div className="flex gap-3 items-center">
       <Badge size="small" variant="success">Small</Badge>
       <Badge size="medium" variant="success">Medium</Badge>
-      <Badge size="large" variant="success">Large</Badge>
     </div>
   ),
 };

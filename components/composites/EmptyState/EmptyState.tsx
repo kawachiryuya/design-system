@@ -42,11 +42,8 @@ const DefaultIcon = () => (
     className="w-full h-full text-onSurface-disabled"
     aria-hidden="true"
   >
-    <rect x="8" y="16" width="48" height="36" rx="4"/>
-    <path d="M8 24h48"/>
-    <path d="M24 16V8M40 16V8"/>
-    <circle cx="32" cy="40" r="6"/>
-    <path d="M32 34v6M32 46v.5"/>
+    <circle cx="32" cy="32" r="24"/>
+    <path d="M22 32l7 7 13-13"/>
   </svg>
 );
 
@@ -106,15 +103,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
       {(action || secondaryAction) && (
         <div className="flex flex-wrap gap-2 justify-center mt-1">
-          {action && (
-            <Button
-              variant={action.variant ?? 'primary'}
-              size={size === 'sm' ? 'small' : 'medium'}
-              onClick={action.onClick}
-            >
-              {action.label}
-            </Button>
-          )}
           {secondaryAction && (
             <Button
               variant={secondaryAction.variant ?? 'tertiary'}
@@ -122,6 +110,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
               onClick={secondaryAction.onClick}
             >
               {secondaryAction.label}
+            </Button>
+          )}
+          {action && (
+            <Button
+              variant={action.variant ?? 'primary'}
+              size={size === 'sm' ? 'small' : 'medium'}
+              onClick={action.onClick}
+            >
+              {action.label}
             </Button>
           )}
         </div>

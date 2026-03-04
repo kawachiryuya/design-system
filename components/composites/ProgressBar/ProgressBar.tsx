@@ -104,7 +104,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       >
         <div
           className={fillClass}
-          style={indeterminate ? { width: '40%' } : { width: `${percentage}%` }}
+          style={indeterminate ? undefined : { width: `${percentage}%` }}
         />
       </div>
     </div>

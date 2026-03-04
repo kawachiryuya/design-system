@@ -1,24 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 
-const spacing = require('./tokens/spacing.json');
-const colors = require('./tokens/colors.json');
-const typography = require('./tokens/typography.json');
-const shadows = require('./tokens/shadows.json');
-const radius = require('./tokens/radius.json');
-const breakpoints = require('./tokens/breakpoints.json');
-const animation = require('./tokens/animation.json');
+// デザインシステム本体のトークンを共有
+const spacing = require('../tokens/spacing.json');
+const colors = require('../tokens/colors.json');
+const typography = require('../tokens/typography.json');
+const shadows = require('../tokens/shadows.json');
+const radius = require('../tokens/radius.json');
+const breakpoints = require('../tokens/breakpoints.json');
+const animation = require('../tokens/animation.json');
 
 module.exports = {
   content: [
     './src/**/*.{html,js,jsx,ts,tsx}',
-    './components/**/*.{html,js,jsx,ts,tsx,mdx}',
-    './.storybook/**/*.{js,ts,tsx}',
+    './index.html',
+    // デザインシステムのコンポーネント
+    '../components/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
-    // Spacing (8px base scale)
     spacing: spacing.spacing,
-    
-    // Colors (Primary, Neutral, Semantic)
     colors: {
       primary: colors.primary,
       neutral: colors.neutral,
@@ -30,35 +29,18 @@ module.exports = {
       black: colors.base.black,
       transparent: colors.base.transparent,
     },
-    
-    // Typography
     fontSize: typography.fontSize,
     fontWeight: typography.fontWeight,
     lineHeight: typography.lineHeight,
     letterSpacing: typography.letterSpacing,
     fontFamily: typography.fontFamily,
-    
-    // Shadows
     boxShadow: shadows.shadow,
-    
-    // Border Radius
     borderRadius: radius.radius,
-    
-    // Breakpoints
     screens: breakpoints.screens,
-    
-    // Animation
     transitionDuration: animation.duration,
     transitionTimingFunction: animation.easing,
-    
     extend: {
-      // Semantic spacing aliases
       spacing: spacing.semantic,
-
-      // ── Semantic color tokens (WHERE × WHAT) ──
-      // CSS custom properties defined in .storybook/tailwind.css
-
-      // bg-background, bg-surface-*, bg-state-*
       backgroundColor: {
         background: 'var(--color-bg-default)',
         surface: {
@@ -86,8 +68,6 @@ module.exports = {
           dragged: 'var(--color-state-dragged)',
         },
       },
-
-      // text-onSurface-*
       textColor: {
         onSurface: {
           DEFAULT:  'var(--color-on-default)',
@@ -102,8 +82,6 @@ module.exports = {
           inverse:  'var(--color-on-inverse)',
         },
       },
-
-      // border-border-*
       borderColor: {
         border: {
           DEFAULT:  'var(--color-border-default)',
@@ -122,8 +100,6 @@ module.exports = {
           'info-muted':    'var(--color-border-info-muted)',
         },
       },
-
-      // ring-border-*, ring-surface
       ringColor: {
         border: {
           focus:   'var(--color-border-focus)',
@@ -132,8 +108,6 @@ module.exports = {
         },
         surface: 'var(--color-surface-default)',
       },
-
-      // divide-border-*
       divideColor: {
         border: {
           DEFAULT: 'var(--color-border-default)',
@@ -143,4 +117,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

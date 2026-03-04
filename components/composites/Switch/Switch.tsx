@@ -89,7 +89,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'focus-visible:ring-offset-2',
       'focus-visible:ring-border-focus',
       trackSize,
-      checked ? 'bg-surface-primary' : 'bg-neutral-300',
+      checked ? 'bg-surface-primary' : 'bg-surface-neutral',
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
     ]
       .filter(Boolean)

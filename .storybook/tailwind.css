@@ -45,6 +45,9 @@
     --color-border-focus:    #008965;   /* primary-600 */
     --color-border-primary:  #008965;   /* primary-600 */
     --color-border-error:    #C13B3B;   /* error-600 */
+    --color-border-success:  #258732;   /* success-600 */
+    --color-border-warning:  #A55F00;   /* warning-600 */
+    --color-border-info:     #2775BB;   /* info-600 */
     --color-border-disabled: #E5E5E5;   /* neutral-200 */
     --color-border-success-muted: #B0E4B1;   /* success-200 — colored container borders */
     --color-border-error-muted:   #FFBBB3;   /* error-200 */

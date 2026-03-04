@@ -1,0 +1,74 @@
+@tailwind base;
+
+@layer base {
+  :root {
+    /* ── background ── */
+    --color-bg-default:   #FFFFFF;
+
+    /* ── surface ── */
+    --color-surface-default:  #FFFFFF;
+    --color-surface-raised:   #FAFAFA;
+    --color-surface-overlay:  rgba(0, 0, 0, 0.5);
+    --color-surface-primary:   #008965;
+    --color-surface-secondary: #E4FCF2;
+    --color-surface-success:        #399E43;
+    --color-surface-success-muted:  #E8FBE8;
+    --color-surface-error:          #DE4E4B;
+    --color-surface-error-muted:    #FFECE9;
+    --color-surface-warning:        #D38E2E;
+    --color-surface-warning-muted:  #FFF2E0;
+    --color-surface-info:           #398AD6;
+    --color-surface-info-muted:     #E8F7FF;
+    --color-surface-disabled:  #F5F5F5;
+    --color-surface-skeleton:  #E5E5E5;
+    --color-surface-neutral:   #A3A3A3;
+    --color-surface-inset:     #FAFAFA;
+
+    /* ── onSurface (text / icon) ── */
+    --color-on-default:   #171717;
+    --color-on-muted:     #737373;
+    --color-on-subtle:    #A3A3A3;
+    --color-on-primary:   #008965;
+    --color-on-success:   #166D23;
+    --color-on-error:     #9F2A2B;
+    --color-on-warning:   #874A00;
+    --color-on-info:      #185D9A;
+    --color-on-disabled:  #A3A3A3;
+    --color-on-inverse:   #FFFFFF;
+
+    /* ── border ── */
+    --color-border-default:  #D4D4D4;
+    --color-border-muted:    #E5E5E5;
+    --color-border-strong:   #A3A3A3;
+    --color-border-focus:    #008965;
+    --color-border-primary:  #008965;
+    --color-border-error:    #C13B3B;
+    --color-border-success:  #258732;
+    --color-border-warning:  #A55F00;
+    --color-border-info:     #2775BB;
+    --color-border-disabled: #E5E5E5;
+    --color-border-success-muted: #B0E4B1;
+    --color-border-error-muted:   #FFBBB3;
+    --color-border-warning-muted: #F8CB99;
+    --color-border-info-muted:    #AED9FF;
+
+    /* ── state (transparency layers) ── */
+    --color-state-hover:   rgba(0, 0, 0, 0.08);
+    --color-state-active:  rgba(0, 0, 0, 0.12);
+    --color-state-dragged: rgba(0, 0, 0, 0.16);
+  }
+
+  body {
+    font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+    color: var(--color-on-default);
+    background-color: var(--color-bg-default);
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
+
+@keyframes indeterminate {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}

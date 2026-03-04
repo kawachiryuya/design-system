@@ -42,43 +42,43 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     },
     ref
   ) => {
-    // Solid: 塗りつぶし
+    // Solid: 塗りつぶし（セマンティックトークン）
     const solidStyles: Record<BadgeProps['variant'] & string, string> = {
-      neutral: 'bg-neutral-700 text-white',
-      primary: 'bg-primary-600 text-white',
-      success: 'bg-success-600 text-white',
-      error:   'bg-error-600 text-white',
-      warning: 'bg-warning-600 text-white',
-      info:    'bg-info-600 text-white',
+      neutral: 'bg-neutral-700 text-onSurface-inverse',
+      primary: 'bg-surface-primary text-onSurface-inverse',
+      success: 'bg-surface-success text-onSurface-inverse',
+      error:   'bg-surface-error text-onSurface-inverse',
+      warning: 'bg-surface-warning text-onSurface-inverse',
+      info:    'bg-surface-info text-onSurface-inverse',
     };
 
-    // Soft: 薄い背景
+    // Soft: 薄い背景（セマンティックトークン）
     const softStyles: Record<string, string> = {
-      neutral: 'bg-neutral-100 text-neutral-700',
-      primary: 'bg-primary-100 text-primary-700',
-      success: 'bg-success-100 text-success-700',
-      error:   'bg-error-100 text-error-700',
-      warning: 'bg-warning-100 text-warning-700',
-      info:    'bg-info-100 text-info-700',
+      neutral: 'bg-surface-disabled text-onSurface',
+      primary: 'bg-surface-secondary text-onSurface-primary',
+      success: 'bg-surface-success-muted text-onSurface-success',
+      error:   'bg-surface-error-muted text-onSurface-error',
+      warning: 'bg-surface-warning-muted text-onSurface-warning',
+      info:    'bg-surface-info-muted text-onSurface-info',
     };
 
-    // Outline: 枠線のみ
+    // Outline: 枠線のみ（セマンティックトークン）
     const outlineStyles: Record<string, string> = {
-      neutral: 'border border-neutral-400 text-neutral-700',
-      primary: 'border border-primary-500 text-primary-600',
-      success: 'border border-success-500 text-success-700',
-      error:   'border border-error-500 text-error-600',
-      warning: 'border border-warning-500 text-warning-600',
-      info:    'border border-info-500 text-info-600',
+      neutral: 'border border-border-strong text-onSurface',
+      primary: 'border border-border-primary text-onSurface-primary',
+      success: 'border border-border-success text-onSurface-success',
+      error:   'border border-border-error text-onSurface-error',
+      warning: 'border border-border-warning text-onSurface-warning',
+      info:    'border border-border-info text-onSurface-info',
     };
 
     const dotColors: Record<string, string> = {
       neutral: 'bg-neutral-500',
-      primary: 'bg-primary-600',
-      success: 'bg-success-600',
-      error:   'bg-error-600',
-      warning: 'bg-warning-600',
-      info:    'bg-info-600',
+      primary: 'bg-surface-primary',
+      success: 'bg-surface-success',
+      error:   'bg-surface-error',
+      warning: 'bg-surface-warning',
+      info:    'bg-surface-info',
     };
 
     const appearanceStyle =

@@ -37,7 +37,7 @@ export const ConfirmPage = () => {
         {/* 予約詳細 */}
         <Card className="mt-4 divide-y divide-border-muted">
           <div className="p-4">
-            <Typography variant="label" as="h3" color="muted" className="mb-3">列車情報</Typography>
+            <Typography variant="label" as="h3" color="muted" className="mb-3">予約情報</Typography>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-onSurface-muted">区間</span>

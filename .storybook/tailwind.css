@@ -3,7 +3,7 @@
 @layer base {
   :root {
     /* ── background ── */
-    --color-bg-default:   #FFFFFF;
+    --color-bg-default:   #F5F7F5;
 
     /* ── surface ── */
     --color-surface-default:  #FFFFFF;

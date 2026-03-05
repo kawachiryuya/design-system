@@ -6,14 +6,7 @@ import { Typography } from '@ds/primitives/Typography/Typography';
 import { Select } from '@ds/composites/Select/Select';
 import { Card } from '@ds/composites/Card/Card';
 import { stations } from '../data/stations';
-
-const timeSlots = [
-  { value: '', label: '指定なし' },
-  { value: 'early', label: '始発〜8:00' },
-  { value: 'morning', label: '8:00〜12:00' },
-  { value: 'afternoon', label: '12:00〜16:00' },
-  { value: 'evening', label: '16:00〜最終' },
-];
+import { seatClasses } from '../data/trains';
 
 export const SearchPage = () => {
   const navigate = useNavigate();
@@ -24,12 +17,9 @@ export const SearchPage = () => {
     d.setDate(d.getDate() + 7);
     return d.toISOString().split('T')[0];
   });
-  const [timeSlot, setTimeSlot] = useState('');
 
   const handleSearch = () => {
-    const params = new URLSearchParams({ from, to, date });
-    if (timeSlot) params.set('time', timeSlot);
-    navigate(`/results?${params.toString()}`);
+    navigate(`/results?${new URLSearchParams({ from, to, date }).toString()}`);
   };
 
   const handleSwap = () => {
@@ -37,8 +27,15 @@ export const SearchPage = () => {
     setTo(from);
   };
 
+  const unreserved = seatClasses.find((c) => c.id === 'unreserved')!;
+  const unreservedPrice = Math.round(13320 * unreserved.priceMultiplier);
+
+  const handleUnreserved = () => {
+    navigate(`/confirm?from=${from}&to=${to}&date=${date}&class=unreserved&total=${unreservedPrice}`);
+  };
+
   return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8 py-10">
+    <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8 py-4">
       {/* 左カラム: メインフォーム */}
       <div className="col-span-12 lg:col-span-6">
         <Typography variant="h3" as="h1" className="mb-2">新幹線予約</Typography>
@@ -69,30 +66,44 @@ export const SearchPage = () => {
             </div>
           </div>
 
-          {/* 日付 / 時間帯 */}
-          <div className="flex gap-4">
-            <div className="flex-1 flex flex-col gap-1">
-              <label htmlFor="date" className="text-sm font-medium text-onSurface">乗車日</label>
-              <input
-                id="date"
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="block w-full rounded border border-border text-onSurface appearance-none cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface pl-3 pr-10 py-2 text-base"
-              />
-            </div>
-            <div className="flex-1">
-              <Select label="乗車時間帯" value={timeSlot} onChange={(e) => setTimeSlot(e.target.value)} fullWidth>
-                {timeSlots.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </Select>
-            </div>
+          {/* 乗車日 */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="date" className="text-sm font-medium text-onSurface">乗車日</label>
+            <input
+              id="date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="block w-full rounded border border-border text-onSurface appearance-none cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface pl-3 pr-10 py-2 text-base"
+            />
           </div>
 
           {/* 検索ボタン */}
           <Button fullWidth onClick={handleSearch}>
-            検索する
+            列車を検索する
+          </Button>
+
+          {/* または */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 border-t border-border-muted" />
+            <Typography variant="caption" color="muted">または</Typography>
+            <div className="flex-1 border-t border-border-muted" />
+          </div>
+
+          {/* 自由席クイック購入 */}
+          <div className="flex items-center justify-between">
+            <div>
+              <Typography variant="label" as="h2">自由席</Typography>
+              <Typography variant="body-sm" color="muted" className="mt-1">
+                座席指定なし・列車選択不要
+              </Typography>
+            </div>
+            <div className="text-right shrink-0 ml-4">
+              <p className="text-lg font-bold text-onSurface">¥{unreservedPrice.toLocaleString()}</p>
+            </div>
+          </div>
+          <Button fullWidth variant="secondary" onClick={handleUnreserved}>
+            自由席を購入する
           </Button>
         </Card>
       </div>
@@ -108,7 +119,7 @@ export const SearchPage = () => {
             </li>
             <li className="flex items-start gap-2">
               <Icon name="info" size="sm" color="inherit" />
-              <span>座席は列車選択後にお選びいただけます</span>
+              <span>自由席は検索画面から直接購入できます</span>
             </li>
             <li className="flex items-start gap-2">
               <Icon name="info" size="sm" color="inherit" />

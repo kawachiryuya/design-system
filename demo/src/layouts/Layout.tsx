@@ -8,12 +8,12 @@ export const Layout = () => (
     <Header />
     <div className="flex flex-1">
       <Sidebar />
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 flex flex-col">
         <div className="w-full md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-6">
           <Outlet />
         </div>
+        <Footer />
       </main>
     </div>
-    <Footer />
   </div>
 );

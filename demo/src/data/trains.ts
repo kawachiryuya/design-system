@@ -16,6 +16,7 @@ export interface SeatClass {
 }
 
 export const seatClasses: SeatClass[] = [
+  { id: 'unreserved', label: '自由席', description: '座席指定なし・空いている席に着席', priceMultiplier: 0.85 },
   { id: 'reserved', label: '普通車指定席', description: '指定された座席でゆったり移動', priceMultiplier: 1 },
   { id: 'green', label: 'グリーン車', description: '広い座席とゆとりの空間', priceMultiplier: 1.5 },
   { id: 'gran', label: 'グランクラス', description: '最上級のおもてなし', priceMultiplier: 2.2 },

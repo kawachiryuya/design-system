@@ -9,7 +9,7 @@ const navItems = [
 
 export const Header = () => {
   return (
-    <header className="bg-surface-primary text-onSurface-inverse">
+    <header className="lg:hidden bg-surface-primary text-onSurface-inverse">
       <div className="w-full px-4 sm:px-6 md:px-8 lg:px-6 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-semibold text-lg">
           <Icon name="train" size="md" color="inherit" />

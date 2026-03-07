@@ -10,7 +10,7 @@ const meta: Meta<typeof Spinner> = {
     size: {
       control: 'select',
       options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
-      description: 'xs=12px / sm=16px / md=20px / lg=24px / xl=32px / 2xl=48px',
+      description: 'xs=12px / sm=16px / md=24px / lg=32px / xl=48px / 2xl=64px',
     },
     color: { control: 'radio', options: ['primary', 'neutral', 'white'] },
     label: { control: 'text', description: 'スクリーンリーダー用ラベル' },

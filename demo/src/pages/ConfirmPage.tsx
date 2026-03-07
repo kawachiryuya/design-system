@@ -76,7 +76,7 @@ export const ConfirmPage = () => {
 
           <div className="p-4 flex justify-between items-center">
             <Typography variant="label" color="muted">合計金額</Typography>
-            <span className="text-2xl font-bold text-onSurface">¥{total.toLocaleString()}</span>
+            <Typography variant="h3" weight="bold" as="span">¥{total.toLocaleString()}</Typography>
           </div>
         </Card>
 
@@ -106,7 +106,7 @@ export const ConfirmPage = () => {
         <div className="flex items-center justify-between px-4 py-3">
           <div>
             <Typography variant="caption" color="muted">合計</Typography>
-            <p className="text-lg font-bold text-onSurface">¥{total.toLocaleString()}</p>
+            <Typography variant="h5" weight="bold" as="p">¥{total.toLocaleString()}</Typography>
           </div>
           <Button onClick={handleConfirm} disabled={!agreed}>
             予約を確定する

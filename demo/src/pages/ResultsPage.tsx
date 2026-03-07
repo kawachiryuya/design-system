@@ -44,16 +44,16 @@ export const ResultsPage = () => {
             <div className="border-t border-border-muted mt-3 pt-3">
               <dl className="text-sm space-y-2">
                 <div className="flex justify-between">
-                  <dt className="text-onSurface-muted">区間</dt>
-                  <dd className="font-medium text-onSurface">{from} → {to}</dd>
+                  <Typography variant="body-sm" color="muted" as="dt">区間</Typography>
+                  <Typography variant="label" as="dd">{from} → {to}</Typography>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-onSurface-muted">乗車日</dt>
-                  <dd className="font-medium text-onSurface">{date}</dd>
+                  <Typography variant="body-sm" color="muted" as="dt">乗車日</Typography>
+                  <Typography variant="label" as="dd">{date}</Typography>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-onSurface-muted">人数</dt>
-                  <dd className="font-medium text-onSurface">{passengers}名</dd>
+                  <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
+                  <Typography variant="label" as="dd">{passengers}名</Typography>
                 </div>
               </dl>
               <Button fullWidth variant="secondary" size="small" onClick={() => navigate('/')} className="mt-4">
@@ -70,16 +70,16 @@ export const ResultsPage = () => {
           <Typography variant="label" as="h3" color="muted" className="mb-3">検索条件</Typography>
           <dl className="text-sm space-y-2">
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">区間</dt>
-              <dd className="font-medium text-onSurface">{from} → {to}</dd>
+              <Typography variant="body-sm" color="muted" as="dt">区間</Typography>
+              <Typography variant="label" as="dd">{from} → {to}</Typography>
             </div>
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">乗車日</dt>
-              <dd className="font-medium text-onSurface">{date}</dd>
+              <Typography variant="body-sm" color="muted" as="dt">乗車日</Typography>
+              <Typography variant="label" as="dd">{date}</Typography>
             </div>
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">人数</dt>
-              <dd className="font-medium text-onSurface">{passengers}名</dd>
+              <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
+              <Typography variant="label" as="dd">{passengers}名</Typography>
             </div>
           </dl>
           <Button fullWidth variant="secondary" size="small" onClick={() => navigate('/')} className="mt-4">
@@ -103,9 +103,9 @@ export const ResultsPage = () => {
                 <div>
                   <Typography variant="caption" color="muted">{train.name}</Typography>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-onSurface">{train.departure}</span>
+                    <Typography variant="h5" weight="bold" as="span">{train.departure}</Typography>
                     <Typography variant="caption" color="muted" as="span">→</Typography>
-                    <span className="text-lg font-bold text-onSurface">{train.arrival}</span>
+                    <Typography variant="h5" weight="bold" as="span">{train.arrival}</Typography>
                   </div>
                   <Typography variant="caption" color="muted" className="flex items-center gap-1 mt-1">
                     <Icon name="schedule" size="sm" color="inherit" />
@@ -115,9 +115,9 @@ export const ResultsPage = () => {
               </div>
 
               <div className="text-right space-y-1">
-                <p className="text-lg font-bold text-onSurface">
+                <Typography variant="h5" weight="bold" as="p">
                   ¥{train.price.toLocaleString()}
-                </p>
+                </Typography>
                 {seatsBadge(train.seats)}
               </div>
             </div>

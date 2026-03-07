@@ -6,7 +6,7 @@ import React from 'react';
  */
 export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** スピナーのサイズ（用途に合わせて選択） */
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   /** スピナーの色 */
   color?: 'primary' | 'neutral' | 'white';
   /**
@@ -47,6 +47,7 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
       md: 'w-6 h-6',   // 24px コンポーネント内標準
       lg: 'w-8 h-8',   // 32px コンポーネント中央
       xl: 'w-12 h-12', // 48px 全画面オーバーレイ
+      '2xl': 'w-16 h-16', // 64px 特大
     }[size];
 
     const strokeColor = {

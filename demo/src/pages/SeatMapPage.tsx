@@ -4,6 +4,8 @@ import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Card } from '@ds/composites/Card/Card';
+import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
+import { ToggleButton } from '@ds/composites/ToggleButton/ToggleButton';
 import { generateSeatMap, carNumbersForClass, seatClasses, searchTrains } from '../data/trains';
 
 export const SeatMapPage = () => {
@@ -66,21 +68,13 @@ export const SeatMapPage = () => {
         <Typography variant="h5" as="h2" className="mb-4">座席を選択</Typography>
 
         {/* 号車切り替え */}
-        <div className="flex gap-1 mb-4 overflow-x-auto">
-          {availableCars.map((car) => (
-            <button
-              key={car}
-              type="button"
-              onClick={() => handleCarChange(car)}
-              className={`h-10 px-3 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
-                car === selectedCar
-                  ? 'bg-surface-primary text-onSurface-inverse'
-                  : 'bg-surface border border-border-muted text-onSurface hover:border-border-strong'
-              }`}
-            >
-              {car}号車
-            </button>
-          ))}
+        <div className="mb-4">
+          <SegmentedControl
+            items={availableCars.map((car) => ({ value: car, label: `${car}号車` }))}
+            value={selectedCar}
+            onChange={handleCarChange}
+            aria-label="号車選択"
+          />
         </div>
 
         {/* シートマップ */}
@@ -123,21 +117,14 @@ export const SeatMapPage = () => {
 
                   return (
                     <div key={seat.id} className="flex items-center">
-                      <button
-                        type="button"
+                      <ToggleButton
+                        selected={isSelected}
                         disabled={isOccupied}
                         onClick={() => handleSeatClick(seat.id)}
-                        className={`w-10 h-10 rounded text-xs font-medium transition-colors ${
-                          isOccupied
-                            ? 'bg-surface-inset text-onSurface-disabled cursor-not-allowed'
-                            : isSelected
-                              ? 'bg-surface-primary text-onSurface-inverse'
-                              : 'bg-surface border border-border-default text-onSurface hover:border-border-strong'
-                        }`}
                         aria-label={`座席 ${seat.id}${isOccupied ? ' 予約済み' : ''}`}
                       >
                         {row}
-                      </button>
+                      </ToggleButton>
                       {col === aisleAfter && <div className="w-6" />}
                     </div>
                   );
@@ -160,27 +147,27 @@ export const SeatMapPage = () => {
           <Typography variant="label" as="h3" color="muted" className="mb-3">予約内容</Typography>
           <dl className="text-sm space-y-2 mb-4">
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">座席クラス</dt>
-              <dd className="font-medium text-onSurface">{seatClass?.label}</dd>
+              <Typography variant="body-sm" color="muted" as="dt">座席クラス</Typography>
+              <Typography variant="label" as="dd">{seatClass?.label}</Typography>
             </div>
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">号車</dt>
-              <dd className="font-medium text-onSurface">{selectedCar}号車</dd>
+              <Typography variant="body-sm" color="muted" as="dt">号車</Typography>
+              <Typography variant="label" as="dd">{selectedCar}号車</Typography>
             </div>
             {selectedSeats.length > 0 && (
               <div className="flex justify-between">
-                <dt className="text-onSurface-muted">座席</dt>
-                <dd className="font-medium text-onSurface">{selectedSeats.join(', ')}</dd>
+                <Typography variant="body-sm" color="muted" as="dt">座席</Typography>
+                <Typography variant="label" as="dd">{selectedSeats.join(', ')}</Typography>
               </div>
             )}
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">人数</dt>
-              <dd className="font-medium text-onSurface">{passengers}名</dd>
+              <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
+              <Typography variant="label" as="dd">{passengers}名</Typography>
             </div>
           </dl>
           <div className="border-t border-border-muted pt-4 mb-4">
             <Typography variant="body-sm" color="muted">合計金額</Typography>
-            <p className="text-2xl font-bold text-onSurface">¥{price.toLocaleString()}</p>
+            <Typography variant="h3" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
           </div>
           <div className="hidden lg:block">
             <Button fullWidth onClick={handleNext} disabled={selectedSeats.length !== passengers}>
@@ -197,7 +184,7 @@ export const SeatMapPage = () => {
         <div className="flex items-center justify-between px-4 py-3">
           <div>
             <Typography variant="caption" color="muted">合計</Typography>
-            <p className="text-lg font-bold text-onSurface">¥{price.toLocaleString()}</p>
+            <Typography variant="h5" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
           </div>
           <Button onClick={handleNext} disabled={selectedSeats.length !== passengers}>
             予約内容の確認へ

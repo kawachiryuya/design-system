@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
 
 const pageTitles: Record<string, string> = {
@@ -25,14 +26,16 @@ export const Header = () => {
           </Link>
         ) : (
           <>
-            <button
-              type="button"
+            <Button
+              iconOnly
+              size="small"
+              variant="tertiary"
               onClick={() => navigate(-1)}
-              className="flex items-center justify-center w-10 h-10 -ml-2 rounded-full transition-colors hover:bg-white/10"
+              className="-ml-2 text-onSurface-inverse hover:shadow-[inset_0_0_0_9999px_rgba(255,255,255,0.1)]"
               aria-label="戻る"
             >
               <Icon name="arrow_back" size="sm" color="inherit" />
-            </button>
+            </Button>
             <span className="font-semibold text-base ml-1">{title ?? 'Rail Demo'}</span>
           </>
         )}

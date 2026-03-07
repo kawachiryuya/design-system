@@ -72,7 +72,7 @@ export const SeatPage = () => {
                     <Typography variant="body-sm" color="muted" className="mt-1">{cls.description}</Typography>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-bold text-onSurface">¥{price.toLocaleString()}</p>
+                    <Typography variant="h5" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
                   </div>
                 </div>
               </button>
@@ -87,12 +87,12 @@ export const SeatPage = () => {
           <Typography variant="label" as="h3" color="muted" className="mb-3">予約内容</Typography>
           <dl className="text-sm space-y-2 mb-4">
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">座席クラス</dt>
-              <dd className="font-medium text-onSurface">{selected.label}</dd>
+              <Typography variant="body-sm" color="muted" as="dt">座席クラス</Typography>
+              <Typography variant="label" as="dd">{selected.label}</Typography>
             </div>
             <div className="flex justify-between">
-              <dt className="text-onSurface-muted">人数</dt>
-              <dd className="font-medium text-onSurface">{passengers}名</dd>
+              <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
+              <Typography variant="label" as="dd">{passengers}名</Typography>
             </div>
           </dl>
           <div className="border-t border-border-muted pt-4 mb-4">
@@ -100,7 +100,7 @@ export const SeatPage = () => {
               <Typography variant="caption" color="muted">¥{unitPrice.toLocaleString()} × {passengers}名</Typography>
             )}
             <Typography variant="body-sm" color="muted">合計金額</Typography>
-            <p className="text-2xl font-bold text-onSurface">¥{totalPrice.toLocaleString()}</p>
+            <Typography variant="h3" weight="bold" as="p">¥{totalPrice.toLocaleString()}</Typography>
           </div>
           <div className="hidden lg:block">
             <Button fullWidth onClick={handleNext}>
@@ -117,7 +117,7 @@ export const SeatPage = () => {
         <div className="flex items-center justify-between px-4 py-3">
           <div>
             <Typography variant="caption" color="muted">合計</Typography>
-            <p className="text-lg font-bold text-onSurface">¥{totalPrice.toLocaleString()}</p>
+            <Typography variant="h5" weight="bold" as="p">¥{totalPrice.toLocaleString()}</Typography>
           </div>
           <Button onClick={handleNext}>
             座席を選択する

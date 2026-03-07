@@ -36,7 +36,8 @@ export type TypographyColor =
 type PolymorphicElement =
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   | 'p' | 'span' | 'div' | 'label' | 'caption'
-  | 'legend' | 'figcaption' | 'strong' | 'em';
+  | 'legend' | 'figcaption' | 'strong' | 'em'
+  | 'dt' | 'dd';
 
 /**
  * Typography Props
@@ -53,6 +54,8 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   as?: PolymorphicElement;
   /** テキストカラー */
   color?: TypographyColor;
+  /** フォントウェイト（variant のデフォルトを上書き） */
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
   /** テキストを省略して1行に収める */
   truncate?: boolean;
   /** 内容 */
@@ -183,6 +186,7 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
       variant = 'body',
       as,
       color = 'default',
+      weight,
       truncate = false,
       children,
       className = '',
@@ -192,8 +196,14 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   ) => {
     const Tag = (as || defaultTag[variant]) as React.ElementType;
 
+    // weight 指定時は variant のデフォルト font-weight を除外して上書き
+    const baseStyles = weight
+      ? variantStyles[variant].filter((c) => !c.startsWith('font-'))
+      : variantStyles[variant];
+
     const classes = [
-      ...variantStyles[variant],
+      ...baseStyles,
+      weight ? `font-${weight}` : '',
       colorStyles[color],
       truncate ? 'truncate' : '',
       className,

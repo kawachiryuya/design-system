@@ -2,11 +2,14 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
+import { Input } from '@ds/primitives/Input/Input';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Alert } from '@ds/composites/Alert/Alert';
 import { Card } from '@ds/composites/Card/Card';
 import { Checkbox } from '@ds/composites/Checkbox/Checkbox';
+import { Radio } from '@ds/composites/Radio/Radio';
 import { seatClasses } from '../data/trains';
+import { formatDate } from '../utils/format';
 
 export const ConfirmPage = () => {
   const [params] = useSearchParams();
@@ -22,6 +25,8 @@ export const ConfirmPage = () => {
 
   const seatClass = seatClasses.find((c) => c.id === seatClassId);
   const [agreed, setAgreed] = useState(false);
+  const [cardOption, setCardOption] = useState<'saved' | 'new'>('saved');
+  const [icOption, setIcOption] = useState<'now' | 'later'>('now');
 
   const handleConfirm = () => {
     navigate(`/complete?passengers=${passengers}`);
@@ -29,7 +34,7 @@ export const ConfirmPage = () => {
 
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8">
-      <div className="col-span-12 lg:col-span-8">
+      <div className="col-span-12 lg:col-span-8 lg:col-start-3">
         <Typography variant="h5" as="h2" className="mb-4">予約内容の確認</Typography>
 
         <Alert variant="info">
@@ -51,7 +56,7 @@ export const ConfirmPage = () => {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-onSurface-muted">乗車日</span>
-                <span className="font-medium text-onSurface">{date}</span>
+                <span className="font-medium text-onSurface">{formatDate(date)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-onSurface-muted">座席クラス</span>
@@ -77,6 +82,71 @@ export const ConfirmPage = () => {
           <div className="p-4 flex justify-between items-center">
             <Typography variant="label" color="muted">合計金額</Typography>
             <Typography variant="h3" weight="bold" as="span">¥{total.toLocaleString()}</Typography>
+          </div>
+        </Card>
+
+        {/* お支払い方法 */}
+        <Card className="mt-4" padding="md">
+          <Typography variant="label" as="h3" color="muted" className="mb-4">お支払い方法</Typography>
+          <div className="space-y-3">
+            <Radio
+              name="card"
+              value="saved"
+              checked={cardOption === 'saved'}
+              onChange={() => setCardOption('saved')}
+              label="前回利用したカード"
+            />
+            {cardOption === 'saved' && (
+              <div className="pl-6">
+                <Typography variant="body-sm">Visa **** 1234　有効期限 12/28</Typography>
+              </div>
+            )}
+            <Radio
+              name="card"
+              value="new"
+              checked={cardOption === 'new'}
+              onChange={() => setCardOption('new')}
+              label="新しいカードを登録"
+            />
+            {cardOption === 'new' && (
+              <div className="pl-6 space-y-3">
+                <Input label="カード番号" placeholder="0000 0000 0000 0000" fullWidth />
+                <div className="flex gap-3">
+                  <Input label="有効期限" placeholder="MM/YY" fullWidth />
+                  <Input label="セキュリティコード" placeholder="000" fullWidth />
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* 交通系ICカード連携 */}
+        <Card className="mt-4" padding="md">
+          <Typography variant="label" as="h3" color="muted" className="mb-2">交通系ICカード連携</Typography>
+          <Typography variant="body-sm" color="muted" className="mb-4">
+            ICカードを登録すると、改札をタッチで通過できるようになります。
+          </Typography>
+
+          <div className="space-y-3">
+            <Radio
+              name="ic"
+              value="now"
+              checked={icOption === 'now'}
+              onChange={() => setIcOption('now')}
+              label="今すぐ登録する"
+            />
+            {icOption === 'now' && (
+              <div className="pl-6">
+                <Input label="ICカード番号" placeholder="JE00 0000 0000 0000 0" fullWidth />
+              </div>
+            )}
+            <Radio
+              name="ic"
+              value="later"
+              checked={icOption === 'later'}
+              onChange={() => setIcOption('later')}
+              label="あとで登録する"
+            />
           </div>
         </Card>
 

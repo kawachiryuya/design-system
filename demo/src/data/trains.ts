@@ -1,3 +1,5 @@
+export type SeatAvailability = 'available' | 'few' | 'sold-out';
+
 export interface Train {
   id: string;
   name: string;
@@ -5,7 +7,7 @@ export interface Train {
   arrival: string;
   duration: string;
   price: number;
-  seats: 'available' | 'few' | 'sold-out';
+  seats: Record<string, SeatAvailability>;
 }
 
 export interface SeatClass {
@@ -80,15 +82,15 @@ export function generateSeatMap(classId: string, carNumber: number): Seat[] {
 
 /** 検索結果のモックデータを生成 */
 export function searchTrains(_from: string, _to: string): Train[] {
-  const base = [
-    { suffix: '1号', dep: '06:30', arr: '08:45', dur: '2時間15分', price: 13320, seats: 'available' as const },
-    { suffix: '5号', dep: '07:00', arr: '09:20', dur: '2時間20分', price: 13320, seats: 'available' as const },
-    { suffix: '11号', dep: '08:00', arr: '10:12', dur: '2時間12分', price: 13320, seats: 'few' as const },
-    { suffix: '23号', dep: '09:30', arr: '11:45', dur: '2時間15分', price: 13320, seats: 'available' as const },
-    { suffix: '37号', dep: '11:00', arr: '13:18', dur: '2時間18分', price: 13320, seats: 'available' as const },
-    { suffix: '45号', dep: '12:30', arr: '14:42', dur: '2時間12分', price: 13320, seats: 'few' as const },
-    { suffix: '59号', dep: '14:00', arr: '16:20', dur: '2時間20分', price: 13320, seats: 'sold-out' as const },
-    { suffix: '67号', dep: '16:00', arr: '18:15', dur: '2時間15分', price: 13320, seats: 'available' as const },
+  const base: { suffix: string; dep: string; arr: string; dur: string; price: number; seats: Record<string, SeatAvailability> }[] = [
+    { suffix: '1号', dep: '06:30', arr: '08:45', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'few' } },
+    { suffix: '5号', dep: '07:00', arr: '09:20', dur: '2時間20分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available' } },
+    { suffix: '11号', dep: '08:00', arr: '10:12', dur: '2時間12分', price: 13320, seats: { unreserved: 'few', reserved: 'few', green: 'available' } },
+    { suffix: '23号', dep: '09:30', arr: '11:45', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'sold-out' } },
+    { suffix: '37号', dep: '11:00', arr: '13:18', dur: '2時間18分', price: 13320, seats: { unreserved: 'available', reserved: 'few', green: 'available' } },
+    { suffix: '45号', dep: '12:30', arr: '14:42', dur: '2時間12分', price: 13320, seats: { unreserved: 'few', reserved: 'few', green: 'sold-out' } },
+    { suffix: '59号', dep: '14:00', arr: '16:20', dur: '2時間20分', price: 13320, seats: { unreserved: 'sold-out', reserved: 'sold-out', green: 'sold-out' } },
+    { suffix: '67号', dep: '16:00', arr: '18:15', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available' } },
   ];
 
   return base.map((t, i) => ({

@@ -6,6 +6,7 @@ import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
 import { seatClasses, searchTrains } from '../data/trains';
+import { formatDate } from '../utils/format';
 
 export const SeatPage = () => {
   const [params] = useSearchParams();
@@ -39,7 +40,7 @@ export const SeatPage = () => {
             <span className="font-semibold text-onSurface">{train?.name}（{from} → {to}）</span>
           </div>
           <Typography variant="body-sm" color="muted" className="pl-6">
-            {date} {train?.departure}→{train?.arrival}({train?.duration})
+            {formatDate(date)} {train?.departure}→{train?.arrival}
           </Typography>
         </Card>
 

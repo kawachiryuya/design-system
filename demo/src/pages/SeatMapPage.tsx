@@ -7,6 +7,7 @@ import { Card } from '@ds/composites/Card/Card';
 import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
 import { ToggleButton } from '@ds/composites/ToggleButton/ToggleButton';
 import { generateSeatMap, carNumbersForClass, seatClasses, searchTrains } from '../data/trains';
+import { formatDate } from '../utils/format';
 
 export const SeatMapPage = () => {
   const [params] = useSearchParams();
@@ -61,7 +62,7 @@ export const SeatMapPage = () => {
             <span className="font-semibold text-onSurface">{train?.name}（{from} → {to}）</span>
           </div>
           <Typography variant="body-sm" color="muted" className="pl-6">
-            {date} {train?.departure}→{train?.arrival}({train?.duration}) / {seatClass?.label}
+            {formatDate(date)} {train?.departure}→{train?.arrival} {seatClass?.label}
           </Typography>
         </Card>
 
@@ -141,10 +142,10 @@ export const SeatMapPage = () => {
         </Card>
       </div>
 
-      {/* 右: 料金サマリー */}
+      {/* 右: 座席情報サマリー */}
       <div className="col-span-12 lg:col-span-4">
         <Card variant="filled" padding="md" className="sticky top-6">
-          <Typography variant="label" as="h3" color="muted" className="mb-3">予約内容</Typography>
+          <Typography variant="label" as="h3" color="muted" className="mb-3">選択中の座席</Typography>
           <dl className="text-sm space-y-2 mb-4">
             <div className="flex justify-between">
               <Typography variant="body-sm" color="muted" as="dt">座席クラス</Typography>
@@ -154,21 +155,17 @@ export const SeatMapPage = () => {
               <Typography variant="body-sm" color="muted" as="dt">号車</Typography>
               <Typography variant="label" as="dd">{selectedCar}号車</Typography>
             </div>
-            {selectedSeats.length > 0 && (
-              <div className="flex justify-between">
-                <Typography variant="body-sm" color="muted" as="dt">座席</Typography>
-                <Typography variant="label" as="dd">{selectedSeats.join(', ')}</Typography>
-              </div>
-            )}
+            <div className="flex justify-between">
+              <Typography variant="body-sm" color="muted" as="dt">座席</Typography>
+              <Typography variant="label" as="dd">
+                {selectedSeats.length > 0 ? selectedSeats.join(', ') : '未選択'}
+              </Typography>
+            </div>
             <div className="flex justify-between">
               <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
-              <Typography variant="label" as="dd">{passengers}名</Typography>
+              <Typography variant="label" as="dd">{selectedSeats.length} / {passengers}名</Typography>
             </div>
           </dl>
-          <div className="border-t border-border-muted pt-4 mb-4">
-            <Typography variant="body-sm" color="muted">合計金額</Typography>
-            <Typography variant="h3" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
-          </div>
           <div className="hidden lg:block">
             <Button fullWidth onClick={handleNext} disabled={selectedSeats.length !== passengers}>
               予約内容の確認へ
@@ -183,8 +180,10 @@ export const SeatMapPage = () => {
       >
         <div className="flex items-center justify-between px-4 py-3">
           <div>
-            <Typography variant="caption" color="muted">合計</Typography>
-            <Typography variant="h5" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
+            <Typography variant="caption" color="muted">
+              {selectedSeats.length > 0 ? selectedSeats.join(', ') : '座席を選択してください'}
+            </Typography>
+            <Typography variant="label">{selectedSeats.length} / {passengers}席選択中</Typography>
           </div>
           <Button onClick={handleNext} disabled={selectedSeats.length !== passengers}>
             予約内容の確認へ

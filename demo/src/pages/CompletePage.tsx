@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 
 export const CompletePage = () => {
+  const [params] = useSearchParams();
+  const passengers = Number(params.get('passengers') ?? 1);
   const bookingId = `RD-${Date.now().toString(36).toUpperCase()}`;
 
   return (
@@ -14,7 +16,7 @@ export const CompletePage = () => {
         <Icon name="check_circle" size="lg" color="success" />
       </div>
 
-      <Typography variant="h4" as="h1" className="mb-2">予約が完了しました</Typography>
+      <Typography variant="h4" as="h1" className="mb-2">{passengers}名様のご予約が完了しました</Typography>
       <Typography variant="body-sm" color="muted" className="mb-6">
         ご予約ありがとうございます。確認メールをお送りしました。
       </Typography>

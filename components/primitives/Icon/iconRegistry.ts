@@ -145,6 +145,13 @@ export const iconRegistry: Record<string, IconDefinition> = {
       'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z',
     ],
   },
+  arrow_back: {
+    label: '戻る',
+    mode: 'fill',
+    paths: [
+      'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z',
+    ],
+  },
   arrow_forward: {
     label: '次へ',
     mode: 'fill',
@@ -164,6 +171,20 @@ export const iconRegistry: Record<string, IconDefinition> = {
     mode: 'fill',
     paths: [
       'M19 5v14H5V5h14m1.1-2H3.9c-.5 0-.9.4-.9.9v16.2c0 .4.4.9.9.9h16.2c.4 0 .9-.5.9-.9V3.9c0-.5-.5-.9-.9-.9zM11 7h6v2h-6V7zm0 4h6v2h-6v-2zm0 4h6v2h-6v-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2z',
+    ],
+  },
+  remove: {
+    label: '減らす',
+    mode: 'fill',
+    paths: [
+      'M19 13H5v-2h14v2z',
+    ],
+  },
+  add: {
+    label: '追加',
+    mode: 'fill',
+    paths: [
+      'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
     ],
   },
 };

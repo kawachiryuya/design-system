@@ -7,7 +7,7 @@ import { FormMessage } from '../../_internal/FormMessage';
  */
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /** 入力タイプ */
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date';
   /** サイズ */
   size?: 'small' | 'medium' | 'large';
   /** エラー状態 */
@@ -67,7 +67,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     // Base input styles
     const baseStyles = [
       'block',
-      'rounded',
+      'rounded-sm',
       'border',
       'bg-surface',
       'text-onSurface',
@@ -99,23 +99,24 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ];
 
     // Size styles (tokens/spacing.json)
+    // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
     const sizeStyles = {
       small: [
-        leadingIcon ? 'pl-8' : 'px-3',
-        trailingIcon ? 'pr-8' : 'px-3',
-        'py-1',   // 4px
+        'h-10',  // 40px
+        leadingIcon ? 'pl-10' : 'px-3',
+        trailingIcon ? 'pr-10' : 'px-3',
         'text-sm',
       ],
       medium: [
-        leadingIcon ? 'pl-10' : 'px-3',
-        trailingIcon ? 'pr-10' : 'px-3',
-        'py-2',   // 8px
+        'h-12',  // 48px
+        leadingIcon ? 'pl-12' : 'px-3',
+        trailingIcon ? 'pr-12' : 'px-3',
         'text-base',
       ],
       large: [
+        'h-16',  // 64px
         leadingIcon ? 'pl-12' : 'px-4',
         trailingIcon ? 'pr-12' : 'px-4',
-        'py-3',   // 12px
         'text-lg',
       ],
     };
@@ -131,15 +132,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     // Icon container positioning
     const leadingIconPosition = {
-      small: 'left-2',
+      small: 'left-3',
       medium: 'left-3',
-      large: 'left-3',
+      large: 'left-4',
     }[size];
 
     const trailingIconPosition = {
-      small: 'right-2',
+      small: 'right-3',
       medium: 'right-3',
-      large: 'right-3',
+      large: 'right-4',
     }[size];
 
     const describedBy = [

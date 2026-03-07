@@ -57,10 +57,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const errorId = selectId ? `${selectId}-error` : undefined;
     const helpId = selectId ? `${selectId}-help` : undefined;
 
+    // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
     const sizeConfig = {
-      small: { style: 'pl-3 pr-8 py-1 text-sm', iconSize: 'sm' as const, iconRight: 'right-2' },
-      medium: { style: 'pl-3 pr-10 py-2 text-base', iconSize: 'sm' as const, iconRight: 'right-3' },
-      large: { style: 'pl-4 pr-12 py-3 text-lg', iconSize: 'md' as const, iconRight: 'right-3' },
+      small: { style: 'h-10 pl-3 pr-10 text-sm', iconSize: 'sm' as const, iconRight: 'right-3' },
+      medium: { style: 'h-12 pl-3 pr-12 text-base', iconSize: 'sm' as const, iconRight: 'right-3' },
+      large: { style: 'h-16 pl-4 pr-12 text-lg', iconSize: 'md' as const, iconRight: 'right-4' },
     }[size];
 
     const sizeStyles = sizeConfig.style;
@@ -71,7 +72,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     const selectClasses = [
       'block',
-      'rounded',
+      'rounded-sm',
       'border',
       'text-onSurface',
       'appearance-none',

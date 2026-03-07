@@ -83,7 +83,7 @@ export const Alert: React.FC<AlertProps> = ({
     <div
       role="alert"
       className={[
-        'flex gap-3 rounded-lg p-4',
+        'flex gap-3 rounded-md p-4',
         config.container,
         className,
       ].join(' ')}

@@ -148,7 +148,7 @@ export const Tabs: React.FC<TabsProps> = ({
               <span className="flex items-center gap-1">
                 {tab.label}
                 {tab.badge !== undefined && (
-                  <span className="text-xs font-semibold px-[6px] py-[2px] rounded min-w-5 text-center leading-none bg-surface-skeleton text-onSurface-muted">
+                  <span className="text-xs font-semibold px-[6px] py-[2px] rounded-sm min-w-5 text-center leading-none bg-surface-skeleton text-onSurface-muted">
                     {tab.badge}
                   </span>
                 )}

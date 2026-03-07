@@ -55,9 +55,9 @@ const paddingStyles = {
 };
 
 const variantStyles = {
-  elevated: 'bg-surface shadow-md rounded-lg',
-  outlined: 'bg-surface border border-border-muted rounded-lg',
-  filled: 'bg-surface-inset border border-border-muted rounded-lg',
+  elevated: 'bg-surface shadow-md rounded-md',
+  outlined: 'bg-surface border border-border-muted rounded-md',
+  filled: 'bg-surface-inset border border-border-muted rounded-md',
 };
 
 /**

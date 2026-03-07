@@ -137,7 +137,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   const inputClass = [
     'w-full',
-    'rounded',
+    'rounded-sm',
     'border',
     'border-border',
     'bg-surface',

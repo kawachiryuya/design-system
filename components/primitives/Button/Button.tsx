@@ -53,7 +53,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       'items-center',
       'justify-center',
       'font-medium',
-      'rounded', // 8px (tokens/radius.json)
+      'rounded-sm', // 4px (tokens/radius.json)
       'transition-all',
       'duration-200', // 200ms (tokens/animation.json)
       'focus:outline-none',
@@ -91,24 +91,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     // Size styles (tokens/spacing.json)
+    // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
     const sizeStyles = {
       small: [
+        'h-10',  // 40px
         'px-3',  // 12px
-        'py-1',  // 4px
         'text-sm', // 14px
         'gap-1', // 4px (アイコンとテキストの間)
         'min-w-16', // 64px — 短いラベルでも潰れない
       ],
       medium: [
+        'h-12',  // 48px
         'px-4',  // 16px
-        'py-2',  // 8px
         'text-base', // 16px
         'gap-2', // 8px
         'min-w-20', // 80px
       ],
       large: [
+        'h-16',  // 64px
         'px-6',  // 24px
-        'py-3',  // 12px
         'text-lg', // 18px
         'gap-2', // 8px
         'min-w-24', // 96px

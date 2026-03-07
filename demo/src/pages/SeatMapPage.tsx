@@ -4,7 +4,7 @@ import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Card } from '@ds/composites/Card/Card';
-import { generateSeatMap, carNumbersForClass, seatClasses } from '../data/trains';
+import { generateSeatMap, carNumbersForClass, seatClasses, searchTrains } from '../data/trains';
 
 export const SeatMapPage = () => {
   const [params] = useSearchParams();
@@ -15,11 +15,13 @@ export const SeatMapPage = () => {
   const trainId = params.get('trainId') ?? '';
   const classId = params.get('class') ?? 'reserved';
   const price = Number(params.get('price') ?? 0);
+  const passengers = Number(params.get('passengers') ?? 1);
 
+  const train = searchTrains(from, to).find((t) => t.id === trainId);
   const seatClass = seatClasses.find((c) => c.id === classId);
   const availableCars = carNumbersForClass(classId);
   const [selectedCar, setSelectedCar] = useState(availableCars[0]);
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
   const seatMap = useMemo(() => generateSeatMap(classId, selectedCar), [classId, selectedCar]);
   const cols = classId === 'reserved' ? ['A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D'];
@@ -28,12 +30,22 @@ export const SeatMapPage = () => {
 
   const handleCarChange = (car: number) => {
     setSelectedCar(car);
-    setSelectedSeat(null);
+    setSelectedSeats([]);
+  };
+
+  const handleSeatClick = (seatId: string) => {
+    setSelectedSeats((prev) =>
+      prev.includes(seatId)
+        ? prev.filter((s) => s !== seatId)
+        : prev.length < passengers
+          ? [...prev, seatId]
+          : prev,
+    );
   };
 
   const handleNext = () => {
-    const seatLabel = selectedSeat ? `${selectedCar}号車 ${selectedSeat}` : '';
-    navigate(`/confirm?trainId=${trainId}&from=${from}&to=${to}&date=${date}&class=${classId}&total=${price}&seat=${encodeURIComponent(seatLabel)}`);
+    const seatLabel = selectedSeats.map((s) => `${selectedCar}号車 ${s}`).join(',');
+    navigate(`/confirm?trainId=${trainId}&from=${from}&to=${to}&date=${date}&class=${classId}&total=${price}&passengers=${passengers}&seat=${encodeURIComponent(seatLabel)}`);
   };
 
   return (
@@ -41,13 +53,14 @@ export const SeatMapPage = () => {
       {/* 左: シートマップ */}
       <div className="col-span-12 lg:col-span-8">
         {/* 列車 + 席種サマリー */}
-        <Card padding="md" className="mb-6">
+        <Card padding="md" className="mb-6 space-y-1">
           <div className="flex items-center gap-2 text-sm">
             <Icon name="train" size="sm" color="primary" />
-            <span className="font-semibold text-onSurface">{from} → {to}</span>
-            <Typography variant="body-sm" color="muted" as="span">{date}</Typography>
-            <Typography variant="body-sm" color="muted" as="span">/ {seatClass?.label}</Typography>
+            <span className="font-semibold text-onSurface">{train?.name}（{from} → {to}）</span>
           </div>
+          <Typography variant="body-sm" color="muted" className="pl-6">
+            {date} {train?.departure}→{train?.arrival}({train?.duration}) / {seatClass?.label}
+          </Typography>
         </Card>
 
         <Typography variant="h5" as="h2" className="mb-4">座席を選択</Typography>
@@ -59,7 +72,7 @@ export const SeatMapPage = () => {
               key={car}
               type="button"
               onClick={() => handleCarChange(car)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`h-10 px-3 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
                 car === selectedCar
                   ? 'bg-surface-primary text-onSurface-inverse'
                   : 'bg-surface border border-border-muted text-onSurface hover:border-border-strong'
@@ -92,7 +105,7 @@ export const SeatMapPage = () => {
           <div className="flex items-center justify-center gap-1 mb-2">
             {cols.map((c) => (
               <div key={c} className="flex items-center">
-                <div className="w-8 text-center text-xs font-semibold text-onSurface-muted">{c}</div>
+                <div className="w-10 text-center text-xs font-semibold text-onSurface-muted">{c}</div>
                 {c === aisleAfter && <div className="w-6" />}
               </div>
             ))}
@@ -105,7 +118,7 @@ export const SeatMapPage = () => {
                 {cols.map((col) => {
                   const seat = seatMap.find((s) => s.row === row && s.col === col);
                   if (!seat) return null;
-                  const isSelected = selectedSeat === seat.id;
+                  const isSelected = selectedSeats.includes(seat.id);
                   const isOccupied = seat.status === 'occupied';
 
                   return (
@@ -113,8 +126,8 @@ export const SeatMapPage = () => {
                       <button
                         type="button"
                         disabled={isOccupied}
-                        onClick={() => setSelectedSeat(isSelected ? null : seat.id)}
-                        className={`w-8 h-8 rounded text-xs font-medium transition-colors ${
+                        onClick={() => handleSeatClick(seat.id)}
+                        className={`w-10 h-10 rounded text-xs font-medium transition-colors ${
                           isOccupied
                             ? 'bg-surface-inset text-onSurface-disabled cursor-not-allowed'
                             : isSelected
@@ -133,9 +146,9 @@ export const SeatMapPage = () => {
             ))}
           </div>
 
-          {selectedSeat && (
+          {selectedSeats.length > 0 && (
             <Typography variant="body-sm" className="mt-4">
-              選択中: <span className="font-semibold">{selectedCar}号車 {selectedSeat}</span>
+              選択中 ({selectedSeats.length}/{passengers}): <span className="font-semibold">{selectedSeats.join(', ')}</span>
             </Typography>
           )}
         </Card>
@@ -154,22 +167,45 @@ export const SeatMapPage = () => {
               <dt className="text-onSurface-muted">号車</dt>
               <dd className="font-medium text-onSurface">{selectedCar}号車</dd>
             </div>
-            {selectedSeat && (
+            {selectedSeats.length > 0 && (
               <div className="flex justify-between">
                 <dt className="text-onSurface-muted">座席</dt>
-                <dd className="font-medium text-onSurface">{selectedSeat}</dd>
+                <dd className="font-medium text-onSurface">{selectedSeats.join(', ')}</dd>
               </div>
             )}
+            <div className="flex justify-between">
+              <dt className="text-onSurface-muted">人数</dt>
+              <dd className="font-medium text-onSurface">{passengers}名</dd>
+            </div>
           </dl>
           <div className="border-t border-border-muted pt-4 mb-4">
             <Typography variant="body-sm" color="muted">合計金額</Typography>
             <p className="text-2xl font-bold text-onSurface">¥{price.toLocaleString()}</p>
           </div>
-          <Button fullWidth onClick={handleNext} disabled={!selectedSeat}>
-            予約内容の確認へ
-          </Button>
+          <div className="hidden lg:block">
+            <Button fullWidth onClick={handleNext} disabled={selectedSeats.length !== passengers}>
+              予約内容の確認へ
+            </Button>
+          </div>
         </Card>
       </div>
+
+      {/* モバイル固定 CTA */}
+      <div className="fixed bottom-16 left-0 right-0 lg:hidden z-40 bg-surface border-t border-border-muted shadow-sm"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
+        <div className="flex items-center justify-between px-4 py-3">
+          <div>
+            <Typography variant="caption" color="muted">合計</Typography>
+            <p className="text-lg font-bold text-onSurface">¥{price.toLocaleString()}</p>
+          </div>
+          <Button onClick={handleNext} disabled={selectedSeats.length !== passengers}>
+            予約内容の確認へ
+          </Button>
+        </div>
+      </div>
+      {/* モバイル固定 CTA 分のスペーサー */}
+      <div className="col-span-12 h-16 lg:hidden" />
     </div>
   );
 };

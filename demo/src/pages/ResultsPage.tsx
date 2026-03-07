@@ -23,30 +23,73 @@ export const ResultsPage = () => {
   const from = params.get('from') ?? '東京';
   const to = params.get('to') ?? '新大阪';
   const date = params.get('date') ?? '';
+  const passengers = Number(params.get('passengers') ?? 1);
 
   const trains = searchTrains(from, to);
 
   const handleSelect = (train: Train) => {
-    navigate(`/seat?trainId=${train.id}&from=${from}&to=${to}&date=${date}`);
+    navigate(`/seat?trainId=${train.id}&from=${from}&to=${to}&date=${date}&passengers=${passengers}`);
   };
 
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8">
-      {/* 検索条件サマリー */}
-      <div className="col-span-12 flex items-center gap-3 mb-2">
-        <div className="flex items-center gap-2 text-sm text-onSurface">
-          <span className="font-semibold">{from}</span>
-          <Icon name="arrow_forward" size="sm" color="primary" />
-          <span className="font-semibold">{to}</span>
-        </div>
-        <Typography variant="body-sm" color="muted" as="span">{date}</Typography>
-        <Button size="small" variant="tertiary" onClick={() => navigate('/')}>
-          条件変更
-        </Button>
+      {/* 検索条件: モバイル（アコーディオン） */}
+      <div className="col-span-12 lg:hidden">
+        <Card padding="sm">
+          <details>
+            <summary className="flex items-center justify-between cursor-pointer list-none text-sm [&::-webkit-details-marker]:hidden">
+              <span className="font-medium text-onSurface">{from} → {to}<span className="text-onSurface-muted font-normal ml-2">{date} / {passengers}名</span></span>
+              <Icon name="expand_more" size="sm" color="neutral" />
+            </summary>
+            <div className="border-t border-border-muted mt-3 pt-3">
+              <dl className="text-sm space-y-2">
+                <div className="flex justify-between">
+                  <dt className="text-onSurface-muted">区間</dt>
+                  <dd className="font-medium text-onSurface">{from} → {to}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-onSurface-muted">乗車日</dt>
+                  <dd className="font-medium text-onSurface">{date}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-onSurface-muted">人数</dt>
+                  <dd className="font-medium text-onSurface">{passengers}名</dd>
+                </div>
+              </dl>
+              <Button fullWidth variant="secondary" size="small" onClick={() => navigate('/')} className="mt-4">
+                条件変更
+              </Button>
+            </div>
+          </details>
+        </Card>
+      </div>
+
+      {/* 検索条件: デスクトップ */}
+      <div className="col-span-12 lg:col-span-4 lg:order-2 hidden lg:block">
+        <Card padding="md" className="sticky top-6">
+          <Typography variant="label" as="h3" color="muted" className="mb-3">検索条件</Typography>
+          <dl className="text-sm space-y-2">
+            <div className="flex justify-between">
+              <dt className="text-onSurface-muted">区間</dt>
+              <dd className="font-medium text-onSurface">{from} → {to}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-onSurface-muted">乗車日</dt>
+              <dd className="font-medium text-onSurface">{date}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-onSurface-muted">人数</dt>
+              <dd className="font-medium text-onSurface">{passengers}名</dd>
+            </div>
+          </dl>
+          <Button fullWidth variant="secondary" size="small" onClick={() => navigate('/')} className="mt-4">
+            条件変更
+          </Button>
+        </Card>
       </div>
 
       {/* 結果一覧 */}
-      <div className="col-span-12 lg:col-span-8 space-y-3">
+      <div className="col-span-12 lg:col-span-8 lg:order-1 space-y-3">
         {trains.map((train) => (
           <Card
             key={train.id}
@@ -80,23 +123,6 @@ export const ResultsPage = () => {
             </div>
           </Card>
         ))}
-      </div>
-
-      {/* サイドパネル: フィルター等 */}
-      <div className="col-span-12 lg:col-span-4 hidden lg:block">
-        <Card padding="md" className="sticky top-6">
-          <Typography variant="label" as="h3" color="muted" className="mb-3">検索条件</Typography>
-          <dl className="text-sm space-y-2">
-            <div className="flex justify-between">
-              <dt className="text-onSurface-muted">区間</dt>
-              <dd className="font-medium text-onSurface">{from} → {to}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-onSurface-muted">乗車日</dt>
-              <dd className="font-medium text-onSurface">{date}</dd>
-            </div>
-          </dl>
-        </Card>
       </div>
     </div>
   );

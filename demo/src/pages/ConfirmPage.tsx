@@ -16,13 +16,15 @@ export const ConfirmPage = () => {
   const date = params.get('date') ?? '';
   const seatClassId = params.get('class') ?? 'reserved';
   const total = Number(params.get('total') ?? 0);
-  const seat = params.get('seat') ?? '';
+  const passengers = Number(params.get('passengers') ?? 1);
+  const seatParam = params.get('seat') ?? '';
+  const seats = seatParam ? seatParam.split(',') : [];
 
   const seatClass = seatClasses.find((c) => c.id === seatClassId);
   const [agreed, setAgreed] = useState(false);
 
   const handleConfirm = () => {
-    navigate('/complete');
+    navigate(`/complete?passengers=${passengers}`);
   };
 
   return (
@@ -55,10 +57,18 @@ export const ConfirmPage = () => {
                 <span className="text-onSurface-muted">座席クラス</span>
                 <span className="font-medium text-onSurface">{seatClass?.label}</span>
               </div>
-              {seat && (
+              <div className="flex justify-between text-sm">
+                <span className="text-onSurface-muted">人数</span>
+                <span className="font-medium text-onSurface">{passengers}名</span>
+              </div>
+              {seats.length > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-onSurface-muted">座席</span>
-                  <span className="font-medium text-onSurface">{seat}</span>
+                  <span className="font-medium text-onSurface text-right">
+                    {seats.map((s, i) => (
+                      <span key={i} className="block">{s}</span>
+                    ))}
+                  </span>
                 </div>
               )}
             </div>
@@ -78,7 +88,7 @@ export const ConfirmPage = () => {
             label="利用規約に同意する"
           />
 
-          <div className="flex gap-3 justify-end">
+          <div className="hidden lg:flex gap-3 justify-end">
             <Button variant="tertiary" onClick={() => navigate(-1)}>
               戻る
             </Button>
@@ -88,6 +98,23 @@ export const ConfirmPage = () => {
           </div>
         </div>
       </div>
+
+      {/* モバイル固定 CTA */}
+      <div className="fixed bottom-16 left-0 right-0 lg:hidden z-40 bg-surface border-t border-border-muted shadow-sm"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
+        <div className="flex items-center justify-between px-4 py-3">
+          <div>
+            <Typography variant="caption" color="muted">合計</Typography>
+            <p className="text-lg font-bold text-onSurface">¥{total.toLocaleString()}</p>
+          </div>
+          <Button onClick={handleConfirm} disabled={!agreed}>
+            予約を確定する
+          </Button>
+        </div>
+      </div>
+      {/* モバイル固定 CTA 分のスペーサー */}
+      <div className="col-span-12 h-16 lg:hidden" />
     </div>
   );
 };

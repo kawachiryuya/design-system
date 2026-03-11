@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Link } from './Link';
 
 const meta: Meta<typeof Link> = {
-  title: 'Primitives/Link',
+  title: 'Primitives/_Link',
   component: Link,
   tags: ['autodocs'],
   argTypes: {

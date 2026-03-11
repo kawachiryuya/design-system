@@ -5,7 +5,7 @@ const SAMPLE_IMG = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4
 const PORTRAIT_IMG = 'https://i.pravatar.cc/300?img=47';
 
 const meta: Meta<typeof Image> = {
-  title: 'Primitives/Image',
+  title: 'Primitives/_Image',
   component: Image,
   tags: ['autodocs'],
   argTypes: {

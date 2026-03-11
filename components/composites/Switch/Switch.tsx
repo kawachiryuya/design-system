@@ -1,4 +1,5 @@
 import React from 'react';
+import { Label } from '../../primitives/Label/Label';
 
 /**
  * Switch Props
@@ -75,7 +76,6 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     const thumbOff = { small: 'translate-x-[2px]', medium: 'translate-x-[2px]', large: 'translate-x-1' }[size];
     const thumbOn = { small: 'translate-x-[18px]', medium: 'translate-x-[22px]', large: 'translate-x-[28px]' }[size];
 
-    const labelSize = { small: 'text-sm', medium: 'text-sm', large: 'text-base' }[size];
 
     const trackClasses = [
       'relative',
@@ -114,15 +114,14 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     const labelEl = (label || description) && (
       <div className="flex flex-col gap-[2px]">
         {label && (
-          <label
+          <Label
             htmlFor={switchId}
-            className={`${labelSize} font-medium leading-tight select-none ${
-              disabled ? 'text-onSurface-disabled' : 'text-onSurface cursor-pointer'
-            }`}
+            size={size === 'large' ? 'large' : 'medium'}
+            disabled={disabled}
             onClick={!disabled ? handleClick : undefined}
           >
             {label}
-          </label>
+          </Label>
         )}
         {description && (
           <span className="text-xs text-onSurface-muted leading-normal">{description}</span>

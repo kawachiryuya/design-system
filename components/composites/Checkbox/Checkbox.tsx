@@ -1,4 +1,5 @@
 import React from 'react';
+import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /**
@@ -59,20 +60,24 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     const errorId = inputId ? `${inputId}-error` : undefined;
 
     const sizePx = { small: 'w-4 h-4', medium: 'w-5 h-5', large: 'w-6 h-6' }[size];
-    const labelSize = { small: 'text-sm', medium: 'text-sm', large: 'text-base' }[size];
 
     const inputClasses = [
       sizePx,
+      'appearance-none',
+      'ds-checkbox',
       'rounded-sm',
       'border-2',
       'cursor-pointer',
+      'bg-surface',
+      'bg-center',
+      'bg-no-repeat',
       'transition-all',
       'duration-150',
       'focus:outline-none',
       'focus-visible:ring-2',
       'focus-visible:ring-offset-1',
       error
-        ? 'border-border-error focus-visible:ring-border-error checked:bg-surface-error'
+        ? 'border-border-error focus-visible:ring-border-error checked:bg-surface-error checked:border-border-error'
         : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-surface-primary',
       disabled ? 'opacity-50 cursor-not-allowed' : '',
     ]
@@ -95,14 +100,13 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           {(label || description) && (
             <div className="flex flex-col gap-0.5">
               {label && (
-                <label
+                <Label
                   htmlFor={inputId}
-                  className={`${labelSize} font-medium leading-tight select-none ${
-                    disabled ? 'text-onSurface-disabled cursor-not-allowed' : 'text-onSurface cursor-pointer'
-                  }`}
+                  size={size === 'large' ? 'large' : 'medium'}
+                  disabled={disabled}
                 >
                   {label}
-                </label>
+                </Label>
               )}
               {description && (
                 <span className="text-xs text-onSurface-muted leading-normal">{description}</span>

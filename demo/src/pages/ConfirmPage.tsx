@@ -92,24 +92,26 @@ export const ConfirmPage = () => {
             <Radio
               name="card"
               value="saved"
+              size="medium"
               checked={cardOption === 'saved'}
               onChange={() => setCardOption('saved')}
               label="前回利用したカード"
             />
             {cardOption === 'saved' && (
-              <div className="pl-6">
+              <div className="pl-8">
                 <Typography variant="body-sm">Visa **** 1234　有効期限 12/28</Typography>
               </div>
             )}
             <Radio
               name="card"
               value="new"
+              size="medium"
               checked={cardOption === 'new'}
               onChange={() => setCardOption('new')}
               label="新しいカードを登録"
             />
             {cardOption === 'new' && (
-              <div className="pl-6 space-y-3">
+              <div className="pl-8 space-y-3">
                 <Input label="カード番号" placeholder="0000 0000 0000 0000" fullWidth />
                 <div className="flex gap-3">
                   <Input label="有効期限" placeholder="MM/YY" fullWidth />
@@ -131,18 +133,20 @@ export const ConfirmPage = () => {
             <Radio
               name="ic"
               value="now"
+              size="medium"
               checked={icOption === 'now'}
               onChange={() => setIcOption('now')}
               label="今すぐ登録する"
             />
             {icOption === 'now' && (
-              <div className="pl-6">
+              <div className="pl-8">
                 <Input label="ICカード番号" placeholder="JE00 0000 0000 0000 0" fullWidth />
               </div>
             )}
             <Radio
               name="ic"
               value="later"
+              size="medium"
               checked={icOption === 'later'}
               onChange={() => setIcOption('later')}
               label="あとで登録する"

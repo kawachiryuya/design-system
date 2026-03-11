@@ -30,7 +30,7 @@ const FolderIcon = () => (
 );
 
 const meta: Meta<typeof EmptyState> = {
-  title: 'Composites/EmptyState',
+  title: 'Composites/_EmptyState',
   component: EmptyState,
   tags: ['autodocs'],
   argTypes: {

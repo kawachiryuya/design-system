@@ -9,7 +9,7 @@ const sampleItems = [
 ];
 
 const meta: Meta<typeof Breadcrumb> = {
-  title: 'Composites/Breadcrumb',
+  title: 'Composites/_Breadcrumb',
   component: Breadcrumb,
   tags: ['autodocs'],
   argTypes: {

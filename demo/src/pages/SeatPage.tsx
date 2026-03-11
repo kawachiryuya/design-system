@@ -5,8 +5,19 @@ import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
-import { seatClasses, searchTrains } from '../data/trains';
+import { seatClasses, searchTrains, type SeatAvailability } from '../data/trains';
 import { formatDate } from '../utils/format';
+
+const availabilityLabel = (status: SeatAvailability) => {
+  switch (status) {
+    case 'available':
+      return <Badge variant="success" appearance="soft" size="small">○ 空席あり</Badge>;
+    case 'few':
+      return <Badge variant="warning" appearance="soft" size="small">△ 残りわずか</Badge>;
+    case 'sold-out':
+      return <Badge variant="neutral" appearance="soft" size="small">満席</Badge>;
+  }
+};
 
 export const SeatPage = () => {
   const [params] = useSearchParams();
@@ -71,6 +82,9 @@ export const SeatPage = () => {
                       )}
                     </div>
                     <Typography variant="body-sm" color="muted" className="mt-1">{cls.description}</Typography>
+                    {train?.seats[cls.id] && (
+                      <div className="mt-1">{availabilityLabel(train.seats[cls.id])}</div>
+                    )}
                   </div>
                   <div className="text-right">
                     <Typography variant="h5" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
@@ -83,7 +97,7 @@ export const SeatPage = () => {
       </div>
 
       {/* 右: 料金サマリー */}
-      <div className="col-span-12 lg:col-span-4">
+      <div className="hidden lg:block col-span-12 lg:col-span-4">
         <Card variant="filled" padding="md" className="sticky top-6">
           <Typography variant="label" as="h3" color="muted" className="mb-3">予約内容</Typography>
           <dl className="text-sm space-y-2 mb-4">

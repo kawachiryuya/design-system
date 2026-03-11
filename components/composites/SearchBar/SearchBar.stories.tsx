@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SearchBar } from './SearchBar';
 
 const meta: Meta<typeof SearchBar> = {
-  title: 'Composites/SearchBar',
+  title: 'Composites/_SearchBar',
   component: SearchBar,
   tags: ['autodocs'],
   argTypes: {

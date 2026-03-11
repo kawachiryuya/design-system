@@ -1,4 +1,5 @@
 import React from 'react';
+import { Label } from '../Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /**
@@ -154,17 +155,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className={wrapperStyles}>
         {/* Label */}
         {label && (
-          <label
-            htmlFor={inputId}
-            className="text-sm font-medium text-onSurface"
-          >
+          <Label htmlFor={inputId} size={size === 'large' ? 'large' : 'medium'} required={required} disabled={disabled}>
             {label}
-            {required && (
-              <span className="ml-1 text-onSurface-error" aria-label="必須">
-                *
-              </span>
-            )}
-          </label>
+          </Label>
         )}
 
         {/* Input wrapper（アイコン配置のため） */}

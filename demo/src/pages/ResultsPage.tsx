@@ -10,9 +10,9 @@ import { formatDate } from '../utils/format';
 const availabilityBadge = (status: SeatAvailability, label: string) => {
   switch (status) {
     case 'available':
-      return <Badge variant="success" appearance="soft" size="small">{label} 空席あり</Badge>;
+      return <Badge variant="success" appearance="soft" size="small">○ {label}</Badge>;
     case 'few':
-      return <Badge variant="warning" appearance="soft" size="small">{label} 残りわずか</Badge>;
+      return <Badge variant="warning" appearance="soft" size="small">△ {label}</Badge>;
     case 'sold-out':
       return <Badge variant="neutral" appearance="soft" size="small">{label} 満席</Badge>;
   }
@@ -128,13 +128,19 @@ export const ResultsPage = () => {
                 </div>
 
                 <div className="text-right shrink-0">
-                  <Typography variant="h5" weight="bold" as="p">
-                    ¥{totalCheapest.toLocaleString()}〜
-                  </Typography>
-                  {passengers > 1 && (
-                    <Typography variant="caption" color="muted">
-                      ¥{cheapest.toLocaleString()} × {passengers}名
-                    </Typography>
+                  {soldOut ? (
+                    <Typography variant="h5" weight="bold" as="p" color="muted">満席</Typography>
+                  ) : (
+                    <>
+                      <Typography variant="h5" weight="bold" as="p">
+                        ¥{totalCheapest.toLocaleString()}〜
+                      </Typography>
+                      {passengers > 1 && (
+                        <Typography variant="caption" color="muted">
+                          ¥{cheapest.toLocaleString()} × {passengers}名
+                        </Typography>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

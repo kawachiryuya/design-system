@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
+import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /**
@@ -101,12 +102,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
-          <label htmlFor={selectId} className="text-sm font-medium text-onSurface">
+          <Label htmlFor={selectId} size={size === 'large' ? 'large' : 'medium'} required={required} disabled={disabled}>
             {label}
-            {required && (
-              <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
-            )}
-          </label>
+          </Label>
         )}
         <div className="relative">
           <select

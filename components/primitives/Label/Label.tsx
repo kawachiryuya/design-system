@@ -49,7 +49,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
       'inline-flex',
       'items-center',
       'gap-1',
-      'font-medium',
+      'font-normal',
       'leading-tight',
       'select-none',
     ];
@@ -64,7 +64,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
     // State styles
     const stateStyles = disabled
       ? ['text-onSurface-disabled', 'cursor-not-allowed']
-      : ['text-onSurface'];
+      : ['text-onSurface', 'cursor-pointer'];
 
     const labelClasses = [
       ...baseStyles,

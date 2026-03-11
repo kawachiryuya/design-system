@@ -48,7 +48,7 @@ export const SearchPage = () => {
       <div className="col-span-12 lg:col-span-6">
         <Card padding="lg" className="space-y-5">
           {/* 出発駅 / 到着駅 */}
-          <div className="flex items-end gap-2">
+          <div className="flex flex-col lg:flex-row lg:items-end gap-2">
             <div className="flex-1">
               <Select label="出発駅" value={from} onChange={(e) => setFrom(e.target.value)} fullWidth>
                 {stations.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -61,8 +61,10 @@ export const SearchPage = () => {
               variant="tertiary"
               onClick={handleSwap}
               aria-label="出発駅と到着駅を入れ替え"
+              className="self-center"
             >
-              <Icon name="swap_horiz" size="sm" color="primary" />
+              <Icon name="swap_vert" size="sm" color="primary" className="lg:hidden" />
+              <Icon name="swap_horiz" size="sm" color="primary" className="hidden lg:block" />
             </Button>
 
             <div className="flex-1">
@@ -73,8 +75,8 @@ export const SearchPage = () => {
           </div>
 
           {/* 乗車日 / 人数 */}
-          <div className="flex gap-4">
-            <div className="flex-1">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <Input type="date" label="乗車日" id="date" value={date} onChange={(e) => setDate(e.target.value)} fullWidth />
             </div>
             <NumberInput
@@ -97,7 +99,7 @@ export const SearchPage = () => {
           <Divider label="または" />
 
           {/* 自由席クイック購入 */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             <div>
               <Typography variant="label" as="h2">自由席</Typography>
               <Typography variant="body-sm" color="muted" className="mt-1">

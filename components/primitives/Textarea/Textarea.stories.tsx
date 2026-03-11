@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Textarea } from './Textarea';
 
 const meta: Meta<typeof Textarea> = {
-  title: 'Primitives/Textarea',
+  title: 'Primitives/_Textarea',
   component: Textarea,
   tags: ['autodocs'],
   argTypes: {

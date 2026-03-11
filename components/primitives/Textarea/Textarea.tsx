@@ -1,4 +1,5 @@
 import React from 'react';
+import { Label } from '../Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /**
@@ -105,12 +106,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
           <div className="flex items-center justify-between">
-            <label htmlFor={textareaId} className="text-sm font-medium text-onSurface">
+            <Label htmlFor={textareaId} size="medium" required={required} disabled={disabled}>
               {label}
-              {required && (
-                <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
-              )}
-            </label>
+            </Label>
             {showCounter && (
               <span className={`text-xs ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-subtle'}`}>
                 {currentLength ?? 0}/{maxLength}

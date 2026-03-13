@@ -73,13 +73,13 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     const selectClasses = [
       'block',
-      'rounded-sm',
+      'rounded-xs',
       'border',
       'text-onSurface',
       'appearance-none',
       'cursor-pointer',
       'transition-all',
-      'duration-200',
+      'duration-normal',
       'focus:outline-none',
       'focus:ring-2',
       'focus:ring-offset-0',

@@ -95,7 +95,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       'items-center',
       'gap-[6px]',
       'font-medium',
-      'rounded-sm',
+      'rounded-xs',
       'leading-none',
       'whitespace-nowrap',
       sizeStyle,

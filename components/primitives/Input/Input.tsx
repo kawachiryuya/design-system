@@ -68,13 +68,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     // Base input styles
     const baseStyles = [
       'block',
-      'rounded-sm',
+      'rounded-xs',
       'border',
       'bg-surface',
       'text-onSurface',
       'placeholder:text-onSurface-subtle',
       'transition-all',
-      'duration-200',
+      'duration-normal',
       'focus:outline-none',
       'focus:ring-2',
       'focus:ring-offset-0',

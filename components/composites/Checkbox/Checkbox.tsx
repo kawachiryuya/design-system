@@ -65,7 +65,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       sizePx,
       'appearance-none',
       'ds-checkbox',
-      'rounded-sm',
+      'rounded-xs',
       'border-2',
       'cursor-pointer',
       'bg-surface',

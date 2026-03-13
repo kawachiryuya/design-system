@@ -10,7 +10,7 @@ const navItems = [
 export const BottomNav = () => {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-surface border-t border-border-muted shadow-sm"
+      className="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-surface border-t border-border-muted shadow-xs"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex items-center justify-around h-16">

@@ -40,7 +40,7 @@ const objectFitStyles = {
 
 const roundedStyles = {
   none: 'rounded-none',
-  sm: 'rounded-sm',
+  sm: 'rounded-xs',
   md: 'rounded',
   lg: 'rounded-lg',
   full: 'rounded-full',

@@ -14,7 +14,7 @@ type Story = StoryObj;
 const RADII = Object.entries(radiusToken.radius).map(([key, value]) => ({
   key,
   value,
-  tw: key === 'DEFAULT' ? 'rounded' : key === 'none' ? 'rounded-none' : `rounded-${key}`,
+  tw: key === 'none' ? 'rounded-none' : `rounded-${key}`,
 }));
 
 export const BorderRadius: Story = {

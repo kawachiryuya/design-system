@@ -187,6 +187,34 @@ export const iconRegistry: Record<string, IconDefinition> = {
       'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
     ],
   },
+  confirmation_number: {
+    label: 'チケット',
+    mode: 'fill',
+    paths: [
+      'M22 10V6a2 2 0 0 0-2-2H4c-1.1 0-1.99.89-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 7.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z',
+    ],
+  },
+  place: {
+    label: '場所',
+    mode: 'fill',
+    paths: [
+      'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z',
+    ],
+  },
+  qr_code: {
+    label: 'QRコード',
+    mode: 'fill',
+    paths: [
+      'M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3zm-3 8v-3h-2v5h5v-2h-3zm6 0h-2v2h2v-2z',
+    ],
+  },
+  book_online: {
+    label: '予約',
+    mode: 'fill',
+    paths: [
+      'M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14zm-4.22-5.55-1.57-1.57a.5.5 0 0 0-.71 0l-.01.01a.5.5 0 0 0 0 .71l1.93 1.93a.5.5 0 0 0 .71 0l3.17-3.18a.5.5 0 0 0 0-.71l-.01-.01a.5.5 0 0 0-.71 0l-2.8 2.82z',
+    ],
+  },
 };
 
 /** レジストリからアイコン定義を取得 */

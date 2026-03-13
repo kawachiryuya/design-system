@@ -79,7 +79,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   const s = sizeStyles[size];
 
   const btnBase = [
-    'inline-flex items-center justify-center rounded-sm font-medium',
+    'inline-flex items-center justify-center rounded-xs font-medium',
     'transition-colors duration-150',
     'focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-1',
     'px-1',

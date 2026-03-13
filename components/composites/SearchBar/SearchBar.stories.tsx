@@ -138,7 +138,7 @@ export const HeaderSearch: Story = {
           fullWidth placeholder="記事を検索..." />
         {results.length > 0 && (
           <ul className="absolute top-full mt-1 w-full bg-surface border border-border-muted
-            rounded shadow-sm z-10 overflow-hidden">
+            rounded shadow-xs z-10 overflow-hidden">
             {results.map((r) => (
               <li key={r}>
                 <button type="button" onClick={() => { setValue(r); setResults([]); }}

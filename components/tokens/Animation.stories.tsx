@@ -14,7 +14,7 @@ type Story = StoryObj;
 const DURATIONS = Object.entries(animationToken.duration).map(([key, value]) => ({
   key,
   value,
-  tw: key === 'DEFAULT' ? 'duration-200' : `duration-${parseInt(value)}`,
+  tw: `duration-${key}`,
 }));
 
 const EASINGS = Object.entries(animationToken.easing).map(([key, value]) => ({

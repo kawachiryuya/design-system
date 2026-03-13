@@ -14,7 +14,7 @@ type Story = StoryObj;
 const SHADOWS = Object.entries(shadowsToken.shadow).map(([key, value]) => ({
   key,
   value,
-  tw: key === 'DEFAULT' ? 'shadow' : key === 'none' ? 'shadow-none' : `shadow-${key}`,
+  tw: key === 'none' ? 'shadow-none' : `shadow-${key}`,
 }));
 
 export const Elevations: Story = {

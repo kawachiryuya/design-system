@@ -45,7 +45,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   return (
     <div className="flex flex-col gap-1">
       {label && <Typography variant="label">{label}</Typography>}
-      <div className={`flex items-center border border-border rounded-sm ${sizeStyles.container}`}>
+      <div className={`flex items-center border border-border rounded-xs ${sizeStyles.container}`}>
         <button
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}

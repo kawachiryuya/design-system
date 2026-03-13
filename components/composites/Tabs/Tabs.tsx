@@ -108,7 +108,7 @@ export const Tabs: React.FC<TabsProps> = ({
     const isActive = tab.id === currentId;
 
     return [
-      'relative px-4 py-2 text-sm font-medium transition-colors duration-200',
+      'relative px-4 py-2 text-sm font-medium transition-colors duration-normal',
       'focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-1',
       'whitespace-nowrap',
       tab.disabled
@@ -148,7 +148,7 @@ export const Tabs: React.FC<TabsProps> = ({
               <span className="flex items-center gap-1">
                 {tab.label}
                 {tab.badge !== undefined && (
-                  <span className="text-xs font-semibold px-[6px] py-[2px] rounded-sm min-w-5 text-center leading-none bg-surface-skeleton text-onSurface-muted">
+                  <span className="text-xs font-semibold px-[6px] py-[2px] rounded-xs min-w-5 text-center leading-none bg-surface-skeleton text-onSurface-muted">
                     {tab.badge}
                   </span>
                 )}

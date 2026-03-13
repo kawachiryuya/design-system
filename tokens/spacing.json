@@ -26,14 +26,14 @@
   },
   "semantic": {
     "component": {
-      "tight": "4px",
-      "default": "8px",
-      "comfortable": "12px"
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px"
     },
     "section": {
-      "small": "32px",
-      "default": "48px",
-      "large": "64px"
+      "sm": "32px",
+      "md": "48px",
+      "lg": "64px"
     }
   }
 }

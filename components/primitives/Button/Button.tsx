@@ -56,9 +56,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       'items-center',
       'justify-center',
       'font-medium',
-      iconOnly ? 'rounded-full' : 'rounded-sm',
+      iconOnly ? 'rounded-full' : 'rounded-xs',
       'transition-all',
-      'duration-200', // 200ms (tokens/animation.json)
+      'duration-normal', // 200ms (tokens/animation.json)
       'focus:outline-none',
       'focus-visible:ring-2',
       'focus-visible:ring-offset-2',

@@ -70,7 +70,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     const textareaClasses = [
       'block',
-      'rounded-sm',
+      'rounded-xs',
       'border',
       'text-onSurface',
       'placeholder:text-onSurface-subtle',
@@ -79,7 +79,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       'text-base',
       'leading-normal',
       'transition-all',
-      'duration-200',
+      'duration-normal',
       'focus:outline-none',
       'focus:ring-2',
       'focus:ring-offset-0',

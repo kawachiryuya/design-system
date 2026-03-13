@@ -3,7 +3,7 @@
   "$description": "Animation tokens. Reference: principles/motion/animation.md",
   "duration": {
     "fast": "100ms",
-    "DEFAULT": "200ms",
+    "normal": "200ms",
     "slow": "300ms",
     "slower": "500ms"
   },

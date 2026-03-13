@@ -41,7 +41,7 @@ export const SegmentedControl = <T extends string | number>({
             onClick={() => onChange(item.value)}
             className={[
               sizeStyles,
-              'rounded-sm font-medium whitespace-nowrap transition-colors',
+              'rounded-xs font-medium whitespace-nowrap transition-colors',
               isSelected
                 ? 'bg-surface-primary text-onSurface-inverse'
                 : 'bg-surface border border-border-muted text-onSurface hover:border-border-strong',

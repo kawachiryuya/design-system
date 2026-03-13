@@ -97,7 +97,7 @@ export const Card: React.FC<CardProps> & {
     variantStyles[variant],
     paddingStyles[padding],
     isInteractive
-      ? 'cursor-pointer transition-shadow duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
+      ? 'cursor-pointer transition-shadow duration-normal hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
       : '',
     isLink ? 'block no-underline text-inherit' : '',
     className,

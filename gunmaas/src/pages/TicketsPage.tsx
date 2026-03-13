@@ -68,7 +68,7 @@ export const TicketsPage = () => {
       <div className="px-4 pb-10">
         {filtered.map((t, i) => (
           <FadeIn key={`${t.destId}-${t.name}`} delay={i * 60}>
-            <TicketListItem ticket={t} showBuy />
+            <TicketListItem ticket={t} />
           </FadeIn>
         ))}
       </div>

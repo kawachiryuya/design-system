@@ -7,16 +7,18 @@ import { Card } from '@ds/composites/Card/Card';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Switch } from '@ds/composites/Switch/Switch';
 import { Divider } from '@ds/primitives/Divider/Divider';
+import { ProgressBar } from '@ds/composites/ProgressBar/ProgressBar';
 import { FadeIn } from '../components/FadeIn';
 import { useTicketStore } from '../store/ticketStore';
 
 export const MyPage = () => {
   const navigate = useNavigate();
-  const { tickets } = useTicketStore();
+  const { tickets, userProfile } = useTicketStore();
   const [pushEnabled, setPushEnabled] = useState(true);
   const [discountAuto, setDiscountAuto] = useState(true);
 
   const recentTickets = tickets.slice(0, 3);
+  const setupComplete = userProfile.step >= 3;
 
   return (
     <div>
@@ -30,9 +32,37 @@ export const MyPage = () => {
         </Typography>
       </div>
 
+      {/* Onboarding guide banner */}
+      {!setupComplete && (
+        <div className="px-4 pt-5">
+          <FadeIn>
+            <Card variant="outlined" clickable onClick={() => navigate('/start')}>
+              <div className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center flex-shrink-0">
+                    <Icon name="arrow_forward" size="sm" color="primary" />
+                  </div>
+                  <div className="flex-1">
+                    <Typography variant="body-sm" as="div" weight="bold">
+                      はじめ方ガイド
+                    </Typography>
+                    <Typography variant="caption" color="muted" as="div">
+                      {userProfile.step === 0
+                        ? '3ステップで全機能を使えるようになります'
+                        : `ステップ ${userProfile.step} / 3 完了`}
+                    </Typography>
+                  </div>
+                </div>
+                <ProgressBar value={userProfile.step} max={3} size="sm" />
+              </div>
+            </Card>
+          </FadeIn>
+        </div>
+      )}
+
       {/* Profile */}
       <div className="px-4 pt-5">
-        <FadeIn>
+        <FadeIn delay={setupComplete ? 0 : 50}>
           <Card variant="outlined">
             <div className="p-4 flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-surface-secondary flex items-center justify-center flex-shrink-0">
@@ -45,15 +75,27 @@ export const MyPage = () => {
                   田中 太郎
                 </Typography>
                 <Typography variant="caption" color="muted" as="div" className="mt-1">
-                  tanaka@example.com
+                  {userProfile.step >= 2 && userProfile.email ? userProfile.email : 'tanaka@example.com'}
                 </Typography>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="success" dot size="small">
-                    プレミアム会員
-                  </Badge>
-                  <Badge variant="primary" size="small">
-                    マイナンバー連携済
-                  </Badge>
+                  {userProfile.step >= 2 ? (
+                    <Badge variant="success" dot size="small">
+                      プレミアム会員
+                    </Badge>
+                  ) : (
+                    <Badge variant="neutral" size="small">
+                      未登録
+                    </Badge>
+                  )}
+                  {userProfile.step >= 3 ? (
+                    <Badge variant="primary" size="small">
+                      マイナンバー連携済
+                    </Badge>
+                  ) : (
+                    <Badge variant="neutral" size="small">
+                      マイナンバー未連携
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
@@ -67,33 +109,57 @@ export const MyPage = () => {
           <Typography variant="body-sm" as="div" weight="bold" className="mb-3">
             割引条件
           </Typography>
-          <Card variant="outlined">
-            <div className="p-4">
-              <div className="flex items-center gap-3 mb-3">
-                <Icon name="check_circle" size="sm" color="primary" />
-                <div>
-                  <Typography variant="body-sm" as="div" weight="bold">
-                    中央市民
-                  </Typography>
-                  <Typography variant="caption" color="muted" as="div">
-                    中心市街地乗り放題券 ¥500 → ¥360
-                  </Typography>
-                </div>
-              </div>
-              <Divider />
-              <div className="flex items-center gap-3 mt-3">
+          {userProfile.step < 2 ? (
+            <Card variant="outlined" clickable onClick={() => navigate('/start')}>
+              <div className="p-4 flex items-center gap-3">
                 <Icon name="info" size="sm" color="disabled" />
                 <div>
                   <Typography variant="body-sm" as="div" color="muted">
-                    65歳以上の割引
+                    アカウント登録で割引条件を確認
                   </Typography>
                   <Typography variant="caption" color="subtle" as="div">
-                    条件を満たしていません
+                    はじめ方ガイドから登録できます
                   </Typography>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          ) : (
+            <Card variant="outlined">
+              <div className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  {userProfile.step >= 3 && userProfile.city === '中央市' ? (
+                    <Icon name="check_circle" size="sm" color="primary" />
+                  ) : (
+                    <Icon name="info" size="sm" color="disabled" />
+                  )}
+                  <div>
+                    <Typography variant="body-sm" as="div" weight={userProfile.step >= 3 && userProfile.city === '中央市' ? 'bold' : 'normal'}>
+                      中央市民割引
+                    </Typography>
+                    <Typography variant="caption" color="muted" as="div">
+                      {userProfile.step >= 3 && userProfile.city === '中央市'
+                        ? '✅ 適用済み — 中心市街地乗り放題券 ¥500 → ¥360'
+                        : userProfile.city === '中央市'
+                          ? 'マイナンバー連携で自動適用されます'
+                          : '対象外（中央市民の方が対象）'}
+                    </Typography>
+                  </div>
+                </div>
+                <Divider />
+                <div className="flex items-center gap-3 mt-3">
+                  <Icon name="info" size="sm" color="disabled" />
+                  <div>
+                    <Typography variant="body-sm" as="div" color="muted">
+                      65歳以上の割引
+                    </Typography>
+                    <Typography variant="caption" color="subtle" as="div">
+                      条件を満たしていません
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
         </FadeIn>
       </div>
 

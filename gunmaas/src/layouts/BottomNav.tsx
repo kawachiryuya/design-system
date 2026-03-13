@@ -10,7 +10,7 @@ const navItems = [
 
 export const BottomNav = () => {
   return (
-    <nav className="sticky bottom-0 bg-surface border-t border-border-muted z-50">
+    <nav className="flex-shrink-0 bg-surface border-t border-border-muted z-50">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item, i) => (
           <NavLink

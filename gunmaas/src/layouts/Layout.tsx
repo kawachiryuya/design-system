@@ -2,8 +2,7 @@ import { useRef, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { BottomNav } from './BottomNav';
-import { PurchaseDialog } from '../components/PurchaseDialog';
-import { PurchaseToast } from '../components/PurchaseToast';
+import { TicketModal } from '../components/TicketModal';
 
 export const Layout = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -15,14 +14,14 @@ export const Layout = () => {
 
   return (
     <div
-      ref={scrollRef}
-      className="max-w-[420px] mx-auto bg-background min-h-screen relative shadow-lg overflow-y-auto"
+      className="max-w-[420px] mx-auto bg-background h-screen relative shadow-lg flex flex-col"
     >
-      <Header />
-      <Outlet />
+      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        <Header />
+        <Outlet />
+      </div>
       <BottomNav />
-      <PurchaseDialog />
-      <PurchaseToast />
+      <TicketModal />
     </div>
   );
 };

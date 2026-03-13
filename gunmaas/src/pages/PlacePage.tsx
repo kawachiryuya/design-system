@@ -8,14 +8,16 @@ import { Card } from '@ds/composites/Card/Card';
 import { destinations } from '../data/destinations';
 import { FadeIn } from '../components/FadeIn';
 import { DiscountBanner } from '../components/DiscountBanner';
+import { PersonalDiscountBanner } from '../components/PersonalDiscountBanner';
 import { useTicketStore } from '../store/ticketStore';
+
 
 export const PlacePage = () => {
   const { placeId } = useParams();
   const navigate = useNavigate();
   const d = destinations.find((dest) => dest.id === placeId);
   const [activeTab, setActiveTab] = useState('access');
-  const { setPendingPurchase } = useTicketStore();
+  const { setDetailTicket, userProfile } = useTicketStore();
 
   if (!d) return null;
 
@@ -68,7 +70,11 @@ export const PlacePage = () => {
         <div className="flex flex-col gap-2">
           {d.tickets.map((t, i) => (
             <FadeIn key={i} delay={i * 80}>
-              <Card variant="outlined">
+              <Card
+                variant="outlined"
+                clickable
+                onClick={() => setDetailTicket({ ...t, destName: d.name, destId: d.id })}
+              >
                 <div className="p-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -86,14 +92,6 @@ export const PlacePage = () => {
                       <Typography variant="h4" as="div" weight="bold" color="primary" className="font-sans">
                         {t.price}
                       </Typography>
-                      <Button
-                        size="small"
-                        className="mt-1 !text-xs !h-8 !min-w-0 !px-3"
-                        style={{ background: 'linear-gradient(135deg, var(--gm-accent), var(--gm-accent-dark))' }}
-                        onClick={() => setPendingPurchase({ ticket: t, destName: d.name, destId: d.id })}
-                      >
-                        購入
-                      </Button>
                     </div>
                   </div>
                 </div>
@@ -206,7 +204,11 @@ export const PlacePage = () => {
           {d.tagline}
         </Typography>
 
-        {d.discount && <DiscountBanner discount={d.discount} />}
+        {d.discount && (
+          userProfile.step >= 3 && d.discount.cond.includes(userProfile.city)
+            ? <PersonalDiscountBanner discount={d.discount} />
+            : <DiscountBanner discount={d.discount} />
+        )}
 
         <Button
           fullWidth

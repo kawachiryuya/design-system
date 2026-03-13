@@ -7,6 +7,7 @@ import { TicketsPage } from './pages/TicketsPage';
 import { SearchPage } from './pages/SearchPage';
 import { MyTicketsPage } from './pages/MyTicketsPage';
 import { MyPage } from './pages/MyPage';
+import { StartPage } from './pages/StartPage';
 
 export const App = () => {
   return (
@@ -19,6 +20,7 @@ export const App = () => {
         <Route path="search" element={<SearchPage />} />
         <Route path="my-tickets" element={<MyTicketsPage />} />
         <Route path="mypage" element={<MyPage />} />
+        <Route path="start" element={<StartPage />} />
       </Route>
     </Routes>
   );

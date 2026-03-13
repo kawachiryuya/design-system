@@ -13,7 +13,7 @@ import { useTicketStore } from '../store/ticketStore';
 export const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setPendingPurchase } = useTicketStore();
+  const { setDetailTicket } = useTicketStore();
   const from = searchParams.get('from') ?? '';
   const to = searchParams.get('to') ?? '';
 
@@ -115,7 +115,12 @@ export const SearchPage = () => {
                   </Typography>
                   {d.tickets.map((t, ti) => (
                     <FadeIn key={ti} delay={di * 100 + ti * 60 + 80}>
-                      <Card variant="outlined" className="mb-2">
+                      <Card
+                        variant="outlined"
+                        clickable
+                        className="mb-2"
+                        onClick={() => setDetailTicket({ ...t, destName: d.name, destId: d.id })}
+                      >
                         <div className="p-3 flex justify-between items-start">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
@@ -134,14 +139,6 @@ export const SearchPage = () => {
                             <Typography variant="h5" as="div" weight="bold" color="primary" className="font-sans">
                               {t.price}
                             </Typography>
-                            <Button
-                              size="small"
-                              className="mt-1 !text-xs !h-8 !min-w-0 !px-3"
-                              style={{ background: 'linear-gradient(135deg, var(--gm-accent), var(--gm-accent-dark))' }}
-                              onClick={() => setPendingPurchase({ ticket: t, destName: d.name, destId: d.id })}
-                            >
-                              購入
-                            </Button>
                           </div>
                         </div>
                       </Card>

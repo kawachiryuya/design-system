@@ -1,12 +1,22 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { myTickets as initialTickets, type MyTicket, type TicketStatus } from '../data/myTickets';
-import type { Ticket } from '../data/destinations';
+import type { TicketWithDest } from '../data/destinations';
 
-const STORAGE_KEY = 'gunmaas-my-tickets';
+const TICKETS_KEY = 'tsunagu-my-tickets';
+const PROFILE_KEY = 'tsunagu-user-profile';
+
+export interface UserProfile {
+  /** 0=未開始, 1=閲覧のみ, 2=ID登録済, 3=マイナンバー連携済 */
+  step: 0 | 1 | 2 | 3;
+  city: string;
+  email: string;
+}
+
+const defaultProfile: UserProfile = { step: 0, city: '', email: '' };
 
 function loadTickets(): MyTicket[] {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(TICKETS_KEY);
     if (stored) return JSON.parse(stored);
   } catch {
     // ignore
@@ -15,68 +25,78 @@ function loadTickets(): MyTicket[] {
 }
 
 function saveTickets(tickets: MyTicket[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+  localStorage.setItem(TICKETS_KEY, JSON.stringify(tickets));
+}
+
+function loadProfile(): UserProfile {
+  try {
+    const stored = localStorage.getItem(PROFILE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {
+    // ignore
+  }
+  return defaultProfile;
+}
+
+function saveProfile(profile: UserProfile) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 }
 
 interface TicketStoreContextValue {
   tickets: MyTicket[];
-  purchaseTicket: (ticket: Ticket, destName: string, destId: string) => MyTicket;
-  /** 購入確認用の一時データ */
-  pendingPurchase: PendingPurchase | null;
-  setPendingPurchase: (p: PendingPurchase | null) => void;
-  /** 購入完了通知 */
-  purchaseComplete: MyTicket | null;
-  clearPurchaseComplete: () => void;
-}
-
-export interface PendingPurchase {
-  ticket: Ticket;
-  destName: string;
-  destId: string;
+  purchaseTicket: (ticket: TicketWithDest) => MyTicket;
+  detailTicket: TicketWithDest | null;
+  setDetailTicket: (t: TicketWithDest | null) => void;
+  userProfile: UserProfile;
+  updateProfile: (patch: Partial<UserProfile>) => void;
 }
 
 const TicketStoreContext = createContext<TicketStoreContextValue | null>(null);
 
 export const TicketStoreProvider = ({ children }: { children: ReactNode }) => {
   const [tickets, setTickets] = useState<MyTicket[]>(loadTickets);
-  const [pendingPurchase, setPendingPurchase] = useState<PendingPurchase | null>(null);
-  const [purchaseComplete, setPurchaseComplete] = useState<MyTicket | null>(null);
+  const [detailTicket, setDetailTicket] = useState<TicketWithDest | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile>(loadProfile);
 
   const purchaseTicket = useCallback(
-    (ticket: Ticket, destName: string, destId: string): MyTicket => {
+    (ticket: TicketWithDest): MyTicket => {
       const today = new Date().toISOString().slice(0, 10);
       const newTicket: MyTicket = {
         id: `mt-${Date.now()}`,
         name: ticket.name,
-        destName,
-        destId,
+        destName: ticket.destName,
+        destId: ticket.destId,
         price: ticket.price,
         days: ticket.days,
         status: 'active' as TicketStatus,
         purchasedAt: today,
-        validUntil: today, // simplified for demo
+        validUntil: today,
       };
       const updated = [newTicket, ...tickets];
       setTickets(updated);
       saveTickets(updated);
-      setPendingPurchase(null);
-      setPurchaseComplete(newTicket);
       return newTicket;
     },
     [tickets]
   );
 
-  const clearPurchaseComplete = useCallback(() => setPurchaseComplete(null), []);
+  const updateProfile = useCallback((patch: Partial<UserProfile>) => {
+    setUserProfile((prev) => {
+      const next = { ...prev, ...patch };
+      saveProfile(next);
+      return next;
+    });
+  }, []);
 
   return (
     <TicketStoreContext.Provider
       value={{
         tickets,
         purchaseTicket,
-        pendingPurchase,
-        setPendingPurchase,
-        purchaseComplete,
-        clearPurchaseComplete,
+        detailTicket,
+        setDetailTicket,
+        userProfile,
+        updateProfile,
       }}
     >
       {children}

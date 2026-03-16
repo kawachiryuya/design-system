@@ -1,157 +1,59 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Input } from '@ds/primitives/Input/Input';
-import { Button } from '@ds/primitives/Button/Button';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { destinations } from '../data/destinations';
+/**
+ * 経路検索フォーム（出発地/目的地/日時のピンアイコン付き表示）
+ * compact=true: 結果画面上部の縮小版
+ * compact=false: 入力画面のフル版（検索ボタン付き）
+ */
 
 interface RouteSearchFormProps {
-  overlay?: boolean;
-  defaultFrom?: string;
-  defaultTo?: string;
+  from: string;
+  to: string;
+  compact?: boolean;
+  onSearch?: () => void;
 }
 
-/** 候補リストに使うキーワード（行き先名 + エリア） */
-const suggestions = [
-  '現在地',
-  ...destinations.flatMap((d) => [d.name, d.area]),
-].filter((v, i, arr) => arr.indexOf(v) === i); // dedupe
-
-export const RouteSearchForm = ({ overlay, defaultFrom = '現在地', defaultTo = '' }: RouteSearchFormProps) => {
-  const navigate = useNavigate();
-  const [from, setFrom] = useState(defaultFrom);
-  const [to, setTo] = useState(defaultTo);
-  const [focusedField, setFocusedField] = useState<'from' | 'to' | null>(null);
-  const blurTimeout = useRef<ReturnType<typeof setTimeout>>();
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (from) params.set('from', from);
-    if (to) params.set('to', to);
-    navigate(`/search?${params.toString()}`);
-  };
-
-  const getFiltered = (query: string) => {
-    if (!query) return suggestions;
-    return suggestions.filter((s) => s.includes(query));
-  };
-
-  const handleBlur = () => {
-    blurTimeout.current = setTimeout(() => setFocusedField(null), 150);
-  };
-
-  const handleFocus = (field: 'from' | 'to') => {
-    clearTimeout(blurTimeout.current);
-    setFocusedField(field);
-  };
-
-  const selectSuggestion = (value: string, field: 'from' | 'to') => {
-    if (field === 'from') setFrom(value);
-    else setTo(value);
-    setFocusedField(null);
-  };
-
-  const currentQuery = focusedField === 'from' ? from : to;
-  const filtered = focusedField ? getFiltered(currentQuery) : [];
-
+export const RouteSearchForm = ({ from, to, compact = false, onSearch }: RouteSearchFormProps) => {
   return (
-    <div
-      className="rounded-lg p-4 shadow-md relative"
-      style={{
-        background: overlay ? 'rgba(255,255,255,0.95)' : 'var(--color-surface-default)',
-        backdropFilter: overlay ? 'blur(8px)' : undefined,
-      }}
-    >
-      <div className="text-[10px] text-onSurface-subtle font-semibold tracking-widest uppercase mb-2">
-        経路検索
+    <div style={{ background: compact ? 'white' : 'var(--color-bg-default, #F7FAF8)', padding: compact ? '10px 16px' : '20px 16px 16px' }}>
+      {!compact && <div className="text-[20px] font-black text-onSurface-primary mb-3">経路検索</div>}
+      <div className="bg-surface rounded-lg border border-border-muted overflow-hidden">
+        {/* Origin */}
+        <div className="flex items-center gap-3 px-3 py-3 border-b border-border-muted">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#2D6A4F" />
+            <circle cx="12" cy="9" r="2.5" fill="white" />
+          </svg>
+          <div className="flex-1 text-[14px] text-onSurface-primary font-medium">{from}</div>
+        </div>
+        {/* Destination */}
+        <div className="flex items-center gap-3 px-3 py-3 border-b border-border-muted">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#E07A5F" />
+            <circle cx="12" cy="9" r="2.5" fill="white" />
+          </svg>
+          <div className="flex-1 text-[14px] text-onSurface-primary font-medium">{to}</div>
+        </div>
+        {/* DateTime */}
+        <div className="flex items-center gap-3 px-3 py-3">
+          <div className="w-[22px] h-[22px] flex-shrink-0 flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <div className="flex-1 text-[14px] text-onSurface-primary">
+            3月15日（日）14:38 <span className="text-[12px] font-semibold" style={{ color: '#2D6A4F' }}>出発</span>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <div className="relative">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full border-[2.5px] border-onSurface-primary flex items-center justify-center flex-shrink-0">
-              <div className="w-[6px] h-[6px] rounded-full bg-surface-primary" />
-            </div>
-            <Input
-              placeholder="出発地を入力"
-              size="small"
-              fullWidth
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              onFocus={() => handleFocus('from')}
-              onBlur={handleBlur}
-            />
-          </div>
-          {focusedField === 'from' && filtered.length > 0 && (
-            <SuggestionList
-              items={filtered}
-              onSelect={(v) => selectSuggestion(v, 'from')}
-            />
-          )}
-        </div>
-        <div className="relative">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-              <div
-                className="w-0 h-0"
-                style={{
-                  borderLeft: '6px solid transparent',
-                  borderRight: '6px solid transparent',
-                  borderTop: '8px solid var(--gm-accent)',
-                }}
-              />
-            </div>
-            <Input
-              placeholder="目的地を入力"
-              size="small"
-              fullWidth
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-              onFocus={() => handleFocus('to')}
-              onBlur={handleBlur}
-            />
-          </div>
-          {focusedField === 'to' && filtered.length > 0 && (
-            <SuggestionList
-              items={filtered}
-              onSelect={(v) => selectSuggestion(v, 'to')}
-            />
-          )}
-        </div>
-        <Button
-          fullWidth
-          size="small"
-          className="!bg-accent !hover:bg-accent-dark"
-          style={{ background: 'linear-gradient(135deg, var(--gm-accent), var(--gm-accent-dark))' }}
-          onClick={handleSearch}
+      {!compact && onSearch && (
+        <button
+          onClick={onSearch}
+          className="mt-3 w-full border-none rounded-lg py-3 text-[15px] font-bold cursor-pointer text-white"
+          style={{ background: 'linear-gradient(135deg, #E07A5F, #C4623F)' }}
         >
           経路を検索
-        </Button>
-      </div>
+        </button>
+      )}
     </div>
   );
 };
-
-/** サジェストドロップダウン */
-const SuggestionList = ({
-  items,
-  onSelect,
-}: {
-  items: string[];
-  onSelect: (value: string) => void;
-}) => (
-  <div className="absolute left-6 right-0 top-full z-50 mt-1 bg-surface border border-border-muted rounded-sm shadow-lg max-h-[180px] overflow-y-auto">
-    {items.map((item) => (
-      <button
-        key={item}
-        type="button"
-        className="w-full text-left px-3 py-2 hover:bg-surface-secondary transition-colors cursor-pointer"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => onSelect(item)}
-      >
-        <Typography variant="body-sm" as="span">
-          {item}
-        </Typography>
-      </button>
-    ))}
-  </div>
-);

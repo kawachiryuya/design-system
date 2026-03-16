@@ -1,6 +1,19 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import { myTickets as initialTickets, type MyTicket, type TicketStatus } from '../data/myTickets';
 import type { TicketWithDest } from '../data/destinations';
+
+export type TicketStatus = 'active' | 'past';
+
+export interface MyTicket {
+  id: string;
+  name: string;
+  destName: string;
+  destId: string;
+  price: string;
+  days: string;
+  status: TicketStatus;
+  purchasedAt: string;
+  validUntil: string;
+}
 
 const TICKETS_KEY = 'tsunagu-my-tickets';
 const PROFILE_KEY = 'tsunagu-user-profile';
@@ -21,7 +34,7 @@ function loadTickets(): MyTicket[] {
   } catch {
     // ignore
   }
-  return initialTickets;
+  return [];
 }
 
 function saveTickets(tickets: MyTicket[]) {

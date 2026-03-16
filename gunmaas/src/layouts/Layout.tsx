@@ -14,10 +14,10 @@ export const Layout = () => {
 
   return (
     <div
-      className="max-w-[420px] mx-auto bg-background h-screen relative shadow-lg flex flex-col"
+      className="max-w-[420px] mx-auto bg-background h-screen h-[100dvh] relative shadow-lg flex flex-col"
     >
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
-        <Header />
+      <div ref={scrollRef} className={`flex-1 ${location.pathname === '/' ? '' : 'overflow-y-auto'}`}>
+        {location.pathname !== '/' && <Header />}
         <Outlet />
       </div>
       <BottomNav />

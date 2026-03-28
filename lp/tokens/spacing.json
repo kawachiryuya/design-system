@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$description": "Spacing tokens based on 8px scale. Reference: principles/layout/spacing.md",
+  "spacing": {
+    "0": "0px",
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "8": "32px",
+    "10": "40px",
+    "12": "48px",
+    "16": "64px",
+    "20": "80px",
+    "24": "96px",
+    "32": "128px",
+    "40": "160px",
+    "48": "192px",
+    "56": "224px",
+    "64": "256px",
+    "72": "288px",
+    "80": "320px",
+    "96": "384px"
+  },
+  "semantic": {
+    "component": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px"
+    },
+    "section": {
+      "sm": "32px",
+      "md": "48px",
+      "lg": "64px"
+    }
+  }
+}

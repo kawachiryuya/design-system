@@ -7,8 +7,8 @@ export interface RailLine {
 }
 
 export const railLines: RailLine[] = [
-  { name: 'JR東西線', color: '#16A34A', points: [[195,260],[210,225],[225,190],[215,130],[215,50]], dash: false },
-  { name: 'JR青葉線', color: '#F59E0B', points: [[225,190],[190,165],[165,140],[135,105],[115,80]], dash: false },
+  { name: 'JR東西線', color: '#16A34A', points: [[195,260],[210,225],[225,190],[215,150],[215,80]], dash: false },
+  { name: 'JR青葉線', color: '#F59E0B', points: [[225,190],[190,165],[165,140],[135,115],[115,95]], dash: false },
   { name: 'JR両毛線', color: '#F59E0B', points: [[195,260],[240,248],[290,240],[320,235]], dash: false },
   { name: '中央電鉄', color: '#DC2626', points: [[235,252],[270,245],[305,238],[320,235]], dash: true },
   { name: 'わたらせ渓谷鐵道', color: '#7C3AED', points: [[320,235],[340,210],[350,175]], dash: true },
@@ -16,7 +16,7 @@ export const railLines: RailLine[] = [
 ];
 
 export const busRoutes: RailLine[] = [
-  { name: '緑川高原線', color: '#2563EB', points: [[135,105],[120,85],[115,65]], dash: true },
+  { name: '緑川高原線', color: '#2563EB', points: [[135,115],[125,105],[115,95]], dash: true },
   { name: '石段方面', color: '#2563EB', points: [[225,190],[215,170],[205,155]], dash: true },
 ];
 
@@ -34,6 +34,34 @@ export interface DemandZone {
   fare: string;
   booking: string;
 }
+
+/** Prefecture border polyline (群馬県境) — みなかみ高原ラインに沿う */
+export const prefBorder: [number, number][] = [
+  [0, 95],
+  [40, 85],
+  [80, 78],
+  [120, 72],
+  [160, 80],
+  [200, 70],
+  [240, 68],
+  [280, 75],
+  [320, 82],
+  [360, 90],
+  [400, 98],
+];
+
+/** Neighboring prefecture labels */
+export interface NeighborLabel {
+  name: string;
+  x: number;
+  y: number;
+}
+
+export const neighborLabels: NeighborLabel[] = [
+  { name: '長野県 MaaS', x: 60, y: 52 },
+  { name: '新潟県 MaaS', x: 200, y: 40 },
+  { name: '福島県 MaaS', x: 310, y: 48 },
+];
 
 export const demandZones: DemandZone[] = [
   {

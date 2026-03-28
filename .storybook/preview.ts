@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 import './tailwind.css';
 
 const preview: Preview = {
@@ -16,12 +16,11 @@ const preview: Preview = {
     },
     layout: 'centered',
     backgrounds: {
-      default: 'light',
-      values: [
-        { name: 'light', value: '#FAFAFA' },
-        { name: 'white', value: '#FFFFFF' },
-        { name: 'dark', value: '#262626' },
-      ],
+      options: {
+        light: { name: 'light', value: '#FAFAFA' },
+        white: { name: 'white', value: '#FFFFFF' },
+        dark: { name: 'dark', value: '#262626' }
+      }
     },
     a11y: {
       config: {
@@ -31,6 +30,12 @@ const preview: Preview = {
       },
     },
   },
+
+  initialGlobals: {
+    backgrounds: {
+      value: 'light'
+    }
+  }
 };
 
 export default preview;

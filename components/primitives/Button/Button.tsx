@@ -56,7 +56,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       'items-center',
       'justify-center',
       'font-medium',
-      iconOnly ? 'rounded-full' : 'rounded-xs',
+      iconOnly ? 'rounded-full' : '', // 角丸は sizeStyles で個別指定
       'transition-all',
       'duration-normal', // 200ms (tokens/animation.json)
       'focus:outline-none',
@@ -68,8 +68,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       // disabled 時は無効（shadow-none で上書き）
       'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
       'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
+      'active:scale-[0.98]',
       'disabled:hover:shadow-none',
       'disabled:active:shadow-none',
+      'disabled:active:scale-100',
     ];
 
     // Variant styles
@@ -84,6 +86,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         'text-onSurface-primary',
         'border',
         'border-primary-600',
+        'hover:!shadow-[inset_0_0_0_9999px_rgba(0,137,101,0.08)]',
+        'active:!shadow-[inset_0_0_0_9999px_rgba(0,137,101,0.12)]',
         'focus-visible:ring-border-focus',
       ],
       tertiary: [
@@ -108,6 +112,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             'text-sm', // 14px
             'gap-1', // 4px (アイコンとテキストの間)
             'min-w-16', // 64px — 短いラベルでも潰れない
+            'rounded-xs', // 4px
           ],
           medium: [
             'h-12',  // 48px
@@ -115,6 +120,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             'text-base', // 16px
             'gap-2', // 8px
             'min-w-20', // 80px
+            'rounded-sm', // 8px
           ],
           large: [
             'h-16',  // 64px
@@ -122,6 +128,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             'text-lg', // 18px
             'gap-2', // 8px
             'min-w-24', // 96px
+            'rounded-md', // 12px
           ],
         };
 

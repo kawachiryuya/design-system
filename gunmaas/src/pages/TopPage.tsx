@@ -22,8 +22,15 @@ export const TopPage = () => {
     ? destinations.find((d) => d.id === selectedPlaceId) ?? null
     : null;
 
-  const filteredPlaces =
+  const filteredAll =
     activeCat === 'all' ? destinations : destinations.filter((d) => d.cat === activeCat);
+  // 県内を先、県外を後ろに
+  const filteredPlaces = [
+    ...filteredAll.filter((d) => !d.outOfPref),
+    ...filteredAll.filter((d) => d.outOfPref),
+  ];
+  const inPrefCount = filteredAll.filter((d) => !d.outOfPref).length;
+  const outPrefCount = filteredAll.filter((d) => d.outOfPref).length;
 
   const handlePinClick = (id: string) => {
     setSelectedZone(null);
@@ -89,35 +96,52 @@ export const TopPage = () => {
       <BottomSheet height={sheetHeight} onHeightChange={setSheetHeight}>
         <div className="flex-1 overflow-y-auto px-4">
           <Typography variant="caption" color="muted" as="div" weight="bold" className="mb-2">
-            {activeCat === 'all' ? 'すべての行き先' : activeCat} · {filteredPlaces.length}件
+            {activeCat === 'all' ? 'すべての行き先' : activeCat} · {inPrefCount}件
           </Typography>
-          {filteredPlaces.map((p) => (
-            <div
-              key={p.id}
-              onClick={() => handlePinClick(p.id)}
-              className="flex items-center gap-3 py-3 cursor-pointer border-b border-border-muted last:border-b-0"
-            >
-              <div
-                className="w-10 h-10 rounded-sm flex items-center justify-center text-[20px] flex-shrink-0"
-                style={{ background: '#F0FAF4' }}
-              >
-                {p.emoji}
+          {filteredPlaces.map((p, i) => {
+            const isOut = p.outOfPref === true;
+            return (
+              <div key={p.id}>
+                {/* 県外グループ見出し */}
+                {isOut && i === inPrefCount && (
+                  <Typography variant="caption" color="muted" as="div" weight="bold" className="mt-4 mb-2">
+                    🔒 エリア外 · {outPrefCount}件
+                  </Typography>
+                )}
+                <div
+                  onClick={() => handlePinClick(p.id)}
+                  className="flex items-center gap-3 py-3 cursor-pointer border-b border-border-muted last:border-b-0"
+                  style={isOut ? { opacity: 0.5 } : undefined}
+                >
+                  <div
+                    className="w-10 h-10 rounded-sm flex items-center justify-center text-[20px] flex-shrink-0"
+                    style={{
+                      background: isOut ? '#F1F5F9' : '#F0FAF4',
+                      ...(isOut ? { filter: 'grayscale(0.8)' } : {}),
+                    }}
+                  >
+                    {p.emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <Typography variant="body-sm" as="div" weight="bold">
+                      {p.name}
+                    </Typography>
+                    <Typography variant="caption" color="muted" as="div">
+                      {isOut ? (p.prefMaas ?? '他県MaaS エリア') : `${p.cat} · ${p.area}`}
+                    </Typography>
+                  </div>
+                  {!isOut && p.ticket && (
+                    <Typography variant="caption" color="primary" as="span" weight="semibold" className="flex-shrink-0">
+                      🎫 {p.ticket}
+                    </Typography>
+                  )}
+                  {isOut && (
+                    <span className="text-[14px] flex-shrink-0">🔒</span>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <Typography variant="body-sm" as="div" weight="bold">
-                  {p.name}
-                </Typography>
-                <Typography variant="caption" color="muted" as="div">
-                  {p.cat} · {p.area}
-                </Typography>
-              </div>
-              {p.ticket && (
-                <Typography variant="caption" color="primary" as="span" weight="semibold" className="flex-shrink-0">
-                  🎫 {p.ticket}
-                </Typography>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </BottomSheet>
     </div>

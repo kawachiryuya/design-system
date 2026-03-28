@@ -9,7 +9,7 @@ import { NumberInput } from '@ds/composites/NumberInput/NumberInput';
 import { Select } from '@ds/composites/Select/Select';
 import { Card } from '@ds/composites/Card/Card';
 import { stations } from '../data/stations';
-import { seatClasses } from '../data/trains';
+import { seatClasses, formatPassengers, calcTotalFare } from '../data/trains';
 
 export const SearchPage = () => {
   const navigate = useNavigate();
@@ -20,10 +20,11 @@ export const SearchPage = () => {
     d.setDate(d.getDate() + 7);
     return d.toISOString().split('T')[0];
   });
-  const [passengers, setPassengers] = useState(1);
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
 
   const handleSearch = () => {
-    navigate(`/results?${new URLSearchParams({ from, to, date, passengers: String(passengers) }).toString()}`);
+    navigate(`/results?${new URLSearchParams({ from, to, date, adults: String(adults), children: String(children) }).toString()}`);
   };
 
   const handleSwap = () => {
@@ -34,8 +35,10 @@ export const SearchPage = () => {
   const unreserved = seatClasses.find((c) => c.id === 'unreserved')!;
   const unreservedPrice = Math.round(13320 * unreserved.priceMultiplier);
 
+  const unreservedTotal = calcTotalFare(unreservedPrice, adults, children);
+
   const handleUnreserved = () => {
-    navigate(`/confirm?from=${from}&to=${to}&date=${date}&class=unreserved&total=${unreservedPrice * passengers}&passengers=${passengers}`);
+    navigate(`/confirm?from=${from}&to=${to}&date=${date}&class=unreserved&total=${unreservedTotal}&adults=${adults}&children=${children}`);
   };
 
   return (
@@ -74,19 +77,28 @@ export const SearchPage = () => {
             </div>
           </div>
 
-          {/* 乗車日 / 人数 */}
+          {/* 乗車日 */}
+          <Input type="date" label="乗車日" id="date" value={date} onChange={(e) => setDate(e.target.value)} fullWidth />
+
+          {/* 人数 */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Input type="date" label="乗車日" id="date" value={date} onChange={(e) => setDate(e.target.value)} fullWidth />
-            </div>
             <NumberInput
-              label="人数"
-              value={passengers}
-              onChange={setPassengers}
+              label="おとな"
+              value={adults}
+              onChange={setAdults}
               min={1}
               max={6}
-              decrementLabel="人数を減らす"
-              incrementLabel="人数を増やす"
+              decrementLabel="おとなを減らす"
+              incrementLabel="おとなを増やす"
+            />
+            <NumberInput
+              label="こども"
+              value={children}
+              onChange={setChildren}
+              min={0}
+              max={6}
+              decrementLabel="こどもを減らす"
+              incrementLabel="こどもを増やす"
             />
           </div>
 
@@ -107,10 +119,10 @@ export const SearchPage = () => {
               </Typography>
             </div>
             <div className="text-right shrink-0 ml-4">
-              {passengers > 1 && (
-                <Typography variant="caption" color="muted">¥{unreservedPrice.toLocaleString()} × {passengers}名</Typography>
+              {(adults + children) > 1 && (
+                <Typography variant="caption" color="muted">{formatPassengers(adults, children)}</Typography>
               )}
-              <Typography variant="h5" weight="bold" as="p">¥{(unreservedPrice * passengers).toLocaleString()}</Typography>
+              <Typography variant="h5" weight="bold" as="p">¥{unreservedTotal.toLocaleString()}</Typography>
             </div>
           </div>
           <Button fullWidth variant="secondary" onClick={handleUnreserved}>

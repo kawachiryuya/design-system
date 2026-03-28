@@ -4,7 +4,7 @@ import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
-import { searchTrains, seatClasses, type Train, type SeatAvailability } from '../data/trains';
+import { searchTrains, seatClasses, formatPassengers, calcTotalFare, type Train, type SeatAvailability } from '../data/trains';
 import { formatDate } from '../utils/format';
 
 const availabilityBadge = (status: SeatAvailability, label: string) => {
@@ -27,13 +27,15 @@ export const ResultsPage = () => {
   const from = params.get('from') ?? '東京';
   const to = params.get('to') ?? '新大阪';
   const date = params.get('date') ?? '';
-  const passengers = Number(params.get('passengers') ?? 1);
+  const adults = Number(params.get('adults') ?? 1);
+  const children = Number(params.get('children') ?? 0);
+  const totalPassengers = adults + children;
 
   const trains = searchTrains(from, to);
   const cheapestMultiplier = Math.min(...seatClasses.map((c) => c.priceMultiplier));
 
   const handleSelect = (train: Train) => {
-    navigate(`/seat?trainId=${train.id}&from=${from}&to=${to}&date=${date}&passengers=${passengers}`);
+    navigate(`/seat?trainId=${train.id}&from=${from}&to=${to}&date=${date}&adults=${adults}&children=${children}`);
   };
 
   return (
@@ -43,7 +45,7 @@ export const ResultsPage = () => {
         <Card padding="sm">
           <details>
             <summary className="flex items-center justify-between cursor-pointer list-none text-sm [&::-webkit-details-marker]:hidden">
-              <span className="font-medium text-onSurface">{from} → {to}<span className="text-onSurface-muted font-normal ml-2">{formatDate(date)} / {passengers}名</span></span>
+              <span className="font-medium text-onSurface">{from} → {to}<span className="text-onSurface-muted font-normal ml-2">{formatDate(date)} / {formatPassengers(adults, children)}</span></span>
               <Icon name="expand_more" size="sm" color="neutral" />
             </summary>
             <div className="border-t border-border-muted mt-3 pt-3">
@@ -58,7 +60,7 @@ export const ResultsPage = () => {
                 </div>
                 <div className="flex justify-between">
                   <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
-                  <Typography variant="label" as="dd">{passengers}名</Typography>
+                  <Typography variant="label" as="dd">{formatPassengers(adults, children)}</Typography>
                 </div>
               </dl>
               <Button fullWidth variant="secondary" size="small" onClick={() => navigate('/')} className="mt-4">
@@ -84,7 +86,7 @@ export const ResultsPage = () => {
             </div>
             <div className="flex justify-between">
               <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
-              <Typography variant="label" as="dd">{passengers}名</Typography>
+              <Typography variant="label" as="dd">{formatPassengers(adults, children)}</Typography>
             </div>
           </dl>
           <Button fullWidth variant="secondary" size="small" onClick={() => navigate('/')} className="mt-4">
@@ -98,7 +100,7 @@ export const ResultsPage = () => {
         {trains.map((train) => {
           const soldOut = isAllSoldOut(train.seats);
           const cheapest = Math.round(train.price * cheapestMultiplier);
-          const totalCheapest = cheapest * passengers;
+          const totalCheapest = calcTotalFare(cheapest, adults, children);
 
           return (
             <Card
@@ -135,9 +137,9 @@ export const ResultsPage = () => {
                       <Typography variant="h5" weight="bold" as="p">
                         ¥{totalCheapest.toLocaleString()}〜
                       </Typography>
-                      {passengers > 1 && (
+                      {totalPassengers > 1 && (
                         <Typography variant="caption" color="muted">
-                          ¥{cheapest.toLocaleString()} × {passengers}名
+                          {formatPassengers(adults, children)}
                         </Typography>
                       )}
                     </>

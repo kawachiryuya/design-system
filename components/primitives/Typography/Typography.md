@@ -77,7 +77,6 @@ import { Typography } from '@/components/Typography';
 <Typography variant="body-sm">Body Small テキスト</Typography>
 <Typography variant="caption">Caption テキスト</Typography>
 <Typography variant="label">Label テキスト</Typography>
-<Typography variant="button">Button テキスト</Typography>
 ```
 
 ### `as` prop による意味論と視覚の分離

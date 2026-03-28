@@ -5,7 +5,7 @@ import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
-import { seatClasses, searchTrains, type SeatAvailability } from '../data/trains';
+import { seatClasses, searchTrains, formatPassengers, calcTotalFare, CHILD_FARE_RATE, type SeatAvailability } from '../data/trains';
 import { formatDate } from '../utils/format';
 
 const availabilityLabel = (status: SeatAvailability) => {
@@ -26,7 +26,9 @@ export const SeatPage = () => {
   const to = params.get('to') ?? '新大阪';
   const date = params.get('date') ?? '';
   const trainId = params.get('trainId') ?? '';
-  const passengers = Number(params.get('passengers') ?? 1);
+  const adults = Number(params.get('adults') ?? 1);
+  const children = Number(params.get('children') ?? 0);
+  const totalPassengers = adults + children;
 
   const train = searchTrains(from, to).find((t) => t.id === trainId);
   const [selectedClass, setSelectedClass] = useState('reserved');
@@ -34,10 +36,11 @@ export const SeatPage = () => {
 
   const selected = seatClasses.find((c) => c.id === selectedClass)!;
   const unitPrice = Math.round(basePrice * selected.priceMultiplier);
-  const totalPrice = unitPrice * passengers;
+  const childPrice = Math.round(unitPrice * CHILD_FARE_RATE);
+  const totalPrice = calcTotalFare(unitPrice, adults, children);
 
   const handleNext = () => {
-    navigate(`/seatmap?trainId=${trainId}&from=${from}&to=${to}&date=${date}&class=${selectedClass}&price=${totalPrice}&passengers=${passengers}`);
+    navigate(`/seatmap?trainId=${trainId}&from=${from}&to=${to}&date=${date}&class=${selectedClass}&price=${totalPrice}&adults=${adults}&children=${children}`);
   };
 
   return (
@@ -107,12 +110,20 @@ export const SeatPage = () => {
             </div>
             <div className="flex justify-between">
               <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
-              <Typography variant="label" as="dd">{passengers}名</Typography>
+              <Typography variant="label" as="dd">{formatPassengers(adults, children)}</Typography>
             </div>
           </dl>
           <div className="border-t border-border-muted pt-4 mb-4">
-            {passengers > 1 && (
-              <Typography variant="caption" color="muted">¥{unitPrice.toLocaleString()} × {passengers}名</Typography>
+            {totalPassengers > 1 && (
+              <div className="mb-1">
+                <Typography variant="caption" color="muted">おとな ¥{unitPrice.toLocaleString()} × {adults}名</Typography>
+                {children > 0 && (
+                  <>
+                    <br />
+                    <Typography variant="caption" color="muted">こども ¥{childPrice.toLocaleString()} × {children}名</Typography>
+                  </>
+                )}
+              </div>
             )}
             <Typography variant="body-sm" color="muted">合計金額</Typography>
             <Typography variant="h3" weight="bold" as="p">¥{totalPrice.toLocaleString()}</Typography>

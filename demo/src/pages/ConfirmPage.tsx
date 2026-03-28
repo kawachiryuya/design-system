@@ -8,7 +8,7 @@ import { Alert } from '@ds/composites/Alert/Alert';
 import { Card } from '@ds/composites/Card/Card';
 import { Checkbox } from '@ds/composites/Checkbox/Checkbox';
 import { Radio } from '@ds/composites/Radio/Radio';
-import { seatClasses } from '../data/trains';
+import { seatClasses, formatPassengers } from '../data/trains';
 import { formatDate } from '../utils/format';
 
 export const ConfirmPage = () => {
@@ -19,17 +19,17 @@ export const ConfirmPage = () => {
   const date = params.get('date') ?? '';
   const seatClassId = params.get('class') ?? 'reserved';
   const total = Number(params.get('total') ?? 0);
-  const passengers = Number(params.get('passengers') ?? 1);
+  const adults = Number(params.get('adults') ?? 1);
+  const children = Number(params.get('children') ?? 0);
   const seatParam = params.get('seat') ?? '';
   const seats = seatParam ? seatParam.split(',') : [];
 
   const seatClass = seatClasses.find((c) => c.id === seatClassId);
   const [agreed, setAgreed] = useState(false);
   const [cardOption, setCardOption] = useState<'saved' | 'new'>('saved');
-  const [icOption, setIcOption] = useState<'now' | 'later'>('now');
 
   const handleConfirm = () => {
-    navigate(`/complete?passengers=${passengers}`);
+    navigate(`/complete?adults=${adults}&children=${children}`);
   };
 
   return (
@@ -64,7 +64,7 @@ export const ConfirmPage = () => {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-onSurface-muted">人数</span>
-                <span className="font-medium text-onSurface">{passengers}名</span>
+                <span className="font-medium text-onSurface">{formatPassengers(adults, children)}</span>
               </div>
               {seats.length > 0 && (
                 <div className="flex justify-between text-sm">
@@ -119,38 +119,6 @@ export const ConfirmPage = () => {
                 </div>
               </div>
             )}
-          </div>
-        </Card>
-
-        {/* 交通系ICカード連携 */}
-        <Card className="mt-4" padding="md">
-          <Typography variant="label" as="h3" color="muted" className="mb-2">交通系ICカード連携</Typography>
-          <Typography variant="body-sm" color="muted" className="mb-4">
-            ICカードを登録すると、改札をタッチで通過できるようになります。
-          </Typography>
-
-          <div className="space-y-3">
-            <Radio
-              name="ic"
-              value="now"
-              size="medium"
-              checked={icOption === 'now'}
-              onChange={() => setIcOption('now')}
-              label="今すぐ登録する"
-            />
-            {icOption === 'now' && (
-              <div className="pl-8">
-                <Input label="ICカード番号" placeholder="JE00 0000 0000 0000 0" fullWidth />
-              </div>
-            )}
-            <Radio
-              name="ic"
-              value="later"
-              size="medium"
-              checked={icOption === 'later'}
-              onChange={() => setIcOption('later')}
-              label="あとで登録する"
-            />
           </div>
         </Card>
 

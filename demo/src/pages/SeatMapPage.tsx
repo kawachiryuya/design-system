@@ -18,7 +18,9 @@ export const SeatMapPage = () => {
   const trainId = params.get('trainId') ?? '';
   const classId = params.get('class') ?? 'reserved';
   const price = Number(params.get('price') ?? 0);
-  const passengers = Number(params.get('passengers') ?? 1);
+  const adults = Number(params.get('adults') ?? 1);
+  const children = Number(params.get('children') ?? 0);
+  const totalPassengers = adults + children;
 
   const train = searchTrains(from, to).find((t) => t.id === trainId);
   const seatClass = seatClasses.find((c) => c.id === classId);
@@ -40,7 +42,7 @@ export const SeatMapPage = () => {
     setSelectedSeats((prev) =>
       prev.includes(seatId)
         ? prev.filter((s) => s !== seatId)
-        : prev.length < passengers
+        : prev.length < totalPassengers
           ? [...prev, seatId]
           : prev,
     );
@@ -48,7 +50,7 @@ export const SeatMapPage = () => {
 
   const handleNext = () => {
     const seatLabel = selectedSeats.map((s) => `${selectedCar}号車 ${s}`).join(',');
-    navigate(`/confirm?trainId=${trainId}&from=${from}&to=${to}&date=${date}&class=${classId}&total=${price}&passengers=${passengers}&seat=${encodeURIComponent(seatLabel)}`);
+    navigate(`/confirm?trainId=${trainId}&from=${from}&to=${to}&date=${date}&class=${classId}&total=${price}&adults=${adults}&children=${children}&seat=${encodeURIComponent(seatLabel)}`);
   };
 
   return (
@@ -136,7 +138,7 @@ export const SeatMapPage = () => {
 
           {selectedSeats.length > 0 && (
             <Typography variant="body-sm" className="mt-4">
-              選択中 ({selectedSeats.length}/{passengers}): <span className="font-semibold">{selectedSeats.join(', ')}</span>
+              選択中 ({selectedSeats.length}/{totalPassengers}): <span className="font-semibold">{selectedSeats.join(', ')}</span>
             </Typography>
           )}
         </Card>
@@ -163,11 +165,11 @@ export const SeatMapPage = () => {
             </div>
             <div className="flex justify-between">
               <Typography variant="body-sm" color="muted" as="dt">人数</Typography>
-              <Typography variant="label" as="dd">{selectedSeats.length} / {passengers}名</Typography>
+              <Typography variant="label" as="dd">{selectedSeats.length} / {totalPassengers}名</Typography>
             </div>
           </dl>
           <div className="hidden lg:block">
-            <Button fullWidth onClick={handleNext} disabled={selectedSeats.length !== passengers}>
+            <Button fullWidth onClick={handleNext} disabled={selectedSeats.length !== totalPassengers}>
               予約内容の確認へ
             </Button>
           </div>
@@ -183,9 +185,9 @@ export const SeatMapPage = () => {
             <Typography variant="caption" color="muted">
               {selectedSeats.length > 0 ? selectedSeats.join(', ') : '座席を選択してください'}
             </Typography>
-            <Typography variant="label">{selectedSeats.length} / {passengers}席選択中</Typography>
+            <Typography variant="label">{selectedSeats.length} / {totalPassengers}席選択中</Typography>
           </div>
-          <Button onClick={handleNext} disabled={selectedSeats.length !== passengers}>
+          <Button onClick={handleNext} disabled={selectedSeats.length !== totalPassengers}>
             予約内容の確認へ
           </Button>
         </div>

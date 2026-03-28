@@ -6,6 +6,8 @@ import { SeatPage } from './pages/SeatPage';
 import { SeatMapPage } from './pages/SeatMapPage';
 import { ConfirmPage } from './pages/ConfirmPage';
 import { CompletePage } from './pages/CompletePage';
+import { ReservationsPage } from './pages/ReservationsPage';
+import { ReservationDetailPage } from './pages/ReservationDetailPage';
 
 export const App = () => (
   <BrowserRouter>
@@ -17,6 +19,8 @@ export const App = () => (
         <Route path="/seatmap" element={<SeatMapPage />} />
         <Route path="/confirm" element={<ConfirmPage />} />
         <Route path="/complete" element={<CompletePage />} />
+        <Route path="/reservations" element={<ReservationsPage />} />
+        <Route path="/reservations/:id" element={<ReservationDetailPage />} />
       </Route>
     </Routes>
   </BrowserRouter>

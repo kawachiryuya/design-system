@@ -16,8 +16,7 @@ export type TypographyVariant =
   | 'body'
   | 'body-sm'
   | 'caption'
-  | 'label'
-  | 'button';
+  | 'label';
 
 /** テキストカラー */
 export type TypographyColor =
@@ -76,7 +75,6 @@ const defaultTag: Record<TypographyVariant, PolymorphicElement> = {
   'body-sm': 'p',
   caption:   'p',
   label:     'span',
-  button:    'span',
 };
 
 /** variant → Tailwind クラスのマップ（tokens/typography.json） */
@@ -96,7 +94,7 @@ const variantStyles: Record<TypographyVariant, string[]> = {
   h2: [
     'text-3xl',          // 30px
     'font-bold',
-    'leading-snug',
+    'leading-tight',
     'tracking-tight',
   ],
   h3: [
@@ -144,12 +142,6 @@ const variantStyles: Record<TypographyVariant, string[]> = {
     'text-sm',           // 14px
     'font-medium',
     'leading-normal',
-  ],
-  button: [
-    'text-base',         // 16px
-    'font-medium',
-    'leading-none',
-    'tracking-wide',
   ],
 };
 

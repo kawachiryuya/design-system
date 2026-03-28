@@ -83,9 +83,9 @@ export const BottomSheet = ({
         onTouchEnd={onTouchEnd}
         onMouseDown={onMouseDown}
         onClick={handleTap}
-        className="flex justify-center py-3 cursor-grab flex-shrink-0"
+        className="flex justify-center pt-[10px] pb-3 cursor-grab flex-shrink-0"
       >
-        <div className="w-10 h-1 rounded-full bg-border-muted" />
+        <div className="w-[36px] h-[5px] rounded-full bg-neutral-300" />
       </div>
       {children}
     </div>

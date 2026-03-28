@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Typography } from './Typography';
 
 const meta: Meta<typeof Typography> = {
@@ -51,7 +51,6 @@ export const TypeScale: Story = {
       <Typography variant="body-sm">Body Small — 14px / 補足テキスト</Typography>
       <Typography variant="caption">Caption — 12px / 注釈・著作権</Typography>
       <Typography variant="label">Label — 14px / フォームラベル</Typography>
-      <Typography variant="button">Button — 14px / ボタンテキスト</Typography>
     </div>
   ),
 };

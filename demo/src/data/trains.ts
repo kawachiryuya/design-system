@@ -80,6 +80,20 @@ export function generateSeatMap(classId: string, carNumber: number): Seat[] {
   return seats;
 }
 
+/** こども料金の割引率（半額） */
+export const CHILD_FARE_RATE = 0.5;
+
+/** 「おとな2名・こども1名」のような表示文字列を返す */
+export function formatPassengers(adults: number, children: number): string {
+  if (children === 0) return `おとな${adults}名`;
+  return `おとな${adults}名・こども${children}名`;
+}
+
+/** おとな + こどもの合計料金を計算 */
+export function calcTotalFare(unitPrice: number, adults: number, children: number): number {
+  return unitPrice * adults + Math.round(unitPrice * CHILD_FARE_RATE) * children;
+}
+
 /** 検索結果のモックデータを生成 */
 export function searchTrains(_from: string, _to: string): Train[] {
   const base: { suffix: string; dep: string; arr: string; dur: string; price: number; seats: Record<string, SeatAvailability> }[] = [

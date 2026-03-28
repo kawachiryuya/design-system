@@ -3,10 +3,13 @@ import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
+import { Card } from '@ds/composites/Card/Card';
+import { formatPassengers } from '../data/trains';
 
 export const CompletePage = () => {
   const [params] = useSearchParams();
-  const passengers = Number(params.get('passengers') ?? 1);
+  const adults = Number(params.get('adults') ?? 1);
+  const children = Number(params.get('children') ?? 0);
   const bookingId = `RD-${Date.now().toString(36).toUpperCase()}`;
 
   return (
@@ -16,7 +19,7 @@ export const CompletePage = () => {
         <Icon name="check_circle" size="lg" color="success" />
       </div>
 
-      <Typography variant="h4" as="h1" className="mb-2">{passengers}名様のご予約が完了しました</Typography>
+      <Typography variant="h4" as="h1" className="mb-2">{formatPassengers(adults, children)}のご予約が完了しました</Typography>
       <Typography variant="body-sm" color="muted" className="mb-6">
         ご予約ありがとうございます。確認メールをお送りしました。
       </Typography>
@@ -26,9 +29,21 @@ export const CompletePage = () => {
         <Badge variant="neutral" appearance="outline" size="medium">{bookingId}</Badge>
       </div>
 
+      <Card padding="md" className="mb-8 max-w-sm w-full text-left">
+        <div className="flex items-start gap-3">
+          <Icon name="contactless" size="sm" color="primary" className="mt-0.5 shrink-0" />
+          <div>
+            <Typography variant="label" as="p">交通系ICカード連携</Typography>
+            <Typography variant="body-sm" color="muted" className="mt-1">
+              ICカードを登録すると、改札をタッチで通過できます。予約一覧からいつでも登録できます。
+            </Typography>
+          </div>
+        </div>
+      </Card>
+
       <div className="flex gap-3">
-        <Link to="/">
-          <Button variant="tertiary">トップへ戻る</Button>
+        <Link to="/reservations">
+          <Button variant="secondary">予約一覧へ</Button>
         </Link>
         <Link to="/">
           <Button>新しい予約</Button>

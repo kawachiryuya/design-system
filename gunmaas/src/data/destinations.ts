@@ -50,6 +50,10 @@ export interface Destination {
   y: number;
   /** Quick ticket price display on map */
   ticket: string | null;
+  /** 県外スポット（他県MaaSエリア） */
+  outOfPref?: boolean;
+  /** 県外の場合の管轄MaaS名 */
+  prefMaas?: string;
   access: AccessRoute[];
   tickets: Ticket[];
   spots: Spot[];
@@ -69,7 +73,7 @@ export const destinations: Destination[] = [
     emoji: '♨️',
     color: '#2D6A4F',
     gradient: 'linear-gradient(160deg, #2D6A4F 0%, #52B788 100%)',
-    x: 115, y: 65,
+    x: 115, y: 105,
     ticket: '¥1,540〜',
     access: [
       { icon: '🚃', mode: '電車+バス', time: '約2時間', detail: '南口駅→緑川口（特急）→ 路線バス 25分' },
@@ -103,7 +107,7 @@ export const destinations: Destination[] = [
     emoji: '♨️',
     color: '#5B8A72',
     gradient: 'linear-gradient(160deg, #5B8A72 0%, #7DB89E 100%)',
-    x: 165, y: 105,
+    x: 165, y: 120,
     ticket: '¥2,000〜',
     access: [
       { icon: '🚃', mode: '電車+バス', time: '約2.5時間', detail: '中央駅→四方口→路線バス 40分' },
@@ -161,8 +165,10 @@ export const destinations: Destination[] = [
     emoji: '🏔',
     color: '#4A7C5E',
     gradient: 'linear-gradient(160deg, #4A7C5E 0%, #6BAF8D 100%)',
-    x: 215, y: 50,
+    x: 200, y: 52,
     ticket: '¥3,500〜',
+    outOfPref: true,
+    prefMaas: '新潟県MaaS',
     access: [
       { icon: '🚃', mode: '特急+バス', time: '約3時間', detail: '南口駅→みなかみ駅→シャトルバス' },
     ],
@@ -215,8 +221,10 @@ export const destinations: Destination[] = [
     emoji: '🌿',
     color: '#2D8A5E',
     gradient: 'linear-gradient(160deg, #2D8A5E 0%, #4FBB7E 100%)',
-    x: 250, y: 30,
+    x: 280, y: 55,
     ticket: '¥4,000〜',
+    outOfPref: true,
+    prefMaas: '福島県MaaS',
     access: [
       { icon: '🚌', mode: 'シャトルバス', time: '約3.5時間', detail: '中央駅→尾沢口→シャトルバス' },
     ],

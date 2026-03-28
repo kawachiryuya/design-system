@@ -22,9 +22,13 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
 
 # Environment
 .env
 .env.local
 .env.*.local
 .vercel
+
+# MCP config
+.mcp.json

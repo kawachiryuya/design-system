@@ -16,7 +16,7 @@ interface SectionNavProps {
 
 export default function SectionNav({ className = '', activeSection, onNavigate }: SectionNavProps) {
   return (
-    <nav className={`w-full bg-white border-2 border-border rounded-lg py-2 ${className}`}>
+    <nav aria-label="セクションナビゲーション" className={`w-full bg-white border-2 border-border rounded-lg py-2 ${className}`}>
       <ul className="flex flex-col w-full">
         {navItems.map((item, i) => {
           const isActive = activeSection

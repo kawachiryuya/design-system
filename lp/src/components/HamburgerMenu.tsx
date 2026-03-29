@@ -35,7 +35,7 @@ export default function HamburgerMenu() {
           />
 
           {/* Panel (right slide-in) */}
-          <nav className="absolute top-0 right-0 h-full w-full sm:w-[320px] md:w-[480px] bg-white shadow-lg flex flex-col">
+          <nav aria-label="メニュー" className="absolute top-0 right-0 h-full w-full sm:w-[320px] md:w-[480px] bg-white shadow-lg flex flex-col">
             {/* Close button */}
             <div className="flex items-center justify-end h-16 px-4">
               <button

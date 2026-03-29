@@ -14,9 +14,9 @@ export default function CautionSection() {
   const [contentRef, contentVisible] = useFadeIn();
 
   return (
-    <section className="bg-surface-warning-muted flex flex-col gap-6 items-center px-6 py-10 relative" id="caution">
+    <section id="caution" aria-label="注意事項" className="bg-surface-warning-muted flex flex-col gap-6 items-center px-6 py-10 relative">
       {/* Warning icon */}
-      <div className="absolute -top-[27px] left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-surface-warning-muted flex items-center justify-center z-0">
+      <div aria-hidden="true" className="absolute -top-[27px] left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-surface-warning-muted flex items-center justify-center z-0">
         <Icon name="warning" color="warning" size="xl" />
       </div>
 
@@ -25,7 +25,7 @@ export default function CautionSection() {
         className={`fade-in-up flex flex-col items-center w-full relative z-10 ${contentVisible ? 'is-visible' : ''}`}
       >
         <div className="pb-4 w-full">
-          <Typography variant="h3" weight="semibold" className="text-center">
+          <Typography variant="h3" as="h2" weight="semibold" className="text-center">
             注意事項
           </Typography>
         </div>

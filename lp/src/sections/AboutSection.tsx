@@ -14,7 +14,7 @@ export default function AboutSection() {
   const [listRef, listVisible] = useFadeIn();
 
   return (
-    <section className="flex flex-col items-center pb-12 pt-10">
+    <section aria-label="サービス紹介" className="flex flex-col items-center pb-12 pt-10">
       <div className="flex flex-col gap-6 items-center px-6 w-full">
         {/* Title */}
         <div
@@ -23,7 +23,7 @@ export default function AboutSection() {
         >
           <div className="flex gap-3 items-center">
             <Placeholder label="ロゴアセット想定" className="h-14 w-[200px]" />
-            <Typography variant="h4" weight="semibold">
+            <Typography variant="h4" as="h2" weight="semibold">
               とは
             </Typography>
           </div>

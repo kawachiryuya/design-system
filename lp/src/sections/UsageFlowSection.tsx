@@ -13,21 +13,23 @@ export default function UsageFlowSection() {
   const [headingRef, headingVisible] = useFadeIn();
 
   return (
-    <section className="flex flex-col gap-6 items-center pb-16 pt-10 px-6" id="usage-flow">
+    <section id="usage-flow" aria-label="利用の流れ" className="flex flex-col gap-6 items-center pb-16 pt-10 px-6">
       <div ref={headingRef} className={`fade-in-up ${headingVisible ? 'is-visible' : ''}`}>
-        <Typography variant="h3" weight="semibold" className="text-center">
+        <Typography variant="h3" as="h2" weight="semibold" className="text-center">
           利用の流れ
         </Typography>
       </div>
 
-      <div className="flex flex-col gap-6 w-full">
+      <ol className="flex flex-col gap-6 w-full list-none">
         {steps.map((step, i) => (
-          <StepCard key={i} stepNumber={i + 1} heading={step.heading} />
+          <li key={i}>
+            <StepCard stepNumber={i + 1} heading={step.heading} />
+          </li>
         ))}
-      </div>
+      </ol>
 
       {/* TODO: 納品時に実 URL を設定 */}
-      <a href="" target="_blank" rel="noopener noreferrer" onClick={(e) => e.preventDefault()} className="w-full">
+      <a href="" target="_blank" rel="noopener noreferrer" aria-label="ボタンテキスト（別ウィンドウで開きます）" onClick={(e) => e.preventDefault()} className="w-full">
         <Button variant="secondary" size="large" fullWidth>
           ボタンテキスト
         </Button>

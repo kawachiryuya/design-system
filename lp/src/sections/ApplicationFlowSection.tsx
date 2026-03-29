@@ -40,23 +40,24 @@ export default function ApplicationFlowSection() {
   const [headingRef, headingVisible] = useFadeIn();
 
   return (
-    <section className="flex flex-col gap-6 items-center px-6 py-10" id="application-flow">
+    <section id="application-flow" aria-label="応募の流れ" className="flex flex-col gap-6 items-center px-6 py-10">
       <div ref={headingRef} className={`fade-in-up ${headingVisible ? 'is-visible' : ''}`}>
-        <Typography variant="h3" weight="semibold" className="text-center">
+        <Typography variant="h3" as="h2" weight="semibold" className="text-center">
           応募の流れ
         </Typography>
       </div>
 
-      <div className="flex flex-col gap-6 w-full">
+      <ol className="flex flex-col gap-6 w-full list-none">
         {steps.map((step, i) => (
-          <StepCard
-            key={i}
-            stepNumber={i + 1}
-            heading={step.heading}
-            footnote={step.footnote}
-          />
+          <li key={i}>
+            <StepCard
+              stepNumber={i + 1}
+              heading={step.heading}
+              footnote={step.footnote}
+            />
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }

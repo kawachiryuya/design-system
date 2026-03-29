@@ -8,7 +8,7 @@ export default function TrialCtaSection() {
   const [ctaRef, ctaVisible] = useFadeIn();
 
   return (
-    <section className="bg-gradient-to-b from-[#e9f2ef] to-[#f2f5f4] flex flex-col gap-6 items-center px-6 py-12 relative" id="trial">
+    <section id="trial" aria-label="先行体験のご案内" className="bg-gradient-to-b from-[#e9f2ef] to-[#f2f5f4] flex flex-col gap-6 items-center px-6 py-12 relative">
       {/* Decorative ribbon */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60px] h-[28px] bg-white" style={{ clipPath: 'polygon(0 0, 100% 0, 50% 100%)' }} />
 
@@ -17,7 +17,7 @@ export default function TrialCtaSection() {
         className={`fade-in-up flex flex-col gap-2 items-center ${contentVisible ? 'is-visible' : ''}`}
       >
         <Placeholder label="ロゴアセット想定" className="h-14 w-[200px]" />
-        <Typography variant="h3" weight="semibold" className="text-center">
+        <Typography variant="h3" as="h2" weight="semibold" className="text-center">
           先行体験してみませんか？
         </Typography>
       </div>
@@ -37,7 +37,7 @@ export default function TrialCtaSection() {
         className={`fade-in-up delay-100 pulse-once w-full ${ctaVisible ? 'is-visible' : ''}`}
       >
         {/* TODO: 納品時に実 URL を設定 */}
-        <a href="" target="_blank" rel="noopener noreferrer" onClick={(e) => e.preventDefault()}>
+        <a href="" target="_blank" rel="noopener noreferrer" aria-label="申し込む（別ウィンドウで開きます）" onClick={(e) => e.preventDefault()}>
           <Button variant="primary" size="large" fullWidth>
             申し込む
           </Button>

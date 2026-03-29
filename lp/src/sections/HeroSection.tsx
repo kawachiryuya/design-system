@@ -30,7 +30,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section id="about" className="bg-gradient-to-b from-[#e9f2ef] to-[#f2f5f4] flex flex-col items-center overflow-clip pb-10">
+    <section id="about" aria-label="メインビジュアル" className="bg-gradient-to-b from-[#e9f2ef] to-[#f2f5f4] flex flex-col items-center overflow-clip pb-10">
       {/* Header */}
       <div className="flex items-center justify-between h-16 px-4 py-2 w-full lg:hidden">
         <button ref={logoRef} onClick={scrollToTop} className="sm:invisible" aria-label="トップへ戻る">
@@ -50,18 +50,20 @@ export default function HeroSection() {
             ref={headlineRef}
             className={`fade-in-up flex flex-col gap-2 items-center mb-4 text-center ${headlineVisible ? 'is-visible' : ''}`}
           >
-            <div className="flex items-baseline gap-[0.5px]">
-              <Typography variant="h2" weight="semibold" as="span">
-                XXXXX
-              </Typography>
-              <Typography variant="h3" weight="semibold" as="span">
-                を
-              </Typography>
-            </div>
-            <div className="bg-surface-primary text-onSurface-inverse rounded-md p-3 flex items-baseline gap-[2px]">
-              <span className="text-5xl font-medium leading-none">XXXXX</span>
-              <span className="text-4xl font-bold leading-none">で！</span>
-            </div>
+            <h1 className="flex flex-col gap-2 items-center">
+              <span className="flex items-baseline gap-[0.5px]">
+                <Typography variant="h2" weight="semibold" as="span">
+                  XXXXX
+                </Typography>
+                <Typography variant="h3" weight="semibold" as="span">
+                  を
+                </Typography>
+              </span>
+              <span className="bg-surface-primary text-onSurface-inverse rounded-md p-3 flex items-baseline gap-[2px]">
+                <span className="text-5xl font-medium leading-none">XXXXX</span>
+                <span className="text-4xl font-bold leading-none">で！</span>
+              </span>
+            </h1>
           </div>
 
           {/* Phone mockups — 後ほど画像に差し替え予定 */}
@@ -88,7 +90,7 @@ export default function HeroSection() {
           className={`fade-in-up delay-300 pulse-once relative z-10 w-full ${ctaVisible ? 'is-visible' : ''}`}
         >
           {/* TODO: 納品時に実 URL を設定 */}
-          <a href="" target="_blank" rel="noopener noreferrer" onClick={(e) => e.preventDefault()}>
+          <a href="" target="_blank" rel="noopener noreferrer" aria-label="申し込む（別ウィンドウで開きます）" onClick={(e) => e.preventDefault()}>
             <Button variant="primary" size="large" fullWidth>
               申し込む
             </Button>

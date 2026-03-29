@@ -51,16 +51,16 @@ export default function DesktopWrapper() {
 
           {/* Col 1: Headline — vertically centered */}
           <div className="anim-slide-left col-start-1 row-start-1 self-center px-10" style={{ animationDelay: '0ms' }}>
-            <div className="flex flex-col gap-1">
-              <p className="text-2xl font-semibold tracking-wide">
+            <h1 className="flex flex-col gap-1">
+              <span className="text-2xl font-semibold tracking-wide">
                 <span className="text-onSurface-primary">XXXX</span>
                 <span>がはじめる</span>
-              </p>
-              <div className="flex flex-col text-4xl font-semibold leading-normal tracking-wide">
+              </span>
+              <span className="flex flex-col text-4xl font-semibold leading-normal tracking-wide">
                 <span>あたらしい</span>
                 <span>XXXXサービス</span>
-              </div>
-            </div>
+              </span>
+            </h1>
           </div>
 
           {/* Col 1: Illustrations left — bottom（一旦非表示）
@@ -97,16 +97,16 @@ export default function DesktopWrapper() {
           <Placeholder label="ロゴアセット想定" className="h-16 w-[229px] max-w-full text-lg" />
         </button>
         <div className="anim-slide-left flex flex-col justify-center h-full px-8" style={{ animationDelay: '0ms' }}>
-          <div className="flex flex-col gap-1">
-            <p className="text-2xl font-semibold tracking-wide">
+          <h1 className="flex flex-col gap-1">
+            <span className="text-2xl font-semibold tracking-wide">
               <span className="text-onSurface-primary">XXXX</span>
               <span>がはじめる</span>
-            </p>
-            <div className="flex flex-col text-4xl font-semibold leading-normal tracking-wide">
+            </span>
+            <span className="flex flex-col text-4xl font-semibold leading-normal tracking-wide">
               <span>あたらしい</span>
               <span>XXXXサービス</span>
-            </div>
-          </div>
+            </span>
+          </h1>
         </div>
       </div>
     </div>

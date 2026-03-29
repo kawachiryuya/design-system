@@ -11,13 +11,16 @@ export default function CtaBand({
   buttonLabel = '申し込む',
 }: CtaBandProps) {
   return (
-    <section className="bg-[#f5f7f5] flex flex-col gap-6 items-center justify-center px-6 py-8">
+    <section aria-label="申し込み案内" className="bg-[#f5f7f5] flex flex-col gap-6 items-center justify-center px-6 py-8">
       <Typography variant="body" color="default" className="text-center">
         {text}
       </Typography>
-      <Button variant="primary" size="large" fullWidth>
-        {buttonLabel}
-      </Button>
+      {/* TODO: 納品時に実 URL を設定 */}
+      <a href="" target="_blank" rel="noopener noreferrer" aria-label={`${buttonLabel}（別ウィンドウで開きます）`} onClick={(e) => e.preventDefault()} className="w-full">
+        <Button variant="primary" size="large" fullWidth>
+          {buttonLabel}
+        </Button>
+      </a>
     </section>
   );
 }

@@ -31,22 +31,26 @@ const PEEK_HEIGHT = 80;
 
 function FaqCard({ q, a }: { q: string; a: string }) {
   return (
-    <div className="border-2 border-border flex flex-col gap-4 p-6 rounded-lg w-full">
+    <dl className="border-2 border-border flex flex-col gap-4 p-6 rounded-lg w-full">
       {/* Question */}
       <div className="flex gap-3 items-center">
-        <span className="bg-surface-primary text-onSurface-inverse rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shrink-0">Q</span>
-        <Typography variant="body" color="default" className="flex-1">
-          {q}
-        </Typography>
+        <span aria-hidden="true" className="bg-surface-primary text-onSurface-inverse rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shrink-0">Q</span>
+        <dt>
+          <Typography variant="body" color="default" className="flex-1" as="span">
+            {q}
+          </Typography>
+        </dt>
       </div>
       {/* Answer */}
       <div className="flex gap-3 items-start">
-        <span className="bg-error-500 text-onSurface-inverse rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shrink-0 mt-[2px]">A</span>
-        <Typography variant="body" color="default" className="flex-1 leading-relaxed">
-          {a}
-        </Typography>
+        <span aria-hidden="true" className="bg-error-500 text-onSurface-inverse rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shrink-0 mt-[2px]">A</span>
+        <dd>
+          <Typography variant="body" color="default" className="flex-1 leading-relaxed" as="span">
+            {a}
+          </Typography>
+        </dd>
       </div>
-    </div>
+    </dl>
   );
 }
 
@@ -72,14 +76,14 @@ export default function FaqSection() {
   const wrapperHeight = isExpanded ? contentHeight : PEEK_HEIGHT;
 
   return (
-    <section className="flex flex-col gap-6 items-center px-6 py-10" id="faq">
+    <section id="faq" aria-label="よくある質問" className="flex flex-col gap-6 items-center px-6 py-10">
       {/* Heading */}
       <div ref={headingRef} className={`fade-in-up flex flex-col items-center ${headingVisible ? 'is-visible' : ''}`}>
-        <Typography variant="h3" weight="semibold" className="text-center">
+        <Typography variant="h3" as="h2" weight="semibold" className="text-center">
           よくある質問
-        </Typography>
-        <Typography variant="h5" weight="semibold" className="text-center">
-          見出し補足テキストが入る
+          <Typography variant="h5" as="span" weight="semibold" className="block">
+            見出し補足テキストが入る
+          </Typography>
         </Typography>
       </div>
 
@@ -113,7 +117,7 @@ export default function FaqSection() {
 
       {/* CTA ボタン — 展開後は非表示 */}
       {!isExpanded && (
-        <Button variant="secondary" size="large" fullWidth onClick={handleExpand}>
+        <Button variant="secondary" size="large" fullWidth onClick={handleExpand} aria-expanded={false}>
           すべてのFAQをみる +
         </Button>
       )}

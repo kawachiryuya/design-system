@@ -1,11 +1,13 @@
 import { Typography } from '@ds/Typography';
 import { Button } from '@ds/Button';
 import { useFadeIn } from '../hooks/useFadeIn';
+import { urls } from '../assets';
+import ExternalLink from '../components/ExternalLink';
 
-const links: { label: string; url: string }[] = [
-  { label: 'ボタンテキスト', url: '' },
-  { label: 'ボタンテキスト', url: '' },
-  { label: 'ボタンテキストボタンテキスト', url: '' },
+const links = [
+  { label: 'ボタンテキスト' },
+  { label: 'ボタンテキスト' },
+  { label: 'ボタンテキストボタンテキスト' },
 ];
 
 export default function LinksSection() {
@@ -19,13 +21,12 @@ export default function LinksSection() {
         </Typography>
 
         <div className="flex flex-col gap-4 w-full">
-          {/* TODO: 納品時に各 url を設定 */}
-          {links.map(({ label, url }, i) => (
-            <a key={i} href={url || ''} target="_blank" rel="noopener noreferrer" aria-label={`${label}（別ウィンドウで開きます）`} onClick={url ? undefined : (e) => e.preventDefault()}>
+          {links.map(({ label }, i) => (
+            <ExternalLink key={i} href={urls.links[i] || ''} label={label}>
               <Button variant="secondary" size="large" fullWidth>
                 {label}
               </Button>
-            </a>
+            </ExternalLink>
           ))}
         </div>
       </div>

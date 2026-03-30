@@ -43,7 +43,7 @@ function FaqCard({ q, a }: { q: string; a: string }) {
       </div>
       {/* Answer */}
       <div className="flex gap-3 items-start">
-        <span aria-hidden="true" className="bg-error-500 text-onSurface-inverse rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shrink-0 mt-[2px]">A</span>
+        <span aria-hidden="true" className="bg-surface-error text-onSurface-inverse rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shrink-0 mt-[2px]">A</span>
         <dd>
           <Typography variant="body" color="default" className="flex-1 leading-relaxed" as="span">
             {a}
@@ -117,7 +117,7 @@ export default function FaqSection() {
 
       {/* CTA ボタン — 展開後は非表示 */}
       {!isExpanded && (
-        <Button variant="secondary" size="large" fullWidth onClick={handleExpand} aria-expanded={false}>
+        <Button variant="secondary" size="large" fullWidth onClick={handleExpand} aria-expanded={isExpanded}>
           すべてのFAQをみる +
         </Button>
       )}

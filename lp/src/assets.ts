@@ -33,3 +33,20 @@ export const assets = {
 export function img(filename: string): string {
   return `${BASE}images/${filename}`;
 }
+
+/**
+ * 外部リンク URL の定義
+ *
+ * 空文字の間はリンクが無効化される（Button のみ表示）。
+ * URL を設定すると自動で <a> タグでラップされる。
+ */
+export const urls = {
+  /** 申し込みフォーム（HeroSection, TrialCtaSection, CtaBand で共通） */
+  apply: '',
+
+  /** 利用の流れセクションのボタン */
+  usageFlow: '',
+
+  /** リンクセクションのボタン（各リンク個別） */
+  links: ['', '', ''] as string[],
+};

@@ -2,7 +2,8 @@ import { Typography } from '@ds/Typography';
 import { Button } from '@ds/Button';
 import Placeholder from '../components/Placeholder';
 import { useFadeIn } from '../hooks/useFadeIn';
-import { assets } from '../assets';
+import { assets, urls } from '../assets';
+import ExternalLink from '../components/ExternalLink';
 
 export default function TrialCtaSection() {
   const [contentRef, contentVisible] = useFadeIn();
@@ -37,12 +38,11 @@ export default function TrialCtaSection() {
         ref={ctaRef}
         className={`fade-in-up delay-100 pulse-once w-full ${ctaVisible ? 'is-visible' : ''}`}
       >
-        {/* TODO: 納品時に実 URL を設定 */}
-        <a href="" target="_blank" rel="noopener noreferrer" aria-label="申し込む（別ウィンドウで開きます）" onClick={(e) => e.preventDefault()}>
+        <ExternalLink href={urls.apply} label="申し込む">
           <Button variant="primary" size="large" fullWidth>
             申し込む
           </Button>
-        </a>
+        </ExternalLink>
       </div>
     </section>
   );

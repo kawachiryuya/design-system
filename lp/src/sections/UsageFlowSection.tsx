@@ -2,7 +2,8 @@ import { Typography } from '@ds/Typography';
 import { Button } from '@ds/Button';
 import StepCard from '../components/StepCard';
 import { useFadeIn } from '../hooks/useFadeIn';
-import { assets } from '../assets';
+import { assets, urls } from '../assets';
+import ExternalLink from '../components/ExternalLink';
 
 const steps = [
   { heading: 'ステップ1の見出しテキスト' },
@@ -29,12 +30,11 @@ export default function UsageFlowSection() {
         ))}
       </ol>
 
-      {/* TODO: 納品時に実 URL を設定 */}
-      <a href="" target="_blank" rel="noopener noreferrer" aria-label="ボタンテキスト（別ウィンドウで開きます）" onClick={(e) => e.preventDefault()} className="w-full">
+      <ExternalLink href={urls.usageFlow} label="ボタンテキスト" className="w-full">
         <Button variant="secondary" size="large" fullWidth>
           ボタンテキスト
         </Button>
-      </a>
+      </ExternalLink>
     </section>
   );
 }

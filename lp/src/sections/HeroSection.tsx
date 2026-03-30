@@ -5,7 +5,8 @@ import Placeholder from '../components/Placeholder';
 import PhoneMockup from '../components/PhoneMockup';
 import HamburgerMenu from '../components/HamburgerMenu';
 import { useFadeIn } from '../hooks/useFadeIn';
-import { assets } from '../assets';
+import { assets, urls } from '../assets';
+import ExternalLink from '../components/ExternalLink';
 
 export default function HeroSection() {
   const [headlineRef, headlineVisible] = useFadeIn();
@@ -84,12 +85,11 @@ export default function HeroSection() {
           ref={ctaRef}
           className={`fade-in-up delay-300 pulse-once relative z-10 w-full ${ctaVisible ? 'is-visible' : ''}`}
         >
-          {/* TODO: 納品時に実 URL を設定 */}
-          <a href="" target="_blank" rel="noopener noreferrer" aria-label="申し込む（別ウィンドウで開きます）" onClick={(e) => e.preventDefault()}>
+          <ExternalLink href={urls.apply} label="申し込む">
             <Button variant="primary" size="large" fullWidth>
               申し込む
             </Button>
-          </a>
+          </ExternalLink>
         </div>
       </div>
     </section>

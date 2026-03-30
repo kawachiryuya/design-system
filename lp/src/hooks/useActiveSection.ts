@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type RefObject } from 'react';
+import { useState, useEffect, useCallback, useMemo, type RefObject } from 'react';
 import { navItems } from '../SectionNav';
 
 /**
@@ -10,7 +10,7 @@ import { navItems } from '../SectionNav';
  *  - setActiveSection: クリック時に強制セットするための setter
  */
 export function useActiveSection(scrollRef: RefObject<HTMLDivElement | null>) {
-  const sectionIds = navItems.map((item) => item.href.replace('#', ''));
+  const sectionIds = useMemo(() => navItems.map((item) => item.href.replace('#', '')), []);
   const [activeSection, setActiveSection] = useState(sectionIds[0]);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export function useActiveSection(scrollRef: RefObject<HTMLDivElement | null>) {
       observer.disconnect();
       container.removeEventListener('scroll', handleScroll);
     };
-  }, [scrollRef]);
+  }, [scrollRef, sectionIds]);
 
   const forceSetActive = useCallback((id: string) => {
     setActiveSection(id);

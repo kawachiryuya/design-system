@@ -1,5 +1,7 @@
 import { Typography } from '@ds/Typography';
 import { Button } from '@ds/Button';
+import { urls } from '../assets';
+import ExternalLink from './ExternalLink';
 
 interface CtaBandProps {
   text?: string;
@@ -15,12 +17,11 @@ export default function CtaBand({
       <Typography variant="body" color="default" className="text-center">
         {text}
       </Typography>
-      {/* TODO: 納品時に実 URL を設定 */}
-      <a href="" target="_blank" rel="noopener noreferrer" aria-label={`${buttonLabel}（別ウィンドウで開きます）`} onClick={(e) => e.preventDefault()} className="w-full">
+      <ExternalLink href={urls.apply} label={buttonLabel} className="w-full">
         <Button variant="primary" size="large" fullWidth>
           {buttonLabel}
         </Button>
-      </a>
+      </ExternalLink>
     </section>
   );
 }

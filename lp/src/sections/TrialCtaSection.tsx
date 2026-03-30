@@ -2,6 +2,7 @@ import { Typography } from '@ds/Typography';
 import { Button } from '@ds/Button';
 import Placeholder from '../components/Placeholder';
 import { useFadeIn } from '../hooks/useFadeIn';
+import { assets } from '../assets';
 
 export default function TrialCtaSection() {
   const [contentRef, contentVisible] = useFadeIn();
@@ -16,7 +17,7 @@ export default function TrialCtaSection() {
         ref={contentRef}
         className={`fade-in-up flex flex-col gap-2 items-center ${contentVisible ? 'is-visible' : ''}`}
       >
-        <Placeholder label="ロゴアセット想定" className="h-14 w-[200px]" />
+        <Placeholder src={assets.logo} label="ロゴ" className="h-14 w-[200px]" />
         <Typography variant="h3" as="h2" weight="semibold" className="text-center">
           先行体験してみませんか？
         </Typography>

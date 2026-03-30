@@ -2,12 +2,13 @@ import { Typography } from '@ds/Typography';
 import { Icon } from '@ds/Icon';
 import Placeholder from '../components/Placeholder';
 import { useFadeIn } from '../hooks/useFadeIn';
+import { assets } from '../assets';
 
 const conditions = [
-  { text: '条件1 ※' },
-  { text: '条件2' },
-  { text: '条件3' },
-  { text: '条件4のテキストが入ります' },
+  { text: '条件1 ※', illustration: assets.cautionIllustrations[0] },
+  { text: '条件2', illustration: assets.cautionIllustrations[1] },
+  { text: '条件3', illustration: assets.cautionIllustrations[2] },
+  { text: '条件4のテキストが入ります', illustration: assets.cautionIllustrations[3] },
 ];
 
 export default function CautionSection() {
@@ -35,7 +36,7 @@ export default function CautionSection() {
           <ul className="grid grid-cols-2 gap-x-6 gap-y-4 list-none">
             {conditions.map((cond, i) => (
               <li key={i} className="flex flex-col gap-4">
-                <Placeholder label="イラスト想定" className="aspect-square w-full" />
+                <Placeholder src={cond.illustration} label="イラスト" className="aspect-square w-full" />
                 <Typography variant="body" color="default">
                   {cond.text}
                 </Typography>

@@ -2,6 +2,7 @@ import { Typography } from '@ds/Typography';
 import { Button } from '@ds/Button';
 import StepCard from '../components/StepCard';
 import { useFadeIn } from '../hooks/useFadeIn';
+import { assets } from '../assets';
 
 const steps = [
   { heading: 'ステップ1の見出しテキスト' },
@@ -23,7 +24,7 @@ export default function UsageFlowSection() {
       <ol className="flex flex-col gap-6 w-full list-none">
         {steps.map((step, i) => (
           <li key={i}>
-            <StepCard stepNumber={i + 1} heading={step.heading} />
+            <StepCard stepNumber={i + 1} heading={step.heading} illustration={assets.usageSteps[i]} />
           </li>
         ))}
       </ol>

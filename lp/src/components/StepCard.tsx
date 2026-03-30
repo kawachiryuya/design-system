@@ -7,9 +7,11 @@ interface StepCardProps {
   stepNumber: number;
   heading: ReactNode;
   footnote?: string;
+  /** イラスト画像の URL（空文字の間はプレースホルダー表示） */
+  illustration?: string;
 }
 
-export default function StepCard({ stepNumber, heading, footnote }: StepCardProps) {
+export default function StepCard({ stepNumber, heading, footnote, illustration }: StepCardProps) {
   const num = String(stepNumber).padStart(2, '0');
   const [cardRef, cardVisible] = useFadeIn();
 
@@ -30,7 +32,7 @@ export default function StepCard({ stepNumber, heading, footnote }: StepCardProp
 
       {/* Illustration placeholder */}
       <div className="flex justify-center w-full">
-        <Placeholder label="イラスト想定" className="w-[200px] h-[200px]" />
+        <Placeholder src={illustration} label="イラスト" className="w-[200px] h-[200px]" />
       </div>
 
       {/* Footnote */}

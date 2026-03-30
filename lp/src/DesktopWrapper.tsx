@@ -3,6 +3,7 @@ import Placeholder from './components/Placeholder';
 import SectionNav from './SectionNav';
 import MobileLp from './MobileLp';
 import { useActiveSection } from './hooks/useActiveSection';
+import { assets } from './assets';
 
 export default function DesktopWrapper() {
   const lpFrameRef = useRef<HTMLDivElement>(null);
@@ -45,7 +46,7 @@ export default function DesktopWrapper() {
           {/* Col 1: Logo — top-left */}
           <div className="anim-fade col-start-1 row-start-1 self-start mt-10 ml-10" style={{ animationDelay: '200ms' }}>
             <button onClick={scrollToTop} className="cursor-pointer" aria-label="トップへ戻る">
-              <Placeholder label="ロゴアセット想定" className="h-16 w-[229px] max-w-full text-lg" />
+              <Placeholder src={assets.logo} label="ロゴ" className="h-16 w-[229px] max-w-full text-lg" />
             </button>
           </div>
 
@@ -94,7 +95,7 @@ export default function DesktopWrapper() {
       <div className="lg:hidden fixed top-0 left-0 w-1/2 h-screen z-20">
         {/* Logo — top-left, 40px from edges */}
         <button onClick={scrollToTop} className="anim-fade absolute top-10 left-10 cursor-pointer z-10" style={{ animationDelay: '200ms' }} aria-label="トップへ戻る">
-          <Placeholder label="ロゴアセット想定" className="h-16 w-[229px] max-w-full text-lg" />
+          <Placeholder src={assets.logo} label="ロゴ" className="h-16 w-[229px] max-w-full text-lg" />
         </button>
         <div className="anim-slide-left flex flex-col justify-center h-full px-8" style={{ animationDelay: '0ms' }}>
           <h1 className="flex flex-col gap-1">

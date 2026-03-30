@@ -2,6 +2,7 @@ import { Typography } from '@ds/Typography';
 import { Icon } from '@ds/Icon';
 import Placeholder from '../components/Placeholder';
 import { useFadeIn } from '../hooks/useFadeIn';
+import { assets } from '../assets';
 
 const features = [
   'テキストテキストテキストテキスト',
@@ -22,7 +23,7 @@ export default function AboutSection() {
           className={`fade-in-up flex flex-col gap-4 items-center ${titleVisible ? 'is-visible' : ''}`}
         >
           <div className="flex gap-3 items-center">
-            <Placeholder label="ロゴアセット想定" className="h-14 w-[200px]" />
+            <Placeholder src={assets.logo} label="ロゴ" className="h-14 w-[200px]" />
             <Typography variant="h4" as="h2" weight="semibold">
               とは
             </Typography>

@@ -1,6 +1,7 @@
 import { Typography } from '@ds/Typography';
 import StepCard from '../components/StepCard';
 import { useFadeIn } from '../hooks/useFadeIn';
+import { assets } from '../assets';
 
 const steps = [
   {
@@ -54,6 +55,7 @@ export default function ApplicationFlowSection() {
               stepNumber={i + 1}
               heading={step.heading}
               footnote={step.footnote}
+              illustration={assets.applicationSteps[i]}
             />
           </li>
         ))}

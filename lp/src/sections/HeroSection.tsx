@@ -5,9 +5,7 @@ import Placeholder from '../components/Placeholder';
 import PhoneMockup from '../components/PhoneMockup';
 import HamburgerMenu from '../components/HamburgerMenu';
 import { useFadeIn } from '../hooks/useFadeIn';
-
-/** TODO: 納品時にロゴ画像パスを設定（空文字の間は Placeholder 表示） */
-const LOGO_SRC = '';
+import { assets } from '../assets';
 
 export default function HeroSection() {
   const [headlineRef, headlineVisible] = useFadeIn();
@@ -34,10 +32,7 @@ export default function HeroSection() {
       {/* Header */}
       <div className="flex items-center justify-between h-16 px-4 py-2 w-full lg:hidden">
         <button ref={logoRef} onClick={scrollToTop} className="sm:invisible" aria-label="トップへ戻る">
-          {LOGO_SRC
-            ? <img src={LOGO_SRC} alt="ロゴ" className="h-10 w-[143px] object-contain" />
-            : <Placeholder label="ロゴアセット想定" className="h-10 w-[143px] text-xs" />
-          }
+          <Placeholder src={assets.logo} label="ロゴ" className="h-10 w-[143px] text-xs" />
         </button>
         <HamburgerMenu />
       </div>

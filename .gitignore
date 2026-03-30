@@ -4,6 +4,7 @@ node_modules/
 # Build outputs
 storybook-static/
 dist/
+!lp/dist/
 
 # macOS
 .DS_Store

@@ -5,6 +5,7 @@ const navItems = [
   { to: '/', icon: 'home' as const, label: 'ホーム' },
   { to: '/reservations', icon: 'list_alt' as const, label: '予約一覧' },
   { to: '/mypage', icon: 'person' as const, label: 'マイページ' },
+  { to: '/tokens', icon: 'palette' as const, label: 'Tokens' },
 ];
 
 export const Sidebar = () => {

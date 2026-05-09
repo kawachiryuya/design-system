@@ -17,6 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@ds/*": ["../components/*"],
+      "@tokens": ["../tokens/index.ts"],
       "@tokens/*": ["../tokens/*"]
     },
     "baseUrl": "."

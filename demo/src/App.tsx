@@ -8,6 +8,7 @@ import { ConfirmPage } from './pages/ConfirmPage';
 import { CompletePage } from './pages/CompletePage';
 import { ReservationsPage } from './pages/ReservationsPage';
 import { ReservationDetailPage } from './pages/ReservationDetailPage';
+import { TokensPage } from './pages/TokensPage';
 
 export const App = () => (
   <BrowserRouter>
@@ -21,6 +22,7 @@ export const App = () => (
         <Route path="/complete" element={<CompletePage />} />
         <Route path="/reservations" element={<ReservationsPage />} />
         <Route path="/reservations/:id" element={<ReservationDetailPage />} />
+        <Route path="/tokens" element={<TokensPage />} />
       </Route>
     </Routes>
   </BrowserRouter>

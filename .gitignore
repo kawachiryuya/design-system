@@ -6,6 +6,9 @@ storybook-static/
 dist/
 !lp/dist/
 
+# Style Dictionary build artifacts (auto-generated from tokens/source/)
+tokens/build/
+
 # macOS
 .DS_Store
 .AppleDouble

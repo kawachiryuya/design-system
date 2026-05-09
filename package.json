@@ -4,6 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "npm run tokens:build",
+    "tokens:build": "style-dictionary build --config style-dictionary.config.js",
+    "tokens:watch": "style-dictionary build --config style-dictionary.config.js --watch",
+    "tokens:typecheck": "tsc -p tsconfig.tokens.json",
+    "prestorybook": "npm run tokens:build",
+    "prebuild-storybook": "npm run tokens:build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
     "build:gunmaas": "cd gunmaas && npm install && npm run build",
@@ -25,6 +31,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "storybook": "^10.3.3",
+    "style-dictionary": "^5.4.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
     "vite": "^6.0.7"

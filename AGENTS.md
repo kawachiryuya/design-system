@@ -181,17 +181,20 @@ PJ ルートの CSS で CSS 変数を上書き:
 
 | コマンド | 用途 |
 |---|---|
-| `npm install` | 依存インストール |
-| `npm run storybook` | Storybook ローカル起動（http://localhost:6006） |
-| `npm run build-storybook` | Storybook 静的書き出し（`storybook-static/`） |
+| `npm install` | 依存インストール（postinstall で `tokens:build` も自動実行） |
+| `npm run tokens:build` | Style Dictionary でトークンを `tokens/source/` から `tokens/build/` へビルド |
+| `npm run tokens:watch` | トークンソース変更を監視して自動ビルド |
+| `npm run tokens:typecheck` | `tokens/index.ts` の型整合性をチェック |
+| `npm run storybook` | Storybook ローカル起動（http://localhost:6006、tokens を pre-build） |
+| `npm run build-storybook` | Storybook 静的書き出し（`storybook-static/`、tokens を pre-build） |
 | `npm run build:gunmaas` | gunmaas PJ ビルド |
 | `npm run build:demo` | demo PJ ビルド |
 
-### 将来追加予定（Phase 1）
+### トークン参照の使い分け
 
-| コマンド | 用途 | Issue |
-|---|---|---|
-| `npm run tokens:build` | Style Dictionary でトークンビルド | [kawachiryuya/ai-management#32](https://github.com/kawachiryuya/ai-management/issues/32) |
+- **TypeScript / 型付き参照**: `import { COLORS, SPACING } from '../tokens'` → `tokens/index.ts` 経由でネスト構造の型付き const にアクセス（AI 用途で推奨）
+- **CSS 変数**: `var(--color-surface-primary)` → `tokens/build/variables.css` を `@import` する（実 PJ で `.storybook/tailwind.css` や `demo/src/index.css` の手書き定義を順次置き換え予定 - Phase 1 後半）
+- **Tailwind**: 現状 `tailwind.config.js` は `tokens/*.json`（ソース）を直接読み込み中。Phase 1 後半で `tokens/build/` 経由に切替予定
 
 ---
 

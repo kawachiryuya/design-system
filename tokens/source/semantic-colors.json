@@ -1,0 +1,239 @@
+{
+  "color": {
+    "bg": {
+      "default": {
+        "value": "#F5F7F5",
+        "type": "color",
+        "description": "ページ最下層"
+      }
+    },
+    "surface": {
+      "default": {
+        "value": "{color.base.white}",
+        "type": "color",
+        "description": "カード・モーダル"
+      },
+      "raised": {
+        "value": "{color.neutral.50}",
+        "type": "color",
+        "description": "入れ子サーフェス"
+      },
+      "overlay": {
+        "value": "rgba(0, 0, 0, 0.5)",
+        "type": "color",
+        "description": "モーダルオーバーレイ"
+      },
+      "primary": {
+        "value": "{color.primary.600}",
+        "type": "color",
+        "description": "主要アクション（Primaryボタン等）"
+      },
+      "secondary": {
+        "value": "{color.primary.50}",
+        "type": "color",
+        "description": "選択状態・アクティブ項目"
+      },
+      "success": {
+        "value": "{color.success.500}",
+        "type": "color",
+        "description": "成功の強調塗り（バッジ・ドット等）"
+      },
+      "success-muted": {
+        "value": "{color.success.50}",
+        "type": "color",
+        "description": "成功Alert背景等"
+      },
+      "error": {
+        "value": "{color.error.500}",
+        "type": "color",
+        "description": "エラーの強調塗り（バッジ・ドット等）"
+      },
+      "error-muted": {
+        "value": "{color.error.50}",
+        "type": "color",
+        "description": "エラーAlert背景等"
+      },
+      "warning": {
+        "value": "{color.warning.400}",
+        "type": "color",
+        "description": "警告の強調塗り（バッジ・ドット等）"
+      },
+      "warning-muted": {
+        "value": "{color.warning.50}",
+        "type": "color",
+        "description": "警告Alert背景等"
+      },
+      "info": {
+        "value": "{color.info.500}",
+        "type": "color",
+        "description": "情報の強調塗り（バッジ・ドット等）"
+      },
+      "info-muted": {
+        "value": "{color.info.50}",
+        "type": "color",
+        "description": "情報Alert背景等"
+      },
+      "disabled": {
+        "value": "{color.neutral.100}",
+        "type": "color",
+        "description": "非活性エリア"
+      },
+      "skeleton": {
+        "value": "{color.neutral.200}",
+        "type": "color",
+        "description": "スケルトンローディング"
+      },
+      "neutral": {
+        "value": "{color.neutral.400}",
+        "type": "color",
+        "description": "オフライン等のミュートな塗り"
+      },
+      "inset": {
+        "value": "{color.neutral.50}",
+        "type": "color",
+        "description": "凹み・控えめな背景（neutral Alert等）"
+      }
+    },
+    "on": {
+      "default": {
+        "value": "{color.neutral.900}",
+        "type": "color",
+        "description": "主テキスト"
+      },
+      "muted": {
+        "value": "{color.neutral.500}",
+        "type": "color",
+        "description": "サブテキスト・プレースホルダー"
+      },
+      "subtle": {
+        "value": "{color.neutral.400}",
+        "type": "color",
+        "description": "最も控えめなテキスト"
+      },
+      "primary": {
+        "value": "{color.primary.600}",
+        "type": "color",
+        "description": "リンク・CTA"
+      },
+      "success": {
+        "value": "{color.success.700}",
+        "type": "color",
+        "description": "成功テキスト・アイコン"
+      },
+      "error": {
+        "value": "{color.error.700}",
+        "type": "color",
+        "description": "エラーテキスト"
+      },
+      "warning": {
+        "value": "{color.warning.700}",
+        "type": "color",
+        "description": "警告テキスト"
+      },
+      "info": {
+        "value": "{color.info.700}",
+        "type": "color",
+        "description": "情報テキスト"
+      },
+      "disabled": {
+        "value": "{color.neutral.400}",
+        "type": "color",
+        "description": "非活性テキスト"
+      },
+      "inverse": {
+        "value": "{color.base.white}",
+        "type": "color",
+        "description": "色面上テキスト（Primaryボタン等）"
+      }
+    },
+    "border": {
+      "default": {
+        "value": "{color.neutral.300}",
+        "type": "color",
+        "description": "標準ボーダー"
+      },
+      "muted": {
+        "value": "{color.neutral.200}",
+        "type": "color",
+        "description": "薄いボーダー"
+      },
+      "strong": {
+        "value": "{color.neutral.400}",
+        "type": "color",
+        "description": "強調ボーダー"
+      },
+      "focus": {
+        "value": "{color.primary.600}",
+        "type": "color",
+        "description": "フォーカスリング"
+      },
+      "primary": {
+        "value": "{color.primary.600}",
+        "type": "color",
+        "description": "選択・アクティブ枠"
+      },
+      "error": {
+        "value": "{color.error.600}",
+        "type": "color",
+        "description": "エラー枠"
+      },
+      "success": {
+        "value": "{color.success.600}",
+        "type": "color",
+        "description": "成功枠"
+      },
+      "warning": {
+        "value": "{color.warning.600}",
+        "type": "color",
+        "description": "警告枠"
+      },
+      "info": {
+        "value": "{color.info.600}",
+        "type": "color",
+        "description": "情報枠"
+      },
+      "disabled": {
+        "value": "{color.neutral.200}",
+        "type": "color",
+        "description": "非活性ボーダー"
+      },
+      "success-muted": {
+        "value": "{color.success.200}",
+        "type": "color",
+        "description": "成功コンテナ枠（Alert等）"
+      },
+      "error-muted": {
+        "value": "{color.error.200}",
+        "type": "color",
+        "description": "エラーコンテナ枠（Alert等）"
+      },
+      "warning-muted": {
+        "value": "{color.warning.200}",
+        "type": "color",
+        "description": "警告コンテナ枠（Alert等）"
+      },
+      "info-muted": {
+        "value": "{color.info.200}",
+        "type": "color",
+        "description": "情報コンテナ枠（Alert等）"
+      }
+    },
+    "state": {
+      "hover": {
+        "value": "rgba(0, 0, 0, 0.08)",
+        "type": "color",
+        "description": "ホバーオーバーレイ"
+      },
+      "active": {
+        "value": "rgba(0, 0, 0, 0.12)",
+        "type": "color",
+        "description": "アクティブオーバーレイ"
+      },
+      "dragged": {
+        "value": "rgba(0, 0, 0, 0.16)",
+        "type": "color",
+        "description": "ドラッグ中オーバーレイ"
+      }
+    }
+  }
+}

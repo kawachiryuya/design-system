@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true
+  },
+  "include": ["tokens/index.ts", "tokens/build/**/*"]
+}

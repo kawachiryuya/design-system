@@ -143,7 +143,41 @@ PJ ルートの CSS で CSS 変数を上書き:
 
 ---
 
-## 5. ビルドコマンド
+## 5. 検証サイト（PJ ディレクトリの位置付け）
+
+リポ内に同居する複数の PJ ディレクトリは、それぞれ役割が異なります。**検証作業は `demo/` で行う**のが基本ルールです。
+
+| ディレクトリ | 位置付け | 用途 |
+|---|---|---|
+| **`demo/`** ⭐ | **デザインシステム検証サイト** | コンポーネント変更後の動作確認・回帰テスト・AI 生成 UI のトーン揃え検証はここで行う |
+| `gunmaas/` | サンプル PJ（GunMaaS プロトタイプ） | 個別 PJ 例として保持 |
+| `lp/` | ランディングページ | 公開用 LP |
+| `demo2/` | デモ 2 | 補助的なデモ |
+
+### `demo/` を検証サイトとして使う理由
+
+- React Router で 8 ページ構成（鉄道予約デモ）→ ルーティング・レイアウト・状態管理を含む現実的な利用シナリオ
+- Vite alias `@ds` で design-system コンポーネントを直接 import
+- Tailwind config が design-system の `tokens/*.json` を相対参照
+- `npm run deploy` で Vercel 配信可能 → 公開検証も可
+
+### 検証フロー（コンポーネント / トークン変更時）
+
+1. design-system 本体を編集
+2. `cd demo && npm run dev` で http://localhost:5173 起動
+3. 影響範囲の画面（例: ボタン変更なら `/results` `/confirm` 等）を目視確認
+4. 必要なら `npm run build` でビルドエラーをチェック
+5. 重要な変更なら Storybook（リポルートで `npm run storybook`）でも確認
+
+### demo の現状の手書き同期（Phase 1 で解消予定）
+
+- `demo/src/index.css` に CSS 変数のコピーがある（`.storybook/tailwind.css` と同内容を手書き同期中）
+- `demo/tailwind.config.js` の semantic 部分も design-system 本体と重複
+- → Style Dictionary 化（[#32](https://github.com/kawachiryuya/ai-management/issues/32)）で `tokens/build/variables.css` と `tokens/build/tailwind-preset.js` を自動生成し、両方が import / preset 参照する形に移行
+
+---
+
+## 6. ビルドコマンド
 
 | コマンド | 用途 |
 |---|---|
@@ -161,7 +195,7 @@ PJ ルートの CSS で CSS 変数を上書き:
 
 ---
 
-## 6. 新規コンポーネント追加時の規約
+## 7. 新規コンポーネント追加時の規約
 
 各コンポーネントは **4 ファイル構成**:
 
@@ -214,7 +248,7 @@ CONTEXT.md §「次のコンポーネントを作るときのプロンプト例�
 
 ---
 
-## 7. アクセシビリティ前提
+## 8. アクセシビリティ前提
 
 - フォーカスリング: `focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-border-focus` を Primitive に標準装備
 - 最小タッチターゲット: 44x44px（WCAG 2.5.5 AAA）。Button の medium が 48px、small が 40px は icon-only 用途
@@ -224,7 +258,7 @@ CONTEXT.md §「次のコンポーネントを作るときのプロンプト例�
 
 ---
 
-## 8. リポ全体の変更時に守ること
+## 9. リポ全体の変更時に守ること
 
 - トークン構造を変更したら **`docs/ai-roadmap.md`** も同 PR で更新（風化防止）
 - semantic 色を追加したら `.storybook/tailwind.css` の CSS 変数も同期

@@ -78,21 +78,38 @@
 6. **`tokens/index.ts` を新設して TS エクスポート**:
    - 雛形は本ドキュメント末尾を参照
 
-7. **`tailwind.config.js` を build 成果物参照に切り替え**:
+7. **`tailwind.config.js` を build 成果物参照に切り替え**（リポ本体 + 各 PJ）:
    - 既存の `require('./tokens/colors.json')` → `require('./tokens/build/colors.json')`
+   - リポルートの `tailwind.config.js`、および `demo/`, `gunmaas/`, `lp/`, `demo2/` 各 PJ の `tailwind.config.js` 全てに反映
    - 既存の `tailwind.config.js` 構造は維持（PJ ビルドが壊れない）
 
-8. **既存 PJ（gunmaas/lp/demo/demo2）の build 確認**:
+8. **手書き CSS 変数を build 成果物の import に置き換え**:
+   - 現状 `.storybook/tailwind.css` と `demo/src/index.css` の **2 箇所に CSS 変数が手書き同期**されている
+   - `tokens/build/variables.css` を Style Dictionary が自動生成
+   - 両ファイルから `@import "../tokens/build/variables.css"` または相対パスで読み込む形に変更
+   - 同期維持コストがゼロになる
+
+9. **検証サイト（demo）で動作確認**:
    ```bash
-   npm run build:gunmaas
-   npm run build:demo
+   cd demo
+   npm install
+   npm run dev      # http://localhost:5173 で目視確認
+   npm run build    # ビルドエラーチェック
    ```
+   - 主要画面: `/`（検索）/ `/results`（結果一覧）/ `/seat`（座席選択）/ `/confirm`（確認）等
+   - 色・余白・角丸・フォント等が変化していないことを確認
+
+10. **その他 PJ のビルド確認**:
+    ```bash
+    npm run build:gunmaas
+    npm run build:demo
+    ```
 
 #### 注意点
 
 - gunmaas, lp 等の既存 PJ ビルドが壊れないよう、現行 `tailwind.config.js` が認識する形式は保つ（破壊的変更を避ける）
 - iOS/Android 用 platforms は **コメントアウト状態で残す**（Phase 4 で有効化、設計だけ残す）
-- semantic-colors は `.storybook/tailwind.css` の手書き CSS 変数と二重管理になっている → ビルドで CSS 変数を自動生成し、`.storybook/tailwind.css` は build 成果物を import する形へ
+- 検証は `demo/` で行う（AGENTS.md §5 参照）。`gunmaas/` `lp/` は触らないことが多いので、回帰テストには `demo/` が最適
 
 ### 施策 C: AI コンテキスト整備 — [#33](https://github.com/kawachiryuya/ai-management/issues/33)
 

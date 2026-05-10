@@ -1,27 +1,70 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
 
-/**
- * Breadcrumb Props
- * Reference: principles/patterns/navigation.md
- *
- * Molecule: Link Atom を連結したパンくずリスト
- */
+/** Breadcrumb のセパレーター種類 */
+export type BreadcrumbSeparator = 'slash' | 'chevron' | 'dot';
+
+/** Breadcrumb の 1 項目 */
 export interface BreadcrumbItem {
-  /** 表示ラベル */
+  /** 表示ラベル。 */
   label: string;
-  /** リンクURL（省略すると現在ページとして扱う） */
+  /** リンク URL。**省略すると現在ページとして扱われる**（最後の項目は href なしが自然）。 */
   href?: string;
 }
 
+/**
+ * Breadcrumb Props
+ *
+ * パンくずナビゲーション。最後の項目は `aria-current="page"` 自動付与で a11y 対応。
+ *
+ * @example
+ *   // 基本（chevron 区切り）
+ *   <Breadcrumb items={[
+ *     { label: 'ホーム', href: '/' },
+ *     { label: 'ブログ', href: '/blog' },
+ *     { label: 'デザインシステムとは' },
+ *   ]} />
+ *
+ * @example
+ *   // スラッシュ区切り（テキスト密集 UI）
+ *   <Breadcrumb
+ *     separator="slash"
+ *     items={[
+ *       { label: 'プロジェクト', href: '/projects' },
+ *       { label: 'design-system', href: '/projects/design-system' },
+ *       { label: 'コンポーネント一覧' },
+ *     ]}
+ *   />
+ *
+ * @example
+ *   // ドット区切り（ミニマル）
+ *   <Breadcrumb
+ *     separator="dot"
+ *     items={[
+ *       { label: 'Tag', href: '/tag' },
+ *       { label: 'TypeScript' },
+ *     ]}
+ *   />
+ *
+ * @see principles/patterns/navigation.md
+ */
 export interface BreadcrumbProps {
-  /** パンくずの項目リスト */
+  /** パンくずの項目リスト。最後の項目は通常 `href` なし（現在ページ）。 */
   items: BreadcrumbItem[];
-  /** セパレーターの種類 */
-  separator?: 'slash' | 'chevron' | 'dot';
-  /** aria-label */
+  /**
+   * セパレーターの種類。
+   * - `chevron` 矢印（標準、視認性高）
+   * - `slash` スラッシュ（密集 UI）
+   * - `dot` 中点（ミニマル）
+   * @default 'chevron'
+   */
+  separator?: BreadcrumbSeparator;
+  /**
+   * `aria-label`。
+   * @default 'パンくずリスト'
+   */
   ariaLabel?: string;
-  /** 追加CSSクラス */
+  /** 追加 CSS クラス。 */
   className?: string;
 }
 

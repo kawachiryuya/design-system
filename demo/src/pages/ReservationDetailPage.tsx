@@ -32,9 +32,14 @@ export const ReservationDetailPage = () => {
     <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8">
       <div className="col-span-12 lg:col-span-8 lg:col-start-3">
         <div className="flex items-center gap-3 mb-6">
-          <Button iconOnly variant="tertiary" size="small" onClick={() => navigate('/reservations')} aria-label="戻る">
-            <Icon name="arrow_back" size="sm" color="inherit" />
-          </Button>
+          <Button
+            iconOnly
+            variant="tertiary"
+            size="small"
+            onClick={() => navigate('/reservations')}
+            aria-label="戻る"
+            icon={<Icon name="arrow_back" size="sm" color="inherit" />}
+          />
           <Typography variant="h5" as="h2">予約詳細</Typography>
         </div>
 

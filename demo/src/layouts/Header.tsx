@@ -33,9 +33,8 @@ export const Header = () => {
               onClick={() => navigate(-1)}
               className="-ml-2 text-onSurface-inverse hover:shadow-[inset_0_0_0_9999px_rgba(255,255,255,0.1)]"
               aria-label="戻る"
-            >
-              <Icon name="arrow_back" size="sm" color="inherit" />
-            </Button>
+              icon={<Icon name="arrow_back" size="sm" color="inherit" />}
+            />
             <span className="font-semibold text-base ml-1">{title ?? 'Rail Demo'}</span>
           </>
         )}

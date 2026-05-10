@@ -65,10 +65,13 @@ export const SearchPage = () => {
               onClick={handleSwap}
               aria-label="出発駅と到着駅を入れ替え"
               className="self-center"
-            >
-              <Icon name="swap_vert" size="sm" color="primary" className="lg:hidden" />
-              <Icon name="swap_horiz" size="sm" color="primary" className="hidden lg:block" />
-            </Button>
+              icon={
+                <>
+                  <Icon name="swap_vert" size="sm" color="primary" className="lg:hidden" />
+                  <Icon name="swap_horiz" size="sm" color="primary" className="hidden lg:block" />
+                </>
+              }
+            />
 
             <div className="flex-1">
               <Select label="到着駅" value={to} onChange={(e) => setTo(e.target.value)} fullWidth>

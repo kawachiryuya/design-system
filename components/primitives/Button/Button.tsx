@@ -1,40 +1,124 @@
 import React from 'react';
 
-/**
- * Button Props
- * Reference: principles/interaction/button/priority.md
- */
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** ボタンのバリアント（優先度） */
-  variant?: 'primary' | 'secondary' | 'tertiary';
-  /** ボタンのサイズ */
-  size?: 'small' | 'medium' | 'large';
-  /** ローディング状態 */
+/** ボタンの優先度（1 画面に primary は通常 1 個に絞る） */
+export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
+
+/** ボタンのサイズ。タッチターゲット保証のため最小 40px（small/iconOnly） */
+export type ButtonSize = 'small' | 'medium' | 'large';
+
+/** Variant / size など全 Button が共有するプロパティ */
+interface ButtonBaseProps {
+  /**
+   * ボタンのバリアント（優先度）。
+   * - `primary`: 主要アクション（保存・送信等）。1 画面 1 個推奨
+   * - `secondary`: 副次アクション（キャンセル・戻る等）
+   * - `tertiary`: 補助アクション（テキストリンク的）
+   * @default 'primary'
+   */
+  variant?: ButtonVariant;
+  /**
+   * サイズ。WCAG 2.5.5 AAA（44px）を満たす。
+   * - `small`: 40px、密集 UI 用
+   * - `medium`: 48px、標準
+   * - `large`: 64px、モバイル CTA / メインアクション
+   * @default 'medium'
+   */
+  size?: ButtonSize;
+  /** ローディング状態。`true` で disabled + spinner 表示。 */
   isLoading?: boolean;
-  /** アイコン（左または右） */
-  icon?: React.ReactNode;
-  /** アイコンの位置 */
-  iconPosition?: 'left' | 'right';
-  /** アイコンのみのボタン（正方形・円形） */
-  iconOnly?: boolean;
-  /** 全幅表示 */
+  /** 全幅表示（親要素の幅に追従）。フォーム送信ボタン等で使用。 */
   fullWidth?: boolean;
-  /** ボタンの内容 */
-  children?: React.ReactNode;
 }
 
 /**
- * Button Component
- * 
- * Atomic Design: Atom
- * 
+ * Icon-only ボタン（アイコンのみ、テキストラベルなし）。
+ *
+ * アクセシビリティのため `aria-label` を必須にする。
+ * `iconPosition` / `children` は使用不可（型レベルで弾く）。
+ */
+interface ButtonIconOnlyProps extends ButtonBaseProps {
+  /** Icon-only モード（テキストラベルなし）。 */
+  iconOnly: true;
+  /** 表示するアイコン。 */
+  icon: React.ReactNode;
+  /** Icon-only モードでは使用不可。 */
+  iconPosition?: never;
+  /** Icon-only モードでは children 不可。`aria-label` でラベルを指定。 */
+  children?: never;
+  /** スクリーンリーダー向けラベル（必須）。 */
+  'aria-label': string;
+}
+
+/**
+ * 通常のボタン（テキストラベル + 任意のアイコン）。
+ */
+interface ButtonRegularProps extends ButtonBaseProps {
+  /** 通常モード（デフォルト）。 */
+  iconOnly?: false;
+  /** アイコン要素（任意）。`iconPosition` で左右指定。 */
+  icon?: React.ReactNode;
+  /**
+   * アイコンの位置。
+   * @default 'left'
+   */
+  iconPosition?: 'left' | 'right';
+  /** ボタンラベル（必須）。 */
+  children: React.ReactNode;
+}
+
+/**
+ * Button Props — discriminated union
+ *
+ * 用途に応じて 2 つの形のいずれかで使う:
+ * - **通常**: `<Button variant="primary">保存</Button>` — children 必須、icon は任意
+ * - **Icon-only**: `<Button iconOnly icon={...} aria-label="..." />` — テキストなし、aria-label 必須
+ *
  * @example
- * <Button variant="primary">保存</Button>
- * <Button variant="secondary" size="small" icon={<SaveIcon />}>保存</Button>
+ *   // 主要アクション
+ *   <Button variant="primary">保存</Button>
+ *
+ * @example
+ *   // 副次アクション + 左アイコン
+ *   <Button variant="secondary" icon={<Icon name="check_circle" />}>
+ *     確定
+ *   </Button>
+ *
+ * @example
+ *   // ローディング中（送信中）
+ *   <Button variant="primary" isLoading>送信中</Button>
+ *
+ * @example
+ *   // 全幅 + large（モバイル CTA）
+ *   <Button variant="primary" size="large" fullWidth>
+ *     購入する
+ *   </Button>
+ *
+ * @example
+ *   // Icon-only（aria-label 必須、TS が強制）
+ *   <Button iconOnly icon={<Icon name="close" />} aria-label="閉じる" />
+ *
+ * @see principles/interaction/button/priority.md
+ */
+export type ButtonProps =
+  (ButtonIconOnlyProps | ButtonRegularProps) &
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'aria-label'>;
+
+/** Internal flexible type to allow destructuring across both discriminants */
+type _InternalButtonProps = ButtonBaseProps & {
+  iconOnly?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+  children?: React.ReactNode;
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'>;
+
+/**
+ * Button — Atomic Design: Atom
+ *
+ * @see ButtonProps for usage examples.
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
+  (props, ref) => {
+    const {
       variant = 'primary',
       size = 'medium',
       isLoading = false,
@@ -46,10 +130,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       className = '',
       type = 'button',
-      ...props
-    },
-    ref
-  ) => {
+      ...rest
+    } = props as _InternalButtonProps;
+
     // Base styles - すべてのボタンに共通
     const baseStyles = [
       'inline-flex',
@@ -155,7 +238,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         disabled={disabled || isLoading}
         className={buttonClasses}
-        {...props}
+        {...rest}
       >
         {isLoading && (
           <svg

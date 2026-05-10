@@ -1,37 +1,83 @@
 import React from 'react';
 import { Label } from '../../primitives/Label/Label';
 
+/** Switch のサイズ */
+export type SwitchSize = 'small' | 'medium' | 'large';
+
+/** ラベル位置 */
+export type SwitchLabelPosition = 'left' | 'right';
+
 /**
  * Switch Props
- * Reference: principles/patterns/forms.md, principles/interaction/state/interactive-states.md
+ *
+ * トグルスイッチ。`role="switch"` 自動付与で a11y 対応。
+ * **設計原則**: 即時反映される設定に使用（フォーム送信不要）。送信フローでは Checkbox を使う。
+ *
+ * @example
+ *   // 基本（controlled）
+ *   <Switch label="メール通知" checked={enabled} onChange={setEnabled} />
+ *
+ * @example
+ *   // 説明付き（設定画面）
+ *   <Switch
+ *     label="ダークモード"
+ *     description="OS の設定に従う場合は無効化"
+ *     checked={isDark}
+ *     onChange={setDark}
+ *   />
+ *
+ * @example
+ *   // ラベル左配置（テーブル風 UI）
+ *   <Switch
+ *     label="自動更新"
+ *     labelPosition="left"
+ *     checked={autoUpdate}
+ *     onChange={setAutoUpdate}
+ *   />
+ *
+ * @example
+ *   // 小サイズ + 高密度 UI
+ *   <Switch label="WiFi" size="small" checked={wifi} onChange={setWifi} />
+ *
+ * @see principles/patterns/forms.md
+ * @see principles/interaction/state/interactive-states.md
  */
 export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
-  /** オン/オフの状態 */
+  /**
+   * オン/オフの状態（controlled）。
+   * @default false
+   */
   checked?: boolean;
-  /** 状態変更コールバック */
+  /** 状態変更コールバック。次の状態（反転後）が引数に渡される。 */
   onChange?: (checked: boolean) => void;
-  /** サイズ */
-  size?: 'small' | 'medium' | 'large';
-  /** ラベルテキスト */
+  /**
+   * サイズ。
+   * - `small` トラック 32px（密集 UI）
+   * - `medium` トラック 44px（標準）
+   * - `large` トラック 56px（モバイル設定画面）
+   * @default 'medium'
+   */
+  size?: SwitchSize;
+  /** ラベルテキスト。クリックでもトグルする。 */
   label?: string;
-  /** ラベルの補足テキスト */
+  /** ラベルの補足テキスト（より小さく、ミュート色）。 */
   description?: string;
-  /** ラベル位置 */
-  labelPosition?: 'left' | 'right';
-  /** 無効状態 */
+  /**
+   * ラベルの位置。
+   * @default 'right'
+   */
+  labelPosition?: SwitchLabelPosition;
+  /**
+   * 無効状態。
+   * @default false
+   */
   disabled?: boolean;
 }
 
 /**
- * Switch Component
+ * Switch — Atomic Design: Composite
  *
- * Atomic Design: Atom
- *
- * トグルスイッチ。即時反映される設定に使用する（フォーム送信不要）。
- *
- * @example
- * <Switch label="メール通知" checked={enabled} onChange={setEnabled} />
- * <Switch label="ダークモード" size="small" />
+ * @see SwitchProps for usage examples.
  */
 export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
   (

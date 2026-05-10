@@ -1,19 +1,73 @@
 import React from 'react';
 
+/** Badge のセマンティックカラー */
+export type BadgeVariant = 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'info';
+
+/** Badge のスタイル */
+export type BadgeAppearance = 'solid' | 'soft' | 'outline';
+
+/** Badge のサイズ */
+export type BadgeSize = 'small' | 'medium';
+
 /**
  * Badge Props
- * Reference: principles/color/semantic-colors.md
+ *
+ * ステータス・カテゴリ・数値などを簡潔に表示するインラインラベル。
+ *
+ * @example
+ *   // 完了ステータス（success + soft）
+ *   <Badge variant="success">完了</Badge>
+ *
+ * @example
+ *   // エラー強調（solid）
+ *   <Badge variant="error" appearance="solid">エラー</Badge>
+ *
+ * @example
+ *   // ドット付き（待機中等のリアルタイム表示）
+ *   <Badge variant="warning" dot>処理中</Badge>
+ *
+ * @example
+ *   // 枠線のみ（控えめなカテゴリラベル）
+ *   <Badge variant="primary" appearance="outline" size="small">
+ *     ベータ
+ *   </Badge>
+ *
+ * @example
+ *   // 数値カウント
+ *   <Badge variant="error" appearance="solid" size="small">12</Badge>
+ *
+ * @see principles/color/semantic-colors.md
  */
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  /** バッジのバリアント（セマンティックカラー） */
-  variant?: 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'info';
-  /** バッジのスタイル */
-  appearance?: 'solid' | 'soft' | 'outline';
-  /** サイズ */
-  size?: 'small' | 'medium';
-  /** 先頭のドット表示 */
+  /**
+   * セマンティックカラー。
+   * - `neutral` カテゴリ・タグ等の意味色なし
+   * - `primary` ブランド強調
+   * - `success` `error` `warning` `info` 状態の意味色
+   * @default 'neutral'
+   */
+  variant?: BadgeVariant;
+  /**
+   * バッジのスタイル。
+   * - `solid` 塗りつぶし（強調表示、数値カウント等）
+   * - `soft` 薄い背景（標準、リスト内のステータス）
+   * - `outline` 枠線のみ（最も控えめ、サブカテゴリ）
+   * @default 'soft'
+   */
+  appearance?: BadgeAppearance;
+  /**
+   * サイズ。
+   * - `small` 高密度 UI / 数値カウント
+   * - `medium` 標準
+   * @default 'medium'
+   */
+  size?: BadgeSize;
+  /**
+   * 先頭にドットを表示。リアルタイム性（処理中・新着等）を示唆する用途。
+   * @default false
+   */
   dot?: boolean;
-  /** バッジの内容 */
+  /** バッジの内容（短いテキストや数値）。 */
   children: React.ReactNode;
 }
 

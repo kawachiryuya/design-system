@@ -43,7 +43,7 @@ export const CompletePage = () => {
               variant="primary"
               size="medium"
               fullWidth
-              onClick={() => navigate(`/reservations/${bookingId}#ic-section`)}
+              onClick={() => navigate(`/reservations/${bookingId}/ic-register`)}
             >
               ICカード設定を続ける
             </Button>

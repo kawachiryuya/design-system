@@ -8,6 +8,7 @@ import { ConfirmPage } from './pages/ConfirmPage';
 import { CompletePage } from './pages/CompletePage';
 import { ReservationsPage } from './pages/ReservationsPage';
 import { ReservationDetailPage } from './pages/ReservationDetailPage';
+import { ICRegisterPage } from './pages/ICRegisterPage';
 import { TokensPage } from './pages/TokensPage';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
@@ -48,6 +49,7 @@ export const App = () => (
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/reservations" element={<ReservationsPage />} />
         <Route path="/reservations/:id" element={<ReservationDetailPage />} />
+        <Route path="/reservations/:id/ic-register" element={<ICRegisterPage />} />
         <Route path="/settings" element={<SettingsPage />} />
 
         {/* デザインシステム */}

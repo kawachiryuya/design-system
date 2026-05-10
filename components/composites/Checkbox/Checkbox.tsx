@@ -2,38 +2,88 @@ import React from 'react';
 import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
-/**
- * Checkbox Props
- * Reference: principles/patterns/forms.md
- */
-export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
-  /** チェックボックスのサイズ */
-  size?: 'small' | 'medium' | 'large';
-  /** ラベルテキスト */
+/** Checkbox のサイズ */
+export type CheckboxSize = 'small' | 'medium' | 'large';
+
+interface CheckboxBaseProps {
+  /**
+   * チェックボックスのサイズ。
+   * @default 'medium'
+   */
+  size?: CheckboxSize;
+  /** ラベルテキスト。未指定時はチェックボックスのみ表示。 */
   label?: string;
-  /** ラベルの補足テキスト */
+  /** ラベルの補足テキスト（より小さく、ミュート色で 1〜2 行）。 */
   description?: string;
-  /** エラー状態 */
-  error?: boolean;
-  /** エラーメッセージ */
-  errorMessage?: string;
-  /** 不確定状態（一部選択） */
+  /**
+   * 不確定状態（一部選択）。`indeterminate` 視覚スタイルが適用される。
+   * 親 Checkbox で「全項目のうち一部選択中」を表現する用途。
+   * @default false
+   */
   indeterminate?: boolean;
 }
 
+/** エラー状態の Checkbox — `errorMessage` が必須 */
+interface CheckboxErrorProps extends CheckboxBaseProps {
+  /** エラー状態。`true` で枠線赤・`aria-invalid="true"` 自動付与。 */
+  error: true;
+  /** エラーメッセージ（必須）。 */
+  errorMessage: string;
+}
+
+/** 通常状態の Checkbox */
+interface CheckboxNormalProps extends CheckboxBaseProps {
+  /** @default false */
+  error?: false;
+  errorMessage?: never;
+}
+
 /**
- * Checkbox Component
- *
- * Atomic Design: Atom
+ * Checkbox Props — discriminated union
  *
  * @example
- * <Checkbox label="利用規約に同意する" required />
- * <Checkbox label="全て選択" indeterminate />
- * <Checkbox label="メール通知" description="週1回の更新メールを受け取る" />
+ *   // 単体（必須）
+ *   <Checkbox label="利用規約に同意する" required />
+ *
+ * @example
+ *   // 説明付き
+ *   <Checkbox
+ *     label="メール通知"
+ *     description="週 1 回の更新メールを受け取る"
+ *   />
+ *
+ * @example
+ *   // 不確定状態（親チェックで一部選択中）
+ *   <Checkbox label="全て選択" indeterminate checked={someSelected} />
+ *
+ * @example
+ *   // エラー状態（errorMessage 必須）
+ *   <Checkbox
+ *     label="プライバシーポリシーに同意"
+ *     error
+ *     errorMessage="同意が必要です"
+ *   />
+ *
+ * @see principles/patterns/forms.md
+ */
+export type CheckboxProps =
+  (CheckboxErrorProps | CheckboxNormalProps) &
+  Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'>;
+
+/** Internal flexible type */
+type _InternalCheckboxProps = CheckboxBaseProps & {
+  error?: boolean;
+  errorMessage?: string;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'>;
+
+/**
+ * Checkbox — Atomic Design: Composite
+ *
+ * @see CheckboxProps for usage examples.
  */
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  (
-    {
+  (props, ref) => {
+    const {
       size = 'medium',
       label,
       description,
@@ -43,10 +93,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       disabled,
       id,
       className = '',
-      ...props
-    },
-    ref
-  ) => {
+      ...rest
+    } = props as _InternalCheckboxProps;
+
     const inputRef = React.useRef<HTMLInputElement>(null);
     const resolvedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
 
@@ -95,7 +144,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             aria-invalid={error || undefined}
             aria-describedby={error && errorId ? errorId : undefined}
             className={inputClasses}
-            {...props}
+            {...rest}
           />
           {(label || description) && (
             <div className="flex flex-col gap-0.5">
@@ -124,48 +173,87 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
 
 Checkbox.displayName = 'Checkbox';
 
-/**
- * CheckboxGroup Props
- */
-export interface CheckboxGroupProps {
-  /** グループのラベル */
+interface CheckboxGroupBaseProps {
+  /** グループのラベル（`<legend>` 要素として表示）。a11y で fieldset とセットで必須。 */
   legend: string;
-  /** チェックボックスの選択肢 */
+  /** Checkbox の選択肢（複数の `<Checkbox>` を入れる）。 */
   children: React.ReactNode;
-  /** エラー状態 */
-  error?: boolean;
-  /** エラーメッセージ */
-  errorMessage?: string;
-  /** ヘルプテキスト */
+  /** ヘルプテキスト。エラー時は非表示。 */
   helpText?: string;
-  /** 必須 */
+  /**
+   * 必須グループ。`legend` 末尾に `*` が `aria-label="必須"` 付きで表示される。
+   * @default false
+   */
   required?: boolean;
-  /** 横並び */
+  /**
+   * 横並び表示（フレックスラップ）。少数の選択肢で水平に並べたい場合。
+   * @default false
+   */
   inline?: boolean;
   className?: string;
 }
 
+interface CheckboxGroupErrorProps extends CheckboxGroupBaseProps {
+  error: true;
+  errorMessage: string;
+}
+
+interface CheckboxGroupNormalProps extends CheckboxGroupBaseProps {
+  error?: false;
+  errorMessage?: never;
+}
+
 /**
- * CheckboxGroup Component
+ * CheckboxGroup Props — discriminated union
  *
- * Checkbox をグルーピングし、アクセシブルな fieldset でラップする。
+ * Checkbox をグルーピングし、`<fieldset>` + `<legend>` でラップ。
+ * エラー時は legend と children の下にエラーメッセージ表示。
  *
  * @example
- * <CheckboxGroup legend="通知設定" helpText="複数選択できます">
- *   <Checkbox label="メール" />
- *   <Checkbox label="プッシュ" />
- * </CheckboxGroup>
+ *   // 基本（縦並び）
+ *   <CheckboxGroup legend="通知設定" helpText="複数選択できます">
+ *     <Checkbox label="メール" />
+ *     <Checkbox label="プッシュ" />
+ *   </CheckboxGroup>
+ *
+ * @example
+ *   // 横並び
+ *   <CheckboxGroup legend="言語" inline>
+ *     <Checkbox label="日本語" />
+ *     <Checkbox label="English" />
+ *   </CheckboxGroup>
+ *
+ * @example
+ *   // 必須 + エラー
+ *   <CheckboxGroup
+ *     legend="興味のあるトピック"
+ *     required
+ *     error
+ *     errorMessage="1 つ以上選択してください"
+ *   >
+ *     <Checkbox label="技術" />
+ *     <Checkbox label="ビジネス" />
+ *   </CheckboxGroup>
  */
-export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
-  legend,
-  children,
-  error = false,
-  errorMessage,
-  helpText,
-  required = false,
-  inline = false,
-  className = '',
-}) => {
+export type CheckboxGroupProps = CheckboxGroupErrorProps | CheckboxGroupNormalProps;
+
+/**
+ * CheckboxGroup — Atomic Design: Composite
+ *
+ * @see CheckboxGroupProps for usage examples.
+ */
+export const CheckboxGroup: React.FC<CheckboxGroupProps> = (props) => {
+  const {
+    legend,
+    children,
+    error = false,
+    errorMessage,
+    helpText,
+    required = false,
+    inline = false,
+    className = '',
+  } = props as CheckboxGroupBaseProps & { error?: boolean; errorMessage?: string };
+
   const errorId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-error`;
   const helpId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-help`;
 

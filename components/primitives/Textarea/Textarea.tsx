@@ -2,41 +2,100 @@ import React from 'react';
 import { Label } from '../Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
-/**
- * Textarea Props
- * Reference: principles/patterns/forms.md
- */
-export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  /** ラベル */
+/** Textarea のリサイズ挙動 */
+export type TextareaResize = 'none' | 'vertical' | 'horizontal' | 'both';
+
+interface TextareaBaseProps {
+  /** ラベルテキスト。指定すると `<label>` 要素が自動生成され `htmlFor`/`aria-*` 関連付けされる。 */
   label?: string;
-  /** エラー状態 */
-  error?: boolean;
-  /** エラーメッセージ */
-  errorMessage?: string;
-  /** ヘルプテキスト */
+  /** ヘルプテキスト（補助説明）。エラー時は非表示になり `errorMessage` に置き換わる。 */
   helpText?: string;
-  /** 全幅 */
+  /** 全幅表示（親要素の幅に追従）。 */
   fullWidth?: boolean;
-  /** 現在の文字数（表示用） */
+  /** 現在の文字数（カウンター表示用）。`maxLength` と組で使う。 */
   currentLength?: number;
-  /** 最大文字数（カウンター表示用） */
+  /** 最大文字数。指定するとラベル横にカウンター（`{currentLength}/{maxLength}`）が表示される。 */
   maxLength?: number;
-  /** リサイズ挙動 */
-  resize?: 'none' | 'vertical' | 'horizontal' | 'both';
+  /**
+   * リサイズ挙動。
+   * @default 'vertical'
+   */
+  resize?: TextareaResize;
+}
+
+/** エラー状態の Textarea — `errorMessage` が必須 */
+interface TextareaErrorProps extends TextareaBaseProps {
+  /** エラー状態。`true` で枠線赤・背景色変化・`aria-invalid="true"` 自動付与。 */
+  error: true;
+  /** エラーメッセージ（必須）。`aria-describedby` で textarea に関連付けられる。 */
+  errorMessage: string;
+}
+
+/** 通常状態の Textarea */
+interface TextareaNormalProps extends TextareaBaseProps {
+  /** @default false */
+  error?: false;
+  /** 通常状態では使用不可。 */
+  errorMessage?: never;
 }
 
 /**
- * Textarea Component
+ * Textarea Props — discriminated union
  *
- * Atomic Design: Atom
+ * `error` の値で型が分岐する（Input と同パターン）:
+ * - `error: true` → `errorMessage` 必須
+ * - `error: false`（または省略） → `errorMessage` 使用不可
  *
  * @example
- * <Textarea label="お問い合わせ内容" rows={5} required maxLength={500} />
- * <Textarea label="備考" helpText="任意で入力してください" />
+ *   // 基本（rows + required）
+ *   <Textarea label="お問い合わせ内容" rows={5} required />
+ *
+ * @example
+ *   // 文字数カウンター付き
+ *   <Textarea
+ *     label="自己紹介"
+ *     maxLength={500}
+ *     currentLength={value.length}
+ *     value={value}
+ *     onChange={(e) => setValue(e.target.value)}
+ *   />
+ *
+ * @example
+ *   // エラー状態（errorMessage が型レベルで必須）
+ *   <Textarea
+ *     label="コメント"
+ *     error
+ *     errorMessage="500 文字以内で入力してください"
+ *   />
+ *
+ * @example
+ *   // ヘルプテキスト + リサイズ無効
+ *   <Textarea label="備考" helpText="任意で入力してください" resize="none" />
+ *
+ * @example
+ *   // 全幅 + 大きめ
+ *   <Textarea label="議事録" rows={10} fullWidth />
+ *
+ * @see principles/patterns/forms.md
+ */
+export type TextareaProps =
+  (TextareaErrorProps | TextareaNormalProps) &
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+/** Internal flexible type to allow destructuring across both discriminants */
+type _InternalTextareaProps = TextareaBaseProps & {
+  error?: boolean;
+  errorMessage?: string;
+} & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+/**
+ * Textarea — Atomic Design: Atom
+ *
+ * @see TextareaProps for usage examples.
  */
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (
-    {
+  (props, ref) => {
+    const {
       label,
       error = false,
       errorMessage,
@@ -49,10 +108,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       required,
       id,
       className = '',
-      ...props
-    },
-    ref
-  ) => {
+      ...rest
+    } = props as _InternalTextareaProps;
+
     const textareaId = id || (label ? `textarea-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
     const errorId = textareaId ? `${textareaId}-error` : undefined;
     const helpId = textareaId ? `${textareaId}-help` : undefined;
@@ -126,7 +184,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           aria-required={required || undefined}
           aria-describedby={describedBy}
           className={textareaClasses}
-          {...props}
+          {...rest}
         />
         <FormMessage
           helpText={helpText}

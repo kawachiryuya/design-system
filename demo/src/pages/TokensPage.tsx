@@ -4,10 +4,10 @@
  * デザインシステムのトークン一覧を可視化する検証ページ。
  * AI / 人間が現在のシステム値を視覚的に確認するためのリファレンス。
  *
- * Phase 1 で導入した `@tokens`（Style Dictionary build 成果物）を実際に dogfooding。
+ * Phase 2（#35）以降は npm パッケージ経由で import（npm link で検証中）。
  * 各値はソース `tokens/source/*.json` から `npm run tokens:build` で自動生成。
  */
-import { COLORS, SPACING, TYPOGRAPHY, RADIUS, SHADOWS } from '@tokens';
+import { COLORS, SPACING, TYPOGRAPHY, RADIUS, SHADOWS } from '@kawachiryuya/design-system/tokens';
 import { Typography } from '@ds/primitives/Typography/Typography';
 
 const PRIMITIVE_PALETTES = ['primary', 'neutral', 'success', 'error', 'warning', 'info'] as const;

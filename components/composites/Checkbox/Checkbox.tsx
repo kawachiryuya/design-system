@@ -173,41 +173,14 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
 
 Checkbox.displayName = 'Checkbox';
 
-interface CheckboxGroupBaseProps {
-  /** グループのラベル（`<legend>` 要素として表示）。a11y で fieldset とセットで必須。 */
-  legend: string;
-  /** Checkbox の選択肢（複数の `<Checkbox>` を入れる）。 */
-  children: React.ReactNode;
-  /** ヘルプテキスト。エラー時は非表示。 */
-  helpText?: string;
-  /**
-   * 必須グループ。`legend` 末尾に `*` が `aria-label="必須"` 付きで表示される。
-   * @default false
-   */
-  required?: boolean;
-  /**
-   * 横並び表示（フレックスラップ）。少数の選択肢で水平に並べたい場合。
-   * @default false
-   */
-  inline?: boolean;
-  className?: string;
-}
-
-interface CheckboxGroupErrorProps extends CheckboxGroupBaseProps {
-  error: true;
-  errorMessage: string;
-}
-
-interface CheckboxGroupNormalProps extends CheckboxGroupBaseProps {
-  error?: false;
-  errorMessage?: never;
-}
-
 /**
- * CheckboxGroup Props — discriminated union
+ * CheckboxGroup Props
  *
  * Checkbox をグルーピングし、`<fieldset>` + `<legend>` でラップ。
  * エラー時は legend と children の下にエラーメッセージ表示。
+ *
+ * **Note**: フォームでは `error` が動的 boolean になることが多いため、Checkbox 単体と異なり
+ * discriminated union ではなく緩い型にしている。`errorMessage` は `error: true` 時のみ表示。
  *
  * @example
  *   // 基本（縦並び）
@@ -224,35 +197,59 @@ interface CheckboxGroupNormalProps extends CheckboxGroupBaseProps {
  *   </CheckboxGroup>
  *
  * @example
- *   // 必須 + エラー
+ *   // 動的エラー（フォームバリデーション）
  *   <CheckboxGroup
  *     legend="興味のあるトピック"
  *     required
- *     error
+ *     error={submitted && selected.length === 0}
  *     errorMessage="1 つ以上選択してください"
  *   >
  *     <Checkbox label="技術" />
  *     <Checkbox label="ビジネス" />
  *   </CheckboxGroup>
  */
-export type CheckboxGroupProps = CheckboxGroupErrorProps | CheckboxGroupNormalProps;
+export interface CheckboxGroupProps {
+  /** グループのラベル（`<legend>` 要素として表示）。a11y で fieldset とセットで必須。 */
+  legend: string;
+  /** Checkbox の選択肢（複数の `<Checkbox>` を入れる）。 */
+  children: React.ReactNode;
+  /**
+   * エラー状態。動的 boolean OK。`true` 時のみ `errorMessage` が表示される。
+   * @default false
+   */
+  error?: boolean;
+  /** エラーメッセージ。`error: true` 時に legend/children の下に表示。 */
+  errorMessage?: string;
+  /** ヘルプテキスト。エラー時は非表示。 */
+  helpText?: string;
+  /**
+   * 必須グループ。`legend` 末尾に `*` が `aria-label="必須"` 付きで表示される。
+   * @default false
+   */
+  required?: boolean;
+  /**
+   * 横並び表示（フレックスラップ）。少数の選択肢で水平に並べたい場合。
+   * @default false
+   */
+  inline?: boolean;
+  className?: string;
+}
 
 /**
  * CheckboxGroup — Atomic Design: Composite
  *
  * @see CheckboxGroupProps for usage examples.
  */
-export const CheckboxGroup: React.FC<CheckboxGroupProps> = (props) => {
-  const {
-    legend,
-    children,
-    error = false,
-    errorMessage,
-    helpText,
-    required = false,
-    inline = false,
-    className = '',
-  } = props as CheckboxGroupBaseProps & { error?: boolean; errorMessage?: string };
+export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
+  legend,
+  children,
+  error = false,
+  errorMessage,
+  helpText,
+  required = false,
+  inline = false,
+  className = '',
+}) => {
 
   const errorId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-error`;
   const helpId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-help`;

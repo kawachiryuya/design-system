@@ -1,34 +1,64 @@
 import React from 'react';
 
+/** Label のサイズ */
+export type LabelSize = 'small' | 'medium' | 'large';
+
 /**
  * Label Props
- * Reference: principles/patterns/forms.md
+ *
+ * フォームフィールドのラベル。必須/任意の状態を視覚的・a11y 的に伝える。
+ * `required` と `optional` は同時指定すると `required` が優先される（実装側のフォールバック）。
+ *
+ * @example
+ *   // 必須項目
+ *   <Label htmlFor="email" required>メールアドレス</Label>
+ *
+ * @example
+ *   // 任意項目
+ *   <Label htmlFor="nickname" optional>ニックネーム</Label>
+ *
+ * @example
+ *   // フィールドが disabled の時に追従
+ *   <Label htmlFor="readonly-field" disabled>読み取り専用</Label>
+ *
+ * @example
+ *   // 大サイズ（モバイル CTA フォーム）
+ *   <Label htmlFor="phone" size="large" required>電話番号</Label>
+ *
+ * @see principles/patterns/forms.md
  */
 export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
-  /** 関連付けるフォームフィールドのID */
+  /** 関連付けるフォームフィールドの `id`（HTML `<label for="...">` に対応）。 */
   htmlFor?: string;
-  /** ラベルのサイズ */
-  size?: 'small' | 'medium' | 'large';
-  /** 必須マーク（* を表示） */
+  /**
+   * ラベルのサイズ（typography トークンに対応）。
+   * - `small` 12px、`medium` 14px、`large` 16px
+   * @default 'medium'
+   */
+  size?: LabelSize;
+  /**
+   * 必須項目マーク（`*` を `aria-label="必須"` 付きで表示）。
+   * @default false
+   */
   required?: boolean;
-  /** 任意マーク（「任意」を表示） */
+  /**
+   * 任意項目マーク（「（任意）」を表示）。
+   * @default false
+   */
   optional?: boolean;
-  /** 無効状態（関連フィールドが disabled のとき） */
+  /**
+   * 無効状態。関連フィールドが `disabled` のときに合わせて使う。
+   * @default false
+   */
   disabled?: boolean;
-  /** ラベルの内容 */
+  /** ラベルテキスト（必須）。 */
   children: React.ReactNode;
 }
 
 /**
- * Label Component
+ * Label — Atomic Design: Atom
  *
- * Atomic Design: Atom
- *
- * フォームフィールドと関連付けるラベル。必須・任意の状態を視覚的・意味的に伝える。
- *
- * @example
- * <Label htmlFor="email" required>メールアドレス</Label>
- * <Label htmlFor="nickname" optional>ニックネーム</Label>
+ * @see LabelProps for usage examples.
  */
 export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   (

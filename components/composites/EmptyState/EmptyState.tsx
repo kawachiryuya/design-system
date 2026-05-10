@@ -1,33 +1,97 @@
 import React from 'react';
 import { Button } from '../../primitives/Button/Button';
 
-/**
- * EmptyState Props
- * Reference: principles/patterns/data-display.md
- *
- * Molecule: データなし・エラー・検索結果ゼロ時のプレースホルダー
- */
+/** EmptyState のサイズ */
+export type EmptyStateSize = 'sm' | 'md' | 'lg';
+
+/** EmptyState のアクション設定 */
 export interface EmptyStateAction {
+  /** ボタンラベル。 */
   label: string;
+  /** クリックハンドラー。 */
   onClick?: () => void;
+  /** リンク先 URL（指定時はリンクとして動作）。現状未対応、将来拡張用。 */
   href?: string;
+  /** ボタンの variant。`action` のデフォルトは `primary`、`secondaryAction` は `tertiary`。 */
   variant?: 'primary' | 'secondary' | 'tertiary';
 }
 
+/**
+ * EmptyState Props
+ *
+ * データなし・検索結果ゼロ・初回利用時のプレースホルダー UI。
+ * アイコン + タイトル + 説明文 + アクションボタンの構成。
+ *
+ * @example
+ *   // 基本（データなし + 新規作成 CTA）
+ *   <EmptyState
+ *     title="データがありません"
+ *     description="まだ登録されているアイテムがありません。"
+ *     action={{ label: '新規作成', onClick: handleCreate }}
+ *   />
+ *
+ * @example
+ *   // 検索結果ゼロ（カスタムアイコン）
+ *   <EmptyState
+ *     icon={<Icon name="search_off" size="xl" color="disabled" />}
+ *     title="該当する結果がありません"
+ *     description="別のキーワードでお試しください。"
+ *     action={{ label: '検索条件をリセット', onClick: handleReset, variant: 'tertiary' }}
+ *   />
+ *
+ * @example
+ *   // 2 アクション（主要 + 補助）
+ *   <EmptyState
+ *     title="プロジェクトがまだありません"
+ *     description="最初のプロジェクトを作成しましょう。"
+ *     action={{ label: '新規作成', onClick: handleCreate }}
+ *     secondaryAction={{ label: 'チュートリアルを見る', onClick: showTutorial }}
+ *   />
+ *
+ * @example
+ *   // コンパクト（サイドバー内・カード内）
+ *   <EmptyState
+ *     title="通知なし"
+ *     size="sm"
+ *   />
+ *
+ * @example
+ *   // ヒーロー（オンボーディング画面）
+ *   <EmptyState
+ *     title="ようこそ！"
+ *     description="始めるには下のボタンをクリックしてください。"
+ *     size="lg"
+ *     action={{ label: 'はじめる', onClick: startOnboarding }}
+ *   />
+ *
+ * @see principles/patterns/data-display.md
+ */
 export interface EmptyStateProps {
-  /** アイコン（SVG要素またはカスタムコンテンツ） */
+  /** カスタムアイコン（SVG 要素や `<Icon>`）。未指定時はデフォルトアイコン。 */
   icon?: React.ReactNode;
-  /** タイトル */
+  /** タイトル（必須）。簡潔な状況説明。 */
   title: string;
-  /** 説明文 */
+  /** 説明文（任意）。詳細・次のアクション提案。 */
   description?: string;
-  /** プライマリアクション */
+  /**
+   * 主要アクション。デフォルト variant は `primary`。
+   * `secondaryAction` と併用する場合、こちらが目立つ位置（右）に表示される。
+   */
   action?: EmptyStateAction;
-  /** セカンダリアクション */
+  /**
+   * セカンダリアクション。デフォルト variant は `tertiary`。
+   * 補助的な選択肢（チュートリアル・別の方法等）を提供する用途。
+   */
   secondaryAction?: EmptyStateAction;
-  /** サイズ */
-  size?: 'sm' | 'md' | 'lg';
-  /** 追加CSSクラス */
+  /**
+   * サイズ。
+   * - `sm` コンパクト（サイドバー・カード内）
+   * - `md` 標準
+   * - `lg` ヒーロー（オンボーディング・ランディング）
+   * @default 'md'
+   */
+  size?: EmptyStateSize;
+  /** 追加 CSS クラス。 */
   className?: string;
 }
 

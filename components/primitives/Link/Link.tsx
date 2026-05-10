@@ -1,36 +1,84 @@
 import React from 'react';
 import { Icon } from '../Icon';
 
+/** Link のテキストサイズ */
+export type LinkSize = 'sm' | 'md' | 'lg';
+
+/** Link のテキストカラー */
+export type LinkColor = 'primary' | 'neutral' | 'muted';
+
+/** Link のアンダーライン表示タイミング */
+export type LinkUnderline = 'always' | 'hover' | 'none';
+
 /**
  * Link Props
- * Reference: principles/content/ / principles/interaction/state/interactive-states.md
+ *
+ * `<a>` 要素のラッパー。a11y / 外部リンク安全策（rel="noopener noreferrer"）を自動適用。
+ *
+ * @example
+ *   // 基本（内部リンク）
+ *   <Link href="/about">会社概要</Link>
+ *
+ * @example
+ *   // 外部リンク（target="_blank" + rel + 外部アイコン自動付与）
+ *   <Link href="https://example.com" external>外部サイト</Link>
+ *
+ * @example
+ *   // ミュート色 + ホバー時のみアンダーライン（フッター用）
+ *   <Link href="/terms" color="muted" underline="hover">利用規約</Link>
+ *
+ * @example
+ *   // 大サイズ + 常にアンダーライン（CTA リンク）
+ *   <Link href="/start" size="lg" underline="always">今すぐ始める</Link>
+ *
+ * @example
+ *   // 無効状態（クリック不可、aria-disabled 自動付与）
+ *   <Link href="/admin" disabled>管理画面（権限が必要）</Link>
+ *
+ * @see principles/content/
+ * @see principles/interaction/state/interactive-states.md
  */
 export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'color'> {
-  /** リンク先URL */
+  /** リンク先 URL（必須）。`disabled` 時は href が削除される。 */
   href: string;
-  /** 外部リンク（target="_blank" + rel="noopener noreferrer" + 外部アイコン） */
+  /**
+   * 外部リンクフラグ。`true` で以下を自動付与:
+   * - `target="_blank"` `rel="noopener noreferrer"`（セキュリティ対策）
+   * - 外部アイコン（`open_in_new`）を末尾に表示
+   * @default false
+   */
   external?: boolean;
-  /** テキストサイズ */
-  size?: 'sm' | 'md' | 'lg';
-  /** テキストカラー */
-  color?: 'primary' | 'neutral' | 'muted';
-  /** アンダーラインの表示タイミング */
-  underline?: 'always' | 'hover' | 'none';
-  /** 無効状態（クリック不可・視覚的に非活性） */
+  /**
+   * テキストサイズ。
+   * @default 'md'
+   */
+  size?: LinkSize;
+  /**
+   * テキストカラー。
+   * - `primary` プライマリ色（CTA 的リンク）
+   * - `neutral` 通常テキスト色
+   * - `muted` 控えめ色（フッター・補足等）
+   * @default 'primary'
+   */
+  color?: LinkColor;
+  /**
+   * アンダーライン表示タイミング。a11y のため `none` は `color` で十分な区別ができる場合のみ。
+   * @default 'hover'
+   */
+  underline?: LinkUnderline;
+  /**
+   * 無効状態。クリック不可・視覚的に非活性・`aria-disabled` 自動付与。
+   * @default false
+   */
   disabled?: boolean;
-  /** リンクのテキスト内容 */
+  /** リンクのテキスト内容（必須）。 */
   children: React.ReactNode;
 }
 
 /**
- * Link Component
+ * Link — Atomic Design: Atom
  *
- * Atomic Design: Atom
- *
- * @example
- * <Link href="/about">会社概要</Link>
- * <Link href="https://example.com" external>外部サイト</Link>
- * <Link href="/terms" color="muted" underline="hover">利用規約</Link>
+ * @see LinkProps for usage examples.
  */
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (

@@ -1,23 +1,64 @@
 {
-  "name": "design-system",
-  "version": "1.0.0",
-  "private": true,
+  "name": "@kawachiryuya/design-system",
+  "version": "0.1.0",
+  "description": "AI 活用 SSOT デザインシステム — トークン / コンポーネント / 原則ドキュメント",
   "type": "module",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kawachiryuya/design-system.git"
+  },
+  "homepage": "https://design-system-storybook-murex.vercel.app",
+  "exports": {
+    ".": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
+    },
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "import": "./dist/tokens/index.js"
+    },
+    "./tokens/preset": {
+      "default": "./tokens/preset.cjs"
+    },
+    "./tokens/variables.css": "./tokens/build/variables.css",
+    "./principles/*": "./principles/*",
+    "./AGENTS.md": "./AGENTS.md"
+  },
+  "files": [
+    "dist",
+    "tokens/preset.cjs",
+    "tokens/build/variables.css",
+    "tokens/build/tokens.json",
+    "principles",
+    "AGENTS.md",
+    "README.md"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
   "scripts": {
     "postinstall": "npm run tokens:build",
     "tokens:build": "style-dictionary build --config style-dictionary.config.js",
     "tokens:watch": "style-dictionary build --config style-dictionary.config.js --watch",
     "tokens:typecheck": "tsc -p tsconfig.tokens.json",
+    "build": "npm run tokens:build && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build",
     "prestorybook": "npm run tokens:build",
     "prebuild-storybook": "npm run tokens:build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
     "build:gunmaas": "cd gunmaas && npm install && npm run build",
     "build:demo": "cd demo && npm install && npm run build"
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^10.3.3",
@@ -30,6 +71,8 @@
     "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "storybook": "^10.3.3",
     "style-dictionary": "^5.4.0",
     "tailwindcss": "^3.4.17",

@@ -1,0 +1,39 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "isolatedModules": false,
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "tokens/index.ts",
+    "tokens/build/tokens.ts",
+    "tokens/build/tokens.d.ts"
+  ],
+  "exclude": [
+    "**/*.stories.tsx",
+    "**/*.stories.ts",
+    "**/*.test.tsx",
+    "**/*.test.ts",
+    "node_modules",
+    "demo",
+    "demo2",
+    "gunmaas",
+    "lp",
+    ".storybook",
+    "dist",
+    "storybook-static",
+    "tokens/source"
+  ]
+}

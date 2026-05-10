@@ -39,3 +39,6 @@ yarn-error.log*
 
 # MCP config
 .mcp.json
+
+# npm authentication（PAT を含む可能性、絶対 commit しない）
+.npmrc

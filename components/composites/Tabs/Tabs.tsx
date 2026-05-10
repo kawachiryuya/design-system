@@ -1,58 +1,99 @@
 import React, { useState, useRef, useId } from 'react';
 
 /**
- * Tabs Props
- * Reference: principles/patterns/navigation.md / principles/interaction/state/interactive-states.md
- *
- * Molecule: キーボード操作に対応したタブナビゲーション
- * ARIA: role="tablist" / role="tab" / role="tabpanel"
+ * Tabs の 1 タブ項目。
  */
 export interface TabItem {
-  /** タブの一意ID */
+  /** タブの一意 ID（`aria-controls` 関連付けに使用）。 */
   id: string;
-  /** タブのラベル */
+  /** タブのラベル。 */
   label: string;
-  /** タブのパネルコンテンツ */
+  /** タブパネルの内容。アクティブ時のみレンダリングされる。 */
   content: React.ReactNode;
-  /** タブを無効にする */
+  /**
+   * タブを無効化。キーボードナビゲーションでスキップされる。
+   * @default false
+   */
   disabled?: boolean;
-  /** タブラベルの右端に表示するバッジ（件数など） */
+  /** ラベル右に表示するバッジ（件数等）。文字列または数値。 */
   badge?: string | number;
 }
 
+/**
+ * Tabs Props
+ *
+ * a11y 完全対応のタブナビゲーション。`role="tablist"` / `role="tab"` / `role="tabpanel"` 自動付与。
+ *
+ * **キーボード操作**:
+ * - `←` `→` `↑` `↓` 矢印キー: 隣のタブへ移動（disabled をスキップ）
+ * - `Home` `End`: 最初/最後のタブへ
+ * - `Enter` `Space`: タブ選択
+ *
+ * **controlled vs uncontrolled**:
+ * - `activeId` を渡すと controlled モード（`onChange` で外部が状態管理）
+ * - 渡さなければ uncontrolled モード（内部 state、`defaultActiveId` で初期値指定可）
+ *
+ * @example
+ *   // 基本（uncontrolled）
+ *   <Tabs
+ *     tabs={[
+ *       { id: 'profile', label: 'プロフィール', content: <ProfilePane /> },
+ *       { id: 'settings', label: '設定', content: <SettingsPane /> },
+ *     ]}
+ *     defaultActiveId="profile"
+ *   />
+ *
+ * @example
+ *   // バッジ付き（通知数）
+ *   <Tabs
+ *     tabs={[
+ *       { id: 'inbox', label: '受信', badge: 12, content: <Inbox /> },
+ *       { id: 'sent', label: '送信', content: <Sent /> },
+ *     ]}
+ *   />
+ *
+ * @example
+ *   // controlled（URL クエリ等と同期）
+ *   <Tabs
+ *     tabs={tabsData}
+ *     activeId={searchParams.get('tab') ?? 'overview'}
+ *     onChange={(id) => setSearchParams({ tab: id })}
+ *   />
+ *
+ * @example
+ *   // 一部タブ disabled
+ *   <Tabs
+ *     tabs={[
+ *       { id: 'a', label: '利用可', content: <A /> },
+ *       { id: 'b', label: '準備中', content: <B />, disabled: true },
+ *     ]}
+ *   />
+ *
+ * @see principles/patterns/navigation.md
+ * @see principles/interaction/state/interactive-states.md
+ */
 export interface TabsProps {
-  /** タブ項目 */
+  /** タブ項目の配列。順序通りに表示される。 */
   tabs: TabItem[];
-  /** 初期アクティブタブのID（非制御） */
+  /** 初期アクティブタブの ID（uncontrolled モードのみ）。未指定時は `tabs[0].id`。 */
   defaultActiveId?: string;
-  /** アクティブタブのID（制御） */
+  /** アクティブタブの ID（controlled モード）。指定すると外部が状態管理。 */
   activeId?: string;
-  /** タブ切り替え時のコールバック */
+  /** タブ切り替え時のコールバック。新しい ID が引数。 */
   onChange?: (id: string) => void;
-  /** タブリスト全体のaria-label */
+  /**
+   * タブリスト全体の `aria-label`。
+   * @default 'タブナビゲーション'
+   */
   ariaLabel?: string;
-  /** 追加CSSクラス（コンテナ） */
+  /** 追加 CSS クラス（コンテナに適用）。 */
   className?: string;
 }
 
 /**
- * Tabs Component
+ * Tabs — Atomic Design: Composite (Molecule)
  *
- * Atomic Design: Molecule
- *
- * キーボード操作:
- * - ←/→ 矢印キーで隣のタブへ移動
- * - Home/End で最初/最後のタブへ移動
- * - Enter/Space でタブを選択
- *
- * @example
- * <Tabs
- *   tabs={[
- *     { id: 'profile', label: 'プロフィール', content: <ProfilePane /> },
- *     { id: 'settings', label: '設定', content: <SettingsPane /> },
- *   ]}
- *   defaultActiveId="profile"
- * />
+ * @see TabsProps for usage examples.
  */
 export const Tabs: React.FC<TabsProps> = ({
   tabs,

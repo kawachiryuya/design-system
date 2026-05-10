@@ -10,21 +10,12 @@ import { Alert } from '@ds/composites/Alert/Alert';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { getReservation } from '../data/reservations';
 
-type CardType = 'suica' | 'pasmo' | 'icoca' | 'kitaca';
 type Mode = 'register' | 'later';
 
 interface PassengerEntry {
   mode: Mode;
-  cardType: CardType;
   cardNumber: string;
 }
-
-const IC_CARD_TYPES: { value: CardType; label: string }[] = [
-  { value: 'suica', label: 'Suica' },
-  { value: 'pasmo', label: 'PASMO' },
-  { value: 'icoca', label: 'ICOCA' },
-  { value: 'kitaca', label: 'Kitaca' },
-];
 
 export const ICRegisterPage = () => {
   const navigate = useNavigate();
@@ -34,7 +25,6 @@ export const ICRegisterPage = () => {
   const [entries, setEntries] = useState<PassengerEntry[]>(() =>
     reservation?.passengers.map<PassengerEntry>(() => ({
       mode: 'register',
-      cardType: 'suica',
       cardNumber: '',
     })) ?? []
   );
@@ -125,35 +115,28 @@ export const ICRegisterPage = () => {
                 </Typography>
               ) : (
                 <>
-                  {/* モード切替: 登録する / あとで */}
-                  <SegmentedControl<Mode>
-                    items={[
-                      { value: 'register', label: '登録する' },
-                      { value: 'later', label: 'あとで' },
-                    ]}
-                    value={entry.mode}
-                    onChange={(v) => updateEntry(idx, { mode: v })}
-                    aria-label={`${label} のIC カード設定`}
-                  />
+                  {/* モード切替: 登録する / あとで（有効領域を 2 分割） */}
+                  <div className="[&>[role=group]]:w-full [&>[role=group]>button]:flex-1">
+                    <SegmentedControl<Mode>
+                      items={[
+                        { value: 'register', label: '登録する' },
+                        { value: 'later', label: 'あとで' },
+                      ]}
+                      value={entry.mode}
+                      onChange={(v) => updateEntry(idx, { mode: v })}
+                      aria-label={`${label} のIC カード設定`}
+                    />
+                  </div>
 
                   {entry.mode === 'register' && (
-                    <div className="mt-4 space-y-3">
-                      <div>
-                        <Typography variant="label" className="mb-1 block">カードの種類</Typography>
-                        <SegmentedControl<CardType>
-                          items={IC_CARD_TYPES}
-                          value={entry.cardType}
-                          onChange={(v) => updateEntry(idx, { cardType: v })}
-                          aria-label="IC カードの種類"
-                        />
-                      </div>
+                    <div className="mt-4">
                       <Input
                         label="カード番号"
                         placeholder="JE 0000 0000 0000 0000"
                         value={entry.cardNumber}
                         onChange={(e) => updateEntry(idx, { cardNumber: e.target.value })}
                         fullWidth
-                        helpText="カード裏面の番号を入力"
+                        helpText="カード裏面の番号を入力（カード会社は番号から自動判定）"
                       />
                     </div>
                   )}
@@ -179,10 +162,6 @@ export const ICRegisterPage = () => {
           設定しない
         </Button>
       </div>
-
-      <Typography variant="caption" color="subtle" className="block text-center mt-6">
-        登録は予約ごとに必要です。アカウントには紐づきません。
-      </Typography>
     </div>
   );
 };

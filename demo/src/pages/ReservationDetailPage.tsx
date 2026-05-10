@@ -125,20 +125,13 @@ export const ReservationDetailPage = () => {
         <Card className="mt-4" padding="md">
           <Typography variant="label" as="h3" color="muted" className="mb-3">お支払い情報</Typography>
           {reservation.payment ? (
-            <div className="flex items-center justify-between">
-              <div>
-                <Typography variant="body">
-                  {brandLabel(reservation.payment.brand)} **** {reservation.payment.last4}
-                </Typography>
-                <Typography variant="caption" color="muted">
-                  有効期限 {reservation.payment.expiry}
-                </Typography>
-              </div>
-              {isUpcoming && (
-                <Button variant="tertiary" size="small" onClick={() => alert('未実装')}>
-                  変更する
-                </Button>
-              )}
+            <div>
+              <Typography variant="body">
+                {brandLabel(reservation.payment.brand)} **** {reservation.payment.last4}
+              </Typography>
+              <Typography variant="caption" color="muted">
+                有効期限 {reservation.payment.expiry}
+              </Typography>
             </div>
           ) : (
             <Typography variant="body-sm" color="muted">支払い情報未登録</Typography>

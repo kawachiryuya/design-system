@@ -1,5 +1,5 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
 import { Input } from '@ds/primitives/Input/Input';
@@ -9,11 +9,32 @@ import { Card } from '@ds/composites/Card/Card';
 import { getReservation, brandLabel } from '../data/reservations';
 import { formatDate } from '../utils/format';
 
+const TOAST_MESSAGES: Record<string, string> = {
+  'ic-saved': 'IC カードを登録しました',
+};
+
 export const ReservationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const reservation = getReservation(id ?? '');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // toast クエリ取り込み → 表示 → URL から削除
+  useEffect(() => {
+    const toastKey = searchParams.get('toast');
+    if (toastKey && TOAST_MESSAGES[toastKey]) {
+      setToastMessage(TOAST_MESSAGES[toastKey]);
+      const next = new URLSearchParams(searchParams);
+      next.delete('toast');
+      setSearchParams(next, { replace: true });
+      const timer = setTimeout(() => setToastMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!reservation) {
     return (
@@ -100,6 +121,30 @@ export const ReservationDetailPage = () => {
           </div>
         </Card>
 
+        {/* お支払い情報（IC の上に配置） */}
+        <Card className="mt-4" padding="md">
+          <Typography variant="label" as="h3" color="muted" className="mb-3">お支払い情報</Typography>
+          {reservation.payment ? (
+            <div className="flex items-center justify-between">
+              <div>
+                <Typography variant="body">
+                  {brandLabel(reservation.payment.brand)} **** {reservation.payment.last4}
+                </Typography>
+                <Typography variant="caption" color="muted">
+                  有効期限 {reservation.payment.expiry}
+                </Typography>
+              </div>
+              {isUpcoming && (
+                <Button variant="tertiary" size="small" onClick={() => alert('未実装')}>
+                  変更する
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Typography variant="body-sm" color="muted">支払い情報未登録</Typography>
+          )}
+        </Card>
+
         {/* 乗客・ICカード（CompletePage からの anchor link 用） */}
         <div id="ic-section" className="scroll-mt-4">
         <Card className="mt-4" padding="md">
@@ -181,30 +226,6 @@ export const ReservationDetailPage = () => {
         </Card>
         </div>
 
-        {/* お支払い情報 */}
-        <Card className="mt-4" padding="md">
-          <Typography variant="label" as="h3" color="muted" className="mb-3">お支払い情報</Typography>
-          {reservation.payment ? (
-            <div className="flex items-center justify-between">
-              <div>
-                <Typography variant="body">
-                  {brandLabel(reservation.payment.brand)} **** {reservation.payment.last4}
-                </Typography>
-                <Typography variant="caption" color="muted">
-                  有効期限 {reservation.payment.expiry}
-                </Typography>
-              </div>
-              {isUpcoming && (
-                <Button variant="tertiary" size="small" onClick={() => alert('未実装')}>
-                  変更する
-                </Button>
-              )}
-            </div>
-          ) : (
-            <Typography variant="body-sm" color="muted">支払い情報未登録</Typography>
-          )}
-        </Card>
-
         {/* 領収書 */}
         <Card className="mt-4" padding="md">
           <Typography variant="label" as="h3" color="muted" className="mb-2">領収書</Typography>
@@ -216,21 +237,30 @@ export const ReservationDetailPage = () => {
           </Button>
         </Card>
 
-        {/* 予約管理 */}
+        {/* 予約管理: ラベル・背景なしの裸ボタン */}
         {isUpcoming && (
-          <Card className="mt-4" padding="md">
-            <Typography variant="label" as="h3" color="muted" className="mb-3">予約管理</Typography>
-            <div className="flex flex-col gap-2">
-              <Button variant="secondary" onClick={() => alert('未実装')}>
-                予約を変更する
-              </Button>
-              <Button variant="tertiary" onClick={() => alert('未実装')}>
-                予約をキャンセル
-              </Button>
-            </div>
-          </Card>
+          <div className="mt-6 flex flex-col gap-2">
+            <Button variant="secondary" onClick={() => alert('未実装')}>
+              予約を変更する
+            </Button>
+            <Button variant="tertiary" onClick={() => alert('未実装')}>
+              予約をキャンセル
+            </Button>
+          </div>
         )}
       </div>
+
+      {/* Toast (簡易実装、3 秒で自動消失) */}
+      {toastMessage && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-3 rounded-md shadow-lg bg-neutral-800 text-onSurface-inverse"
+        >
+          <Icon name="check_circle" size="sm" color="inherit" />
+          <span className="text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 };

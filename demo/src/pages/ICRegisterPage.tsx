@@ -55,11 +55,8 @@ export const ICRegisterPage = () => {
   };
 
   const handleSubmit = () => {
-    const registered = entries.filter((e) => e.mode === 'register' && e.cardNumber.trim().length > 0);
-    const skipped = entries.length - registered.length;
-    // demo: 実際の保存は省略。alert で結果のみ通知
-    alert(`登録 ${registered.length} 件 / あとで ${skipped} 件で完了しました（demo: 永続化はスキップ）`);
-    navigate(`/reservations/${id}`);
+    // demo: 実際の保存はスキップ。query param で toast を予約詳細画面へ渡す
+    navigate(`/reservations/${id}?toast=ic-saved`);
   };
 
   // 各 passenger のラベル（ReservationDetailPage と同じロジック）
@@ -74,9 +71,6 @@ export const ICRegisterPage = () => {
   // 既に登録されている passenger のステータス
   const isAlreadyRegistered = (index: number): boolean =>
     Boolean(reservation.passengers[index].icCard);
-
-  // 登録セクションを表示するか（既に登録済みなら登録不可状態として skip）
-  const registeredCount = entries.filter((e) => e.mode === 'register' && e.cardNumber.trim().length > 0).length;
 
   return (
     <div className="max-w-md mx-auto py-6">
@@ -179,10 +173,10 @@ export const ICRegisterPage = () => {
       {/* CTA */}
       <div className="mt-6 flex flex-col gap-2">
         <Button variant="primary" onClick={handleSubmit} fullWidth>
-          {registeredCount > 0 ? `${registeredCount} 件登録して完了` : 'すべて後で設定する'}
+          設定を完了する
         </Button>
         <Button variant="tertiary" onClick={() => navigate(`/reservations/${id}`)} fullWidth>
-          キャンセル
+          設定しない
         </Button>
       </div>
 

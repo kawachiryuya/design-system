@@ -1,26 +1,78 @@
 import React from 'react';
 import { getIconDef, type IconRenderMode } from './iconRegistry';
 
+/** Icon のサイズ（principles/Typography/iconography/sizes.md） */
+export type IconSize = 'sm' | 'md' | 'lg' | 'xl';
+
+/** Icon のセマンティックカラー */
+export type IconColor =
+  | 'inherit'
+  | 'neutral'
+  | 'primary'
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'disabled';
+
 /**
  * Icon Props
- * Reference: principles/Typography/iconography/
+ *
+ * SVG アイコンのラッパー。サイズ・カラー・アクセシビリティを統一管理。
+ * `name` で iconRegistry から取得、または `children` でカスタム SVG パスを直接渡す。
+ *
+ * @example
+ *   // レジストリからアイコン取得（推奨）
+ *   <Icon name="search" size="md" />
+ *
+ * @example
+ *   // 意味のあるアイコン（label 必須、role="img" 自動付与）
+ *   <Icon name="error" size="md" color="error" label="エラー" />
+ *
+ * @example
+ *   // 装飾目的（label 省略 → aria-hidden="true" 自動付与）
+ *   <Icon name="chevron_right" size="sm" />
+ *
+ * @example
+ *   // カスタム SVG パス（stroke 系・デフォルト）
+ *   <Icon size="md" label="カスタム"><path d="M3 12h18" /></Icon>
+ *
+ * @example
+ *   // カスタム SVG パス（fill 系、Material Icons 系）
+ *   <Icon size="md" variant="fill"><path d="..." /></Icon>
+ *
+ * @see principles/Typography/iconography/
  */
 export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
-  /** レジストリからアイコンを取得（children と排他） */
-  name?: string;
-  /** アイコンのサイズ（principles/Typography/iconography/sizes.md） */
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** アイコンの色（セマンティックカラー） */
-  color?: 'inherit' | 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'info' | 'disabled';
   /**
-   * アクセシブルなラベル（aria-label）。
-   * 装飾目的のみのアイコンは省略し、aria-hidden が自動で true になる。
-   * インタラクティブ要素やテキストなしで意味を伝える場合は必ず指定する。
+   * iconRegistry に登録されたアイコン名。`children` と排他。
+   * 利用可能な name 一覧は `getIconNames()` で取得可能。
+   */
+  name?: string;
+  /**
+   * アイコンサイズ（px は内部で 20/24/32/48 にマップ）。
+   * @default 'md'
+   */
+  size?: IconSize;
+  /**
+   * アイコンカラー。`inherit` は親要素の色を継承（Button 内のアイコン等で多用）。
+   * @default 'inherit'
+   */
+  color?: IconColor;
+  /**
+   * アクセシブルなラベル（`aria-label`）。
+   * - **意味のあるアイコン**（成功/警告/エラー等）: 必ず指定（`role="img"` 自動付与）
+   * - **装飾目的**（テキスト隣のアイコン等）: 省略 → `aria-hidden="true"` 自動付与
    */
   label?: string;
-  /** レンダリングモード: fill=Material Icons, stroke=Heroicons系。name 指定時はレジストリから自動判定。 */
+  /**
+   * レンダリングモード:
+   * - `fill`: Material Icons 系（パスを塗りつぶし）
+   * - `stroke`: Heroicons 系（パスを線描画）
+   * `name` 指定時は iconRegistry から自動判定されるため通常不要。
+   */
   variant?: IconRenderMode;
-  /** SVGアイコンのchildren（name と排他） */
+  /** カスタム SVG パス要素。`name` と排他。 */
   children?: React.ReactNode;
 }
 
@@ -45,25 +97,9 @@ const colorClass = {
 } as const;
 
 /**
- * Icon Component
+ * Icon — Atomic Design: Atom
  *
- * Atomic Design: Atom
- *
- * SVGアイコンのラッパー。サイズ・カラー・アクセシビリティを統一的に管理する。
- * Material Symbols Outlined を推奨アイコンソースとし、カスタム SVG も利用可能。
- *
- * @example
- * // レジストリからアイコンを取得
- * <Icon name="search" size="md" />
- *
- * // カスタム SVG（stroke 系）
- * <Icon size="md"><path d="..." /></Icon>
- *
- * // カスタム SVG（fill 系）
- * <Icon size="md" variant="fill"><path d="..." /></Icon>
- *
- * // カラー指定
- * <Icon name="error" size="md" color="error" />
+ * @see IconProps for usage examples.
  */
 export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
   (

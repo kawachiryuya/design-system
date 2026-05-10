@@ -1,34 +1,87 @@
 import React, { useId, useRef } from 'react';
 import { Icon } from '../../primitives/Icon';
 
+/** SearchBar のサイズ */
+export type SearchBarSize = 'small' | 'medium' | 'large';
+
 /**
  * SearchBar Props
- * Reference: principles/patterns/forms.md / principles/interaction/state/interactive-states.md
  *
- * Molecule: Icon + Input[type=search] + Clear Button を組み合わせた検索フィールド
+ * 検索専用入力。Icon + `<input type="search">` + Clear Button を組み合わせた Molecule。
+ * Enter で `onSearch` 発火、Escape でクリアして blur、value がある時にクリアボタン自動表示。
+ *
+ * @example
+ *   // 基本（controlled、Enter で検索実行）
+ *   const [query, setQuery] = useState('');
+ *   <SearchBar
+ *     value={query}
+ *     onChange={setQuery}
+ *     onSearch={(v) => fetchResults(v)}
+ *     placeholder="記事を検索..."
+ *   />
+ *
+ * @example
+ *   // 全幅 + 大サイズ（モバイルヘッダー）
+ *   <SearchBar value={q} onChange={setQ} size="large" fullWidth />
+ *
+ * @example
+ *   // ローディング中（onSearch から非同期処理中）
+ *   <SearchBar value={q} onChange={setQ} isLoading={isFetching} />
+ *
+ * @example
+ *   // カスタム onClear（クリア時に追加処理）
+ *   <SearchBar
+ *     value={q}
+ *     onChange={setQ}
+ *     onClear={() => { setQ(''); resetFilters(); }}
+ *   />
+ *
+ * @example
+ *   // a11y: 用途固有の aria-label
+ *   <SearchBar value={q} onChange={setQ} ariaLabel="商品名で検索" />
+ *
+ * @see principles/patterns/forms.md
  */
 export interface SearchBarProps {
-  /** 入力値（制御コンポーネント） */
+  /** 入力値（controlled）。 */
   value: string;
-  /** 値変更ハンドラー */
+  /** 値変更ハンドラー。タイプ毎に発火。 */
   onChange: (value: string) => void;
-  /** 検索実行ハンドラー（Enter / 検索ボタン押下） */
+  /** 検索実行ハンドラー。Enter キー押下時に発火。省略時は Enter 操作なし。 */
   onSearch?: (value: string) => void;
-  /** クリアハンドラー（省略時はデフォルト動作） */
+  /** クリアハンドラー。省略時は `onChange('')` でデフォルト動作。 */
   onClear?: () => void;
-  /** プレースホルダー */
+  /**
+   * プレースホルダーテキスト。
+   * @default '検索...'
+   */
   placeholder?: string;
-  /** サイズ */
-  size?: 'small' | 'medium' | 'large';
-  /** 全幅 */
+  /**
+   * サイズ。
+   * - `small` 32px、密集 UI 用（テーブルヘッダー等）
+   * - `medium` 40px、標準
+   * - `large` 48px、目立たせる検索（ヘッダー）
+   * @default 'medium'
+   */
+  size?: SearchBarSize;
+  /** 全幅表示（親要素の幅に追従）。 */
   fullWidth?: boolean;
-  /** ローディング状態（スピナーをトレイリングアイコンとして表示） */
+  /**
+   * ローディング状態。`true` でクリアボタンの位置にスピナー表示。
+   * @default false
+   */
   isLoading?: boolean;
-  /** 無効状態 */
+  /**
+   * 無効状態。
+   * @default false
+   */
   disabled?: boolean;
-  /** aria-label（label を持たない場合に必須） */
+  /**
+   * `aria-label`。視覚的ラベルがない（このコンポーネントは Label を持たない）ため必ず指定推奨。
+   * @default '検索'
+   */
   ariaLabel?: string;
-  /** 追加CSSクラス */
+  /** 追加 CSS クラス。 */
   className?: string;
 }
 
@@ -50,18 +103,9 @@ const LoadingSpinner: React.FC<{ size: number }> = ({ size }) => (
 );
 
 /**
- * SearchBar Component
+ * SearchBar — Atomic Design: Molecule（Icon + Input + ClearButton）
  *
- * Atomic Design: Molecule（Icon + Input + ClearButton）
- *
- * @example
- * const [query, setQuery] = useState('');
- * <SearchBar
- *   value={query}
- *   onChange={setQuery}
- *   onSearch={(v) => console.log('search:', v)}
- *   placeholder="記事を検索..."
- * />
+ * @see SearchBarProps for usage examples.
  */
 export const SearchBar: React.FC<SearchBarProps> = ({
   value,

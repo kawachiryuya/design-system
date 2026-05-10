@@ -1,24 +1,85 @@
 import React, { useState } from 'react';
 import { Icon } from '../../primitives/Icon';
 
+/** Avatar のサイズ */
+export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+/** Avatar の形状 */
+export type AvatarShape = 'circle' | 'square';
+
+/** Avatar のオンラインステータス */
+export type AvatarStatus = 'online' | 'offline' | 'busy' | 'away';
+
 /**
  * Avatar Props
- * Reference: principles/foundation/accessibility/overview.md
+ *
+ * ユーザー画像。`src` 不在/読込失敗時は `name` のイニシャル、それも無ければアイコンへフォールバック。
+ * `role="img"` + `aria-label`（name や alt + ステータス）を自動付与。
+ *
+ * @example
+ *   // 基本（画像 + 名前）
+ *   <Avatar src="/user.jpg" name="田中 太郎" />
+ *
+ * @example
+ *   // 名前だけ（イニシャル + 名前ハッシュで色決定）
+ *   <Avatar name="田中 太郎" size="lg" />
+ *
+ * @example
+ *   // オンラインステータス付き（チャット用途）
+ *   <Avatar
+ *     src="/user.jpg"
+ *     name="田中 太郎"
+ *     status="online"
+ *   />
+ *
+ * @example
+ *   // 角丸（チームアイコン等）
+ *   <Avatar src="/team.jpg" alt="チーム A" shape="square" size="md" />
+ *
+ * @example
+ *   // フォールバック表示（src も name もなし）
+ *   <Avatar size="lg" />
+ *
+ * @see principles/foundation/accessibility/overview.md
  */
 export interface AvatarProps {
-  /** 画像URL */
+  /** 画像 URL。未指定 / 読込失敗時は `name` イニシャル → アイコンの順にフォールバック。 */
   src?: string;
-  /** 画像の代替テキスト（装飾のみの場合は空文字） */
+  /**
+   * 画像の代替テキスト。装飾のみの場合は空文字 `""`。
+   * `name` 指定時はそれが優先で `aria-label` に反映される。
+   */
   alt?: string;
-  /** ユーザー名（イニシャルフォールバック生成に使用） */
+  /**
+   * ユーザー名。
+   * - `src` 不在時のイニシャルフォールバック生成（最大 2 文字）に使用
+   * - `aria-label` に反映
+   * - 名前ハッシュで背景色を決定論的に選択
+   */
   name?: string;
-  /** アバターサイズ */
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  /** 形状 */
-  shape?: 'circle' | 'square';
-  /** オンライン状態インジケーター */
-  status?: 'online' | 'offline' | 'busy' | 'away';
-  /** 追加CSSクラス */
+  /**
+   * サイズ。
+   * - `xs` 24px、サイドバー・コメント
+   * - `sm` 32px、リスト
+   * - `md` 40px、標準
+   * - `lg` 56px、プロフィールカード
+   * - `xl` 80px、プロフィール画面ヒーロー
+   * @default 'md'
+   */
+  size?: AvatarSize;
+  /**
+   * 形状。
+   * - `circle` 円形（個人アカウント）
+   * - `square` 角丸正方形（チーム・組織）
+   * @default 'circle'
+   */
+  shape?: AvatarShape;
+  /**
+   * オンラインステータス。`true` で右下にドット表示、`aria-label` にも追記される。
+   * - `online` 緑、`offline` グレー、`busy` 赤、`away` 黄
+   */
+  status?: AvatarStatus;
+  /** 追加 CSS クラス。 */
   className?: string;
 }
 

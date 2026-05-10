@@ -56,6 +56,10 @@ export const SeatPage = () => {
           <Typography variant="body-sm" color="muted" className="pl-6">
             {formatDate(date)} {train?.departure}→{train?.arrival}
           </Typography>
+          <div className="pl-6 flex items-center gap-1.5">
+            <Icon name="group" size="sm" color="neutral" />
+            <Typography variant="body-sm" color="muted">{formatPassengers(adults, children)}</Typography>
+          </div>
         </Card>
 
         <Typography variant="h5" as="h2" className="mb-4">座席クラスを選択</Typography>

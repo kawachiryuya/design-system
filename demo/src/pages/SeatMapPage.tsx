@@ -182,10 +182,10 @@ export const SeatMapPage = () => {
       >
         <div className="flex items-center justify-between px-4 py-3">
           <div>
+            <Typography variant="label">{selectedSeats.length} / {totalPassengers}席選択中</Typography>
             <Typography variant="caption" color="muted">
               {selectedSeats.length > 0 ? selectedSeats.join(', ') : '座席を選択してください'}
             </Typography>
-            <Typography variant="label">{selectedSeats.length} / {totalPassengers}席選択中</Typography>
           </div>
           <Button onClick={handleNext} disabled={selectedSeats.length !== totalPassengers}>
             予約内容の確認へ

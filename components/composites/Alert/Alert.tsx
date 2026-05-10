@@ -1,24 +1,72 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
 
+/** Alert のセマンティックカラーバリアント */
+export type AlertVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral';
+
 /**
  * Alert Props
- * Reference: principles/color/semantic-colors.md / principles/interaction/feedback/
  *
- * Molecule: アイコン + タイトル + 本文 + 閉じるボタン のインラインアラート
+ * インラインアラート。アイコン + タイトル + 本文 + 閉じるボタンの構成。
+ * `role="alert"` 自動付与でスクリーンリーダーに即時通知。
+ *
+ * @example
+ *   // 成功通知（タイトル + 本文）
+ *   <Alert variant="success" title="保存しました">
+ *     変更内容が正常に保存されました。
+ *   </Alert>
+ *
+ * @example
+ *   // 閉じるボタン付きエラー（dismissible）
+ *   <Alert variant="error" onClose={() => setVisible(false)}>
+ *     入力内容に誤りがあります。
+ *   </Alert>
+ *
+ * @example
+ *   // 警告（簡潔）
+ *   <Alert variant="warning">未保存の変更があります</Alert>
+ *
+ * @example
+ *   // 情報（リンク含む）
+ *   <Alert variant="info" title="新機能">
+ *     ベータ版が公開されました。<Link href="/beta">詳細を見る</Link>
+ *   </Alert>
+ *
+ * @example
+ *   // ニュートラル + アイコン非表示（情報量を抑えた controle）
+ *   <Alert variant="neutral" hideIcon>
+ *     データの更新中です。しばらくお待ちください。
+ *   </Alert>
+ *
+ * @see principles/color/semantic-colors.md
+ * @see principles/interaction/feedback/
  */
 export interface AlertProps {
-  /** セマンティックカラーバリアント */
-  variant?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
-  /** アラートのタイトル（任意） */
+  /**
+   * セマンティックカラーバリアント。
+   * - `success` 成功・完了・正常終了
+   * - `error` エラー・失敗
+   * - `warning` 警告・注意喚起
+   * - `info` 情報・通知（デフォルト）
+   * - `neutral` その他・進捗情報など意味色を避けたい場合
+   * @default 'info'
+   */
+  variant?: AlertVariant;
+  /** アラートのタイトル（任意）。指定すると本文より太字で目立つ。 */
   title?: string;
-  /** アラートの本文 */
+  /** アラートの本文（必須）。テキストや React 要素 OK。 */
   children: React.ReactNode;
-  /** 閉じるボタンのハンドラー（省略時は閉じるボタン非表示） */
+  /**
+   * 閉じるボタンのハンドラー。**指定しない場合は閉じるボタン非表示**。
+   * dismissible にしたい時は必ず指定する。
+   */
   onClose?: () => void;
-  /** アイコンを非表示にする */
+  /**
+   * アイコンを非表示。コンパクト表示用。
+   * @default false
+   */
   hideIcon?: boolean;
-  /** 追加CSSクラス */
+  /** 追加 CSS クラス。 */
   className?: string;
 }
 

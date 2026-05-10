@@ -8,7 +8,7 @@ import { Card } from '@ds/composites/Card/Card';
 import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
 import { Alert } from '@ds/composites/Alert/Alert';
 import { Badge } from '@ds/composites/Badge/Badge';
-import { getReservation } from '../data/reservations';
+import { getReservation, formatICCard, getPassengerLabel } from '../data/reservations';
 
 type Mode = 'register' | 'later';
 
@@ -22,12 +22,13 @@ export const ICRegisterPage = () => {
   const { id } = useParams<{ id: string }>();
   const reservation = getReservation(id ?? '');
 
-  const [entries, setEntries] = useState<PassengerEntry[]>(() =>
-    reservation?.passengers.map<PassengerEntry>(() => ({
-      mode: 'register',
-      cardNumber: '',
-    })) ?? []
-  );
+  const [entries, setEntries] = useState<Record<string, PassengerEntry>>(() => {
+    const init: Record<string, PassengerEntry> = {};
+    reservation?.passengers.forEach((p) => {
+      init[p.id] = { mode: 'register', cardNumber: '' };
+    });
+    return init;
+  });
 
   if (!reservation) {
     return (
@@ -40,27 +41,14 @@ export const ICRegisterPage = () => {
     );
   }
 
-  const updateEntry = (idx: number, partial: Partial<PassengerEntry>) => {
-    setEntries((prev) => prev.map((e, i) => (i === idx ? { ...e, ...partial } : e)));
+  const updateEntry = (passengerId: string, partial: Partial<PassengerEntry>) => {
+    setEntries((prev) => ({ ...prev, [passengerId]: { ...prev[passengerId], ...partial } }));
   };
 
   const handleSubmit = () => {
     // demo: 実際の保存はスキップ。query param で toast を予約詳細画面へ渡す
     navigate(`/reservations/${id}?toast=ic-saved`);
   };
-
-  // 各 passenger のラベル（ReservationDetailPage と同じロジック）
-  const getLabel = (index: number): string => {
-    const passenger = reservation.passengers[index];
-    const sameTypeCount = reservation.passengers.filter((p) => p.type === passenger.type).length;
-    const sameTypeIdx = reservation.passengers.slice(0, index + 1).filter((p) => p.type === passenger.type).length;
-    const base = passenger.type === 'adult' ? 'おとな' : 'こども';
-    return sameTypeCount > 1 ? `${base} ${sameTypeIdx}` : base;
-  };
-
-  // 既に登録されている passenger のステータス
-  const isAlreadyRegistered = (index: number): boolean =>
-    Boolean(reservation.passengers[index].icCard);
 
   return (
     <div className="max-w-md mx-auto py-6">
@@ -89,12 +77,12 @@ export const ICRegisterPage = () => {
       {/* 各乗客カード */}
       <div className="mt-6 space-y-3">
         {reservation.passengers.map((p, idx) => {
-          const entry = entries[idx];
-          const label = getLabel(idx);
-          const alreadyRegistered = isAlreadyRegistered(idx);
+          const entry = entries[p.id];
+          const label = getPassengerLabel(reservation.passengers, p.id);
+          const alreadyRegistered = Boolean(p.icCard);
 
           return (
-            <Card key={idx} variant="outlined" padding="md">
+            <Card key={p.id} variant="outlined" padding="md">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <Typography variant="label" as="span">{label}</Typography>
@@ -109,9 +97,9 @@ export const ICRegisterPage = () => {
                 )}
               </div>
 
-              {alreadyRegistered ? (
+              {alreadyRegistered && p.icCard ? (
                 <Typography variant="body-sm" color="muted">
-                  {p.icCard}（変更は予約詳細から行えます）
+                  {formatICCard(p.icCard)}（変更は予約詳細から行えます）
                 </Typography>
               ) : (
                 <>
@@ -123,7 +111,7 @@ export const ICRegisterPage = () => {
                         { value: 'later', label: 'あとで' },
                       ]}
                       value={entry.mode}
-                      onChange={(v) => updateEntry(idx, { mode: v })}
+                      onChange={(v) => updateEntry(p.id, { mode: v })}
                       aria-label={`${label} のIC カード設定`}
                     />
                   </div>
@@ -134,7 +122,7 @@ export const ICRegisterPage = () => {
                         label="カード番号"
                         placeholder="JE 0000 0000 0000 0000"
                         value={entry.cardNumber}
-                        onChange={(e) => updateEntry(idx, { cardNumber: e.target.value })}
+                        onChange={(e) => updateEntry(p.id, { cardNumber: e.target.value })}
                         fullWidth
                         helpText="カード裏面の番号を入力（カード会社は番号から自動判定）"
                       />

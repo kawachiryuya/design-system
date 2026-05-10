@@ -6,7 +6,13 @@ import { Input } from '@ds/primitives/Input/Input';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
-import { getReservation, brandLabel } from '../data/reservations';
+import {
+  getReservation,
+  brandLabel,
+  formatICCard,
+  getSeat,
+  getPassengerLabel,
+} from '../data/reservations';
 import { formatDate } from '../utils/format';
 
 const TOAST_MESSAGES: Record<string, string> = {
@@ -18,7 +24,7 @@ export const ReservationDetailPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const reservation = getReservation(id ?? '');
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingPassengerId, setEditingPassengerId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // toast クエリ取り込み → 表示 → URL から削除
@@ -48,6 +54,8 @@ export const ReservationDetailPage = () => {
   }
 
   const isUpcoming = reservation.status === 'upcoming';
+  const firstLeg = reservation.legs[0];
+  const lastLeg = reservation.legs[reservation.legs.length - 1];
 
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8">
@@ -85,35 +93,68 @@ export const ReservationDetailPage = () => {
               <div className="flex justify-between text-sm">
                 <span className="text-onSurface-muted">区間</span>
                 <span className="font-medium text-onSurface flex items-center gap-1">
-                  {reservation.from}
+                  {firstLeg.from}
                   <Icon name="arrow_forward" size="sm" color="inherit" />
-                  {reservation.to}
+                  {lastLeg.to}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-onSurface-muted">列車</span>
-                <span className="font-medium text-onSurface">{reservation.trainName}</span>
+                <span className="text-onSurface-muted">乗車日</span>
+                <span className="font-medium text-onSurface">{formatDate(firstLeg.date)}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-onSurface-muted">乗車日時</span>
-                <span className="font-medium text-onSurface">{formatDate(reservation.date)} {reservation.departure}→{reservation.arrival}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-onSurface-muted">座席クラス</span>
-                <span className="font-medium text-onSurface">{reservation.seatClassLabel}</span>
-              </div>
-              {reservation.seats.length > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-onSurface-muted">座席</span>
-                  <span className="font-medium text-onSurface text-right">
-                    {reservation.seats.map((s, i) => (
-                      <span key={i} className="block">{s}</span>
-                    ))}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
+
+          {/* leg ごとの区間カード */}
+          {reservation.legs.map((leg, legIdx) => (
+            <div key={leg.id} className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <Typography variant="label" as="h3" color="muted">
+                  {reservation.legs.length > 1 ? `区間 ${legIdx + 1}` : '乗車情報'}
+                </Typography>
+                <Typography variant="caption" color="muted">{leg.seatClassLabel}</Typography>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-onSurface-muted">列車</span>
+                  <span className="font-medium text-onSurface">{leg.trainName}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-onSurface-muted">区間</span>
+                  <span className="font-medium text-onSurface flex items-center gap-1">
+                    {leg.from}
+                    <Icon name="arrow_forward" size="sm" color="inherit" />
+                    {leg.to}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-onSurface-muted">時刻</span>
+                  <span className="font-medium text-onSurface">{leg.departure}→{leg.arrival}</span>
+                </div>
+                {(() => {
+                  const seatsForLeg = reservation.passengers
+                    .map((p) => ({ passenger: p, seat: getSeat(reservation, p.id, leg.id) }))
+                    .filter((x) => x.seat);
+                  if (seatsForLeg.length === 0) return null;
+                  return (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-onSurface-muted">座席</span>
+                      <span className="font-medium text-onSurface text-right">
+                        {seatsForLeg.map(({ passenger, seat }) => (
+                          <span key={passenger.id} className="block">
+                            {seat!.car}号車 {seat!.seatNumber}
+                            <span className="text-onSurface-muted text-xs ml-1">
+                              （{getPassengerLabel(reservation.passengers, passenger.id)}）
+                            </span>
+                          </span>
+                        ))}
+                      </span>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          ))}
 
           <div className="p-4 flex justify-between items-center">
             <Typography variant="label" color="muted">合計金額</Typography>
@@ -151,15 +192,11 @@ export const ReservationDetailPage = () => {
 
           <div className="divide-y divide-border-muted">
             {reservation.passengers.map((passenger, index) => {
-              const adultIndex = reservation.passengers.slice(0, index + 1).filter((p) => p.type === passenger.type).length;
-              const typeCount = reservation.passengers.filter((p) => p.type === passenger.type).length;
-              const label = passenger.type === 'adult'
-                ? `おとな${typeCount > 1 ? ` ${adultIndex}` : ''}`
-                : `こども${typeCount > 1 ? ` ${adultIndex}` : ''}`;
-              const isEditing = editingIndex === index;
+              const label = getPassengerLabel(reservation.passengers, passenger.id);
+              const isEditing = editingPassengerId === passenger.id;
 
               return (
-                <div key={index} className="py-3 first:pt-0 last:pb-0">
+                <div key={passenger.id} className="py-3 first:pt-0 last:pb-0">
                   <div className="flex items-center justify-between">
                     <div>
                       <Typography variant="label" as="span">{label}</Typography>
@@ -170,12 +207,12 @@ export const ReservationDetailPage = () => {
                     <div className="flex items-center gap-2">
                       {passenger.icCard ? (
                         <>
-                          <Typography variant="body-sm">{passenger.icCard}</Typography>
+                          <Typography variant="body-sm">{formatICCard(passenger.icCard)}</Typography>
                           {isUpcoming && (
                             <Button
                               variant="tertiary"
                               size="small"
-                              onClick={() => setEditingIndex(isEditing ? null : index)}
+                              onClick={() => setEditingPassengerId(isEditing ? null : passenger.id)}
                             >
                               {isEditing ? 'キャンセル' : '変更'}
                             </Button>
@@ -188,7 +225,7 @@ export const ReservationDetailPage = () => {
                             <Button
                               variant="secondary"
                               size="small"
-                              onClick={() => setEditingIndex(isEditing ? null : index)}
+                              onClick={() => setEditingPassengerId(isEditing ? null : passenger.id)}
                             >
                               {isEditing ? 'キャンセル' : '登録する'}
                             </Button>
@@ -207,7 +244,7 @@ export const ReservationDetailPage = () => {
                           fullWidth
                         />
                       </div>
-                      <Button size="small" onClick={() => setEditingIndex(null)}>
+                      <Button size="small" onClick={() => setEditingPassengerId(null)}>
                         保存
                       </Button>
                     </div>

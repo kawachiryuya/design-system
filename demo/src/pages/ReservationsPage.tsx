@@ -3,7 +3,7 @@ import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
-import { reservations, type Reservation } from '../data/reservations';
+import { reservations, getTripSummary, type Reservation } from '../data/reservations';
 import { formatPassengers } from '../data/trains';
 import { formatDate } from '../utils/format';
 
@@ -33,6 +33,7 @@ export const ReservationsPage = () => {
         {reservations.map((r) => {
           const { adults, children } = countByType(r.passengers);
           const unregisteredIc = r.passengers.filter((p) => !p.icCard).length;
+          const trip = getTripSummary(r);
 
           return (
             <Card
@@ -48,15 +49,15 @@ export const ReservationsPage = () => {
                     <Typography variant="caption" color="muted">{r.id}</Typography>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Typography variant="h5" weight="bold" as="span">{r.from}</Typography>
+                    <Typography variant="h5" weight="bold" as="span">{trip.from}</Typography>
                     <Icon name="arrow_forward" size="sm" color="neutral" />
-                    <Typography variant="h5" weight="bold" as="span">{r.to}</Typography>
+                    <Typography variant="h5" weight="bold" as="span">{trip.to}</Typography>
                   </div>
                   <Typography variant="body-sm" color="muted">
-                    {formatDate(r.date)} {r.departure}→{r.arrival}
+                    {formatDate(trip.date)} {trip.departure}→{trip.arrival}
                   </Typography>
                   <Typography variant="body-sm" color="muted">
-                    {r.seatClassLabel} / {formatPassengers(adults, children)}
+                    {trip.seatClassLabel} / {formatPassengers(adults, children)}
                   </Typography>
                   {unregisteredIc > 0 && r.status === 'upcoming' && (
                     <div className="flex items-center gap-1 mt-1">

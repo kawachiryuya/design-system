@@ -1,26 +1,78 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
 
+/** Pagination のサイズ */
+export type PaginationSize = 'sm' | 'md' | 'lg';
+
 /**
  * Pagination Props
- * Reference: principles/patterns/navigation.md
  *
- * Molecule: ページ番号ナビゲーション
+ * ページ番号ナビゲーション。`<nav aria-label>` でラップ、`aria-current="page"` 自動付与。
+ *
+ * @example
+ *   // 基本
+ *   <Pagination
+ *     currentPage={page}
+ *     totalPages={totalPages}
+ *     onPageChange={setPage}
+ *   />
+ *
+ * @example
+ *   // 最初/最後ジャンプボタン付き（管理画面のテーブル等）
+ *   <Pagination
+ *     currentPage={page}
+ *     totalPages={50}
+ *     onPageChange={setPage}
+ *     showEdges
+ *   />
+ *
+ * @example
+ *   // モバイル向け（表示数を減らして compact に）
+ *   <Pagination
+ *     currentPage={page}
+ *     totalPages={20}
+ *     onPageChange={setPage}
+ *     maxVisible={5}
+ *     size="sm"
+ *   />
+ *
+ * @example
+ *   // 大サイズ（メインの一覧）
+ *   <Pagination
+ *     currentPage={page}
+ *     totalPages={10}
+ *     onPageChange={setPage}
+ *     size="lg"
+ *   />
+ *
+ * @see principles/patterns/navigation.md
  */
 export interface PaginationProps {
-  /** 現在のページ番号（1始まり） */
+  /** 現在のページ番号（1 始まり）。 */
   currentPage: number;
-  /** 総ページ数 */
+  /** 総ページ数。`<= 1` の場合は描画されない。 */
   totalPages: number;
-  /** ページ変更コールバック */
+  /** ページ変更コールバック。新しいページ番号が引数。 */
   onPageChange: (page: number) => void;
-  /** 表示するページボタンの最大数（省略記号で折りたたむ） */
+  /**
+   * 表示するページボタンの最大数。これを超えると省略記号 (`…`) で折りたたむ。
+   * @default 7
+   */
   maxVisible?: number;
-  /** 最初・最後のページボタンを表示する */
+  /**
+   * 最初/最後のページボタン（`«` `»`）を表示。長いリストでの一気ジャンプに便利。
+   * @default false
+   */
   showEdges?: boolean;
-  /** サイズ */
-  size?: 'sm' | 'md' | 'lg';
-  /** 追加CSSクラス */
+  /**
+   * サイズ。
+   * - `sm` 28px、密集 UI（フッター・サイドバー）
+   * - `md` 32px、標準
+   * - `lg` 40px、メインの一覧（モバイル CTA）
+   * @default 'md'
+   */
+  size?: PaginationSize;
+  /** 追加 CSS クラス。 */
   className?: string;
 }
 

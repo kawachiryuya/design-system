@@ -122,7 +122,7 @@ export const ConfirmPage = () => {
           </div>
         </Card>
 
-        {/* 同意 */}
+        {/* 同意 + アクションボタン */}
         <div className="mt-6 space-y-4">
           <Checkbox
             checked={agreed}
@@ -130,33 +130,21 @@ export const ConfirmPage = () => {
             label="利用規約に同意する"
           />
 
-          <div className="hidden lg:flex gap-3 justify-end">
-            <Button variant="tertiary" onClick={() => navigate(-1)}>
-              戻る
-            </Button>
-            <Button onClick={handleConfirm} disabled={!agreed}>
+          <div className="flex flex-col gap-2">
+            <Button onClick={handleConfirm} disabled={!agreed} fullWidth>
               予約を確定する
             </Button>
+            <div className="flex gap-2">
+              <Button variant="tertiary" onClick={() => navigate(-1)} fullWidth>
+                戻る
+              </Button>
+              <Button variant="tertiary" onClick={() => navigate('/')} fullWidth>
+                予約をキャンセル
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* モバイル固定 CTA */}
-      <div className="fixed bottom-16 left-0 right-0 lg:hidden z-40 bg-surface border-t border-border-muted shadow-xs"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-      >
-        <div className="flex items-center justify-between px-4 py-3">
-          <div>
-            <Typography variant="caption" color="muted">合計</Typography>
-            <Typography variant="h5" weight="bold" as="p">¥{total.toLocaleString()}</Typography>
-          </div>
-          <Button onClick={handleConfirm} disabled={!agreed}>
-            予約を確定する
-          </Button>
-        </div>
-      </div>
-      {/* モバイル固定 CTA 分のスペーサー */}
-      <div className="col-span-12 h-16 lg:hidden" />
     </div>
   );
 };

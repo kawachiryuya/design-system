@@ -6,7 +6,7 @@ import { Typography } from '@ds/primitives/Typography/Typography';
 import { Card } from '@ds/composites/Card/Card';
 import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
 import { ToggleButton } from '@ds/composites/ToggleButton/ToggleButton';
-import { generateSeatMap, carNumbersForClass, seatClasses, searchTrains } from '../data/trains';
+import { generateSeatMap, carNumbersForClass, seatClasses, searchTrains, formatPassengers } from '../data/trains';
 import { formatDate } from '../utils/format';
 
 export const SeatMapPage = () => {
@@ -64,7 +64,14 @@ export const SeatMapPage = () => {
             <span className="font-semibold text-onSurface">{train?.name}（{from} → {to}）</span>
           </div>
           <Typography variant="body-sm" color="muted" className="pl-6">
-            {formatDate(date)} {train?.departure}→{train?.arrival} {seatClass?.label}
+            {formatDate(date)} {train?.departure}→{train?.arrival}
+          </Typography>
+          <div className="pl-6 flex items-center gap-1.5">
+            <Icon name="group" size="sm" color="neutral" />
+            <Typography variant="body-sm" color="muted">{formatPassengers(adults, children)}</Typography>
+          </div>
+          <Typography variant="body-sm" color="muted" className="pl-6">
+            {seatClass?.label}
           </Typography>
         </Card>
 
@@ -136,16 +143,11 @@ export const SeatMapPage = () => {
             ))}
           </div>
 
-          {selectedSeats.length > 0 && (
-            <Typography variant="body-sm" className="mt-4">
-              選択中 ({selectedSeats.length}/{totalPassengers}): <span className="font-semibold">{selectedSeats.join(', ')}</span>
-            </Typography>
-          )}
         </Card>
       </div>
 
-      {/* 右: 座席情報サマリー */}
-      <div className="col-span-12 lg:col-span-4">
+      {/* 右: 座席情報サマリー（PC のみ表示、SP ではボトムナビと重複するため非表示） */}
+      <div className="hidden lg:block lg:col-span-4">
         <Card variant="filled" padding="md" className="sticky top-6">
           <Typography variant="label" as="h3" color="muted" className="mb-3">選択中の座席</Typography>
           <dl className="text-sm space-y-2 mb-4">
@@ -182,7 +184,7 @@ export const SeatMapPage = () => {
       >
         <div className="flex items-center justify-between px-4 py-3">
           <div>
-            <Typography variant="label">{selectedSeats.length} / {totalPassengers}席選択中</Typography>
+            <Typography variant="label">座席（{selectedSeats.length} / {totalPassengers}）</Typography>
             <Typography variant="caption" color="muted">
               {selectedSeats.length > 0 ? selectedSeats.join(', ') : '座席を選択してください'}
             </Typography>

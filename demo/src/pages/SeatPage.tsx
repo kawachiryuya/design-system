@@ -11,7 +11,7 @@ import { formatDate } from '../utils/format';
 const availabilityLabel = (status: SeatAvailability) => {
   switch (status) {
     case 'available':
-      return <Badge variant="success" appearance="soft" size="small">○ 空席あり</Badge>;
+      return null;
     case 'few':
       return <Badge variant="warning" appearance="soft" size="small">△ 残りわずか</Badge>;
     case 'sold-out':
@@ -68,33 +68,42 @@ export const SeatPage = () => {
           {seatClasses.map((cls) => {
             const isSelected = cls.id === selectedClass;
             const price = Math.round(basePrice * cls.priceMultiplier);
+            const status = train?.seats[cls.id];
+            const isSoldOut = status === 'sold-out';
 
             return (
               <button
                 key={cls.id}
                 type="button"
-                onClick={() => setSelectedClass(cls.id)}
+                onClick={() => !isSoldOut && setSelectedClass(cls.id)}
+                disabled={isSoldOut}
                 className={`w-full text-left rounded-md border-2 p-4 transition-all ${
-                  isSelected
-                    ? 'border-border-primary bg-surface-secondary'
-                    : 'border-border-muted bg-surface hover:border-border-strong'
+                  isSoldOut
+                    ? 'border-border-muted bg-surface-inset opacity-60 cursor-not-allowed'
+                    : isSelected
+                      ? 'border-border-primary bg-surface-secondary'
+                      : 'border-border-muted bg-surface hover:border-border-strong'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-onSurface">{cls.label}</span>
-                      {cls.id === 'green' && (
+                      {cls.id === 'green' && !isSoldOut && (
                         <Badge variant="primary" appearance="soft" size="small">人気</Badge>
                       )}
                     </div>
                     <Typography variant="body-sm" color="muted" className="mt-1">{cls.description}</Typography>
-                    {train?.seats[cls.id] && (
-                      <div className="mt-1">{availabilityLabel(train.seats[cls.id])}</div>
+                    {status && availabilityLabel(status) && (
+                      <div className="mt-1">{availabilityLabel(status)}</div>
                     )}
                   </div>
-                  <div className="text-right">
-                    <Typography variant="h5" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
+                  <div className="text-right shrink-0">
+                    {isSoldOut ? (
+                      <Typography variant="h5" weight="bold" as="p" color="muted">満席</Typography>
+                    ) : (
+                      <Typography variant="h5" weight="bold" as="p">¥{price.toLocaleString()}</Typography>
+                    )}
                   </div>
                 </div>
               </button>

@@ -6,7 +6,7 @@ import { Input } from '@ds/primitives/Input/Input';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
-import { getReservation } from '../data/reservations';
+import { getReservation, brandLabel } from '../data/reservations';
 import { formatDate } from '../utils/format';
 
 export const ReservationDetailPage = () => {
@@ -100,7 +100,8 @@ export const ReservationDetailPage = () => {
           </div>
         </Card>
 
-        {/* 乗客・ICカード */}
+        {/* 乗客・ICカード（CompletePage からの anchor link 用） */}
+        <div id="ic-section" className="scroll-mt-4">
         <Card className="mt-4" padding="md">
           <div className="flex items-center gap-2 mb-4">
             <Icon name="contactless" size="sm" color="primary" />
@@ -178,6 +179,57 @@ export const ReservationDetailPage = () => {
             })}
           </div>
         </Card>
+        </div>
+
+        {/* お支払い情報 */}
+        <Card className="mt-4" padding="md">
+          <Typography variant="label" as="h3" color="muted" className="mb-3">お支払い情報</Typography>
+          {reservation.payment ? (
+            <div className="flex items-center justify-between">
+              <div>
+                <Typography variant="body">
+                  {brandLabel(reservation.payment.brand)} **** {reservation.payment.last4}
+                </Typography>
+                <Typography variant="caption" color="muted">
+                  有効期限 {reservation.payment.expiry}
+                </Typography>
+              </div>
+              {isUpcoming && (
+                <Button variant="tertiary" size="small" onClick={() => alert('未実装')}>
+                  変更する
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Typography variant="body-sm" color="muted">支払い情報未登録</Typography>
+          )}
+        </Card>
+
+        {/* 領収書 */}
+        <Card className="mt-4" padding="md">
+          <Typography variant="label" as="h3" color="muted" className="mb-2">領収書</Typography>
+          <Typography variant="body-sm" color="muted" className="mb-3">
+            PDF 形式でダウンロードできます。
+          </Typography>
+          <Button variant="secondary" size="small" onClick={() => alert('未実装')}>
+            領収書を発行する
+          </Button>
+        </Card>
+
+        {/* 予約管理 */}
+        {isUpcoming && (
+          <Card className="mt-4" padding="md">
+            <Typography variant="label" as="h3" color="muted" className="mb-3">予約管理</Typography>
+            <div className="flex flex-col gap-2">
+              <Button variant="secondary" onClick={() => alert('未実装')}>
+                予約を変更する
+              </Button>
+              <Button variant="tertiary" onClick={() => alert('未実装')}>
+                予約をキャンセル
+              </Button>
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );

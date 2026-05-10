@@ -1,4 +1,4 @@
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@ds/primitives/Button/Button';
 import { Icon } from '@ds/primitives/Icon';
 import { Typography } from '@ds/primitives/Typography/Typography';
@@ -34,44 +34,29 @@ export const CompletePage = () => {
         </div>
 
         {/* IC カード登録動線 */}
-        <Card variant="outlined" padding="md" className="mb-8 max-w-md w-full text-left">
-          <div className="flex items-start gap-3 mb-4">
-            <Icon name="contactless" size="md" color="primary" className="shrink-0" />
-            <div className="flex-1">
-              <Typography variant="label" as="p">改札をタッチで通過する</Typography>
-              <Typography variant="body-sm" color="muted" className="mt-1">
-                IC カード（Suica / PASMO / ICOCA 等）を登録すると、当日改札にタッチするだけで乗車できます。
-                登録は <strong>この予約のみ</strong> に適用され、後からでも登録可能です。
-              </Typography>
-            </div>
+        <Card variant="outlined" padding="md" className="max-w-md w-full">
+          <div className="flex items-center justify-center mb-4">
+            <Icon name="contactless" size="lg" color="primary" />
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex flex-col gap-2">
             <Button
               variant="primary"
               size="medium"
-              onClick={() => navigate(`/reservations/${bookingId}/ic-register`)}
+              fullWidth
+              onClick={() => navigate(`/reservations/${bookingId}#ic-section`)}
             >
-              今すぐ登録する
+              ICカード設定を続ける
             </Button>
             <Button
               variant="tertiary"
               size="medium"
-              onClick={() => navigate('/reservations')}
+              fullWidth
+              onClick={() => navigate(`/reservations/${bookingId}`)}
             >
-              あとで（予約一覧へ）
+              予約詳細をみる
             </Button>
           </div>
         </Card>
-
-        <Typography variant="caption" color="subtle" className="mb-4">
-          後から登録する場合は、予約一覧の予約詳細から再開できます
-        </Typography>
-
-        <div className="flex gap-3">
-          <Link to="/">
-            <Button variant="secondary">新しい予約</Button>
-          </Link>
-        </div>
       </div>
     </div>
   );

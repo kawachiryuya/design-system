@@ -3,6 +3,13 @@ export interface Passenger {
   icCard?: string;
 }
 
+export interface Payment {
+  method: 'card';
+  brand: 'visa' | 'mastercard' | 'amex' | 'jcb';
+  last4: string;
+  expiry: string;
+}
+
 export interface Reservation {
   id: string;
   from: string;
@@ -15,8 +22,18 @@ export interface Reservation {
   seats: string[];
   total: number;
   passengers: Passenger[];
+  payment?: Payment;
   status: 'upcoming' | 'completed';
 }
+
+export const brandLabel = (brand: Payment['brand']): string => {
+  switch (brand) {
+    case 'visa': return 'Visa';
+    case 'mastercard': return 'Mastercard';
+    case 'amex': return 'American Express';
+    case 'jcb': return 'JCB';
+  }
+};
 
 export const reservations: Reservation[] = [
   {
@@ -35,6 +52,7 @@ export const reservations: Reservation[] = [
       { type: 'adult' },
       { type: 'child' },
     ],
+    payment: { method: 'card', brand: 'visa', last4: '1234', expiry: '12/28' },
     status: 'upcoming',
   },
   {
@@ -52,6 +70,7 @@ export const reservations: Reservation[] = [
       { type: 'adult', icCard: 'PASMO ****5678' },
       { type: 'adult', icCard: 'Suica ****9012' },
     ],
+    payment: { method: 'card', brand: 'mastercard', last4: '5678', expiry: '08/27' },
     status: 'upcoming',
   },
   {
@@ -68,6 +87,7 @@ export const reservations: Reservation[] = [
     passengers: [
       { type: 'adult', icCard: 'Suica ****1234' },
     ],
+    payment: { method: 'card', brand: 'visa', last4: '1234', expiry: '12/28' },
     status: 'completed',
   },
 ];

@@ -193,8 +193,22 @@ PJ ルートの CSS で CSS 変数を上書き:
 ### トークン参照の使い分け
 
 - **TypeScript / 型付き参照**: `import { COLORS, SPACING } from '../tokens'` → `tokens/index.ts` 経由でネスト構造の型付き const にアクセス（AI 用途で推奨）
-- **CSS 変数**: `var(--color-surface-primary)` → `tokens/build/variables.css` を `@import` する（実 PJ で `.storybook/tailwind.css` や `demo/src/index.css` の手書き定義を順次置き換え予定 - Phase 1 後半）
-- **Tailwind**: 現状 `tailwind.config.js` は `tokens/*.json`（ソース）を直接読み込み中。Phase 1 後半で `tokens/build/` 経由に切替予定
+- **CSS 変数**: `var(--color-surface-primary)` → `tokens/build/variables.css` を `@import` する（`.storybook/tailwind.css` と `demo/src/index.css` で実装済み）
+- **Tailwind**: `tokens/preset.cjs` 経由。各 PJ の `tailwind.config.js` で `presets: [require('.../tokens/preset.cjs')]` で継承（root / demo / gunmaas で実装済み）
+
+### Phase 1 完了時のトークン全体図
+
+```
+tokens/source/*.json         （一次ソース、人間が編集する）
+        ↓ npm run tokens:build (Style Dictionary)
+        ├→ tokens/build/tokens.json    （AI 用ネストJSON、gitignore）
+        ├→ tokens/build/tokens.ts      （AI 用 TS const、gitignore）
+        ├→ tokens/build/variables.css  （CSS 変数、gitignore）
+        └→ tokens/{colors,spacing,...}.json  （旧形式、stories 用、gitignore）
+
+tokens/index.ts              （AI 用 public API、TOKENS / COLORS / SPACING ... を export）
+tokens/preset.cjs            （Tailwind preset、各 PJ tailwind.config.js が継承）
+```
 
 ---
 

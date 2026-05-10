@@ -12,7 +12,7 @@
 | Phase | 内容 | 関連 Issue |
 |---|---|---|
 | **Phase 0** | 方針メモ完成、優先施策の Issue 起票 | （完了） |
-| **Phase 1** | 施策 A（Style Dictionary 化 + TS エクスポート）+ 施策 C（AGENTS.md + 本ファイル） | [#32](https://github.com/kawachiryuya/ai-management/issues/32) / [#33](https://github.com/kawachiryuya/ai-management/issues/33) |
+| **Phase 1** | 施策 A（Style Dictionary 化 + TS エクスポート + Tailwind preset）+ 施策 C（AGENTS.md + 本ファイル） | （**完了**） [#32](https://github.com/kawachiryuya/ai-management/issues/32) / [#33](https://github.com/kawachiryuya/ai-management/issues/33) |
 | **Phase 2** | 施策 B（型強化）+ npm パッケージ化 | [#34](https://github.com/kawachiryuya/ai-management/issues/34) / [#35](https://github.com/kawachiryuya/ai-management/issues/35) |
 | **Phase 3** | 受託案件で実運用 → 50% 工数削減検証 | [#36](https://github.com/kawachiryuya/ai-management/issues/36) |
 | **Phase 4** | iOS / Android / RN 向けビルダー追加 + monorepo 化判断 | （Phase 4 トリガー時） |
@@ -40,7 +40,19 @@
 
 ---
 
-## Phase 1: 施策 A & C（自由時間枠で進行中）
+## Phase 1: 施策 A & C（**完了** 2026-05-10）
+
+### 完了サマリ
+
+- ✅ Style Dictionary v5 導入、`tokens/source/*.json` を一次ソースに
+- ✅ AI 用 TS const エクスポート（`tokens/index.ts` 経由で `import { COLORS } from '../tokens'`）
+- ✅ CSS 変数自動生成（`tokens/build/variables.css`、`.storybook/tailwind.css` と `demo/src/index.css` が `@import` で参照）
+- ✅ Tailwind preset（`tokens/preset.cjs`）で root / demo / gunmaas の tailwind.config.js を統一
+- ✅ 旧形式 JSON も build 成果物として再生成（Storybook stories の後方互換維持、`tokens/{colors,spacing,...}.json` は gitignore）
+- ✅ AGENTS.md / docs/ai-roadmap.md（本ファイル）整備、検証サイト = demo/ を明記
+- ✅ demo の `/tokens` で AI dogfooding 動作（`import { COLORS } from '@tokens'`）
+
+### Phase 1 詳細
 
 ### 施策 A: Style Dictionary 化 + TS エクスポート — [#32](https://github.com/kawachiryuya/ai-management/issues/32)
 

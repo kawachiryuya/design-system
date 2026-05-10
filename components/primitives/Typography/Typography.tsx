@@ -1,8 +1,8 @@
 import React from 'react';
 
 /**
- * Typography のバリアント定義
- * Reference: principles/Typography/hierarchy.md
+ * Typography のバリアント定義（視覚スタイル）
+ * @see principles/Typography/hierarchy.md
  */
 export type TypographyVariant =
   | 'display'
@@ -18,7 +18,7 @@ export type TypographyVariant =
   | 'caption'
   | 'label';
 
-/** テキストカラー */
+/** テキストカラー（semantic-colors.json の onSurface 系を反映） */
 export type TypographyColor =
   | 'default'
   | 'muted'
@@ -31,8 +31,11 @@ export type TypographyColor =
   | 'info'
   | 'inherit';
 
-/** HTML要素の型（as prop） */
-type PolymorphicElement =
+/** フォントウェイト */
+export type TypographyWeight = 'normal' | 'medium' | 'semibold' | 'bold';
+
+/** レンダリング先 HTML 要素（`as` prop） */
+export type TypographyElement =
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   | 'p' | 'span' | 'div' | 'label' | 'caption'
   | 'legend' | 'figcaption' | 'strong' | 'em'
@@ -40,29 +43,76 @@ type PolymorphicElement =
 
 /**
  * Typography Props
- * Reference: principles/Typography/hierarchy.md
+ *
+ * **設計原則**: 視覚スタイル（`variant`）と意味論（`as`）を分離する。
+ * - `variant` は見た目だけ決める（h1 サイズに見える等）
+ * - `as` は HTML 構造を決める（`<h2>` を実際にレンダリング）
+ * - 両方を組み合わせることで「h1 のスタイルで `<p>`」のような柔軟性を実現
+ *
+ * @example
+ *   // 基本（variant に従う HTML タグが自動選択）
+ *   <Typography variant="h1">ページタイトル</Typography>
+ *
+ * @example
+ *   // 視覚 vs 意味の分離: 見た目 h2、構造は h3
+ *   <Typography variant="h2" as="h3">セクションタイトル</Typography>
+ *
+ * @example
+ *   // 補足テキスト（mute 色）
+ *   <Typography variant="body" color="muted">
+ *     最終更新日: 2026-05-10
+ *   </Typography>
+ *
+ * @example
+ *   // ラベル（form 内で使用、強調）
+ *   <Typography variant="label" weight="semibold">必須項目</Typography>
+ *
+ * @example
+ *   // 1 行省略（カード内タイトル等）
+ *   <Typography variant="h5" truncate>
+ *     {longTitle}
+ *   </Typography>
+ *
+ * @see principles/Typography/hierarchy.md
  */
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
-  /** タイポグラフィのバリアント（視覚スタイルを決定） */
+  /**
+   * タイポグラフィのバリアント（視覚スタイル）。
+   * - `display`: 最大級ヒーローテキスト
+   * - `h1`〜`h6`: 見出し（数字が大きいほど小さい）
+   * - `body-lg`/`body`/`body-sm`: 本文（3 段階）
+   * - `caption`: 補助テキスト（最小）
+   * - `label`: フォームラベル等
+   * @default 'body'
+   */
   variant?: TypographyVariant;
   /**
-   * レンダリングするHTML要素（省略時はvariantから自動選択）。
-   * 視覚スタイルと意味論を切り離すために使用する。
-   * @example variant="h1" as="p" → h1のスタイルで<p>タグ
+   * レンダリング先 HTML 要素。省略時は `variant` から自動選択（h1 → `<h1>` 等）。
+   * 視覚と意味論の分離に使う。
+   *
+   * @example variant="h1" as="p" → h1 のスタイルで `<p>` タグ
    */
-  as?: PolymorphicElement;
-  /** テキストカラー */
+  as?: TypographyElement;
+  /**
+   * テキストカラー。
+   * @default 'default'
+   */
   color?: TypographyColor;
-  /** フォントウェイト（variant のデフォルトを上書き） */
-  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
-  /** テキストを省略して1行に収める */
+  /**
+   * フォントウェイト（variant のデフォルトを上書き）。指定しなければ variant の標準ウェイトに従う。
+   */
+  weight?: TypographyWeight;
+  /**
+   * `true` で 1 行に省略（CSS `truncate`）。長いタイトル等で使用。
+   * @default false
+   */
   truncate?: boolean;
-  /** 内容 */
+  /** テキスト内容（必須）。 */
   children: React.ReactNode;
 }
 
-/** variant → デフォルトHTMLタグのマップ */
-const defaultTag: Record<TypographyVariant, PolymorphicElement> = {
+/** variant → デフォルト HTML タグのマップ */
+const defaultTag: Record<TypographyVariant, TypographyElement> = {
   display:  'h1',
   h1:       'h1',
   h2:       'h2',
@@ -160,17 +210,12 @@ const colorStyles: Record<TypographyColor, string> = {
 };
 
 /**
- * Typography Component
- *
- * Atomic Design: Atom
+ * Typography — Atomic Design: Atom
  *
  * タイポグラフィヒエラルキーを実装したテキストコンポーネント。
- * `variant` で視覚スタイルを、`as` で意味論的なHTML要素を指定する。
+ * 視覚スタイルと HTML 意味論を分離できる polymorphic 設計。
  *
- * @example
- * <Typography variant="h1">ページタイトル</Typography>
- * <Typography variant="h2" as="h3">見た目はH2、意味論はH3</Typography>
- * <Typography variant="body" color="muted">補足テキスト</Typography>
+ * @see TypographyProps for usage examples.
  */
 export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   (

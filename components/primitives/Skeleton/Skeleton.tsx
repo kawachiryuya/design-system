@@ -1,33 +1,67 @@
 import React from 'react';
 
+/** Skeleton の形状バリアント */
+export type SkeletonVariant = 'text' | 'circular' | 'rectangular' | 'rounded';
+
 /**
  * Skeleton Props
- * Reference: principles/interaction/feedback/loading-indicators.md
+ *
+ * 読み込み中のプレースホルダー。`role="status"` `aria-busy="true"` 自動付与で a11y 対応。
+ *
+ * @example
+ *   // テキスト 3 行（最後の行は 75% 幅）
+ *   <Skeleton variant="text" lines={3} />
+ *
+ * @example
+ *   // 円形（アバター・アイコン）
+ *   <Skeleton variant="circular" width={40} height={40} />
+ *
+ * @example
+ *   // 画像プレースホルダー
+ *   <Skeleton variant="rectangular" width="100%" height={200} />
+ *
+ * @example
+ *   // カード
+ *   <Skeleton variant="rounded" width="100%" height={120} />
+ *
+ * @example
+ *   // アニメーション無効（複数並べる場合のパフォーマンス対策）
+ *   <Skeleton variant="text" lines={5} animated={false} />
+ *
+ * @see principles/interaction/feedback/loading-indicators.md
  */
 export interface SkeletonProps {
-  /** スケルトンの形状 */
-  variant?: 'text' | 'circular' | 'rectangular' | 'rounded';
-  /** 幅（CSS値 or Tailwindクラス用の数値文字列） */
+  /**
+   * スケルトンの形状。
+   * - `text`: 行を模す（lines で複数行）
+   * - `circular`: 円形（アバター・アイコン）
+   * - `rectangular`: 矩形（画像・カード本体）
+   * - `rounded`: 角丸矩形（モダンなカード）
+   * @default 'text'
+   */
+  variant?: SkeletonVariant;
+  /** 幅（CSS 文字列 or 数値で px）。省略時は variant ごとのデフォルト。 */
   width?: string | number;
-  /** 高さ（CSS値 or 数値） */
+  /** 高さ（CSS 文字列 or 数値で px）。省略時は variant ごとのデフォルト。 */
   height?: string | number;
-  /** variant="text" 時の行数 */
+  /**
+   * `variant="text"` 時の行数。最終行は 75% 幅で自然な見た目に。
+   * @default 1
+   */
   lines?: number;
-  /** pulse アニメーション */
+  /**
+   * Pulse アニメーション。
+   * @default true
+   */
   animated?: boolean;
-  /** 追加CSSクラス */
+  /** 追加 CSS クラス。 */
   className?: string;
 }
 
 /**
- * Skeleton Component
+ * Skeleton — Atomic Design: Atom
  *
- * Atomic Design: Atom
- *
- * @example
- * <Skeleton variant="text" lines={3} />
- * <Skeleton variant="circular" width={40} height={40} />
- * <Skeleton variant="rectangular" width="100%" height={200} />
+ * @see SkeletonProps for usage examples.
  */
 export const Skeleton: React.FC<SkeletonProps> = ({
   variant = 'text',

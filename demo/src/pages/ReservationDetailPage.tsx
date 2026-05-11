@@ -6,26 +6,52 @@ import { Input } from '@ds/primitives/Input/Input';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Card } from '@ds/composites/Card/Card';
+import { Checkbox } from '@ds/composites/Checkbox/Checkbox';
+import { Radio } from '@ds/composites/Radio/Radio';
 import {
   getReservation,
   brandLabel,
   formatICCard,
   getSeat,
   getPassengerLabel,
+  type Reservation,
+  type SeatAssignment,
 } from '../data/reservations';
 import { formatDate } from '../utils/format';
 
 const TOAST_MESSAGES: Record<string, string> = {
   'ic-saved': 'IC カードを登録しました',
+  'seats-updated': '座席を変更しました',
+  'partial-cancelled': '一部をキャンセルしました',
 };
+
+type CancelScope = 'all' | 'passengers' | 'legs';
+
+// 編集中の座席（号車 + 席番）
+interface SeatDraft {
+  car: string; // input は string で保持
+  seatNumber: string;
+}
 
 export const ReservationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const reservation = getReservation(id ?? '');
+  const initialReservation = getReservation(id ?? '');
+  const [reservation, setReservation] = useState<Reservation | undefined>(initialReservation);
   const [editingPassengerId, setEditingPassengerId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // 座席変更: 編集中の legId と passengerId → draft マップ
+  const [editingSeatsLegId, setEditingSeatsLegId] = useState<string | null>(null);
+  const [seatDrafts, setSeatDrafts] = useState<Record<string, SeatDraft>>({});
+
+  // キャンセル Modal 状態
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelScope, setCancelScope] = useState<CancelScope>('all');
+  const [cancelTargetPassengers, setCancelTargetPassengers] = useState<Record<string, boolean>>({});
+  const [cancelTargetLegs, setCancelTargetLegs] = useState<Record<string, boolean>>({});
+  const [cancelStep, setCancelStep] = useState<1 | 2>(1);
 
   // toast クエリ取り込み → 表示 → URL から削除
   useEffect(() => {
@@ -42,6 +68,11 @@ export const ReservationDetailPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const showToast = (key: keyof typeof TOAST_MESSAGES) => {
+    setToastMessage(TOAST_MESSAGES[key]);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
   if (!reservation) {
     return (
       <div className="py-10 text-center">
@@ -56,6 +87,95 @@ export const ReservationDetailPage = () => {
   const isUpcoming = reservation.status === 'upcoming';
   const firstLeg = reservation.legs[0];
   const lastLeg = reservation.legs[reservation.legs.length - 1];
+
+  // 座席変更: 開く
+  const openSeatEdit = (legId: string) => {
+    const drafts: Record<string, SeatDraft> = {};
+    reservation.passengers.forEach((p) => {
+      const seat = getSeat(reservation, p.id, legId);
+      drafts[p.id] = {
+        car: seat ? String(seat.car) : '',
+        seatNumber: seat ? seat.seatNumber : '',
+      };
+    });
+    setSeatDrafts(drafts);
+    setEditingSeatsLegId(legId);
+  };
+  const closeSeatEdit = () => {
+    setEditingSeatsLegId(null);
+    setSeatDrafts({});
+  };
+  const saveSeatEdit = () => {
+    if (!editingSeatsLegId) return;
+    const legId = editingSeatsLegId;
+    const nextAssignments: SeatAssignment[] = reservation.seatAssignments.filter(
+      (s) => s.legId !== legId,
+    );
+    reservation.passengers.forEach((p) => {
+      const d = seatDrafts[p.id];
+      const car = parseInt(d?.car ?? '', 10);
+      const seatNumber = (d?.seatNumber ?? '').trim();
+      if (Number.isFinite(car) && car > 0 && seatNumber) {
+        nextAssignments.push({ passengerId: p.id, legId, car, seatNumber });
+      }
+    });
+    setReservation({ ...reservation, seatAssignments: nextAssignments });
+    closeSeatEdit();
+    showToast('seats-updated');
+  };
+
+  // キャンセル Modal: 開閉
+  const openCancel = () => {
+    setCancelScope('all');
+    setCancelStep(1);
+    setCancelTargetPassengers({});
+    setCancelTargetLegs({});
+    setCancelOpen(true);
+  };
+  const closeCancel = () => setCancelOpen(false);
+
+  const canProceedStep1 =
+    cancelScope === 'all' ||
+    (cancelScope === 'passengers' &&
+      Object.values(cancelTargetPassengers).some(Boolean) &&
+      Object.values(cancelTargetPassengers).filter(Boolean).length < reservation.passengers.length) ||
+    (cancelScope === 'legs' &&
+      Object.values(cancelTargetLegs).some(Boolean) &&
+      Object.values(cancelTargetLegs).filter(Boolean).length < reservation.legs.length);
+
+  const executeCancel = () => {
+    if (cancelScope === 'all') {
+      // demo: 一覧へ戻す
+      setCancelOpen(false);
+      navigate('/reservations');
+      return;
+    }
+    if (cancelScope === 'passengers') {
+      const removedIds = new Set(
+        Object.entries(cancelTargetPassengers)
+          .filter(([, v]) => v)
+          .map(([k]) => k),
+      );
+      setReservation({
+        ...reservation,
+        passengers: reservation.passengers.filter((p) => !removedIds.has(p.id)),
+        seatAssignments: reservation.seatAssignments.filter((s) => !removedIds.has(s.passengerId)),
+      });
+    } else if (cancelScope === 'legs') {
+      const removedIds = new Set(
+        Object.entries(cancelTargetLegs)
+          .filter(([, v]) => v)
+          .map(([k]) => k),
+      );
+      setReservation({
+        ...reservation,
+        legs: reservation.legs.filter((l) => !removedIds.has(l.id)),
+        seatAssignments: reservation.seatAssignments.filter((s) => !removedIds.has(s.legId)),
+      });
+    }
+    setCancelOpen(false);
+    showToast('partial-cancelled');
+  };
 
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8">
@@ -106,55 +226,133 @@ export const ReservationDetailPage = () => {
           </div>
 
           {/* leg ごとの区間カード */}
-          {reservation.legs.map((leg, legIdx) => (
-            <div key={leg.id} className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <Typography variant="label" as="h3" color="muted">
-                  {reservation.legs.length > 1 ? `区間 ${legIdx + 1}` : '乗車情報'}
-                </Typography>
-                <Typography variant="caption" color="muted">{leg.seatClassLabel}</Typography>
+          {reservation.legs.map((leg, legIdx) => {
+            const isEditing = editingSeatsLegId === leg.id;
+            const seatsForLeg = reservation.passengers
+              .map((p) => ({ passenger: p, seat: getSeat(reservation, p.id, leg.id) }));
+            const hasAnySeat = seatsForLeg.some((x) => x.seat);
+
+            return (
+              <div key={leg.id} className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <Typography variant="label" as="h3" color="muted">
+                    {reservation.legs.length > 1 ? `区間 ${legIdx + 1}` : '乗車情報'}
+                  </Typography>
+                  <Typography variant="caption" color="muted">{leg.seatClassLabel}</Typography>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onSurface-muted">列車</span>
+                    <span className="font-medium text-onSurface">{leg.trainName}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onSurface-muted">区間</span>
+                    <span className="font-medium text-onSurface flex items-center gap-1">
+                      {leg.from}
+                      <Icon name="arrow_forward" size="sm" color="inherit" />
+                      {leg.to}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onSurface-muted">時刻</span>
+                    <span className="font-medium text-onSurface">{leg.departure}→{leg.arrival}</span>
+                  </div>
+                </div>
+
+                {/* 座席ブロック（編集モード切替） */}
+                {hasAnySeat && (
+                  <div className="mt-3 pt-3 border-t border-border-muted">
+                    {!isEditing ? (
+                      <>
+                        <div className="flex items-center justify-between mb-2">
+                          <Typography variant="caption" color="muted">座席</Typography>
+                          {isUpcoming && (
+                            <Button
+                              variant="tertiary"
+                              size="small"
+                              onClick={() => openSeatEdit(leg.id)}
+                            >
+                              座席を変更
+                            </Button>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          {seatsForLeg.map(({ passenger, seat }) =>
+                            seat ? (
+                              <div key={passenger.id} className="flex justify-between text-sm">
+                                <span className="text-onSurface-muted">
+                                  {getPassengerLabel(reservation.passengers, passenger.id)}
+                                </span>
+                                <span className="font-medium text-onSurface">
+                                  {seat.car}号車 {seat.seatNumber}
+                                </span>
+                              </div>
+                            ) : null,
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="caption" color="muted" className="block mb-2">
+                          座席を変更
+                        </Typography>
+                        <div className="space-y-3">
+                          {reservation.passengers.map((p) => {
+                            const draft = seatDrafts[p.id] ?? { car: '', seatNumber: '' };
+                            return (
+                              <div key={p.id} className="flex items-end gap-2">
+                                <div className="w-20 shrink-0">
+                                  <Typography variant="caption" color="muted" className="block mb-1">
+                                    {getPassengerLabel(reservation.passengers, p.id)}
+                                  </Typography>
+                                </div>
+                                <div className="w-20">
+                                  <Input
+                                    label="号車"
+                                    value={draft.car}
+                                    onChange={(e) =>
+                                      setSeatDrafts((prev) => ({
+                                        ...prev,
+                                        [p.id]: { ...draft, car: e.target.value },
+                                      }))
+                                    }
+                                    placeholder="3"
+                                    fullWidth
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <Input
+                                    label="席番"
+                                    value={draft.seatNumber}
+                                    onChange={(e) =>
+                                      setSeatDrafts((prev) => ({
+                                        ...prev,
+                                        [p.id]: { ...draft, seatNumber: e.target.value },
+                                      }))
+                                    }
+                                    placeholder="5A"
+                                    fullWidth
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="flex gap-2 mt-3">
+                          <Button variant="tertiary" size="small" onClick={closeSeatEdit} fullWidth>
+                            キャンセル
+                          </Button>
+                          <Button size="small" onClick={saveSeatEdit} fullWidth>
+                            保存
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-onSurface-muted">列車</span>
-                  <span className="font-medium text-onSurface">{leg.trainName}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-onSurface-muted">区間</span>
-                  <span className="font-medium text-onSurface flex items-center gap-1">
-                    {leg.from}
-                    <Icon name="arrow_forward" size="sm" color="inherit" />
-                    {leg.to}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-onSurface-muted">時刻</span>
-                  <span className="font-medium text-onSurface">{leg.departure}→{leg.arrival}</span>
-                </div>
-                {(() => {
-                  const seatsForLeg = reservation.passengers
-                    .map((p) => ({ passenger: p, seat: getSeat(reservation, p.id, leg.id) }))
-                    .filter((x) => x.seat);
-                  if (seatsForLeg.length === 0) return null;
-                  return (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-onSurface-muted">座席</span>
-                      <span className="font-medium text-onSurface text-right">
-                        {seatsForLeg.map(({ passenger, seat }) => (
-                          <span key={passenger.id} className="block">
-                            {seat!.car}号車 {seat!.seatNumber}
-                            <span className="text-onSurface-muted text-xs ml-1">
-                              （{getPassengerLabel(reservation.passengers, passenger.id)}）
-                            </span>
-                          </span>
-                        ))}
-                      </span>
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           <div className="p-4 flex justify-between items-center">
             <Typography variant="label" color="muted">合計金額</Typography>
@@ -273,12 +471,175 @@ export const ReservationDetailPage = () => {
             <Button variant="secondary" onClick={() => alert('未実装')}>
               予約を変更する
             </Button>
-            <Button variant="tertiary" onClick={() => alert('未実装')}>
+            <Button variant="tertiary" onClick={openCancel}>
               予約をキャンセル
             </Button>
           </div>
         )}
       </div>
+
+      {/* キャンセル Modal */}
+      {cancelOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-modal-title"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40"
+          onClick={closeCancel}
+        >
+          <div
+            className="w-full sm:max-w-md max-h-[90vh] overflow-y-auto bg-surface rounded-t-xl sm:rounded-xl shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 border-b border-border-muted flex items-center justify-between">
+              <Typography variant="h5" as="h2" id="cancel-modal-title">
+                {cancelStep === 1 ? '予約をキャンセル' : 'キャンセル内容の確認'}
+              </Typography>
+              <Button
+                iconOnly
+                variant="tertiary"
+                size="small"
+                onClick={closeCancel}
+                aria-label="閉じる"
+                icon={<Icon name="close" size="sm" color="inherit" />}
+              />
+            </div>
+
+            <div className="p-4">
+              {cancelStep === 1 ? (
+                <>
+                  <Typography variant="body-sm" color="muted" className="mb-4">
+                    キャンセルする範囲を選んでください。
+                  </Typography>
+                  <div className="space-y-3">
+                    <Radio
+                      label="予約全体をキャンセル"
+                      name="cancel-scope"
+                      checked={cancelScope === 'all'}
+                      onChange={() => setCancelScope('all')}
+                    />
+                    <Radio
+                      label="一部の乗客のみキャンセル"
+                      name="cancel-scope"
+                      checked={cancelScope === 'passengers'}
+                      onChange={() => setCancelScope('passengers')}
+                      disabled={reservation.passengers.length <= 1}
+                    />
+                    {cancelScope === 'passengers' && (
+                      <div className="ml-7 mt-2 space-y-2">
+                        {reservation.passengers.map((p) => (
+                          <Checkbox
+                            key={p.id}
+                            label={getPassengerLabel(reservation.passengers, p.id)}
+                            checked={Boolean(cancelTargetPassengers[p.id])}
+                            onChange={(e) =>
+                              setCancelTargetPassengers((prev) => ({
+                                ...prev,
+                                [p.id]: e.target.checked,
+                              }))
+                            }
+                          />
+                        ))}
+                        <Typography variant="caption" color="muted" as="p">
+                          ※ 予約全体は別の選択肢から
+                        </Typography>
+                      </div>
+                    )}
+                    <Radio
+                      label="一部の区間のみキャンセル"
+                      name="cancel-scope"
+                      checked={cancelScope === 'legs'}
+                      onChange={() => setCancelScope('legs')}
+                      disabled={reservation.legs.length <= 1}
+                    />
+                    {cancelScope === 'legs' && (
+                      <div className="ml-7 mt-2 space-y-2">
+                        {reservation.legs.map((l, i) => (
+                          <Checkbox
+                            key={l.id}
+                            label={`区間 ${i + 1}: ${l.from} → ${l.to}（${l.trainName}）`}
+                            checked={Boolean(cancelTargetLegs[l.id])}
+                            onChange={(e) =>
+                              setCancelTargetLegs((prev) => ({
+                                ...prev,
+                                [l.id]: e.target.checked,
+                              }))
+                            }
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Typography variant="body-sm" color="muted" className="mb-3">
+                    以下の内容でキャンセルします。
+                  </Typography>
+                  <div className="space-y-2 mb-4 p-3 bg-surface-inset rounded">
+                    {cancelScope === 'all' && (
+                      <Typography variant="body">予約 {reservation.id} を全てキャンセル</Typography>
+                    )}
+                    {cancelScope === 'passengers' && (
+                      <>
+                        <Typography variant="label" as="p">対象の乗客:</Typography>
+                        {reservation.passengers
+                          .filter((p) => cancelTargetPassengers[p.id])
+                          .map((p) => (
+                            <Typography variant="body-sm" key={p.id}>
+                              ・{getPassengerLabel(reservation.passengers, p.id)}
+                            </Typography>
+                          ))}
+                      </>
+                    )}
+                    {cancelScope === 'legs' && (
+                      <>
+                        <Typography variant="label" as="p">対象の区間:</Typography>
+                        {reservation.legs
+                          .filter((l) => cancelTargetLegs[l.id])
+                          .map((l, i) => (
+                            <Typography variant="body-sm" key={l.id}>
+                              ・区間 {reservation.legs.findIndex((x) => x.id === l.id) + 1 || i + 1}: {l.from} → {l.to}
+                            </Typography>
+                          ))}
+                      </>
+                    )}
+                  </div>
+                  <Typography variant="caption" color="muted">
+                    ※ デモ画面のため、実際の払戻処理は行われません。
+                  </Typography>
+                </>
+              )}
+            </div>
+
+            <div className="p-4 border-t border-border-muted flex gap-2">
+              {cancelStep === 1 ? (
+                <>
+                  <Button variant="tertiary" onClick={closeCancel} fullWidth>
+                    やめる
+                  </Button>
+                  <Button
+                    onClick={() => setCancelStep(2)}
+                    fullWidth
+                    disabled={!canProceedStep1}
+                  >
+                    次へ
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="tertiary" onClick={() => setCancelStep(1)} fullWidth>
+                    戻る
+                  </Button>
+                  <Button variant="primary" onClick={executeCancel} fullWidth>
+                    キャンセルを実行
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast (簡易実装、3 秒で自動消失) */}
       {toastMessage && (

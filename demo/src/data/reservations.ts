@@ -50,8 +50,17 @@ export interface Reservation {
   seatAssignments: SeatAssignment[];
   total: number;
   payment?: Payment;
-  status: 'upcoming' | 'completed';
+  status: 'upcoming' | 'completed' | 'cancelled';
 }
+
+/** 過去タブで使う status ラベル */
+export const statusPastLabel = (status: Reservation['status']): string => {
+  switch (status) {
+    case 'completed': return '乗車済み';
+    case 'cancelled': return 'キャンセル済み';
+    case 'upcoming': return ''; // 過去タブには出ない
+  }
+};
 
 // ---------- helpers ----------
 
@@ -124,7 +133,7 @@ export const getTripSummary = (reservation: Reservation): TripSummary => {
     trainName: hasTransfer ? `${first.trainName} ほか` : first.trainName,
     departure: first.departure,
     arrival: last.arrival,
-    seatClassLabel: hasTransfer ? '複数区間' : first.seatClassLabel,
+    seatClassLabel: first.seatClassLabel,
     hasTransfer,
   };
 };
@@ -145,7 +154,7 @@ export const reservations: Reservation[] = [
         trainName: 'のぞみ5号',
         from: '東京',
         to: '新大阪',
-        date: '2026-06-05',
+        date: '2026-05-13',
         departure: '07:00',
         arrival: '09:20',
         seatClassLabel: '普通車指定席',
@@ -172,7 +181,7 @@ export const reservations: Reservation[] = [
         trainName: 'のぞみ24号',
         from: '新大阪',
         to: '東京',
-        date: '2026-06-07',
+        date: '2026-05-12',
         departure: '17:00',
         arrival: '19:15',
         seatClassLabel: 'グリーン車',
@@ -184,6 +193,47 @@ export const reservations: Reservation[] = [
     ],
     total: 39960,
     payment: { method: 'card', brand: 'mastercard', last4: '5678', expiry: '08/27' },
+    status: 'upcoming',
+  },
+  {
+    id: 'RD-004',
+    passengers: [
+      { id: 'P-001', type: 'adult', icCard: { type: 'suica', maskedNumber: '****1234' } },
+      { id: 'P-002', type: 'adult', icCard: { type: 'pasmo', maskedNumber: '****5678' } },
+      { id: 'P-003', type: 'child' },
+    ],
+    legs: [
+      {
+        id: 'LEG-001',
+        trainName: 'のぞみ7号',
+        from: '東京',
+        to: '新大阪',
+        date: '2026-05-18',
+        departure: '06:00',
+        arrival: '08:27',
+        seatClassLabel: '普通車指定席',
+      },
+      {
+        id: 'LEG-002',
+        trainName: 'さくら545号',
+        from: '新大阪',
+        to: '鹿児島中央',
+        date: '2026-05-18',
+        departure: '08:59',
+        arrival: '13:01',
+        seatClassLabel: 'グリーン車',
+      },
+    ],
+    seatAssignments: [
+      { passengerId: 'P-001', legId: 'LEG-001', car: 5, seatNumber: '7A' },
+      { passengerId: 'P-002', legId: 'LEG-001', car: 5, seatNumber: '7B' },
+      { passengerId: 'P-003', legId: 'LEG-001', car: 5, seatNumber: '7C' },
+      { passengerId: 'P-001', legId: 'LEG-002', car: 6, seatNumber: '3A' },
+      { passengerId: 'P-002', legId: 'LEG-002', car: 6, seatNumber: '3B' },
+      { passengerId: 'P-003', legId: 'LEG-002', car: 6, seatNumber: '3C' },
+    ],
+    total: 63270,
+    payment: { method: 'card', brand: 'jcb', last4: '4321', expiry: '03/29' },
     status: 'upcoming',
   },
   {
@@ -207,6 +257,32 @@ export const reservations: Reservation[] = [
     total: 10170,
     payment: { method: 'card', brand: 'visa', last4: '1234', expiry: '12/28' },
     status: 'completed',
+  },
+  {
+    id: 'RD-005',
+    passengers: [
+      { id: 'P-001', type: 'adult', icCard: { type: 'icoca', maskedNumber: '****0099' } },
+      { id: 'P-002', type: 'adult' },
+    ],
+    legs: [
+      {
+        id: 'LEG-001',
+        trainName: 'のぞみ33号',
+        from: '東京',
+        to: '京都',
+        date: '2026-04-20',
+        departure: '10:00',
+        arrival: '12:13',
+        seatClassLabel: '普通車指定席',
+      },
+    ],
+    seatAssignments: [
+      { passengerId: 'P-001', legId: 'LEG-001', car: 4, seatNumber: '11A' },
+      { passengerId: 'P-002', legId: 'LEG-001', car: 4, seatNumber: '11B' },
+    ],
+    total: 27500,
+    payment: { method: 'card', brand: 'visa', last4: '1234', expiry: '12/28' },
+    status: 'cancelled',
   },
 ];
 

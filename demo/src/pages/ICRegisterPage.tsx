@@ -25,7 +25,7 @@ export const ICRegisterPage = () => {
   const [entries, setEntries] = useState<Record<string, PassengerEntry>>(() => {
     const init: Record<string, PassengerEntry> = {};
     reservation?.passengers.forEach((p) => {
-      init[p.id] = { mode: 'register', cardNumber: '' };
+      init[p.id] = { mode: 'later', cardNumber: '' };
     });
     return init;
   });
@@ -45,8 +45,15 @@ export const ICRegisterPage = () => {
     setEntries((prev) => ({ ...prev, [passengerId]: { ...prev[passengerId], ...partial } }));
   };
 
+  // 登録対象の人数（register モード × 番号入力済み）
+  const registerCount = reservation
+    ? reservation.passengers.filter(
+        (p) => !p.icCard && entries[p.id]?.mode === 'register' && entries[p.id]?.cardNumber.trim() !== '',
+      ).length
+    : 0;
+
   const handleSubmit = () => {
-    // demo: 実際の保存はスキップ。query param で toast を予約詳細画面へ渡す
+    // demo: 実際の保存はスキップ。toast で予約詳細画面に通知
     navigate(`/reservations/${id}?toast=ic-saved`);
   };
 
@@ -119,12 +126,11 @@ export const ICRegisterPage = () => {
                   {entry.mode === 'register' && (
                     <div className="mt-4">
                       <Input
-                        label="カード番号"
+                        label="ICカード番号"
                         placeholder="JE 0000 0000 0000 0000"
                         value={entry.cardNumber}
                         onChange={(e) => updateEntry(p.id, { cardNumber: e.target.value })}
                         fullWidth
-                        helpText="カード裏面の番号を入力（カード会社は番号から自動判定）"
                       />
                     </div>
                   )}
@@ -141,12 +147,23 @@ export const ICRegisterPage = () => {
         })}
       </div>
 
-      {/* CTA */}
+      {/* CTA: 主（登録する）+ 副（設定しない） */}
       <div className="mt-6 flex flex-col gap-2">
-        <Button variant="primary" onClick={handleSubmit} fullWidth>
-          設定を完了する
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={registerCount === 0}
+          fullWidth
+        >
+          {registerCount > 0
+            ? `${registerCount}名のICカードを登録する`
+            : 'ICカードを登録する'}
         </Button>
-        <Button variant="tertiary" onClick={() => navigate(`/reservations/${id}`)} fullWidth>
+        <Button
+          variant="secondary"
+          onClick={() => navigate(`/reservations/${id}`)}
+          fullWidth
+        >
           設定しない
         </Button>
       </div>

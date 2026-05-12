@@ -7,7 +7,7 @@ import { Tabs } from '@ds/composites/Tabs/Tabs';
 import {
   reservations,
   getTripSummary,
-  statusPastLabel,
+  getStatusBadgeSpec,
   type Reservation,
 } from '../data/reservations';
 import { formatPassengers } from '../data/trains';
@@ -21,35 +21,27 @@ const countByType = (passengers: Reservation['passengers']) => {
 
 interface ReservationCardProps {
   reservation: Reservation;
-  showStatusBadge: boolean;
   onClick: () => void;
 }
 
 const ReservationCard = ({
   reservation: r,
-  showStatusBadge,
   onClick,
 }: ReservationCardProps) => {
   const { adults, children } = countByType(r.passengers);
   const unregisteredIc = r.passengers.filter((p) => !p.icCard).length;
   const trip = getTripSummary(r);
   const duration = calcDuration(trip.departure, trip.arrival);
+  const badge = getStatusBadgeSpec(r);
 
   return (
     <Card clickable onClick={onClick} padding="md">
       <div className="space-y-1">
-        {/* 過去タブのみ: status Badge */}
-        {showStatusBadge && (
-          <div className="flex items-center gap-2">
-            <Badge
-              variant={r.status === 'cancelled' ? 'error' : 'neutral'}
-              appearance="soft"
-              size="small"
-            >
-              {statusPastLabel(r.status)}
-            </Badge>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <Badge variant={badge.variant} appearance="soft" size="small">
+            {badge.label}
+          </Badge>
+        </div>
 
         {/* 主役: from → to */}
         <div className="flex items-center gap-1">
@@ -84,11 +76,9 @@ const ReservationCard = ({
 
 const ReservationList = ({
   items,
-  showStatusBadge,
   emptyMessage,
 }: {
   items: Reservation[];
-  showStatusBadge: boolean;
   emptyMessage: string;
 }) => {
   const navigate = useNavigate();
@@ -105,7 +95,6 @@ const ReservationList = ({
         <ReservationCard
           key={r.id}
           reservation={r}
-          showStatusBadge={showStatusBadge}
           onClick={() => navigate(`/reservations/${r.id}`)}
         />
       ))}
@@ -135,7 +124,6 @@ export const ReservationsPage = () => {
             content: (
               <ReservationList
                 items={upcoming}
-                showStatusBadge={false}
                 emptyMessage="これからの予約はありません"
               />
             ),
@@ -146,7 +134,6 @@ export const ReservationsPage = () => {
             content: (
               <ReservationList
                 items={past}
-                showStatusBadge
                 emptyMessage="過去の予約はありません"
               />
             ),

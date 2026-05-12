@@ -459,48 +459,41 @@ export const ReservationDetailPage = () => {
           </Typography>
 
           <div className="divide-y divide-border-muted">
-            {reservation.passengers.map((passenger, index) => {
+            {reservation.passengers.map((passenger) => {
               const label = getPassengerLabel(reservation.passengers, passenger.id);
               const isEditing = editingPassengerId === passenger.id;
 
               return (
                 <div key={passenger.id} className="py-3 first:pt-0 last:pb-0">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Typography variant="label" as="span">{label}</Typography>
-                      {index === 0 && (
-                        <Typography variant="caption" color="muted" as="span" className="ml-2">（予約者）</Typography>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {passenger.icCard ? (
-                        <>
-                          <Typography variant="body-sm">{formatICCard(passenger.icCard)}</Typography>
-                          {isUpcoming && (
-                            <Button
-                              variant="tertiary"
-                              size="small"
-                              onClick={() => setEditingPassengerId(isEditing ? null : passenger.id)}
-                            >
-                              {isEditing ? 'キャンセル' : '変更'}
-                            </Button>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <Badge variant="warning" appearance="soft" size="small">未登録</Badge>
-                          {isUpcoming && (
-                            <Button
-                              variant="secondary"
-                              size="small"
-                              onClick={() => setEditingPassengerId(isEditing ? null : passenger.id)}
-                            >
-                              {isEditing ? 'キャンセル' : '登録する'}
-                            </Button>
-                          )}
-                        </>
-                      )}
-                    </div>
+                  <Typography variant="label" as="p">{label}</Typography>
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    {passenger.icCard ? (
+                      <>
+                        <Typography variant="body-sm">{formatICCard(passenger.icCard)}</Typography>
+                        {isUpcoming && (
+                          <Button
+                            variant="tertiary"
+                            size="small"
+                            onClick={() => setEditingPassengerId(isEditing ? null : passenger.id)}
+                          >
+                            {isEditing ? 'キャンセル' : '変更'}
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Badge variant="warning" appearance="soft" size="small">未登録</Badge>
+                        {isUpcoming && (
+                          <Button
+                            variant="secondary"
+                            size="small"
+                            onClick={() => setEditingPassengerId(isEditing ? null : passenger.id)}
+                          >
+                            {isEditing ? 'キャンセル' : '登録する'}
+                          </Button>
+                        )}
+                      </>
+                    )}
                   </div>
                   {isEditing && (
                     <div className="mt-3 flex gap-2 items-end">

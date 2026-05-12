@@ -94,22 +94,27 @@ export function calcTotalFare(unitPrice: number, adults: number, children: numbe
   return unitPrice * adults + Math.round(unitPrice * CHILD_FARE_RATE) * children;
 }
 
-/** 検索結果のモックデータを生成 */
+/** 検索結果のモックデータを生成。のぞみ（速達）・ひかり（準速達）・こだま（各停）の混在 */
 export function searchTrains(_from: string, _to: string): Train[] {
-  const base: { suffix: string; dep: string; arr: string; dur: string; price: number; seats: Record<string, SeatAvailability> }[] = [
-    { suffix: '1号', dep: '06:30', arr: '08:45', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'few', gran: 'available' } },
-    { suffix: '5号', dep: '07:00', arr: '09:20', dur: '2時間20分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available', gran: 'few' } },
-    { suffix: '11号', dep: '08:00', arr: '10:12', dur: '2時間12分', price: 13320, seats: { unreserved: 'few', reserved: 'few', green: 'available', gran: 'available' } },
-    { suffix: '23号', dep: '09:30', arr: '11:45', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'sold-out', gran: 'sold-out' } },
-    { suffix: '37号', dep: '11:00', arr: '13:18', dur: '2時間18分', price: 13320, seats: { unreserved: 'available', reserved: 'few', green: 'available', gran: 'few' } },
-    { suffix: '45号', dep: '12:30', arr: '14:42', dur: '2時間12分', price: 13320, seats: { unreserved: 'few', reserved: 'few', green: 'sold-out', gran: 'available' } },
-    { suffix: '59号', dep: '14:00', arr: '16:20', dur: '2時間20分', price: 13320, seats: { unreserved: 'sold-out', reserved: 'sold-out', green: 'sold-out', gran: 'sold-out' } },
-    { suffix: '67号', dep: '16:00', arr: '18:15', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available', gran: 'available' } },
+  const base: { name: string; dep: string; arr: string; dur: string; price: number; seats: Record<string, SeatAvailability> }[] = [
+    { name: 'こだま703号', dep: '06:00', arr: '10:00', dur: '4時間00分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available', gran: 'sold-out' } },
+    { name: 'のぞみ1号', dep: '06:30', arr: '08:45', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'few', gran: 'available' } },
+    { name: 'ひかり503号', dep: '07:00', arr: '10:08', dur: '3時間08分', price: 13320, seats: { unreserved: 'available', reserved: 'few', green: 'available', gran: 'sold-out' } },
+    { name: 'のぞみ5号', dep: '07:00', arr: '09:20', dur: '2時間20分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available', gran: 'few' } },
+    { name: 'のぞみ11号', dep: '08:00', arr: '10:12', dur: '2時間12分', price: 13320, seats: { unreserved: 'few', reserved: 'few', green: 'available', gran: 'available' } },
+    { name: 'こだま711号', dep: '08:30', arr: '12:35', dur: '4時間05分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'few', gran: 'sold-out' } },
+    { name: 'ひかり509号', dep: '09:00', arr: '12:10', dur: '3時間10分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available', gran: 'sold-out' } },
+    { name: 'のぞみ23号', dep: '09:30', arr: '11:45', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'sold-out', gran: 'sold-out' } },
+    { name: 'こだま719号', dep: '10:30', arr: '14:35', dur: '4時間05分', price: 13320, seats: { unreserved: 'few', reserved: 'available', green: 'available', gran: 'sold-out' } },
+    { name: 'のぞみ37号', dep: '11:00', arr: '13:18', dur: '2時間18分', price: 13320, seats: { unreserved: 'available', reserved: 'few', green: 'available', gran: 'few' } },
+    { name: 'のぞみ45号', dep: '12:30', arr: '14:42', dur: '2時間12分', price: 13320, seats: { unreserved: 'few', reserved: 'few', green: 'sold-out', gran: 'available' } },
+    { name: 'のぞみ59号', dep: '14:00', arr: '16:20', dur: '2時間20分', price: 13320, seats: { unreserved: 'sold-out', reserved: 'sold-out', green: 'sold-out', gran: 'sold-out' } },
+    { name: 'のぞみ67号', dep: '16:00', arr: '18:15', dur: '2時間15分', price: 13320, seats: { unreserved: 'available', reserved: 'available', green: 'available', gran: 'available' } },
   ];
 
   return base.map((t, i) => ({
     id: `train-${i}`,
-    name: `のぞみ${t.suffix}`,
+    name: t.name,
     departure: t.dep,
     arrival: t.arr,
     duration: t.dur,

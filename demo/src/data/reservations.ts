@@ -45,6 +45,8 @@ export interface Payment {
 
 export interface Reservation {
   id: string;
+  /** 予約を確定した日時（ISO 8601）。表示・履歴で使う */
+  bookedAt: string;
   passengers: Passenger[];
   legs: Leg[];
   seatAssignments: SeatAssignment[];
@@ -53,16 +55,42 @@ export interface Reservation {
   status: 'upcoming' | 'completed' | 'cancelled';
 }
 
-/** 過去タブで使う status ラベル */
-export const statusPastLabel = (status: Reservation['status']): string => {
-  switch (status) {
-    case 'completed': return '乗車済み';
-    case 'cancelled': return 'キャンセル済み';
-    case 'upcoming': return ''; // 過去タブには出ない
+/** upcoming 予約の乗車フェーズ */
+export type UpcomingPhase = 'pre-boarding' | 'on-board';
+
+export const getUpcomingPhase = (reservation: Reservation, now: Date = new Date()): UpcomingPhase => {
+  const first = reservation.legs[0];
+  const last = reservation.legs[reservation.legs.length - 1];
+  const departureAt = new Date(`${first.date}T${first.departure}:00`);
+  const arrivalAt = new Date(`${last.date}T${last.arrival}:00`);
+  if (now >= departureAt && now < arrivalAt) return 'on-board';
+  return 'pre-boarding';
+};
+
+/** 表示用 Badge 仕様（ラベル + variant）を返す。upcoming はリアルタイムで乗車前/乗車中を判定。 */
+export interface StatusBadgeSpec {
+  label: string;
+  variant: 'primary' | 'info' | 'neutral' | 'error';
+}
+
+export const getStatusBadgeSpec = (reservation: Reservation, now: Date = new Date()): StatusBadgeSpec => {
+  if (reservation.status === 'upcoming') {
+    const phase = getUpcomingPhase(reservation, now);
+    return phase === 'on-board'
+      ? { label: '乗車中', variant: 'info' }
+      : { label: '乗車前', variant: 'primary' };
   }
+  if (reservation.status === 'completed') return { label: '乗車済み', variant: 'neutral' };
+  return { label: 'キャンセル済み', variant: 'error' };
 };
 
 // ---------- helpers ----------
+
+export const paymentMethodLabel = (method: Payment['method']): string => {
+  switch (method) {
+    case 'card': return 'クレジットカード';
+  }
+};
 
 export const brandLabel = (brand: Payment['brand']): string => {
   switch (brand) {
@@ -143,6 +171,7 @@ export const getTripSummary = (reservation: Reservation): TripSummary => {
 export const reservations: Reservation[] = [
   {
     id: 'RD-001',
+    bookedAt: '2026-04-22T09:15:00',
     passengers: [
       { id: 'P-001', type: 'adult', icCard: { type: 'suica', maskedNumber: '****1234' } },
       { id: 'P-002', type: 'adult' },
@@ -171,6 +200,7 @@ export const reservations: Reservation[] = [
   },
   {
     id: 'RD-002',
+    bookedAt: '2026-04-28T20:03:00',
     passengers: [
       { id: 'P-001', type: 'adult', icCard: { type: 'pasmo', maskedNumber: '****5678' } },
       { id: 'P-002', type: 'adult', icCard: { type: 'suica', maskedNumber: '****9012' } },
@@ -197,6 +227,7 @@ export const reservations: Reservation[] = [
   },
   {
     id: 'RD-004',
+    bookedAt: '2026-05-01T22:30:00',
     passengers: [
       { id: 'P-001', type: 'adult', icCard: { type: 'suica', maskedNumber: '****1234' } },
       { id: 'P-002', type: 'adult', icCard: { type: 'pasmo', maskedNumber: '****5678' } },
@@ -238,6 +269,7 @@ export const reservations: Reservation[] = [
   },
   {
     id: 'RD-003',
+    bookedAt: '2026-03-02T11:48:00',
     passengers: [
       { id: 'P-001', type: 'adult', icCard: { type: 'suica', maskedNumber: '****1234' } },
     ],
@@ -260,6 +292,7 @@ export const reservations: Reservation[] = [
   },
   {
     id: 'RD-005',
+    bookedAt: '2026-04-05T08:22:00',
     passengers: [
       { id: 'P-001', type: 'adult', icCard: { type: 'icoca', maskedNumber: '****0099' } },
       { id: 'P-002', type: 'adult' },

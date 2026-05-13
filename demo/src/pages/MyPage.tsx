@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Card } from '@ds/composites/Card/Card';
 import { Badge } from '@ds/composites/Badge/Badge';
+import { Avatar } from '@ds/composites/Avatar/Avatar';
 import { Icon } from '@ds/primitives/Icon';
 
 export const MyPage = () => {
@@ -17,9 +18,7 @@ export const MyPage = () => {
     <div className="max-w-4xl mx-auto py-8">
       {/* Profile header */}
       <div className="flex items-start gap-4 mb-8">
-        <div className="w-16 h-16 rounded-full bg-surface-primary flex items-center justify-center text-onSurface-inverse text-2xl font-semibold">
-          {user.name.charAt(0)}
-        </div>
+        <Avatar name={user.name} size="lg" />
         <div className="flex-1">
           <Typography variant="h3" as="h1">{user.name}</Typography>
           <Typography variant="body-sm" color="muted">{user.email}</Typography>

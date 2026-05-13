@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Typography } from '@ds/primitives/Typography/Typography';
 import { Card } from '@ds/composites/Card/Card';
 import { Badge } from '@ds/composites/Badge/Badge';
 import { Icon } from '@ds/primitives/Icon';
+import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
 
 const ARTICLES = [
   { id: '1', title: '京都 春の桜名所 5 選', excerpt: '春の京都を満喫する観光ルート。新幹線でのアクセスも詳しく紹介。', category: '観光', date: '2026-04-10', readTime: '5 分' },
@@ -12,9 +14,19 @@ const ARTICLES = [
   { id: '5', title: '初めての新幹線予約 完全ガイド', excerpt: '駅・列車・座席の選び方から決済までを丁寧に解説。', category: '使い方', date: '2026-03-15', readTime: '10 分' },
 ];
 
-const CATEGORIES = ['すべて', '観光', '使い方', '会員', 'お知らせ'];
+type Category = 'すべて' | '観光' | '使い方' | '会員' | 'お知らせ';
+const CATEGORIES: { value: Category; label: string }[] = [
+  { value: 'すべて', label: 'すべて' },
+  { value: '観光', label: '観光' },
+  { value: '使い方', label: '使い方' },
+  { value: '会員', label: '会員' },
+  { value: 'お知らせ', label: 'お知らせ' },
+];
 
 export const ArticlesPage = () => {
+  const [category, setCategory] = useState<Category>('すべて');
+  const filtered = category === 'すべて' ? ARTICLES : ARTICLES.filter((a) => a.category === category);
+
   return (
     <div className="max-w-5xl mx-auto py-8">
       <Typography variant="h2" as="h1">記事一覧</Typography>
@@ -23,26 +35,18 @@ export const ArticlesPage = () => {
       </Typography>
 
       {/* カテゴリ */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {CATEGORIES.map((cat, i) => (
-          <button
-            key={cat}
-            type="button"
-            className={[
-              'px-4 py-1.5 rounded-xs text-sm font-medium transition-colors',
-              i === 0
-                ? 'bg-surface-primary text-onSurface-inverse'
-                : 'bg-surface border border-border-muted text-onSurface hover:border-border-strong',
-            ].join(' ')}
-          >
-            {cat}
-          </button>
-        ))}
+      <div className="mb-6">
+        <SegmentedControl<Category>
+          items={CATEGORIES}
+          value={category}
+          onChange={setCategory}
+          aria-label="記事カテゴリ"
+        />
       </div>
 
       {/* 記事グリッド */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {ARTICLES.map((article) => (
+        {filtered.map((article) => (
           <Link key={article.id} to={`/articles/${article.id}`}>
             <Card variant="outlined" clickable>
               <div className="aspect-video bg-surface-skeleton" />

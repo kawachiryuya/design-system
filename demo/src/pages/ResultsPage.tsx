@@ -10,6 +10,7 @@ import { NumberInput } from '@ds/composites/NumberInput/NumberInput';
 import { Select } from '@ds/composites/Select/Select';
 import { Checkbox } from '@ds/composites/Checkbox/Checkbox';
 import { Radio } from '@ds/composites/Radio/Radio';
+import { FilterChip } from '@ds/composites/FilterChip/FilterChip';
 import { searchTrains, seatClasses, formatPassengers, calcTotalFare, type Train, type SeatAvailability } from '../data/trains';
 import { stations } from '../data/stations';
 import { formatDate } from '../utils/format';
@@ -164,15 +165,6 @@ export const ResultsPage = () => {
     navigate(`/seat?trainId=${train.id}&from=${from}&to=${to}&date=${date}&adults=${adults}&children=${children}`);
   };
 
-  // chip スタイル
-  const chipClass = (active: boolean) =>
-    [
-      'inline-flex items-center gap-1 px-3 h-9 rounded-full border text-sm font-medium transition-colors whitespace-nowrap',
-      active
-        ? 'border-border-primary bg-surface-secondary text-onSurface-primary'
-        : 'border-border-default bg-surface text-onSurface hover:border-border-strong',
-    ].join(' ');
-
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6 xl:gap-8">
       {/* 検索条件: デスクトップ */}
@@ -203,25 +195,29 @@ export const ResultsPage = () => {
       <div className="col-span-12 lg:col-span-8 lg:order-1">
         {/* 1 行フィルターバー: チューナー（一括）+ 並び順 + 種別 + 満席を非表示 */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 mb-2 items-center">
-          <button
-            type="button"
-            className={`${chipClass(false)} !px-2`}
+          <FilterChip
+            iconLeft={<Icon name="tune" size="sm" color="inherit" />}
             onClick={openAllFilters}
-            aria-label="すべての条件・絞り込み"
+            aria-label="すべての条件で絞り込み"
+            className="!px-2"
+          />
+          <FilterChip
+            iconRight={<Icon name="expand_more" size="sm" color="inherit" />}
+            active={sortBy !== 'departure'}
+            onClick={() => setOpenModal('sort')}
           >
-            <Icon name="tune" size="sm" color="inherit" />
-          </button>
-          <button type="button" className={chipClass(sortBy !== 'departure')} onClick={() => setOpenModal('sort')}>
-            <span>並び順: {sortBy === 'departure' ? '出発時刻順' : '到着時刻順'}</span>
-            <Icon name="expand_more" size="sm" color="inherit" />
-          </button>
-          <button type="button" className={chipClass(trainType !== 'all')} onClick={() => setOpenModal('type')}>
-            <span>種別: {trainType === 'all' ? 'すべて' : trainType}</span>
-            <Icon name="expand_more" size="sm" color="inherit" />
-          </button>
-          <button type="button" className={chipClass(hideSoldOut)} onClick={() => setHideSoldOut(!hideSoldOut)}>
-            <span>満席を非表示</span>
-          </button>
+            並び順: {sortBy === 'departure' ? '出発時刻順' : '到着時刻順'}
+          </FilterChip>
+          <FilterChip
+            iconRight={<Icon name="expand_more" size="sm" color="inherit" />}
+            active={trainType !== 'all'}
+            onClick={() => setOpenModal('type')}
+          >
+            種別: {trainType === 'all' ? 'すべて' : trainType}
+          </FilterChip>
+          <FilterChip active={hideSoldOut} onClick={() => setHideSoldOut(!hideSoldOut)}>
+            満席を非表示
+          </FilterChip>
         </div>
 
         {/* 検索結果件数 */}

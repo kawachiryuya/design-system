@@ -62,9 +62,9 @@ export const SeatPage = () => {
           </div>
         </Card>
 
-        <Typography variant="h5" as="h2" className="mb-4">座席クラスを選択</Typography>
+        <Typography variant="h5" as="h2" id="seat-class-label" className="mb-4">座席クラスを選択</Typography>
 
-        <div className="space-y-3">
+        <div role="radiogroup" aria-labelledby="seat-class-label" className="space-y-3">
           {seatClasses.map((cls) => {
             const isSelected = cls.id === selectedClass;
             const price = Math.round(basePrice * cls.priceMultiplier);
@@ -75,6 +75,9 @@ export const SeatPage = () => {
               <button
                 key={cls.id}
                 type="button"
+                role="radio"
+                aria-checked={isSelected}
+                aria-disabled={isSoldOut}
                 onClick={() => !isSoldOut && setSelectedClass(cls.id)}
                 disabled={isSoldOut}
                 className={`w-full text-left rounded-md border-2 p-4 transition-all ${

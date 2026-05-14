@@ -1,6 +1,6 @@
 {
   "name": "@kawachiryuya/design-system",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AI 活用 SSOT デザインシステム — トークン / コンポーネント / 原則ドキュメント",
   "type": "module",
   "license": "UNLICENSED",

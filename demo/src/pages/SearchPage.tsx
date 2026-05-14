@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@ds/primitives/Button/Button';
-import { Icon } from '@ds/primitives/Icon';
-import { Input } from '@ds/primitives/Input/Input';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Divider } from '@ds/primitives/Divider/Divider';
-import { NumberInput } from '@ds/composites/NumberInput/NumberInput';
-import { Select } from '@ds/composites/Select/Select';
-import { Card } from '@ds/composites/Card/Card';
+import { Button } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Divider } from '@kawachiryuya/design-system';
+import { NumberInput } from '@kawachiryuya/design-system';
+import { Select } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
 import { stations } from '../data/stations';
 import { seatClasses, formatPassengers, calcTotalFare } from '../data/trains';
 

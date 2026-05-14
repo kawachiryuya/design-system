@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@ds/primitives/Button/Button';
-import { Input } from '@ds/primitives/Input/Input';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Checkbox } from '@ds/composites/Checkbox/Checkbox';
+import { Button } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Checkbox } from '@kawachiryuya/design-system';
 
 export const SignupPage = () => {
   const navigate = useNavigate();

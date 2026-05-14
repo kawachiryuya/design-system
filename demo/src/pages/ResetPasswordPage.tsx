@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@ds/primitives/Button/Button';
-import { Input } from '@ds/primitives/Input/Input';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Alert } from '@ds/composites/Alert/Alert';
+import { Button } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Alert } from '@kawachiryuya/design-system';
 
 export const ResetPasswordPage = () => {
   const [email, setEmail] = useState('');

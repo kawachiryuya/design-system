@@ -1,6 +1,6 @@
-/* CSS variables auto-generated from tokens/source/ via Style Dictionary. */
-/* Edit tokens/source/*.json and run `npm run tokens:build` from repo root. */
-@import "../../tokens/build/variables.css";
+/* CSS variables from design-system (npm package). */
+/* Edit tokens in design-system repo and run `npm run build` there. */
+@import "@kawachiryuya/design-system/tokens/variables.css";
 
 @tailwind base;
 

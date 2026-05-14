@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Icon } from '@ds/primitives/Icon';
+import { Icon } from '@kawachiryuya/design-system';
 
 const navItems = [
   { to: '/', icon: 'home' as const, label: 'ホーム' },

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Icon } from '@ds/primitives/Icon';
+import { Icon } from '@kawachiryuya/design-system';
 
 type NavItem = { to: string; icon: string; label: string };
 

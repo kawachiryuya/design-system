@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Card } from '@ds/composites/Card/Card';
-import { Icon } from '@ds/primitives/Icon';
+import { Typography } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
 
 export const HelpPage = () => {
   const categories = [

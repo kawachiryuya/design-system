@@ -1,11 +1,11 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useState, useMemo } from 'react';
-import { Button } from '@ds/primitives/Button/Button';
-import { Icon } from '@ds/primitives/Icon';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Card } from '@ds/composites/Card/Card';
-import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
-import { ToggleButton } from '@ds/composites/ToggleButton/ToggleButton';
+import { Button } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { SegmentedControl } from '@kawachiryuya/design-system';
+import { ToggleButton } from '@kawachiryuya/design-system';
 import { generateSeatMap, carNumbersForClass, seatClasses, searchTrains, formatPassengers } from '../data/trains';
 import { formatDate } from '../utils/format';
 

@@ -1,14 +1,14 @@
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Button } from '@ds/primitives/Button/Button';
-import { Icon } from '@ds/primitives/Icon';
-import { Input } from '@ds/primitives/Input/Input';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Badge } from '@ds/composites/Badge/Badge';
-import { Card } from '@ds/composites/Card/Card';
-import { NumberInput } from '@ds/composites/NumberInput/NumberInput';
-import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
-import { ToggleButton } from '@ds/composites/ToggleButton/ToggleButton';
+import { Button } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Badge } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { NumberInput } from '@kawachiryuya/design-system';
+import { SegmentedControl } from '@kawachiryuya/design-system';
+import { ToggleButton } from '@kawachiryuya/design-system';
 import { generateSeatMap, carNumbersForClass } from '../data/trains';
 import {
   getReservation,

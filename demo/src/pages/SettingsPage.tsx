@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Input } from '@ds/primitives/Input/Input';
-import { Button } from '@ds/primitives/Button/Button';
-import { Tabs } from '@ds/composites/Tabs/Tabs';
-import { Switch } from '@ds/composites/Switch/Switch';
-import { Card } from '@ds/composites/Card/Card';
-import { Divider } from '@ds/primitives/Divider/Divider';
+import { Typography } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Button } from '@kawachiryuya/design-system';
+import { Tabs } from '@kawachiryuya/design-system';
+import { Switch } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { Divider } from '@kawachiryuya/design-system';
 
 export const SettingsPage = () => {
   const [name, setName] = useState('山田 太郎');

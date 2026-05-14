@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '@ds/primitives/Button/Button';
-import { Icon } from '@ds/primitives/Icon';
+import { Button } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
 
 const pageTitles: Record<string, string> = {
   '/results': '列車一覧',

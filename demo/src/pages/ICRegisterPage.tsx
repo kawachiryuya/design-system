@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button } from '@ds/primitives/Button/Button';
-import { Input } from '@ds/primitives/Input/Input';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Icon } from '@ds/primitives/Icon';
-import { Card } from '@ds/composites/Card/Card';
-import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
-import { Alert } from '@ds/composites/Alert/Alert';
-import { Badge } from '@ds/composites/Badge/Badge';
+import { Button } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { SegmentedControl } from '@kawachiryuya/design-system';
+import { Alert } from '@kawachiryuya/design-system';
+import { Badge } from '@kawachiryuya/design-system';
 import { getReservation, formatICCard, getPassengerLabel } from '../data/reservations';
 
 type Mode = 'register' | 'later';

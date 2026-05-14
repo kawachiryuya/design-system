@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Card } from '@ds/composites/Card/Card';
-import { Badge } from '@ds/composites/Badge/Badge';
-import { Avatar } from '@ds/composites/Avatar/Avatar';
-import { Icon } from '@ds/primitives/Icon';
+import { Typography } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { Badge } from '@kawachiryuya/design-system';
+import { Avatar } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
 
 export const MyPage = () => {
   // mock data

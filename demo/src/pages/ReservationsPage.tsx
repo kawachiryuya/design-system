@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@ds/primitives/Icon';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Badge } from '@ds/composites/Badge/Badge';
-import { Card } from '@ds/composites/Card/Card';
-import { Tabs } from '@ds/composites/Tabs/Tabs';
+import { Icon } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Badge } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { Tabs } from '@kawachiryuya/design-system';
 import {
   reservations,
   getTripSummary,

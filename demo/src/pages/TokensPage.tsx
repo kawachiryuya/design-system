@@ -8,7 +8,7 @@
  * 各値はソース `tokens/source/*.json` から `npm run tokens:build` で自動生成。
  */
 import { COLORS, SPACING, TYPOGRAPHY, RADIUS, SHADOWS } from '@kawachiryuya/design-system/tokens';
-import { Typography } from '@ds/primitives/Typography/Typography';
+import { Typography } from '@kawachiryuya/design-system';
 
 const PRIMITIVE_PALETTES = ['primary', 'neutral', 'success', 'error', 'warning', 'info'] as const;
 const SEMANTIC_GROUPS = ['surface', 'on', 'border', 'state'] as const;

@@ -1,4 +1,4 @@
-import { Typography } from '@ds/primitives/Typography/Typography';
+import { Typography } from '@kawachiryuya/design-system';
 
 export const Footer = () => (
   <footer className="border-t border-border-muted mt-auto">

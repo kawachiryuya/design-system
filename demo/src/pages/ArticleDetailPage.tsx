@@ -1,9 +1,9 @@
 import { Link, useParams } from 'react-router-dom';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Badge } from '@ds/composites/Badge/Badge';
-import { Card } from '@ds/composites/Card/Card';
-import { Icon } from '@ds/primitives/Icon';
-import { Button } from '@ds/primitives/Button/Button';
+import { Typography } from '@kawachiryuya/design-system';
+import { Badge } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { Button } from '@kawachiryuya/design-system';
 
 export const ArticleDetailPage = () => {
   const { id } = useParams();

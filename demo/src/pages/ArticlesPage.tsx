@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Card } from '@ds/composites/Card/Card';
-import { Badge } from '@ds/composites/Badge/Badge';
-import { Icon } from '@ds/primitives/Icon';
-import { SegmentedControl } from '@ds/composites/SegmentedControl/SegmentedControl';
+import { Typography } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { Badge } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { SegmentedControl } from '@kawachiryuya/design-system';
 
 const ARTICLES = [
   { id: '1', title: '京都 春の桜名所 5 選', excerpt: '春の京都を満喫する観光ルート。新幹線でのアクセスも詳しく紹介。', category: '観光', date: '2026-04-10', readTime: '5 分' },

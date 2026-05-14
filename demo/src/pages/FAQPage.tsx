@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Icon } from '@ds/primitives/Icon';
-import { Input } from '@ds/primitives/Input/Input';
-import { Accordion, type AccordionItem } from '@ds/composites/Accordion/Accordion';
+import { Typography } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Accordion, type AccordionItem } from '@kawachiryuya/design-system';
 
 const FAQ_ITEMS = [
   { id: 'q1', q: '予約のキャンセルはいつまで可能ですか？', a: '出発時刻の 1 時間前までキャンセル可能です。それ以降はキャンセル料が発生する場合があります。' },

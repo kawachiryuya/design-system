@@ -1,17 +1,17 @@
 /**
  * Tailwind config for demo (rail-demo) — design-system 検証サイト
  *
- * Theme values inherit from tokens/preset.cjs (tokens/build/tokens.json).
- * 設計トークンを変更したら repo root で `npm run tokens:build` を実行。
+ * design-system は npm package として参照（@kawachiryuya/design-system）。
+ * 設計トークンを変更したら repo root で `npm run build` を実行して dist を更新。
  */
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  presets: [require('../tokens/preset.cjs')],
+  presets: [require('@kawachiryuya/design-system/tokens/preset')],
   content: [
     './src/**/*.{html,js,jsx,ts,tsx}',
     './index.html',
-    '../components/**/*.{js,jsx,ts,tsx}',
+    './node_modules/@kawachiryuya/design-system/dist/**/*.js',
   ],
   plugins: [],
 };

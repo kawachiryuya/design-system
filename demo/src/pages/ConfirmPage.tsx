@@ -1,14 +1,14 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Button } from '@ds/primitives/Button/Button';
-import { Icon } from '@ds/primitives/Icon';
-import { Input } from '@ds/primitives/Input/Input';
-import { Typography } from '@ds/primitives/Typography/Typography';
-import { Alert } from '@ds/composites/Alert/Alert';
-import { Badge } from '@ds/composites/Badge/Badge';
-import { Card } from '@ds/composites/Card/Card';
-import { Checkbox } from '@ds/composites/Checkbox/Checkbox';
-import { Radio } from '@ds/composites/Radio/Radio';
+import { Button } from '@kawachiryuya/design-system';
+import { Icon } from '@kawachiryuya/design-system';
+import { Input } from '@kawachiryuya/design-system';
+import { Typography } from '@kawachiryuya/design-system';
+import { Alert } from '@kawachiryuya/design-system';
+import { Badge } from '@kawachiryuya/design-system';
+import { Card } from '@kawachiryuya/design-system';
+import { Checkbox } from '@kawachiryuya/design-system';
+import { Radio } from '@kawachiryuya/design-system';
 import { seatClasses, searchTrains, formatPassengers } from '../data/trains';
 import { formatDate } from '../utils/format';
 

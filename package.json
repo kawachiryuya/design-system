@@ -57,8 +57,7 @@
     "prebuild-storybook": "npm run tokens:build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
-    "build:gunmaas": "cd gunmaas && npm install && npm run build",
-    "build:demo": "cd demo && npm install && npm run build"
+    "build:gunmaas": "cd gunmaas && npm install && npm run build"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^10.3.3",

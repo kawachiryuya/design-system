@@ -1,6 +1,6 @@
 {
   "name": "@kawachiryuya/design-system",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "AI 活用 SSOT デザインシステム — トークン / コンポーネント / 原則ドキュメント",
   "type": "module",
   "license": "UNLICENSED",
@@ -47,7 +47,6 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "scripts": {
-    "postinstall": "npm run tokens:build",
     "tokens:build": "style-dictionary build --config style-dictionary.config.js",
     "tokens:watch": "style-dictionary build --config style-dictionary.config.js --watch",
     "tokens:typecheck": "tsc -p tsconfig.tokens.json",

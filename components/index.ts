@@ -9,7 +9,7 @@
  *   import type { ButtonProps } from '@kawachiryuya/design-system/components';
  *
  * @see components/primitives/   — 単一 HTML 要素ラッパー（11 個）
- * @see components/composites/   — 複数 Primitive の組合せ or 状態あり（17 個）
+ * @see components/composites/   — 複数 Primitive の組合せ or 状態あり（19 個）
  */
 
 // ── Primitives (11) ──
@@ -25,7 +25,8 @@ export * from './primitives/Spinner';
 export * from './primitives/Textarea';
 export * from './primitives/Typography';
 
-// ── Composites (17) ──
+// ── Composites (19) ──
+export * from './composites/Accordion';
 export * from './composites/Alert';
 export * from './composites/Avatar';
 export * from './composites/Badge';
@@ -33,6 +34,7 @@ export * from './composites/Breadcrumb';
 export * from './composites/Card';
 export * from './composites/Checkbox';
 export * from './composites/EmptyState';
+export * from './composites/FilterChip';
 export * from './composites/NumberInput';
 export * from './composites/Pagination';
 export * from './composites/ProgressBar';

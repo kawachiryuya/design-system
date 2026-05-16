@@ -104,6 +104,28 @@ import { SaveIcon } from '@/icons';
 
 参照: [principles/interaction/button/placement.md](../../principles/interaction/button/placement.md)
 
+### アクションボタン群の幅統一
+
+リスト行のアクションや、状態でラベルがトグル切り替わるボタンが並ぶ場合、`min-width` で最小幅を揃えることでレイアウトのブレを防ぐ。
+
+```tsx
+// 例: 「変更」(2文字) ⇄ 「キャンセル」(5文字) で文言がトグルするケース
+<Button variant="secondary" size="small" className="min-w-[80px]">
+  {isEditing ? 'キャンセル' : '変更'}
+</Button>
+```
+
+**目安**:
+- `size="small"` の行アクション: `min-w-[80px]`
+- `size="medium"` のフォームアクション: `min-w-[96px]`
+- 文言の最長想定（例: 「キャンセル」5文字）を基準に決める
+
+**いつ使うか**:
+- 同一行に異なる文言のボタンが複数並ぶ（例: 各 passenger ごとに「変更」「登録する」「未登録」など状態が混在するリスト）
+- 単一ボタンでも、操作中に文言が変わる（例: 「保存」⇄「保存中…」、「登録する」⇄「キャンセル」）
+
+`fullWidth` を使えるレイアウト（モーダル下部のアクションなど）では `fullWidth` を優先する。`min-width` は inline 配置に留めるアクション向け。
+
 ### インタラクティブ状態
 - hover: 色が明るくなる
 - active: 色が暗くなる

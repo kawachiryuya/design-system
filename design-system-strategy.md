@@ -175,12 +175,12 @@ if (featureFlag.newDesign) {
 |---|---|
 | **Parts** | [`components/primitives/`](./components/primitives/) (Button, Input, Icon, Typography 等 11 個) |
 | **Blocks** | [`components/composites/`](./components/composites/) (Alert, Card, SearchBar, Tabs 等 19 個) |
-| **common (汎用)** | リポジトリルート (`components/`, `tokens/`) |
-| **[product-name] (プロダクト固有)** | [`gunmaas/`](./gunmaas/) (鉄道予約サンプル) / [`lp/`](./lp/) (ランディングページ) |
+| **common (汎用)** | 本リポジトリ全体 (`components/`, `tokens/`, `principles/`) — npm パッケージ `@kawachiryuya/design-system` として配信 |
+| **[product-name] (プロダクト固有)** | 別リポジトリで管理 (本リポを npm 依存として参照)。例: `gunmaas` (鉄道予約) / LP は本リポから切り出し済み |
 | **グローバルトークン** | [`tokens/source/colors.json`](./tokens/source/colors.json) ほか primitive スケール |
 | **セマンティックトークン** | [`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) (WHERE × WHAT 構造) |
 | **検証サイト (Storybook)** | `npm run storybook` / https://design-system-storybook-murex.vercel.app |
-| **検証サイト (アプリ内検証)** | [`demo/`](./demo/) は別リポ `rail-demo` に分離済み |
+| **検証サイト (アプリ内検証)** | 別リポ `rail-demo` (旧 `demo/` を分離) を使用 |
 
 ### 進捗状況
 
@@ -188,7 +188,7 @@ if (featureFlag.newDesign) {
 - Step 2 (Parts): 完了 (primitives 11 個)
 - Step 3 (Blocks): 完了 (composites 19 個)
 - Step 4 (レイアウト基礎): 未着手 — Layout 系コンポーネント (Grid, Stack, PageShell 等) は今後追加予定
-- Step 5 (プロダクト固有 Organism): `gunmaas/` で部分的に実装、エンジニア統合は未
+- Step 5 (プロダクト固有 Organism): 別リポジトリ (product 側) で実装する。本リポからは切り出し済み
 
 ### 命名について
 

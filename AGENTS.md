@@ -77,7 +77,7 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 
 ### 例外
 
-`gunmaas/`, `lp/` 等の **PJ ディレクトリ内** で、PJ ブランド固有の見栄え調整のために primitive スケールを extend する場合は OK (ただし semantic を上書きする方を推奨)。
+PJ 側 (本リポを依存として使う product 側) で、ブランド固有の見栄え調整のために primitive スケールを extend する場合は OK (ただし semantic を上書きする方を推奨)。
 
 ---
 
@@ -169,14 +169,14 @@ Composite (Blocks) → components/composites/ComponentName/
 1. design-system 本体を編集
 2. `npm run storybook` で http://localhost:6006 起動、該当コンポーネントを目視確認
 3. 必要なら `npm run build` で型エラーをチェック
-4. 影響範囲のプロダクト PJ (`gunmaas/`, `lp/`) のビルドが壊れないか確認
+4. 本リポを依存として使う product 側のビルドが壊れないか確認 (本リポを `npm link` または公開済みパッケージ経由で参照)
 
-検証用のリアルアプリは別リポジトリ [`rail-demo`](https://github.com/kawachiryuya/rail-demo) (旧 `demo/`) を使用。
+検証用のリアルアプリは別リポジトリで管理 (例: [`rail-demo`](https://github.com/kawachiryuya/rail-demo))。本リポは common (npm 化単位) のみを扱う。
 
 ---
 
 ## 8. 変更時に守ること
 
 - semantic 色を追加したら `tokens/build/variables.css` が自動生成されることを `npm run tokens:build` で確認
-- 既存 PJ (gunmaas/lp) のビルドが壊れないか `npm run build:gunmaas` 等で確認
+- 依存している product 側のビルドが壊れないか、本リポを `npm link` または公開バージョン経由で確認
 - 戦略レベルの変更 (Parts/Blocks 分類の変更、新カテゴリ追加等) は [`design-system-strategy.md`](./design-system-strategy.md) も同 PR で更新

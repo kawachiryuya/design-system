@@ -32,8 +32,6 @@ design-system/
 │   ├── preset.cjs     Tailwind preset
 │   └── index.ts       TS public API
 ├── principles/        コンポーネント実装時に参照する設計原則
-├── gunmaas/           プロダクト固有サンプル (鉄道予約)
-├── lp/                ランディングページ
 └── .storybook/        Storybook 設定
 ```
 

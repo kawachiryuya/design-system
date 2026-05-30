@@ -9,8 +9,6 @@
  *   const cta = COLORS.surface.primary;        // "#008965" (literal type)
  *   const gap = SPACING['4'];                   // "16px"
  *   const onText = COLORS.on.default;           // "#171717"
- *
- * @see docs/ai-roadmap.md §「Phase 1 / 施策 A」
  */
 
 export { TOKENS, type Tokens } from './build/tokens';

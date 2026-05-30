@@ -18,6 +18,7 @@ tokens/*.json
 
 # iCloud
 *.icloud
+.icloud-nosync
 
 # Editor
 .vscode/

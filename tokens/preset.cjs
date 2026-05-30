@@ -5,8 +5,6 @@
  * PJ 固有の追加は `theme.extend` に書く。
  *
  * 一次ソース: tokens/source/x.json → Style Dictionary → tokens/build/tokens.json
- * 詳細: docs/ai-roadmap.md §「Phase 1 / 施策 A」
- * 親 Issue: kawachiryuya/ai-management#32
  */
 
 const path = require('path');
@@ -17,8 +15,7 @@ try {
 } catch (e) {
   throw new Error(
     'Design tokens not built yet.\n' +
-    'Run `npm install` (which runs postinstall → tokens:build) at the design-system repo root.\n' +
-    'Or run `npm run tokens:build` manually.\n' +
+    'Run `npm run tokens:build` at the design-system repo root.\n' +
     `Looking for: ${path.join(__dirname, 'build/tokens.json')}`
   );
 }

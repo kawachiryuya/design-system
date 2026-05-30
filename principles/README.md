@@ -8,15 +8,15 @@
 
 | カテゴリ | ドキュメント | 概要 |
 |---|---|---|
-| **Foundation** | [accessibility.md](./Foundation/accessibility.md) | アクセシビリティ全般 (WCAG 準拠の前提) |
-| | [hierarchy.md](./Foundation/hierarchy.md) | 視覚的ヒエラルキー |
-| | [responsiveness.md](./Foundation/responsiveness.md) | モバイルファースト・ブレイクポイント |
-| **Color** | [semantic-colors.md](./Color/semantic-colors.md) | セマンティックカラー (WHERE × WHAT) |
-| **Typography** | [scale.md](./Typography/scale.md) | フォントサイズ・ウェイト・行間 |
-| **Layout** | [grid.md](./Layout/grid.md) | グリッドとブレイクポイント |
-| **Interaction** | [button.md](./Interaction/button.md) | ボタン優先度と配置 |
-| | [state.md](./Interaction/state.md) | hover / focus / active / loading / error |
-| **Patterns** | [forms.md](./Patterns/forms.md) | フォーム設計 |
+| **Foundation** | [accessibility.mdx](./Foundation/accessibility.mdx) | アクセシビリティ全般 (WCAG 準拠の前提) |
+| | [hierarchy.mdx](./Foundation/hierarchy.mdx) | 視覚的ヒエラルキー |
+| | [responsiveness.mdx](./Foundation/responsiveness.mdx) | モバイルファースト・ブレイクポイント |
+| **Color** | [semantic-colors.mdx](./Color/semantic-colors.mdx) | セマンティックカラー (WHERE × WHAT) |
+| **Typography** | [scale.mdx](./Typography/scale.mdx) | フォントサイズ・ウェイト・行間 |
+| **Layout** | [grid.mdx](./Layout/grid.mdx) | グリッドとブレイクポイント |
+| **Interaction** | [button.mdx](./Interaction/button.mdx) | ボタン優先度と配置 |
+| | [state.mdx](./Interaction/state.mdx) | hover / focus / active / loading / error |
+| **Patterns** | [forms.mdx](./Patterns/forms.mdx) | フォーム設計 |
 
 ## 編集方針
 

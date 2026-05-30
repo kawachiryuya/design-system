@@ -65,4 +65,4 @@
 | `error` | 失敗・エラー |
 | `warning` | 注意が必要な状態（ストレージ逼迫など） |
 
-参照: `principles/Color/semantic-colors.mdx`
+参照: `principles/Color/semantic-colors.md`

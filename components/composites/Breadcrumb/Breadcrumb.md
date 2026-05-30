@@ -75,7 +75,7 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 - `Tab`: リンク間のフォーカス移動
 - `Enter`: リンクの遷移
 
-参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
+参照: [principles/Foundation/accessibility/overview.md](../../principles/Foundation/accessibility/overview.md)
 
 ---
 

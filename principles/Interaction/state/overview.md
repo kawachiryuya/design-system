@@ -1,8 +1,10 @@
-import { Meta } from '@storybook/addon-docs/blocks';
-
-<Meta title="Principles/Interaction/State" />
-
 # 状態（States）概要
+
+## メタ情報
+- カテゴリ: インタラクション原則
+- 適用範囲: Atom〜Organism
+- ステータス: Approved
+- 最終更新: 2024-01-15
 
 ## 原則の定義
 
@@ -30,6 +32,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - **Focus**: キーボードフォーカス
 - **Active**: 押下中
 
+→ 詳細は [Interactive States](./interactive-states.md)
 
 ### 2. Status States（ステータス状態）
 
@@ -40,15 +43,40 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - **Error**: エラー
 - **Disabled**: 無効
 
+→ 詳細は [Status States](./status-states.md)
 
 ## 状態遷移
 
 状態間の遷移は滑らかで予測可能である必要がある。
 
+→ 詳細は [State Transitions](./state-transitions.md)
+
+## この章のドキュメント
+
+### [1. Interactive States](./interactive-states.md)
+hover, focus, active等のインタラクティブ状態
+
+### [2. Status States](./status-states.md)
+loading, error, success, disabled等のステータス状態
+
+### [3. State Transitions](./state-transitions.md)
+状態遷移のルールとアニメーション
+
+## 推奨読書順序
+
+1. 概要（このページ）
+2. interactive-states.md
+3. status-states.md
+4. state-transitions.md
 
 ## 関連原則
 
-- [Button Priority](?path=/docs/principles-interaction-button--docs)
-- [Color Meaning](?path=/docs/principles-color-semantic-colors--docs)
-- [Accessibility](?path=/docs/principles-foundation-accessibility--docs)
+- [Button Priority](../button/priority.md)
+- [Color Meaning](../../color/color-meaning.md)
+- [Accessibility](../../foundation/accessibility/overview.md)
 
+## バージョン履歴
+
+| 日付 | バージョン | 変更内容 | 変更理由 |
+|------|-----------|----------|----------|
+| 2024-01-15 | 1.0.0 | 初版作成 | states.mdから分離 |

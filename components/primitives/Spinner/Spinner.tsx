@@ -76,7 +76,7 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
     },
     ref
   ) => {
-    // principles/Typography/scale.mdx に準拠
+    // principles/Typography/scale.md に準拠
     const sizePx = {
       xs: 'w-3 h-3',   // 12px インライン（テキストと同じ高さ）
       sm: 'w-4 h-4',   // 16px インライン

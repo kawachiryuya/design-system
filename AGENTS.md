@@ -158,7 +158,7 @@ Composite (Blocks) → components/composites/ComponentName/
 - 最小タッチターゲット: 44x44px (WCAG 2.5.5 AAA)
 - セマンティック HTML: `<button>` / `<a>` / `<label>` を Primitive 内で適切に使用
 - aria 属性: 状態を持つコンポーネント (Tabs, Pagination, Switch 等) は aria-* を実装済み
-- 詳細は [`principles/Foundation/accessibility.mdx`](./principles/Foundation/accessibility.mdx) 参照
+- 詳細は [`principles/Foundation/accessibility/overview.md`](./principles/Foundation/accessibility/overview.md) 参照
 
 ---
 

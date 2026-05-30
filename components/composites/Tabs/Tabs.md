@@ -98,7 +98,7 @@ const [activeTab, setActiveTab] = useState('profile');
 - `End`: 最後のタブへ移動
 - アクティブタブのみ `tabIndex={0}`、他は `tabIndex={-1}`（ロービングタブインデックス）
 
-参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
+参照: [principles/Foundation/accessibility/overview.md](../../principles/Foundation/accessibility/overview.md)
 
 ---
 

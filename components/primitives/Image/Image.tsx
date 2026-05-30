@@ -41,7 +41,7 @@ export type ImageRounded = 'none' | 'sm' | 'md' | 'lg' | 'full';
  *   />
  *
  * @see principles/README.md
- * @see principles/Foundation/accessibility.mdx
+ * @see principles/Foundation/accessibility/overview.md
  */
 export interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   /** 画像 URL（必須）。 */

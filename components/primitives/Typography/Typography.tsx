@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * Typography のバリアント定義（視覚スタイル）
- * @see principles/Typography/scale.mdx
+ * @see principles/Typography/scale.md
  */
 export type TypographyVariant =
   | 'display'
@@ -73,7 +73,7 @@ export type TypographyElement =
  *     {longTitle}
  *   </Typography>
  *
- * @see principles/Typography/scale.mdx
+ * @see principles/Typography/scale.md
  */
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   /**

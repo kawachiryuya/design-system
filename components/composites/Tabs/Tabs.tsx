@@ -70,7 +70,7 @@ export interface TabItem {
  *   />
  *
  * @see principles/README.md
- * @see principles/Interaction/state.mdx
+ * @see principles/Interaction/state/overview.md
  */
 export interface TabsProps {
   /** タブ項目の配列。順序通りに表示される。 */

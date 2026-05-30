@@ -89,7 +89,7 @@ const [page, setPage] = useState(1);
 - `Tab`: ボタン間のフォーカス移動
 - `Enter` / `Space`: ページ選択
 
-参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
+参照: [principles/Foundation/accessibility/overview.md](../../principles/Foundation/accessibility/overview.md)
 
 ---
 

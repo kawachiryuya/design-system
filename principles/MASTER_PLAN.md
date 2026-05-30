@@ -1,0 +1,521 @@
+# デザインシステム原則ドキュメント マスタープラン
+
+## このドキュメントについて
+
+デザインシステムの原則ドキュメント全体の構造と、各ドキュメントの役割・関係性を可視化したマスタープランです。新しいドキュメントを作成する際、または既存ドキュメントを参照する際は、このプランを確認してください。
+
+**対象**: ドキュメント作成者、メンテナー  
+**最終更新**: 2026年2月22日
+
+**※ 初めての方は [README.md](./README.md) をご覧ください**
+
+---
+
+## 📊 現在の状態（2026年2月22日時点）
+
+### 完成済みドキュメント
+
+**Phase 1〜4 完了**: 62ファイル ✅
+
+```
+✅ foundation/ (10ファイル)
+   ├── accessibility/ (7ファイル)
+   ├── consistency.md
+   ├── hierarchy.md
+   └── responsiveness.md
+
+✅ layout/ (3ファイル)
+   ├── spacing.md
+   ├── grid.md
+   └── alignment.md
+
+✅ interaction/ (18ファイル)
+   ├── button/ (2ファイル)
+   ├── states/ (4ファイル)
+   ├── feedback/ (5ファイル)
+   └── gestures/ (5ファイル)
+
+✅ content/ (15ファイル)
+   ├── typography/ (4ファイル)
+   ├── iconography/ (4ファイル)
+   ├── imagery/ (4ファイル)
+   └── writing/ (3ファイル)
+
+✅ color/ (6ファイル)
+
+✅ motion/ (2ファイル)
+
+✅ patterns/ (4ファイル)
+
+✅ platform/ (6ファイル)
+   ├── web/ (3ファイル)
+   └── mobile/ (3ファイル)
+
+✅ README.md / MASTER_PLAN.md (2ファイル)
+```
+
+**進捗**: 実用的なデザインシステムとして完成。コンポーネント開発に即座に適用可能。
+
+---
+
+## 全体構造
+
+```
+principles/
+├── foundation/          # 基盤原則（すべての基礎）
+├── layout/              # レイアウト原則
+├── interaction/         # インタラクション原則
+├── content/             # コンテンツ原則
+├── color/               # カラー原則
+├── motion/              # モーション原則 ✅
+├── platform/            # プラットフォーム固有原則 ✅
+└── patterns/            # パターン原則（実装パターン）
+```
+
+---
+
+## 📊 カテゴリ別ドキュメント一覧
+
+### 🏗️ Foundation（基盤原則）- 10ファイル
+
+これらはすべての階層・カテゴリで適用される基礎的な原則です。
+
+#### Accessibility（アクセシビリティ）- 7ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **overview.md** | アクセシビリティとは、WCAG概要 | 150行 |
+| **keyboard-navigation.md** | キーボード操作、Tab順序、ショートカット | 150行 |
+| **screen-readers.md** | スクリーンリーダー、ARIA、セマンティックHTML | 180行 |
+| **color-contrast.md** | コントラスト比、WCAG AA/AAA基準 | 150行 |
+| **focus-management.md** | フォーカス管理、インジケーター、トラップ | 180行 |
+| **touch-targets.md** | タッチターゲットサイズ（44px×44px） | 150行 |
+| **testing.md** | アクセシビリティテスト、ツール、チェックリスト | 180行 |
+
+#### その他の基盤原則 - 3ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **consistency.md** | 一貫性の原則（4レベル：視覚/機能/言語/パターン） | 240行 |
+| **hierarchy.md** | 視覚的ヒエラルキー（5つの手段） | 290行 |
+| **responsiveness.md** | モバイルファースト・ブレークポイント | 270行 |
+
+---
+
+### 📐 Layout（レイアウト原則）- 3ファイル
+
+画面構成、余白、配置に関する原則です。
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **spacing.md** | 余白システム（8pxベース、役割別分類） | 350行 |
+| **grid.md** | グリッドシステム（12カラム、ブレークポイント） | 270行 |
+| **alignment.md** | 整列の原則（左/中央/右揃え、光学的整列） | 210行 |
+
+---
+
+### 🖱️ Interaction（インタラクション原則）- 18ファイル
+
+ユーザーとの対話に関する原則です。
+
+#### Button（ボタン）- 2ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **priority.md** | Primary/Secondary/Tertiary/Quaternaryの分類 | 250行 |
+| **placement.md** | 配置ルール（横並び・縦並び・破壊的アクション） | 300行 |
+
+#### States（状態）- 4ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **overview.md** | 状態の概要・2つのカテゴリ | 150行 |
+| **interactive-states.md** | hover, focus, active, disabled | 200行 |
+| **status-states.md** | loading, error, success, warning | 250行 |
+| **state-transitions.md** | 遷移・アニメーション値（100-500ms） | 200行 |
+
+#### Feedback（フィードバック）- 5ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **overview.md** | フィードバック概要・3原則 | 90行 |
+| **toast-notifications.md** | トースト通知（位置・時間・Undo） | 150行 |
+| **inline-validation.md** | フォームバリデーション（onBlur推奨） | 160行 |
+| **loading-indicators.md** | スピナー・スケルトン・ブラー | 180行 |
+| **progress-indicators.md** | プログレスバー・ステップ表示 | 150行 |
+
+#### Gestures（ジェスチャー）- 5ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **overview.md** | ジェスチャー概要・3原則（代替手段・取り消し・ヒント） | 80行 |
+| **tap.md** | タップ・ダブルタップ・フィードバック | 130行 |
+| **swipe.md** | 水平・垂直スワイプ・スクロール競合回避 | 150行 |
+| **pinch-zoom.md** | ピンチ・ズーム・user-scalable禁止 | 120行 |
+| **long-press.md** | 長押し・コンテキストメニュー | 130行 |
+
+---
+
+### ✍️ Content（コンテンツ原則）- 15ファイル
+
+テキスト、画像、アイコン等のコンテンツに関する原則です。
+
+#### Typography（タイポグラフィ）- 4ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **scale.md** | フォントサイズ、ウェイト、行間、字間 | 300行 |
+| **hierarchy.md** | H1-H6, Body, Caption等の使い分け | 300行 |
+| **readability.md** | 行長、段落間隔、可読性 | 250行 |
+| **font-families.md** | フォント選択、Webフォント | 250行 |
+
+#### Iconography（アイコン）- 4ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **overview.md** | アイコン使用の3原則 | 90行 |
+| **sizes.md** | サイズ定義（16/20/24/32px） | 112行 |
+| **styles.md** | Outline/Filled/Two-toneの使い分け | 117行 |
+| **semantic-icons.md** | 状態・アクション別の推奨アイコン | 130行 |
+
+#### Imagery（画像）- 4ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **overview.md** | 画像使用の原則・多様性・包括性 | 80行 |
+| **aspect-ratios.md** | 比率定義（16:9/4:3/1:1等）・object-fit | 130行 |
+| **quality-optimization.md** | WebP/AVIF/srcset・遅延読み込み | 160行 |
+| **alt-text.md** | 代替テキストの書き方（情報画像vs装飾画像） | 140行 |
+
+#### Writing（文章）- 3ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **tone-voice.md** | ボイスの4軸・トーンの場面別調整 | 160行 |
+| **microcopy.md** | ボタンラベル・プレースホルダー・ツールチップ | 190行 |
+| **error-messages.md** | エラー種別ガイドライン・責めない表現 | 180行 |
+
+---
+
+### 🎨 Color（カラー原則）- 6ファイル
+
+色の使用に関する原則です。
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **overview.md** | カラーシステム概要 | 150行 |
+| **palette.md** | 50-900スケール定義 | 150行 |
+| **semantic-colors.md** | Success, Error, Warning, Infoの意味と色 | 150行 |
+| **brand-colors.md** | ブランドカラー・Primaryカラー | 150行 |
+| **neutral-colors.md** | グレースケール | 150行 |
+| **color-usage.md** | コンポーネント別の色使用ガイド | 150行 |
+
+---
+
+### 🎬 Motion（モーション原則）- 2ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **animation.md** | 目的の3分類・イージング・過剰回避の原則 | 200行 |
+| **transitions.md** | ページ遷移・状態遷移・マイクロインタラクション・prefers-reduced-motion | 200行 |
+
+---
+
+### 📱 Platform（プラットフォーム原則）- 6ファイル
+
+#### Web - 3ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **browser-support.md** | Tier1〜3サポート・Progressive Enhancement | 200行 |
+| **performance.md** | Core Web Vitals・画像最適化・Code Splitting | 220行 |
+| **seo.md** | title/meta・OGP・構造化データ・sitemap | 230行 |
+
+#### Mobile - 3ファイル
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **ios.md** | SafeArea・スワイプバック・Dynamic Type・100vh問題 | 190行 |
+| **android.md** | Material Design・Ripple・FAB・Snackbar | 200行 |
+| **native-patterns.md** | iOS vs Android比較・ナビゲーション・スワイプ | 220行 |
+
+---
+
+### 🔧 Patterns（パターン原則）- 4ファイル
+
+実装パターンとベストプラクティスです。
+
+| ドキュメント | 説明 | 行数 |
+|------------|------|------|
+| **atomic-design-implementation.md** | Atomic Design実装パターン | 700行 |
+| **forms.md** | フォーム設計パターン | 230行 |
+| **navigation.md** | 6つのナビゲーションパターン | 210行 |
+| **data-display.md** | テーブル・リスト・カード・空状態 | 230行 |
+
+---
+
+## 🔗 ドキュメント間の依存関係マップ
+
+### レイヤー構造（下位→上位）
+
+```
+【Layer 0: 基盤スケール】
+- layout/spacing.md（余白スケール）
+- layout/grid.md（グリッド・ブレークポイント）
+- content/typography/scale.md（フォントスケール）
+- content/typography/font-families.md（フォント選択）
+- color/palette.md（カラーパレット）
+
+【Layer 1: 基本原則】
+- foundation/accessibility/（アクセシビリティ）
+- foundation/consistency.md（一貫性）
+- foundation/responsiveness.md（レスポンシブ）
+
+【Layer 2: 構造・階層・表現】
+- foundation/hierarchy.md ← spacing, typography/scale, color
+- layout/alignment.md ← grid, spacing
+- content/typography/hierarchy.md ← typography/scale
+- content/typography/readability.md ← typography/scale
+- content/iconography/ ← accessibility, color/semantic
+- content/imagery/ ← accessibility, responsiveness
+- content/writing/ ← consistency
+- motion/ ← states/state-transitions, accessibility
+
+【Layer 3: インタラクション】
+- interaction/button/ ← color, hierarchy
+- interaction/states/ ← color, accessibility
+- interaction/feedback/ ← color, states, writing
+- interaction/gestures/ ← accessibility/touch-targets
+
+【Layer 4: 統合パターン・プラットフォーム】
+- patterns/ ← すべての原則
+- platform/ ← responsiveness, performance, accessibility
+```
+
+---
+
+## 📋 フェーズ別完成状況
+
+### ✅ Phase 1: Core（完了）
+
+システムの基盤として必要なドキュメント。
+
+**完成**: 32ファイル
+
+```
+✅ foundation/accessibility/       (7ファイル)
+✅ foundation/consistency.md
+✅ foundation/hierarchy.md
+✅ layout/spacing.md
+✅ layout/grid.md
+✅ interaction/button/             (2ファイル)
+✅ interaction/states/             (4ファイル)
+✅ content/typography/             (4ファイル)
+✅ color/                          (6ファイル)
+✅ patterns/atomic-design-implementation.md
+✅ README.md / MASTER_PLAN.md
+```
+
+### ✅ Phase 2: Essential（完了）
+
+基本的なデザインシステムを完成させるために必要。
+
+**完成**: 13ファイル
+
+```
+✅ foundation/responsiveness.md
+✅ interaction/feedback/           (5ファイル)
+✅ content/iconography/            (4ファイル)
+✅ patterns/forms.md
+✅ patterns/navigation.md
+✅ patterns/data-display.md
+```
+
+### ✅ Phase 3: Enhanced（完了）
+
+システムを洗練させるために有用。
+
+**完成**: 11ファイル
+
+```
+✅ layout/alignment.md
+✅ content/imagery/                (4ファイル)
+✅ content/writing/                (3ファイル)
+✅ interaction/gestures/           (5ファイル)
+✅ motion/                         (2ファイル)
+```
+
+### ✅ Phase 4: Platform（完了）
+
+プラットフォーム固有の考慮事項。
+
+**完成**: 6ファイル
+
+```
+✅ platform/web/                   (3ファイル)
+✅ platform/mobile/                (3ファイル)
+```
+
+---
+
+## 🎯 各ドキュメントの役割マトリクス
+
+| 種類 | 内容 | 例 |
+|------|------|-----|
+| **原則ドキュメント** | なぜ、何を（設計思想、判断基準） | hierarchy.md: 5つの手段 |
+| **パターン原則** | 原則の組み合わせ（実装パターン） | patterns/forms.md |
+| **コンポーネントドキュメント** | どうやって（実装、Props、コード） | Button.md: 完全な実装コード |
+
+**ルール**:
+- 原則ドキュメント: 詳細コードは最小限、コンポーネントへ参照
+- パターン原則: 実装パターンとベストプラクティス
+- コンポーネント: 完全な実装コードと使用例
+
+---
+
+## 📝 ドキュメント作成ガイドライン
+
+### 新しいドキュメントを作成する前に
+
+1. **このマスタープランを確認**: 該当する原則がすでに存在しないか・依存関係を確認
+2. **依存先ドキュメントを読む**: スコープの重複を避ける
+3. **作成後にこのファイルを更新**: ✅→✅に変更
+
+### ドキュメント構成テンプレート
+
+```markdown
+# [原則名]
+
+## メタ情報
+- カテゴリ: [foundation/layout/interaction/content/color/motion/platform/patterns]
+- 適用範囲: [Atom/Molecule/Organism/Template/Page]
+- ステータス: [Draft/In Review/Approved]
+- 最終更新: YYYY-MM-DD
+
+## 原則の定義
+[一文での明確な定義]
+
+## なぜ必要か / 背景
+
+## [メインコンテンツ]
+[✅/❌の具体例を多用]
+
+## チェックリスト
+
+## 関連ドキュメント
+
+## バージョン履歴
+| 日付 | バージョン | 変更内容 | 変更理由 |
+```
+
+---
+
+## 📚 クイックリファレンス
+
+### 「〜について知りたい」場合の参照先
+
+| トピック | 参照ドキュメント |
+|---------|----------------|
+| ボタンの種類・分類 | interaction/button/priority.md |
+| ボタンの配置 | interaction/button/placement.md |
+| ボタンの状態 | interaction/states/overview.md |
+| 余白の使い方 | layout/spacing.md |
+| グリッド・ブレークポイント | layout/grid.md |
+| 要素の整列 | layout/alignment.md |
+| 文字サイズの選び方 | content/typography/scale.md |
+| 見出しの使い分け | content/typography/hierarchy.md |
+| 読みやすくするには | content/typography/readability.md |
+| フォントの選び方 | content/typography/font-families.md |
+| 色の使い分け | color/color-usage.md |
+| アクセシビリティ対応 | foundation/accessibility/overview.md |
+| 一貫性を保つには | foundation/consistency.md |
+| 重要度を視覚的に伝えるには | foundation/hierarchy.md |
+| レスポンシブ設計の考え方 | foundation/responsiveness.md |
+| フォーム設計 | patterns/forms.md |
+| ナビゲーション設計 | patterns/navigation.md |
+| テーブル・カード・リスト | patterns/data-display.md |
+| 通知・フィードバック | interaction/feedback/overview.md |
+| アニメーション原則 | motion/animation.md |
+| ページ遷移・モーダル | motion/transitions.md |
+| 画像のalt text | content/imagery/alt-text.md |
+| エラーメッセージの書き方 | content/writing/error-messages.md |
+| ボタンラベルの書き方 | content/writing/microcopy.md |
+| スワイプ操作 | interaction/gestures/swipe.md |
+| パフォーマンス最適化 | platform/web/performance.md |
+| SEO対応 | platform/web/seo.md |
+| iOS固有の実装 | platform/mobile/ios.md |
+| Android固有の実装 | platform/mobile/android.md |
+
+### 「〜を作りたい」場合の参照順序
+
+| 作りたいもの | 参照順序 |
+|------------|---------|
+| **Button** | button/priority.md → states/interactive-states.md → accessibility/keyboard-navigation.md |
+| **Form** | patterns/forms.md → feedback/inline-validation.md → button/placement.md |
+| **Modal** | button/placement.md → states/overview.md → accessibility/focus-management.md → motion/transitions.md |
+| **Card** | layout/spacing.md → content/typography/hierarchy.md → foundation/hierarchy.md |
+| **Navigation** | patterns/navigation.md → accessibility/keyboard-navigation.md → foundation/responsiveness.md |
+| **Toast** | feedback/toast-notifications.md → color/semantic-colors.md → motion/transitions.md |
+| **Loading** | feedback/loading-indicators.md → states/status-states.md |
+| **Typography** | typography/scale.md → typography/hierarchy.md → typography/readability.md |
+| **Image** | imagery/aspect-ratios.md → imagery/alt-text.md → imagery/quality-optimization.md |
+
+---
+
+## 🎓 学習パス
+
+### 初めてデザインシステムを学ぶ場合
+
+1. **構造を理解**（30分）
+   - foundation/accessibility/overview.md
+   - patterns/atomic-design-implementation.md
+   - foundation/consistency.md
+
+2. **スケールを理解**（30分）
+   - layout/spacing.md
+   - layout/grid.md
+   - content/typography/scale.md
+   - color/overview.md
+
+3. **階層・整列を理解**（30分）
+   - foundation/hierarchy.md
+   - layout/alignment.md
+   - content/typography/hierarchy.md
+
+4. **インタラクションを理解**（45分）
+   - interaction/button/priority.md
+   - interaction/states/overview.md
+   - interaction/feedback/overview.md
+   - motion/animation.md
+
+5. **パターンを理解**（1時間）
+   - patterns/forms.md
+   - patterns/navigation.md
+   - patterns/data-display.md
+
+6. **プラットフォームを理解**（30分）
+   - platform/web/performance.md
+   - platform/mobile/native-patterns.md
+
+---
+
+## 🔄 このマスタープランの更新ルール
+
+- ✅ 新しいドキュメントを作成した → 一覧テーブルを更新
+- ✅ ドキュメントを削除・統合した → 一覧・依存関係マップを更新
+- ✅ 優先度・フェーズが変わった → 優先度マトリクスを更新
+- ✅ 更新のたびに「最終更新」日付を変更
+
+---
+
+## 📊 統計情報
+
+- **総ファイル数**: 65ファイル（62原則 + 3管理）
+- **総行数**: 約15,000行
+- **最終更新**: 2026年2月22日
+- **完成度**: 100%（Phase 1〜4完了）
+- **メンテナンス状態**: Active
+
+---
+
+**このマスタープランは、デザインシステムの成長とともに継続的に更新されます。**

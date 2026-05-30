@@ -1,8 +1,10 @@
-import { Meta } from '@storybook/addon-docs/blocks';
-
-<Meta title="Principles/Patterns/Forms" />
-
 # フォームパターン
+
+## メタ情報
+- カテゴリ: パターン原則
+- 適用範囲: Molecule〜Organism
+- ステータス: Approved
+- 最終更新: 2024-02-17
 
 ## 原則の定義
 
@@ -173,8 +175,8 @@ After:
 - 入力カテゴリが明確に分かれている
 - 前のステップの情報が次のステップに影響する
 
-→ 進捗表示は [Progress Indicators](?path=/docs/principles-interaction-state--docs) 参照  
-→ ボタン配置は [Action Placement](?path=/docs/principles-interaction-button--docs) 参照
+→ 進捗表示は [Progress Indicators](../interaction/feedback/progress-indicators.md) 参照  
+→ ボタン配置は [Action Placement](../interaction/button/placement.md) 参照
 
 ## 入力の補助
 
@@ -268,8 +270,8 @@ After:
 - `aria-required="true"`: スクリーンリーダーへの必須通知
 - `novalidate`: ブラウザのデフォルトUIではなく、カスタムバリデーションを使う
 
-→ バリデーションのARIAは [Inline Validation](?path=/docs/principles-interaction-state--docs) 参照  
-→ キーボード操作は [Keyboard Navigation](?path=/docs/principles-foundation-accessibility--docs) 参照
+→ バリデーションのARIAは [Inline Validation](../interaction/feedback/inline-validation.md) 参照  
+→ キーボード操作は [Keyboard Navigation](../foundation/accessibility/keyboard-navigation.md) 参照
 
 ## チェックリスト
 
@@ -294,10 +296,15 @@ After:
 
 ## 関連ドキュメント
 
-- **[Inline Validation](?path=/docs/principles-interaction-state--docs)**: バリデーションの表示
-- **[Action Placement](?path=/docs/principles-interaction-button--docs)**: 送信ボタンの配置
-- **[Loading Indicators](?path=/docs/principles-interaction-state--docs)**: 送信中の表示
-- **[Progress Indicators](?path=/docs/principles-interaction-state--docs)**: ウィザードの進捗
-- **[Keyboard Navigation](?path=/docs/principles-foundation-accessibility--docs)**: Tab順序
-- **[Spacing](?path=/docs/principles-layout-grid--docs)**: フォーム内の余白
+- **[Inline Validation](../interaction/feedback/inline-validation.md)**: バリデーションの表示
+- **[Action Placement](../interaction/button/placement.md)**: 送信ボタンの配置
+- **[Loading Indicators](../interaction/feedback/loading-indicators.md)**: 送信中の表示
+- **[Progress Indicators](../interaction/feedback/progress-indicators.md)**: ウィザードの進捗
+- **[Keyboard Navigation](../foundation/accessibility/keyboard-navigation.md)**: Tab順序
+- **[Spacing](../layout/spacing.md)**: フォーム内の余白
 
+## バージョン履歴
+
+| 日付 | バージョン | 変更内容 | 変更理由 |
+|------|-----------|----------|----------|
+| 2024-02-17 | 1.0.0 | 初版作成 | Phase 2 |

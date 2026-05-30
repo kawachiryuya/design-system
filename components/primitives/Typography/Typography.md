@@ -139,7 +139,7 @@ import { Typography } from '@/components/Typography';
 <Typography variant="h2" as="h2">セクション</Typography>
 ```
 
-参照: [principles/Typography/scale.mdx](../../principles/Typography/scale.mdx)
+参照: [principles/Typography/scale.md](../../principles/Typography/scale.md)
 
 ### 本文フォントサイズは 16px 以上
 - `body`（16px）以上を標準として使用する
@@ -151,7 +151,7 @@ import { Typography } from '@/components/Typography';
 - 英語本文: 65文字（65ch）以内
 - `max-w-prose` クラスで制限できる
 
-参照: [principles/Typography/scale.mdx](../../principles/Typography/scale.mdx)
+参照: [principles/Typography/scale.md](../../principles/Typography/scale.md)
 
 ---
 
@@ -170,7 +170,7 @@ import { Typography } from '@/components/Typography';
 ### ズーム対応
 - Tailwind のデフォルトは `rem` 単位なので 200% ズームに対応している
 
-参照: [principles/Typography/scale.mdx](../../principles/Typography/scale.mdx)
+参照: [principles/Typography/scale.md](../../principles/Typography/scale.md)
 
 ---
 

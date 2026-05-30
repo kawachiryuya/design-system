@@ -139,7 +139,7 @@ import { Card } from '@/components/Card';
 - `Tab`: カード内のインタラクティブ要素間でフォーカス移動
 - `Enter` / `Space`: クリック可能なカードの操作
 
-参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
+参照: [principles/Foundation/accessibility/overview.md](../../principles/Foundation/accessibility/overview.md)
 
 ---
 

@@ -67,7 +67,7 @@ import { Alert } from '@/components/Alert';
 - **info**: 一般的なお知らせ・補足情報
 - **neutral**: 特に緊急度のない参考情報
 
-参照: [principles/Color/semantic-colors.mdx](../../principles/Color/semantic-colors.mdx)
+参照: [principles/Color/semantic-colors.md](../../principles/Color/semantic-colors.md)
 
 ### フィードバック
 
@@ -91,7 +91,7 @@ import { Alert } from '@/components/Alert';
 - `Tab`: 閉じるボタン・内部のリンクへフォーカス移動
 - `Enter` / `Space`: 閉じるボタンのクリック
 
-参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
+参照: [principles/Foundation/accessibility/overview.md](../../principles/Foundation/accessibility/overview.md)
 
 ---
 

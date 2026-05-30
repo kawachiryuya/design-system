@@ -100,7 +100,7 @@ import { Input } from '@/components/Input';
 - ラベルは常にフィールドの**上**に配置する
 - プレースホルダーのみでラベルを省略してはならない（入力後にラベルが消えると確認できなくなる）
 
-参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
+参照: [principles/Patterns/forms.md](../../principles/Patterns/forms.md)
 
 ### 必須・任意の明示
 - 必須と任意の**どちらかのみ**マークする（両方マークすると冗長）
@@ -108,7 +108,7 @@ import { Input } from '@/components/Input';
 - フォームの大半が任意項目 → `optional` で任意のみマーク
 - 必須マーク（`*`）は `aria-label="必須"` でスクリーンリーダーにも伝える
 
-参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
+参照: [principles/Patterns/forms.md](../../principles/Patterns/forms.md)
 
 ### 無効状態
 - 関連するフォームフィールドが `disabled` のとき、ラベルも `disabled` にする
@@ -131,7 +131,7 @@ import { Input } from '@/components/Input';
 - `*` は視覚的な記号であり、スクリーンリーダーは「アスタリスク」と読み上げる場合がある
 - `aria-label="必須"` を設定することで「必須」と読み上げさせる
 
-参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
+参照: [principles/Foundation/accessibility/overview.md](../../principles/Foundation/accessibility/overview.md)
 
 ---
 

@@ -40,7 +40,7 @@ export type AvatarStatus = 'online' | 'offline' | 'busy' | 'away';
  *   // フォールバック表示（src も name もなし）
  *   <Avatar size="lg" />
  *
- * @see principles/Foundation/accessibility.mdx
+ * @see principles/Foundation/accessibility/overview.md
  */
 export interface AvatarProps {
   /** 画像 URL。未指定 / 読込失敗時は `name` イニシャル → アイコンの順にフォールバック。 */

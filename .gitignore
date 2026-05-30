@@ -40,5 +40,8 @@ yarn-error.log*
 # MCP config
 .mcp.json
 
+# Claude Code per-user local settings (個人マシン固有の許可リスト等)
+.claude/settings.local.json
+
 # npm authentication（PAT を含む可能性、絶対 commit しない）
 .npmrc

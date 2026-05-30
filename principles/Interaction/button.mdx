@@ -1,0 +1,97 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Interaction/Button" />
+
+# ボタンの原則 — 優先度と配置
+
+## 原則
+
+**ボタンを Primary / Secondary / Tertiary の 3 優先度に分類し、視線の流れに沿って一貫した位置に配置する。**
+
+明確な優先度と配置により、ユーザーは瞬時に最も重要なアクションを認識し、迷わず操作できる。
+
+## 優先度の分類
+
+| 優先度 | 役割 | 視覚スタイル | 1 画面の個数 |
+|---|---|---|---|
+| **Primary** | そのページで達成したい主目的 | 塗りつぶし・ブランドカラー・最も目立つ | 1 個が原則 |
+| **Secondary** | 補助・代替の選択肢 | アウトラインまたは控えめな背景 | 0〜2 個 |
+| **Tertiary** | 付加的なアクション | テキストリンクまたはアイコンのみ | 制限なし (過度は避ける) |
+
+### 典型例
+
+| コンテキスト | Primary | Secondary | Tertiary |
+|---|---|---|---|
+| フォーム | 保存・送信・登録 | キャンセル・リセット | ヘルプ |
+| マルチステップ | 次へ・完了 | 戻る・スキップ | — |
+| 削除確認 | キャンセル (安全な選択) | 削除 | — |
+| カード | 主要 CTA | — | 詳細を見る・シェア |
+
+### 破壊的アクションの扱い
+
+破壊的アクション (削除・全消去等) は **常に Secondary 以下** で扱う。削除確認ダイアログでは **安全な選択 (キャンセル) を Primary** にして、誤操作を防ぐ。
+
+## 配置ルール
+
+### 横並び (デスクトップ・タブレット横向き)
+
+**Primary は右、Secondary は左**。優先度の低い順に左から並べる。
+
+```
+[ Tertiary ]  [ Secondary ]  [ Primary ]
+```
+
+理由: 読み順 (左 → 右) の終点 = 視線が最後に到達する位置に Primary を置く。macOS/Windows/主要 Web サービスの慣習とも一致。
+
+**間隔**: 12〜16px (gap-3 / gap-4)。
+
+### 縦並び (モバイル・狭い画面)
+
+**Primary は上、Secondary は下**。
+
+```
+[ Primary    ]
+[ Secondary  ]
+```
+
+理由: 上 → 下の視線の流れで最初に目が届く位置 = 上端に Primary。「上 = 重要」という認知パターンと一致。
+
+**間隔**: 8〜12px (gap-2 / gap-3)。
+
+### レスポンシブ対応
+
+ブレイクポイント 640px (sm) を基準に横/縦を切り替える。実装では `flex-col-reverse` で DOM 順序を保ったまま視覚順序を逆転できる。
+
+```html
+<div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+  <button variant="secondary" class="w-full sm:w-auto">キャンセル</button>
+  <button variant="primary" class="w-full sm:w-auto">保存</button>
+</div>
+```
+
+## 揃え方
+
+- **デスクトップ**: 右揃え (フォーム入力後、視線が自然に向かう位置)
+- **モバイル**: 全幅 (タップ領域確保。最小高さ 44px)
+- **モーダル・単独 CTA**: 中央揃えも可
+- **マルチステップ**: 「戻る」を左端、「次へ」を右端 (進行方向を示す)
+
+複数ボタンの中央揃えは「どちらが重要か不明確」になるため避ける。
+
+## チェックリスト
+
+- [ ] 1 画面に Primary は 1 つだけ
+- [ ] 横並び: Primary 右、Secondary 左
+- [ ] 縦並び: Primary 上、Secondary 下
+- [ ] 破壊的アクションは Secondary 以下
+- [ ] 削除確認では安全な選択を Primary
+- [ ] ボタンラベルが動詞で始まる明確な行動指示
+- [ ] モバイルで 44px 以上の高さ
+- [ ] レスポンシブ対応 (横 ↔ 縦切り替え)
+
+## 関連
+
+- 本リポでの実装: [`components/primitives/Button/`](../../components/primitives/Button/)
+- [State](?path=/docs/principles-interaction-state--docs) — ボタンの状態管理 (hover/focus/active/disabled)
+- [Hierarchy](?path=/docs/principles-foundation-hierarchy--docs) — 視覚的ヒエラルキー全般
+- [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs) — 破壊的アクションの色トークン

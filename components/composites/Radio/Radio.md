@@ -87,7 +87,7 @@ import { Radio, RadioGroup } from '@/components/Radio';
 ### 選択肢は2〜6個が目安
 - 7個以上は Select（ドロップダウン）の使用を検討する
 
-参照: [principles/patterns/forms.md](../../principles/patterns/forms.md)
+参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
 
 ---
 

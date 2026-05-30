@@ -35,8 +35,8 @@ export type LinkUnderline = 'always' | 'hover' | 'none';
  *   // 無効状態（クリック不可、aria-disabled 自動付与）
  *   <Link href="/admin" disabled>管理画面（権限が必要）</Link>
  *
- * @see principles/content/
- * @see principles/interaction/state/interactive-states.md
+ * @see principles/README.md
+ * @see principles/Interaction/state.mdx
  */
 export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'color'> {
   /** リンク先 URL（必須）。`disabled` 時は href が削除される。 */

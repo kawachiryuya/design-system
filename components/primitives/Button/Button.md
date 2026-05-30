@@ -95,14 +95,14 @@ import { SaveIcon } from '@/icons';
 - **Tertiary**: 補助的・探索的なアクション
 - **Quaternary**: 最も控えめ・破壊的でないアクション
 
-参照: [principles/interaction/button/priority.md](../../principles/interaction/button/priority.md)
+参照: [principles/Interaction/button.mdx](../../principles/Interaction/button.mdx)
 
 ### 配置ルール
 - Primaryは右側
 - Secondaryは左側
 - 横並びは2〜3個まで
 
-参照: [principles/interaction/button/placement.md](../../principles/interaction/button/placement.md)
+参照: [principles/Interaction/button.mdx](../../principles/Interaction/button.mdx)
 
 ### アクションボタン群の幅統一
 
@@ -132,7 +132,7 @@ import { SaveIcon } from '@/icons';
 - focus: リング表示
 - disabled: 透明度50%
 
-参照: [principles/interaction/states/interactive-states.md](../../principles/interaction/states/interactive-states.md)
+参照: [principles/Interaction/state.mdx](../../principles/Interaction/state.mdx)
 
 ---
 
@@ -146,7 +146,7 @@ import { SaveIcon } from '@/icons';
 - `type`属性を適切に設定（submit/button/reset）
 - `disabled`属性が適切に伝えられる
 
-参照: [principles/foundation/accessibility/keyboard-navigation.md](../../principles/foundation/accessibility/keyboard-navigation.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

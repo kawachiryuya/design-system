@@ -46,7 +46,7 @@ export interface BreadcrumbItem {
  *     ]}
  *   />
  *
- * @see principles/patterns/navigation.md
+ * @see principles/README.md
  */
 export interface BreadcrumbProps {
   /** パンくずの項目リスト。最後の項目は通常 `href` なし（現在ページ）。 */

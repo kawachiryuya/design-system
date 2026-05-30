@@ -88,7 +88,7 @@ import { Badge } from '@/components/Badge';
 ### 色だけに依存しない
 バッジは色 + テキスト（+ オプションでドット）で意味を伝える。色覚に関係なく内容が理解できる。
 
-参照: [principles/color/semantic-colors.md](../../principles/color/semantic-colors.md)
+参照: [principles/Color/semantic-colors.mdx](../../principles/Color/semantic-colors.mdx)
 
 ### Appearance の選び方
 - `soft`（デフォルト）: 一般的なステータス表示

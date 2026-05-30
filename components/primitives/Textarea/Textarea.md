@@ -90,7 +90,7 @@ const [text, setText] = useState('');
 - 上限に近づいたら残り文字数を示す
 - 上限超過時は赤色で警告
 
-参照: [principles/patterns/forms.md](../../principles/patterns/forms.md)
+参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
 
 ---
 

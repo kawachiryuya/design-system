@@ -73,4 +73,4 @@
 | 全画面・複数セクション | Skeleton + Spinner の組み合わせ |
 | インラインの短い処理 | Spinner のみ |
 
-参照: `principles/interaction/feedback/loading-indicators.md`
+参照: `principles/README.md`

@@ -76,7 +76,7 @@ interface TextareaNormalProps extends TextareaBaseProps {
  *   // 全幅 + 大きめ
  *   <Textarea label="議事録" rows={10} fullWidth />
  *
- * @see principles/patterns/forms.md
+ * @see principles/Patterns/forms.mdx
  */
 export type TextareaProps =
   (TextareaErrorProps | TextareaNormalProps) &

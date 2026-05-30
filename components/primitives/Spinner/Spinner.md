@@ -92,7 +92,7 @@ import { Spinner } from '@/components/Spinner';
 | **1〜10秒** | **必須** |
 | 10秒以上 | 必須 + 進捗表示（可能なら） |
 
-参照: [principles/interaction/feedback/loading-indicators.md](../../principles/interaction/feedback/loading-indicators.md)
+参照: [principles/README.md](../../principles/README.md)
 
 ### ローディング中の操作制御
 - 同じアクションのボタンは `disabled` にする

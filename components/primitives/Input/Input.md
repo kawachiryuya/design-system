@@ -125,14 +125,14 @@ import { SearchIcon, EyeIcon } from '@/icons';
 - ラベルは常にフィールドの上に配置（プレースホルダーのみは禁止）
 - ラベルが消えると、入力後に何を入力したか確認できなくなるため
 
-参照: [principles/patterns/forms.md](../../principles/patterns/forms.md)
+参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
 
 ### 必須・任意の明示
 - 必須項目には `*` を表示（`aria-label="必須"` でスクリーンリーダーにも伝える）
 - ヘルプテキストはフィールド直下に表示
 - エラー時はヘルプテキストをエラーメッセージに置き換える
 
-参照: [principles/patterns/forms.md](../../principles/patterns/forms.md)
+参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
 
 ### インタラクティブ状態
 - **default**: グレーの枠線
@@ -159,7 +159,7 @@ import { SearchIcon, EyeIcon } from '@/icons';
 - `Tab`: フォーカス移動
 - `Shift + Tab`: 逆方向にフォーカス移動
 
-参照: [principles/foundation/accessibility/keyboard-navigation.md](../../principles/foundation/accessibility/keyboard-navigation.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

@@ -67,14 +67,14 @@ import { Alert } from '@/components/Alert';
 - **info**: 一般的なお知らせ・補足情報
 - **neutral**: 特に緊急度のない参考情報
 
-参照: [principles/color/semantic-colors.md](../../principles/color/semantic-colors.md)
+参照: [principles/Color/semantic-colors.mdx](../../principles/Color/semantic-colors.mdx)
 
 ### フィードバック
 
 - アラートは即座にユーザーへフィードバックを返す手段として使用する
 - 一時的な通知には Toast（未実装）、永続的な情報には Alert を使い分ける
 
-参照: [principles/interaction/feedback/](../../principles/interaction/feedback/)
+参照: [principles/README.md](../../principles/README.md)
 
 ---
 
@@ -91,7 +91,7 @@ import { Alert } from '@/components/Alert';
 - `Tab`: 閉じるボタン・内部のリンクへフォーカス移動
 - `Enter` / `Space`: 閉じるボタンのクリック
 
-参照: [principles/foundation/accessibility/keyboard-navigation.md](../../principles/foundation/accessibility/keyboard-navigation.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

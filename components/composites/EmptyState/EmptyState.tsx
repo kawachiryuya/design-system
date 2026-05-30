@@ -64,7 +64,7 @@ export interface EmptyStateAction {
  *     action={{ label: 'はじめる', onClick: startOnboarding }}
  *   />
  *
- * @see principles/patterns/data-display.md
+ * @see principles/README.md
  */
 export interface EmptyStateProps {
   /** カスタムアイコン（SVG 要素や `<Icon>`）。未指定時はデフォルトアイコン。 */

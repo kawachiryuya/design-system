@@ -70,7 +70,7 @@ const [page, setPage] = useState(1);
 - テーブルやリストのページ分割
 - 記事一覧・検索結果など大量データの分割表示
 
-参照: [principles/patterns/navigation.md](../../principles/patterns/navigation.md)
+参照: [principles/README.md](../../principles/README.md)
 
 ---
 
@@ -89,7 +89,7 @@ const [page, setPage] = useState(1);
 - `Tab`: ボタン間のフォーカス移動
 - `Enter` / `Space`: ページ選択
 
-参照: [principles/foundation/accessibility/keyboard-navigation.md](../../principles/foundation/accessibility/keyboard-navigation.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

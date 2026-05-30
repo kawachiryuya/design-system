@@ -78,7 +78,7 @@ const [activeTab, setActiveTab] = useState('profile');
 - タブラベルは短く簡潔に（2〜4文字が理想）
 - タブの順序は重要度・使用頻度順にする
 
-参照: [principles/patterns/navigation.md](../../principles/patterns/navigation.md)
+参照: [principles/README.md](../../principles/README.md)
 
 ---
 
@@ -98,7 +98,7 @@ const [activeTab, setActiveTab] = useState('profile');
 - `End`: 最後のタブへ移動
 - アクティブタブのみ `tabIndex={0}`、他は `tabIndex={-1}`（ロービングタブインデックス）
 
-参照: [principles/foundation/accessibility/keyboard-navigation.md](../../principles/foundation/accessibility/keyboard-navigation.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

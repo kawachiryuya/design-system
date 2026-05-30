@@ -77,4 +77,4 @@ const [query, setQuery] = useState('');
 - フォーカスリング: `focus:ring-2 focus:ring-primary-200`
 - Escape キーでクリア後、フォーカスを input に戻す
 
-参照: `principles/patterns/forms.md`
+参照: `principles/Patterns/forms.mdx`

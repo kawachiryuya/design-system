@@ -93,7 +93,7 @@ import { Checkbox } from '@/components/Checkbox';
 - 子要素の一部が選択されている「全選択」チェックボックスに使用
 - `indeterminate` は CSS のみで表現（HTMLのデフォルトはない）
 
-参照: [principles/patterns/forms.md](../../principles/patterns/forms.md)
+参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
 
 ---
 

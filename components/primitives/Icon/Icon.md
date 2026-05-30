@@ -144,14 +144,14 @@ myIcon: {
 - テキストなしの場合は `label` prop か `aria-label` で補完する
 - 例外: ✕（閉じる）など極めて普遍的なアイコン
 
-参照: [principles/Typography/iconography/overview.md](../../principles/Typography/iconography/overview.md)
+参照: [principles/Typography/scale.mdx](../../principles/Typography/scale.mdx)
 
 ### スタイルの統一
 - Material Symbols **Outlined** をデフォルトとする
 - カスタム SVG を使う場合は `variant` prop でレンダリングモードを指定
 - 1つのプロダクト内でアイコンスタイルを混在させない
 
-参照: [principles/Typography/iconography/styles.md](../../principles/Typography/iconography/styles.md)
+参照: [principles/Typography/scale.mdx](../../principles/Typography/scale.mdx)
 
 ### テキストサイズとの対応
 
@@ -162,7 +162,7 @@ myIcon: {
 | H3 (24px) | `md` (24px) |
 | H2以上 | `lg` (32px) |
 
-参照: [principles/Typography/iconography/sizes.md](../../principles/Typography/iconography/sizes.md)
+参照: [principles/Typography/scale.mdx](../../principles/Typography/scale.mdx)
 
 ---
 
@@ -188,7 +188,7 @@ myIcon: {
 </button>
 ```
 
-参照: [principles/foundation/accessibility/screen-readers.md](../../principles/foundation/accessibility/screen-readers.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

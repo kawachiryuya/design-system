@@ -97,7 +97,7 @@ interface ButtonRegularProps extends ButtonBaseProps {
  *   // Icon-only（aria-label 必須、TS が強制）
  *   <Button iconOnly icon={<Icon name="close" />} aria-label="閉じる" />
  *
- * @see principles/interaction/button/priority.md
+ * @see principles/Interaction/button.mdx
  */
 export type ButtonProps =
   (ButtonIconOnlyProps | ButtonRegularProps) &

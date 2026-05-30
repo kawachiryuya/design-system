@@ -36,7 +36,7 @@ export type BadgeSize = 'small' | 'medium';
  *   // 数値カウント
  *   <Badge variant="error" appearance="solid" size="small">12</Badge>
  *
- * @see principles/color/semantic-colors.md
+ * @see principles/Color/semantic-colors.mdx
  */
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   /**

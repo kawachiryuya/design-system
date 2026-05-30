@@ -45,7 +45,7 @@ export type PaginationSize = 'sm' | 'md' | 'lg';
  *     size="lg"
  *   />
  *
- * @see principles/patterns/navigation.md
+ * @see principles/README.md
  */
 export interface PaginationProps {
   /** 現在のページ番号（1 始まり）。 */

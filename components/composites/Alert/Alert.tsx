@@ -38,8 +38,8 @@ export type AlertVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral';
  *     データの更新中です。しばらくお待ちください。
  *   </Alert>
  *
- * @see principles/color/semantic-colors.md
- * @see principles/interaction/feedback/
+ * @see principles/Color/semantic-colors.mdx
+ * @see principles/README.md
  */
 export interface AlertProps {
   /**

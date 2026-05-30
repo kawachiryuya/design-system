@@ -1,7 +1,7 @@
 {
   "name": "@kawachiryuya/design-system",
-  "version": "0.1.2",
-  "description": "AI 活用 SSOT デザインシステム — トークン / コンポーネント / 原則ドキュメント",
+  "version": "0.2.0",
+  "description": "Storybook を Single Source of Truth とする React コンポーネントライブラリ — Parts (primitives) / Blocks (composites) と semantic トークン",
   "type": "module",
   "license": "UNLICENSED",
   "repository": {

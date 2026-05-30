@@ -1,33 +1,17 @@
-# AGENTS.md — AI 向けデザインシステム運用ガイド
+# AGENTS.md — AI 向け運用規約
 
-> Claude Code / Cursor などの AI コーディングエージェントが、本リポを `Read` した時点で迷わず動けるよう、設計判断・運用規約・参照優先順位を集約します。人間の onboarding にも使える内容を意図しています。
-
-**最終更新**: 2026-05-10
-**戦略メモ（人生経営側）**: `kawachiryuya/ai-management` リポの `01_areas/work/design-dev/DESIGN-SYSTEM.md`
-**親 Issue**: [kawachiryuya/ai-management#14](https://github.com/kawachiryuya/ai-management/issues/14)
-
-## 関連ファイル
-
-| ファイル | 内容 |
-|---|---|
-| `README.md` | クイックスタート・ディレクトリ概要（ユーザー向け） |
-| `CONTEXT.md` | 過去の作業ログ・進捗履歴（Cursor 作業再開ガイド） |
-| `AGENTS.md`（本ファイル） | AI コーディング規約・参照優先順位 |
-| `docs/ai-roadmap.md` | AI 活用 SSOT 化のロードマップ詳細・実装ガイド |
-| `principles/` | デザイン原則（62 ファイル、a11y / 色 / レイアウト等） |
+Claude Code / Cursor などの AI コーディングエージェントが本リポを操作する際の **実装ルール** を集約。設計戦略 (なぜ・何を) は [`design-system-strategy.md`](./design-system-strategy.md) を参照。
 
 ---
 
-## 1. リポを操作する前に必読
+## 1. 新規セッションで最初に読むもの
 
-新規セッションで本リポを操作する場合、以下を順に `Read` してください:
-
-1. `README.md` — リポ全体像とビルドコマンド
-2. `AGENTS.md`（本ファイル） — 設計規約と禁則
-3. `tokens/semantic-colors.json` — semantic 色の WHERE × WHAT 構造
-4. `components/primitives/Button/Button.tsx` — Primitive 実装パターンの参照点
-5. `components/composites/Card/Card.tsx` — Composite 実装パターンの参照点
-6. 必要に応じて `principles/foundation/accessibility.md` 等の関連原則
+1. [`README.md`](./README.md) — リポ全体像とビルドコマンド
+2. [`design-system-strategy.md`](./design-system-strategy.md) — Parts/Blocks 構成、common/product 分離、トークン階層
+3. 本ファイル — 実装規約と禁則
+4. [`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) — semantic 色の構造
+5. [`components/primitives/Button/Button.tsx`](./components/primitives/Button/Button.tsx) — Primitive 実装パターンの参照点
+6. [`components/composites/Card/Card.tsx`](./components/composites/Card/Card.tsx) — Composite 実装パターンの参照点
 
 ---
 
@@ -41,7 +25,7 @@
 | 副次アクション | `<Button variant="secondary">` | primary と並べて対比 |
 | 補助アクション | `<Button variant="tertiary">` | 取り消し / 戻る等 |
 | 遷移 / 外部リンク | `<Link>` | `<Button>` ではない |
-| 状態通知（成功/警告等） | `<Alert>` | success/error/warning/info/neutral |
+| 状態通知 (成功/警告等) | `<Alert>` | success/error/warning/info/neutral |
 | 補足ラベル | `<Badge>` | 主張の弱い情報マーカー |
 | アイコン | `<Icon>` | 直接 SVG 埋込みではなく必ず `<Icon>` |
 | テキストの装飾的階層 | `<Typography>` | `<h1>` 直書きより推奨 |
@@ -49,14 +33,14 @@
 
 ### Primitive vs Composite
 
-- **Primitive** (`components/primitives/`): 単一 HTML 要素ラッパー（11 個）
-- **Composite** (`components/composites/`): 複数 Primitive の組合せ or 状態管理あり（15 個）
+- **Primitive** (`components/primitives/`): 単一 HTML 要素ラッパー (戦略上の Parts に対応)
+- **Composite** (`components/composites/`): 複数 Primitive の組合せ or 状態管理あり (戦略上の Blocks に対応)
 
 ### 禁則
 
 - `<button>` 直接使用禁止 → 必ず `<Button>`
-- `<a>` 直接使用禁止 → 必ず `<Link>`（native `<a>` が必須な場面のみ例外）
-- 色の primitive 直接指定禁止: `bg-blue-500` `bg-primary-600` → 後述の semantic 色を使う
+- `<a>` 直接使用禁止 → 必ず `<Link>` (native `<a>` が必須な場面のみ例外)
+- 色の primitive 直接指定禁止: `bg-blue-500` / `bg-primary-600` → 後述の semantic 色を使う
 - インラインスタイルでの色指定禁止: `style={{ color: '#xxx' }}`
 
 ---
@@ -66,15 +50,14 @@
 ### トークン階層
 
 ```
-tokens/colors.json          ← primitive tokens（10-step scale: primary-50〜900 等）
-tokens/semantic-colors.json ← semantic tokens（WHERE × WHAT）
+tokens/source/colors.json          ← primitive tokens (10-step scale: primary-50〜900 等)
+tokens/source/semantic-colors.json ← semantic tokens (WHERE × WHAT)
    └ value で primitive を参照、description で意味付け
-.storybook/tailwind.css     ← CSS 変数定義（semantic を実体化）
-   └ Storybook 環境用、PJ 配備時は別途 export 必要（Phase 1 で整備予定）
-tailwind.config.js          ← Tailwind class へマッピング
+tokens/build/variables.css         ← Style Dictionary で自動生成された CSS 変数
+tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.js が継承
 ```
 
-### 参照優先順位（厳守）
+### 参照優先順位 (厳守)
 
 1. **Semantic を最優先**: `bg-surface-primary` / `text-onSurface-default` / `border-border-default`
 2. **Primitive 直参照は禁止**: PJ override 互換性のため
@@ -94,167 +77,71 @@ tailwind.config.js          ← Tailwind class へマッピング
 
 ### 例外
 
-`gunmaas/`, `lp/`, `demo*/` 等の **PJ ディレクトリ内** で、PJ ブランド固有の見栄え調整のために primitive スケールを extend する場合は OK（ただし semantic を上書きする方を推奨）。
+`gunmaas/`, `lp/` 等の **PJ ディレクトリ内** で、PJ ブランド固有の見栄え調整のために primitive スケールを extend する場合は OK (ただし semantic を上書きする方を推奨)。
 
 ---
 
-## 4. PJ オーバーライド方法
-
-> **現状**: design-system はまだ npm パッケージ化されていない（[kawachiryuya/ai-management#35](https://github.com/kawachiryuya/ai-management/issues/35) で対応予定）。下記は **Phase 2 完了後の理想形**。
-
-### 想定構成
-
-```js
-// PJ の tailwind.config.js
-module.exports = {
-  presets: [require('@kawachiryuya/design-system/tailwind')],
-  content: [/* PJ の content path */],
-  theme: {
-    extend: {
-      // PJ 固有の extend のみ。preset を上書きしないこと
-    },
-  },
-};
-```
-
-### ブランドカラーの差し替え
-
-PJ ルートの CSS で CSS 変数を上書き:
-
-```css
-/* PJ の globals.css */
-@import "@kawachiryuya/design-system/styles/variables.css";
-
-:root {
-  --color-surface-primary: #ff6600;  /* PJ ブランド色 */
-  --color-on-primary: #ff6600;       /* テキスト色も連動 */
-}
-```
-
-これで `bg-surface-primary` `text-onSurface-primary` を使ったコンポーネントが PJ ブランドに切り替わる（コンポーネント実装は無変更）。
-
-### リポ内の実例（参考）
-
-- `gunmaas/` = サンプル PJ
-- `lp/` = ランディングページ PJ
-- `demo/`, `demo2/` = デモ用 PJ
-
-各 PJ の `tailwind.config.js` を参照すると、現状のオーバーライドパターンが分かります。
-
----
-
-## 5. 検証サイト（PJ ディレクトリの位置付け）
-
-リポ内に同居する複数の PJ ディレクトリは、それぞれ役割が異なります。**検証作業は `demo/` で行う**のが基本ルールです。
-
-| ディレクトリ | 位置付け | 用途 |
-|---|---|---|
-| **`demo/`** ⭐ | **デザインシステム検証サイト** | コンポーネント変更後の動作確認・回帰テスト・AI 生成 UI のトーン揃え検証はここで行う |
-| `gunmaas/` | サンプル PJ（GunMaaS プロトタイプ） | 個別 PJ 例として保持 |
-| `lp/` | ランディングページ | 公開用 LP |
-| `demo2/` | デモ 2 | 補助的なデモ |
-
-### `demo/` を検証サイトとして使う理由
-
-- React Router で 8 ページ構成（鉄道予約デモ）→ ルーティング・レイアウト・状態管理を含む現実的な利用シナリオ
-- Vite alias `@ds` で design-system コンポーネントを直接 import
-- Tailwind config が design-system の `tokens/*.json` を相対参照
-- `npm run deploy` で Vercel 配信可能 → 公開検証も可
-
-### 検証フロー（コンポーネント / トークン変更時）
-
-1. design-system 本体を編集
-2. `cd demo && npm run dev` で http://localhost:5173 起動
-3. 影響範囲の画面（例: ボタン変更なら `/results` `/confirm` 等）を目視確認
-4. 必要なら `npm run build` でビルドエラーをチェック
-5. 重要な変更なら Storybook（リポルートで `npm run storybook`）でも確認
-
-### demo の現状の手書き同期（Phase 1 で解消予定）
-
-- `demo/src/index.css` に CSS 変数のコピーがある（`.storybook/tailwind.css` と同内容を手書き同期中）
-- `demo/tailwind.config.js` の semantic 部分も design-system 本体と重複
-- → Style Dictionary 化（[#32](https://github.com/kawachiryuya/ai-management/issues/32)）で `tokens/build/variables.css` と `tokens/build/tailwind-preset.js` を自動生成し、両方が import / preset 参照する形に移行
-
----
-
-## 6. ビルドコマンド
+## 4. ビルドコマンド
 
 | コマンド | 用途 |
 |---|---|
-| `npm install` | 依存インストール（postinstall で `tokens:build` も自動実行） |
+| `npm install` | 依存インストール |
 | `npm run tokens:build` | Style Dictionary でトークンを `tokens/source/` から `tokens/build/` へビルド |
 | `npm run tokens:watch` | トークンソース変更を監視して自動ビルド |
 | `npm run tokens:typecheck` | `tokens/index.ts` の型整合性をチェック |
-| `npm run storybook` | Storybook ローカル起動（http://localhost:6006、tokens を pre-build） |
-| `npm run build-storybook` | Storybook 静的書き出し（`storybook-static/`、tokens を pre-build） |
-| `npm run build:gunmaas` | gunmaas PJ ビルド |
-| `npm run build:demo` | demo PJ ビルド |
+| `npm run storybook` | Storybook ローカル起動 (http://localhost:6006) |
+| `npm run build-storybook` | Storybook 静的書き出し (`storybook-static/`) |
+| `npm run build` | コンポーネント + tokens の TS コンパイル (→ `dist/`) |
 
 ### トークン参照の使い分け
 
-- **TypeScript / 型付き参照**: `import { COLORS, SPACING } from '../tokens'` → `tokens/index.ts` 経由でネスト構造の型付き const にアクセス（AI 用途で推奨）
-- **CSS 変数**: `var(--color-surface-primary)` → `tokens/build/variables.css` を `@import` する（`.storybook/tailwind.css` と `demo/src/index.css` で実装済み）
-- **Tailwind**: `tokens/preset.cjs` 経由。各 PJ の `tailwind.config.js` で `presets: [require('.../tokens/preset.cjs')]` で継承（root / demo / gunmaas で実装済み）
-
-### Phase 1 完了時のトークン全体図
-
-```
-tokens/source/*.json         （一次ソース、人間が編集する）
-        ↓ npm run tokens:build (Style Dictionary)
-        ├→ tokens/build/tokens.json    （AI 用ネストJSON、gitignore）
-        ├→ tokens/build/tokens.ts      （AI 用 TS const、gitignore）
-        ├→ tokens/build/variables.css  （CSS 変数、gitignore）
-        └→ tokens/{colors,spacing,...}.json  （旧形式、stories 用、gitignore）
-
-tokens/index.ts              （AI 用 public API、TOKENS / COLORS / SPACING ... を export）
-tokens/preset.cjs            （Tailwind preset、各 PJ tailwind.config.js が継承）
-```
+- **TypeScript / 型付き参照**: `import { COLORS, SPACING } from '../tokens'` → `tokens/index.ts` 経由
+- **CSS 変数**: `var(--color-surface-primary)` → `tokens/build/variables.css` を `@import`
+- **Tailwind**: `tokens/preset.cjs` 経由。各 PJ の `tailwind.config.js` で `presets: [require('.../tokens/preset.cjs')]` で継承
 
 ---
 
-## 7. 新規コンポーネント追加時の規約
+## 5. 新規コンポーネント追加時の規約
 
 各コンポーネントは **4 ファイル構成**:
 
 | ファイル | 内容 |
 |---|---|
-| `ComponentName.tsx` | React 実装（`React.forwardRef` + JSDoc 必須） |
+| `ComponentName.tsx` | React 実装 (`React.forwardRef` + JSDoc 必須) |
 | `ComponentName.stories.tsx` | Storybook Story |
 | `ComponentName.md` | 設計ドキュメント |
-| `index.ts` | エクスポート（named export + 型 re-export） |
+| `index.ts` | named export + 型 re-export |
 
 ### 配置ルール
 
 ```
-Primitive → components/primitives/ComponentName/
-Composite → components/composites/ComponentName/
+Primitive (Parts) → components/primitives/ComponentName/
+Composite (Blocks) → components/composites/ComponentName/
 ```
 
 ### Props 規約
 
 - `interface ComponentProps extends React.HTMLAttributes<...>` で native 属性を継承
-- 各 Props に **JSDoc コメント**（日本語可）
-- コンポーネント本体に **`@example` JSDoc** を最低 1 例
+- 各 Props に JSDoc コメント (日本語可)
+- コンポーネント本体に `@example` JSDoc を最低 1 例
 - `forwardRef` で ref 透過
 
-参考実装: `components/primitives/Button/Button.tsx`
+参考実装: [`components/primitives/Button/Button.tsx`](./components/primitives/Button/Button.tsx)
 
 ### 新規追加時の依頼プロンプト例
-
-CONTEXT.md §「次のコンポーネントを作るときのプロンプト例」を参照。要点:
 
 ```
 このデザインシステムに新しい Composite コンポーネント「XXX」を追加してください。
 
-【ディレクトリ規則】
+【配置ルール】
 - Primitive → components/primitives/XXX/
 - Composite → components/composites/XXX/
 
 【参照ファイル】
-- components/primitives/Button/Button.tsx（Primitive の実装パターン）
-- components/composites/Card/Card.tsx（Composite の実装パターン）
+- components/primitives/Button/Button.tsx (Primitive 実装パターン)
+- components/composites/Card/Card.tsx (Composite 実装パターン)
 - AGENTS.md §3 トークン参照ルール
-- principles/（関連する原則ドキュメント）
+- principles/ の関連ドキュメント
 
 【作成するファイル】
 - components/{primitives|composites}/XXX/XXX.tsx
@@ -265,19 +152,31 @@ CONTEXT.md §「次のコンポーネントを作るときのプロンプト例�
 
 ---
 
-## 8. アクセシビリティ前提
+## 6. アクセシビリティ前提
 
 - フォーカスリング: `focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-border-focus` を Primitive に標準装備
-- 最小タッチターゲット: 44x44px（WCAG 2.5.5 AAA）。Button の medium が 48px、small が 40px は icon-only 用途
-- セマンティック HTML: `<button>` `<a>` `<label>` を Primitive 内で適切に使用
-- aria 属性: 状態を持つコンポーネント（Tabs, Pagination, Switch 等）は aria-* を実装済み
-- 詳細は `principles/foundation/accessibility.md` 参照
+- 最小タッチターゲット: 44x44px (WCAG 2.5.5 AAA)
+- セマンティック HTML: `<button>` / `<a>` / `<label>` を Primitive 内で適切に使用
+- aria 属性: 状態を持つコンポーネント (Tabs, Pagination, Switch 等) は aria-* を実装済み
+- 詳細は [`principles/Foundation/accessibility.mdx`](./principles/Foundation/accessibility.mdx) 参照
 
 ---
 
-## 9. リポ全体の変更時に守ること
+## 7. 検証フロー
 
-- トークン構造を変更したら **`docs/ai-roadmap.md`** も同 PR で更新（風化防止）
-- semantic 色を追加したら `.storybook/tailwind.css` の CSS 変数も同期
-- 既存 PJ（gunmaas/lp/demo/demo2）のビルドが壊れないか `npm run build:gunmaas` 等で確認
-- 大きな変更は `CONTEXT.md` に作業ログとして追記
+コンポーネント / トークン変更時:
+
+1. design-system 本体を編集
+2. `npm run storybook` で http://localhost:6006 起動、該当コンポーネントを目視確認
+3. 必要なら `npm run build` で型エラーをチェック
+4. 影響範囲のプロダクト PJ (`gunmaas/`, `lp/`) のビルドが壊れないか確認
+
+検証用のリアルアプリは別リポジトリ [`rail-demo`](https://github.com/kawachiryuya/rail-demo) (旧 `demo/`) を使用。
+
+---
+
+## 8. 変更時に守ること
+
+- semantic 色を追加したら `tokens/build/variables.css` が自動生成されることを `npm run tokens:build` で確認
+- 既存 PJ (gunmaas/lp) のビルドが壊れないか `npm run build:gunmaas` 等で確認
+- 戦略レベルの変更 (Parts/Blocks 分類の変更、新カテゴリ追加等) は [`design-system-strategy.md`](./design-system-strategy.md) も同 PR で更新

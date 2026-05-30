@@ -80,7 +80,7 @@ import { EmptyState } from '@/components/EmptyState';
 - 説明文は次のアクションを提案する（「最初のアイテムを作成しましょう」）
 - アクションボタンで直接的な解決手段を提供する
 
-参照: [principles/patterns/data-display.md](../../principles/patterns/data-display.md)
+参照: [principles/README.md](../../principles/README.md)
 
 ---
 

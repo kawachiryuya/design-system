@@ -96,7 +96,7 @@ const [enabled, setEnabled] = useState(false);
 | 選択 | 複数選択可能 | 単一のオン/オフ |
 | 用途 | フォーム内の選択 | 設定・プリファレンス |
 
-参照: [principles/patterns/forms.md](../../principles/patterns/forms.md)
+参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
 
 ---
 

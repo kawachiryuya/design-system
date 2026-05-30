@@ -39,8 +39,8 @@ export type SwitchLabelPosition = 'left' | 'right';
  *   // 小サイズ + 高密度 UI
  *   <Switch label="WiFi" size="small" checked={wifi} onChange={setWifi} />
  *
- * @see principles/patterns/forms.md
- * @see principles/interaction/state/interactive-states.md
+ * @see principles/Patterns/forms.mdx
+ * @see principles/Interaction/state.mdx
  */
 export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
   /**

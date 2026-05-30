@@ -1,10 +1,8 @@
-# レスポンシブデザインの原則
+import { Meta } from '@storybook/addon-docs/blocks';
 
-## メタ情報
-- カテゴリ: 基盤原則
-- 適用範囲: 全階層（Atom〜Page）
-- ステータス: Approved
-- 最終更新: 2024-02-17
+<Meta title="Principles/Foundation/Responsiveness" />
+
+# レスポンシブデザインの原則
 
 ## 原則の定義
 
@@ -62,7 +60,7 @@
 @media (max-width: 767px) { width: 100%; }
 ```
 
-→ ブレークポイントの定義は [Grid](../layout/grid.md) 参照
+→ ブレークポイントの定義は [Grid](?path=/docs/principles-layout-grid--docs) 参照
 
 ## コンテンツ優先
 
@@ -100,7 +98,7 @@
 └──────────────┘
 ```
 
-コンテンツの重要度は [Hierarchy](./hierarchy.md) の原則に従って決定する。
+コンテンツの重要度は [Hierarchy](?path=/docs/principles-foundation-hierarchy--docs) の原則に従って決定する。
 
 ## レイアウトの変化パターン
 
@@ -131,7 +129,7 @@
 モバイル:    ハンバーガーメニュー or タブバー
 ```
 
-→ 詳細は [Navigation Pattern](../patterns/navigation.md)（未作成）参照
+→ 詳細は [Navigation Pattern](?path=/docs/principles-interaction-button--docs)（未作成）参照
 
 ### レイアウト変化の実装指針
 
@@ -156,7 +154,7 @@
 - インタラクティブ要素は最小 44px × 44px
 - 隣接する要素との間隔は最小 8px
 
-→ 詳細は [Touch Targets](./accessibility/touch-targets.md) 参照
+→ 詳細は [Touch Targets](?path=/docs/principles-foundation-accessibility--docs) 参照
 
 **ホバー状態への依存を避ける**:
 
@@ -229,14 +227,9 @@
 
 ## 関連原則
 
-- **[Grid](../layout/grid.md)**: ブレークポイントの定義、モバイルファーストの実装
-- **[Spacing](../layout/spacing.md)**: 画面サイズ別の余白変化
-- **[Hierarchy](./hierarchy.md)**: コンテンツ優先度の決定
-- **[Consistency](./consistency.md)**: デバイス間での一貫した体験
-- **[Touch Targets](./accessibility/touch-targets.md)**: タッチ操作のサイズ要件
+- **[Grid](?path=/docs/principles-layout-grid--docs)**: ブレークポイントの定義、モバイルファーストの実装
+- **[Spacing](?path=/docs/principles-layout-grid--docs)**: 画面サイズ別の余白変化
+- **[Hierarchy](?path=/docs/principles-foundation-hierarchy--docs)**: コンテンツ優先度の決定
+- **[Consistency](?path=/docs/principles-foundation-hierarchy--docs)**: デバイス間での一貫した体験
+- **[Touch Targets](?path=/docs/principles-foundation-accessibility--docs)**: タッチ操作のサイズ要件
 
-## バージョン履歴
-
-| 日付 | バージョン | 変更内容 | 変更理由 |
-|------|-----------|----------|----------|
-| 2024-02-17 | 1.0.0 | 初版作成 | Phase 2 |

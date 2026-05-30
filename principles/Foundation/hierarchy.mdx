@@ -1,10 +1,8 @@
-# 視覚的ヒエラルキーの原則（Visual Hierarchy）
+import { Meta } from '@storybook/addon-docs/blocks';
 
-## メタ情報
-- カテゴリ: 基盤原則
-- 適用範囲: 全階層（Atom〜Page）
-- ステータス: Approved
-- 最終更新: 2024-01-15
+<Meta title="Principles/Foundation/Hierarchy" />
+
+# 視覚的ヒエラルキーの原則（Visual Hierarchy）
 
 ## 原則の定義
 
@@ -46,7 +44,7 @@ Caption       →  最も小さい（補足情報）
 ✅ 良い例: H1=36px、H2=24px、Body=16px（明確な差）
 ```
 
-→ スケール定義は [Typography Scale](../content/typography/scale.md) 参照
+→ スケール定義は [Typography Scale](?path=/docs/principles-typography-scale--docs) 参照
 
 ### 2. 色とコントラスト（Color & Contrast）
 
@@ -69,7 +67,7 @@ Secondary       →  neutral（低彩度・控えめ）
 Tertiary        →  テキストのみ（最も控えめ）
 ```
 
-→ 詳細は [Color Usage](../color/color-usage.md)、[Button Priority](../interaction/button/priority.md) 参照
+→ 詳細は [Color Usage](?path=/docs/principles-color-semantic-colors--docs)、[Button Priority](?path=/docs/principles-interaction-button--docs) 参照
 
 ### 3. 余白（Spacing）
 
@@ -102,7 +100,7 @@ Tertiary        →  テキストのみ（最も控えめ）
 段落間: 24px（spacing-6）
 ```
 
-→ 詳細は [Spacing](../layout/spacing.md) 参照
+→ 詳細は [Spacing](?path=/docs/principles-layout-grid--docs) 参照
 
 ### 4. 位置（Position）
 
@@ -135,7 +133,7 @@ Tertiary        →  テキストのみ（最も控えめ）
          [ Secondary ]
 ```
 
-→ 詳細は [Action Placement](../interaction/button/placement.md) 参照
+→ 詳細は [Action Placement](?path=/docs/principles-interaction-button--docs) 参照
 
 ### 5. 太さと字体（Weight & Style）
 
@@ -270,16 +268,11 @@ Tertiary Button:
 
 ## 関連原則
 
-- **[Consistency](./consistency.md)**: ヒエラルキーは一貫して適用する
-- **[Typography Scale](../content/typography/scale.md)**: サイズと太さの定義
-- **[Typography Hierarchy](../content/typography/hierarchy.md)**: テキスト階層の定義
-- **[Spacing](../layout/spacing.md)**: 余白によるヒエラルキー
-- **[Color Usage](../color/color-usage.md)**: 色によるヒエラルキー
-- **[Button Priority](../interaction/button/priority.md)**: ボタンのヒエラルキー
-- **[Action Placement](../interaction/button/placement.md)**: 位置によるヒエラルキー
+- **[Consistency](?path=/docs/principles-foundation-hierarchy--docs)**: ヒエラルキーは一貫して適用する
+- **[Typography Scale](?path=/docs/principles-typography-scale--docs)**: サイズと太さの定義
+- **[Typography Hierarchy](?path=/docs/principles-typography-scale--docs)**: テキスト階層の定義
+- **[Spacing](?path=/docs/principles-layout-grid--docs)**: 余白によるヒエラルキー
+- **[Color Usage](?path=/docs/principles-color-semantic-colors--docs)**: 色によるヒエラルキー
+- **[Button Priority](?path=/docs/principles-interaction-button--docs)**: ボタンのヒエラルキー
+- **[Action Placement](?path=/docs/principles-interaction-button--docs)**: 位置によるヒエラルキー
 
-## バージョン履歴
-
-| 日付 | バージョン | 変更内容 | 変更理由 |
-|------|-----------|----------|----------|
-| 2024-01-15 | 1.0.0 | 初版作成 | Phase 2、consistency.mdに続く基盤原則 |

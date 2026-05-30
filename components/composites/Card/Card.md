@@ -117,7 +117,7 @@ import { Card } from '@/components/Card';
 - **href**: ナビゲーション用途。`<a>` としてレンダリングされ、リンクセマンティクスを持つ
 - **clickable + onClick**: アクション用途。`<div role="button">` としてレンダリング
 
-参照: [principles/patterns/data-display.md](../../principles/patterns/data-display.md)
+参照: [principles/README.md](../../principles/README.md)
 
 ---
 
@@ -139,7 +139,7 @@ import { Card } from '@/components/Card';
 - `Tab`: カード内のインタラクティブ要素間でフォーカス移動
 - `Enter` / `Space`: クリック可能なカードの操作
 
-参照: [principles/foundation/accessibility/keyboard-navigation.md](../../principles/foundation/accessibility/keyboard-navigation.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

@@ -28,7 +28,6 @@
     "**/*.test.ts",
     "node_modules",
     "demo",
-    "demo2",
     "gunmaas",
     "lp",
     ".storybook",

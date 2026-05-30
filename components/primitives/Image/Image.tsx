@@ -40,8 +40,8 @@ export type ImageRounded = 'none' | 'sm' | 'md' | 'lg' | 'full';
  *     fallback={<DefaultAvatar />}
  *   />
  *
- * @see principles/content/
- * @see principles/foundation/accessibility/overview.md
+ * @see principles/README.md
+ * @see principles/Foundation/accessibility.mdx
  */
 export interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   /** 画像 URL（必須）。 */

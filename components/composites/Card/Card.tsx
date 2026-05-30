@@ -59,7 +59,7 @@ export type CardFooterJustify = 'start' | 'end' | 'between';
  *     </Card.Footer>
  *   </Card>
  *
- * @see principles/patterns/data-display.md
+ * @see principles/README.md
  */
 export interface CardProps {
   /**

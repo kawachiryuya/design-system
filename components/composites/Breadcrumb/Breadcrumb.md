@@ -58,7 +58,7 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 - 最後の項目は現在ページとして非リンク表示される
 - ラベルは簡潔にし、長い場合は `truncate`（max-width: 200px）で省略
 
-参照: [principles/patterns/navigation.md](../../principles/patterns/navigation.md)
+参照: [principles/README.md](../../principles/README.md)
 
 ---
 
@@ -75,7 +75,7 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 - `Tab`: リンク間のフォーカス移動
 - `Enter`: リンクの遷移
 
-参照: [principles/foundation/accessibility/keyboard-navigation.md](../../principles/foundation/accessibility/keyboard-navigation.md)
+参照: [principles/Foundation/accessibility.mdx](../../principles/Foundation/accessibility.mdx)
 
 ---
 

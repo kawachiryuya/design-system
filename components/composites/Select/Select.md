@@ -87,7 +87,7 @@ import { Select } from '@/components/Select';
 - 選択肢が **7個以上** → Select（スペース効率が良い）
 - スペースが限られている → Select
 
-参照: [principles/patterns/forms.md](../../principles/patterns/forms.md)
+参照: [principles/Patterns/forms.mdx](../../principles/Patterns/forms.mdx)
 
 ---
 

@@ -176,7 +176,7 @@ if (featureFlag.newDesign) {
 | **Parts** | [`components/primitives/`](./components/primitives/) (Button, Input, Icon, Typography 等 11 個) |
 | **Blocks** | [`components/composites/`](./components/composites/) (Alert, Card, SearchBar, Tabs 等 19 個) |
 | **common (汎用)** | 本リポジトリ全体 (`components/`, `tokens/`, `principles/`) — npm パッケージ `@kawachiryuya/design-system` として配信 |
-| **[product-name] (プロダクト固有)** | 別リポジトリで管理 (本リポを npm 依存として参照)。例: `gunmaas` (鉄道予約) / LP は本リポから切り出し済み |
+| **[product-name] (プロダクト固有)** | 別リポジトリで管理 (本リポを npm 依存として参照)。[`gunmaas`](https://github.com/kawachiryuya/gunmaas) (鉄道予約) / [`rail-demo-lp`](https://github.com/kawachiryuya/rail-demo-lp) (LP) |
 | **グローバルトークン** | [`tokens/source/colors.json`](./tokens/source/colors.json) ほか primitive スケール |
 | **セマンティックトークン** | [`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) (WHERE × WHAT 構造) |
 | **検証サイト (Storybook)** | `npm run storybook` / https://design-system-storybook-murex.vercel.app |

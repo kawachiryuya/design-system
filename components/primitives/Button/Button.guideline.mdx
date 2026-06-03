@@ -1,0 +1,154 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './Button.stories';
+import { Button } from './Button';
+import { Icon } from '../Icon';
+import { Link } from '../Link';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={ButtonStories} で Button.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Button.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={ButtonStories} name="Guideline" />
+
+# Button
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+ユーザーがその場でアクションを実行するためのトリガー。送信・保存・削除など「押すと何かが起きる」操作に使う。別ページへの遷移には Button ではなく `<Link>` を使う。
+
+---
+
+## Props
+
+下表は Button.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={ButtonStories.Playground} />
+
+詳細: [Button Priority 原則](?path=/docs/principles-interaction-button-priority--docs) / [Action Placement 原則](?path=/docs/principles-interaction-button-placement--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="主要アクションは1画面に1つ"
+  doExample={
+    <>
+      <Button>保存する</Button>
+      <Button variant="secondary">キャンセル</Button>
+    </>
+  }
+  doCaption="Primary はメインの操作にだけ使い、副次操作は Secondary に逃がす。"
+  dontExample={
+    <>
+      <Button>保存する</Button>
+      <Button>送信する</Button>
+    </>
+  }
+  dontCaption="Primary が2つあると、ユーザーがどちらを押すべきか判断できない。"
+/>
+
+<DoDontExample
+  label="ラベルは動詞で何が起きるか書く"
+  doExample={
+    <>
+      <Button>削除する</Button>
+      <Button variant="secondary">キャンセル</Button>
+    </>
+  }
+  doCaption="動詞で具体化することで、押した結果がラベルから予測できる。"
+  dontExample={
+    <>
+      <Button>OK</Button>
+      <Button variant="secondary">はい</Button>
+    </>
+  }
+  dontCaption="「OK」「はい」は文脈依存で、押した結果が予測できない。"
+/>
+
+<DoDontExample
+  label="ページ遷移は Button ではなく Link"
+  doExample={<Link href="#account">アカウント設定へ</Link>}
+  doCaption="URL を持つ操作は Link。右クリック新タブ等の OS 機能と SEO に乗る。"
+  dontExample={<Button>アカウント設定へ</Button>}
+  dontCaption="Button では右クリック新タブが効かず、SR でも「ボタン」と読まれて遷移と誤解される。"
+/>
+
+<DoDontExample
+  label="破壊的アクションは色 + アイコン + 動詞で三重に補強する"
+  doExample={
+    <Button variant="destructive" icon={<Icon name="remove" size="sm" />}>削除する</Button>
+  }
+  doCaption="色・アイコン・動詞ラベルの三重表現により、色覚特性に依存せず意味が伝わる。"
+  dontExample={
+    <Button variant="destructive">OK</Button>
+  }
+  dontCaption="動詞でない曖昧ラベル (「OK」「はい」) は、destructive 色を識別しづらいユーザーには「何が起きるか」が読み取れない。"
+/>
+
+<DoDontExample
+  label="横並びは2〜3個まで"
+  doExample={
+    <>
+      <Button>保存する</Button>
+      <Button variant="secondary">下書きに戻す</Button>
+      <Button variant="tertiary">キャンセル</Button>
+    </>
+  }
+  doCaption="主要な選択肢を2〜3個に絞ると視線が誘導される。"
+  dontExample={
+    <div className="flex flex-wrap gap-2">
+      <Button>保存</Button>
+      <Button>送信</Button>
+      <Button>承認</Button>
+      <Button>却下</Button>
+      <Button>キャンセル</Button>
+    </div>
+  }
+  dontCaption="4個以上並べると視線が散り、モバイルでは折返しで配置も崩れる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+「これは Button じゃないかも?」と迷ったときは下の表で目的に合うコンポーネントを探す:
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 押すと **URL に遷移** する | `<Link>` | `<a>` でないと OS 機能 (右クリック新タブ等) / SEO が効かない |
+| 押すと **ON/OFF が永続化** する | `<Switch>` | 状態を表現するのが本義のコントロール |
+| 押すと **選択状態が変わる** (複数候補から1つ) | `<SegmentedControl>` / `<Radio>` | 「選択」と「実行」は別 UI |
+| 押すと **モード切替** する (1ボタンで ON/OFF) | `<ToggleButton>` | 押下=状態切替の専用 UI |
+| **フィルタ条件** を足し引きする | `<FilterChip>` | 検索結果に作用する選択は専用パターン |
+| ナビゲーションの **タブ切替** | `<Tabs>` | 「複数候補から1つを選ぶ」UI、Button はアクション実行 |
+| **メニュー** を開く (複数アクションを内包) | `<Modal>` (暫定) | 専用の `<DropdownMenu>` は未実装。複数アクションを1ボタンに集約する必要があれば現状 `<Modal>` で代用 |
+
+---
+
+## アクセシビリティ
+
+- **キーボード**: `Tab` でフォーカス移動、`Enter` / `Space` でクリック
+- **状態**: `disabled` 時は DOM 上も `disabled` 属性、`isLoading` 時も `disabled` でクリック不能化
+- **フォーカス可視化**: `focus-visible:ring-2` で2px のリングを標準装備
+- **タッチターゲット**: `size="medium"` / `large` で WCAG 2.5.5 (44x44px) を満たす。`size="small"` は密度の高い一覧 UI に限定する
+- **icon-only**: `aria-label` を型レベルで必須化済 (`<Button iconOnly icon={...} aria-label="閉じる" />`)
+
+関連: [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs) / [Focus Management](?path=/docs/principles-foundation-accessibility-focus-management--docs) / [Touch Targets](?path=/docs/principles-foundation-accessibility-touch-targets--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- `<Icon>` — `icon` prop に渡す
+- `<Spinner>` — `isLoading` の内部表示で使用

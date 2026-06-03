@@ -30,6 +30,9 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | アイコン | `<Icon>` | 直接 SVG 埋込みではなく必ず `<Icon>` |
 | テキストの装飾的階層 | `<Typography>` | `<h1>` 直書きより推奨 |
 | ローディング | `<Spinner>` または `<Skeleton>` | 待機状態の見せ方で使い分け |
+| スクリーンリーダ専用テキスト | `<VisuallyHidden>` | icon-only Button の補助ラベル / live region |
+| モーダル表示 | `<Modal>` | ネイティブ `<dialog>` ベース。確認ダイアログ・フォーム入力等 |
+| 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け |
 
 ### Primitive vs Composite
 
@@ -103,13 +106,13 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 
 ## 5. 新規コンポーネント追加時の規約
 
-各コンポーネントは **4 ファイル構成**:
+各コンポーネントは **4 ファイル構成**。情報の置き場を重複させないため、ファイルごとに担当範囲を厳密に分ける。
 
-| ファイル | 内容 |
+| ファイル | 担当 |
 |---|---|
-| `ComponentName.tsx` | React 実装 (`React.forwardRef` + JSDoc 必須) |
-| `ComponentName.stories.tsx` | Storybook Story |
-| `ComponentName.md` | 設計ドキュメント |
+| `ComponentName.tsx` | React 実装 + 全 Props の JSDoc + `@example` (autodocs に流れる) |
+| `ComponentName.stories.tsx` | Storybook Story (**標準 7 節構成** — Docs/Playground/Variants/Sizes/States/WithIcon/EdgeCases) |
+| `ComponentName.guideline.mdx` | **コンポーネントの Docs ページを兼ねる** (`<Meta of={Stories} name="Guideline" />` で autodocs を置き換え)。テキスト中心の設計指針 + `<Primary />` / `<Controls />` / `<Stories />` で stories を埋め込む |
 | `index.ts` | named export + 型 re-export |
 
 ### 配置ルール
@@ -119,34 +122,131 @@ Primitive (Parts) → components/primitives/ComponentName/
 Composite (Blocks) → components/composites/ComponentName/
 ```
 
-### Props 規約
+### .tsx の規約
 
 - `interface ComponentProps extends React.HTMLAttributes<...>` で native 属性を継承
-- 各 Props に JSDoc コメント (日本語可)
-- コンポーネント本体に `@example` JSDoc を最低 1 例
+- **各 Props に JSDoc コメント必須** — Storybook の autodocs (`react-docgen-typescript`) が拾い、Props 表の Description 列に自動表示される
+- `@default` JSDoc タグで既定値を明記する (Props 表に出る)
+- **Props の説明は `.tsx` JSDoc が唯一の情報源**。`.stories.tsx` の `argTypes` 側に `description` を書くと JSDoc を上書きしてしまうので書かない
+- コンポーネント本体に `@example` JSDoc を 2〜3 例
 - `forwardRef` で ref 透過
 
-参考実装: [`components/primitives/Button/Button.tsx`](./components/primitives/Button/Button.tsx)
+### .stories.tsx の規約 — 標準ストーリー構造 (固定順序)
+
+**全コンポーネントで節の命名と順序を統一する**。デザイナー以外の読者が「次のコンポーネントを見ても並びが同じ」状態を作るのが目的。
+
+| 順 | 節名 | 役割 | 必須 | 備考 |
+|---|---|---|---|---|
+| 1 | (Docs) | autodocs の Docs ページ。本リポでは `.guideline.mdx` が `<Meta of={...} />` で兼ねる | 必須 | サイドバーで「Guideline」と表示される |
+| 2 | **Playground** | `args` を全開放、Controls で props を探索する起点 | 必須 | play test (`onClick: fn()` 等) もここに置く |
+| 3 | **Variants** | 種類違いを **静的に横並び** (`primary` / `secondary` / `tertiary` 等) | 任意 | 該当する prop が無ければ省略 |
+| 4 | **Sizes** | サイズ違いを静的に横並び (`small` / `medium` / `large` 等) | 任意 | 該当する prop が無ければ省略 |
+| 5 | **States** | Default / Hover / Focus-visible / Active / Disabled / Loading を **単独で並べる** | 必須 | Hover/Focus/Active は `storybook-addon-pseudo-states` で強制表示 (`parameters.pseudo`) |
+| 6 | **WithIcon** | `icon` / `leadingIcon` / `trailingIcon` / `iconOnly` などの ReactNode prop パターン | 任意 | icon 系 prop が無ければ省略 |
+| 7 | **EdgeCases** | `fullWidth` / 長文ラベル / truncate / 空文字など壊れやすいケースの監視 | 任意 | コンポーネント固有のリスクケースを並べる |
+
+**書き方ルール**:
+- CSF3 (`Meta` + 名前付き `export`)
+- `tags: ['autodocs']` は **付けない** (`.guideline.mdx` が `<Meta of>` で Docs を兼ねるため)
+- 各 story に `parameters.docs.description.story` で一行説明を必須
+- Variants / Sizes / States / WithIcon / EdgeCases は **args 非依存の静的 render** (視覚回帰の対象に)
+- 色・余白はハードコードせず Tokens (semantic Tailwind ユーティリティ) を参照
+
+**判断軸**:
+- 該当する prop が無ければ節をまるごと省略可。ただし**残った節の順序は固定**
+- Controls タブで切り替えられる prop でも Variants/Sizes 節として静的に並べる (一覧性が要る)
+
+参考実装: [`components/primitives/Button/Button.stories.tsx`](./components/primitives/Button/Button.stories.tsx)
+
+### .guideline.mdx の規約 — Docs を兼ねるテキスト中心ページ
+
+**`.guideline.mdx` は `<Meta of={Stories} name="Guideline" />` で autodocs の Docs ページを置き換える**。サイドバーから「Docs」ノードが消え、「Guideline」が Docs を兼ねる。
+
+**冒頭の必須宣言**:
+```mdx
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './ComponentName.stories';
+
+<Meta of={ComponentStories} name="Guideline" />
+```
+
+**Doc Blocks の埋め込み**:
+- `<ArgTypes of={ComponentStories.Playground} />` — Props 表 (Name/Description 2 カラム) を自動描画
+
+注: `<Primary />` / `<Controls />` / `<Stories />` は本リポでは使わない。各 Story はサイドバーから個別に開く運用。
+
+**標準セクション** (上から順、5 セクション):
+
+1. **概要** — 1〜2 文で **「何のためのコンポーネントか」「いつ使うか」「いつ使わないか (代替コンポーネント名)」** を端的に書く。サブセクション禁止 (機能や a11y の詳細は他セクションに任せる)。
+   - 例: 「ユーザーがその場でアクションを実行するためのトリガー。送信・保存・削除など『押すと何かが起きる』操作に使う。別ページへの遷移には Button ではなく `<Link>` を使う。」
+2. **Props** — `<ArgTypes of={ComponentStories.Playground} />` で Props 表 (Storybook autodocs が型から自動生成) を描画。**Name + Description の 2 カラム** に Docs スコープの CSS で抑える (Default 列は CSS 側で `display: none`)。各 prop の説明は **`.tsx` の Props JSDoc に書く** (`argTypes` 側に `description` を書かない — JSDoc を上書きするため)。関連 principles へのリンクを末尾に置く
+3. **Do / Don't** — 2 サブセクション:
+   - `<DoDontExample>` を **3〜5 ペア配置**。重要な NG パターンも視覚カード化する (「色だけで意味」「横並び 4 個以上」など)
+   - `### 別コンポーネントの方が適切な場面` — 「やろうとすること / 使うべき別コンポーネント / 理由」の表で他コンポーネントに誘導 (列順は読者の認知順 「やる → 何を選ぶ → なぜ」)
+4. **アクセシビリティ** の要点 — キーボード操作、ARIA、タッチターゲット、SR への配慮、各種固有 a11y 仕様
+5. **関連** — `### 内部で利用するコンポーネント` のみ。Icon / Spinner など子で使う Primitive を列挙
+
+各 Story の閲覧は **サイドバーから個別に開いて** Controls / Interactions / Accessibility タブで深掘りする運用とする (Guideline ページに `<Stories>` ブロックは置かない)。
+
+### Props 説明の唯一の情報源は .tsx の JSDoc
+
+- ネイティブ HTML 属性 (`disabled` 等、`React.ButtonHTMLAttributes` 等から継承) は **再宣言して JSDoc を上書き** する。React の型には JSDoc が付いていないため、Storybook の Props 表で Description が空欄になる
+- 例: `interface ButtonBaseProps { /** 操作不能化。... */ disabled?: boolean; ... }`
+
+### Do / Don't カードの規約
+
+- **位置**: 独立した `## Do / Don't` セクション (セクション 3)
+- **コンポーネント**: `<DoDontExample>` を使う ([.storybook/blocks/DoDontExample.tsx](./.storybook/blocks/DoDontExample.tsx))。MDX からは `import { DoDontExample } from '@sb-blocks/DoDontExample'` でエイリアス参照
+- **ペア数**: 3〜5 個。「主要アクションは 1 つ」「ラベルは動詞」「他コンポーネントへの代替」のような **基本ルール** に加え、「色だけで意味を伝えない」「横並び 4 個以上にしない」等の **NG パターン** も視覚カード化する
+- **色分け固定**: 緑=Do (推奨) / 赤=Don't (非推奨)。全コンポーネントで意味を統一
+- **構造**: `label` (ルール名) / `doExample` (本物のコンポーネント) / `doCaption` / `dontExample` (本物のコンポーネント) / `dontCaption`
+- **必須**: 各 `dontCaption` に **「なぜそうなのか」の理由** を 1 行書く
+- **プレビュー**: 必ず本物のコンポーネントを描画 (スクリーンショット画像禁止、Tokens 変更追従のため)
+
+### ページ冒頭の TOC
+
+`<GuidelineToc>` ([.storybook/blocks/GuidelineToc.tsx](./.storybook/blocks/GuidelineToc.tsx)、MDX からは `import { GuidelineToc } from '@sb-blocks/GuidelineToc'`) を H1 直下に必ず置く。標準セクション 7 個分の anchor リンクを列挙する。 anchor 用 id は rehype-slug が自動付与 (`#いつ使う--いつ使わない` 等)。
+
+**書かない** (重複・陳腐化の温床):
+- Props 表 → `.tsx` JSDoc から autodocs が自動生成
+- 使用例コードブロック (純粋な props 例) → Story と重複。ユースケース内の図解スニペットは可
+- 実装詳細 (使用トークン表 / Tailwind クラス一覧)
+- バージョン履歴 → git log で十分
+
+参考実装: [`components/primitives/Button/Button.guideline.mdx`](./components/primitives/Button/Button.guideline.mdx)
+
+### 完了条件 (受け入れ基準)
+
+新規・既存問わずコンポーネントを規約準拠と判定するチェックリスト:
+
+- [ ] `.stories.tsx` が標準節 (Playground / Variants / Sizes / States / WithIcon / EdgeCases) を持ち、不要な節は省略しつつ順序が守られている
+- [ ] `tags: ['autodocs']` が付いていない (`.guideline.mdx` 側が Docs を兼ねるため)
+- [ ] `Playground` で `args` 全開放、Controls 操作で props 単位の挙動が見られる
+- [ ] Variants / Sizes / States が静的な一覧として持たれている
+- [ ] States 節で Hover / Focus-visible / Active が `parameters.pseudo` 経由で強制表示される
+- [ ] 各 story に `parameters.docs.description.story` で一行説明がある
+- [ ] `.guideline.mdx` が `<Meta of={...} name="Guideline" />` で Docs を兼ね、`<Primary />` `<Controls />` `<Stories />` を埋め込む
+- [ ] H1 直下に `<GuidelineToc>` を配置し、5 セクションに 1 クリックで飛べる
+- [ ] `## Do / Don't` セクションに `<DoDontExample>` が **3〜5 ペア** ある
+- [ ] 各 `dontCaption` に「なぜ Don't なのか」の理由が書かれている
+- [ ] Do/Don't プレビューが **本物のコンポーネント** で描画されている (画像でない)
+- [ ] 色・余白が semantic Tokens (`bg-surface` `text-onSurface` 等) 参照になっている
 
 ### 新規追加時の依頼プロンプト例
 
 ```
 このデザインシステムに新しい Composite コンポーネント「XXX」を追加してください。
 
-【配置ルール】
-- Primitive → components/primitives/XXX/
-- Composite → components/composites/XXX/
-
 【参照ファイル】
-- components/primitives/Button/Button.tsx (Primitive 実装パターン)
-- components/composites/Card/Card.tsx (Composite 実装パターン)
-- AGENTS.md §3 トークン参照ルール
+- components/primitives/Button/Button.{tsx,stories.tsx,guideline.mdx} — 規約のリファレンス実装
+- components/composites/Card/Card.tsx — Composite 実装パターン
+- AGENTS.md §3 トークン参照ルール / §5 (本節) ファイル別の担当範囲
 - principles/ の関連ドキュメント
 
 【作成するファイル】
 - components/{primitives|composites}/XXX/XXX.tsx
-- components/{primitives|composites}/XXX/XXX.stories.tsx
-- components/{primitives|composites}/XXX/XXX.md
+- components/{primitives|composites}/XXX/XXX.stories.tsx (Story は 3〜5 件、Controls で代替可能なものは作らない)
+- components/{primitives|composites}/XXX/XXX.guideline.mdx (標準 9 セクション、Props 表は書かない)
 - components/{primitives|composites}/XXX/index.ts
 ```
 
@@ -158,7 +258,7 @@ Composite (Blocks) → components/composites/ComponentName/
 - 最小タッチターゲット: 44x44px (WCAG 2.5.5 AAA)
 - セマンティック HTML: `<button>` / `<a>` / `<label>` を Primitive 内で適切に使用
 - aria 属性: 状態を持つコンポーネント (Tabs, Pagination, Switch 等) は aria-* を実装済み
-- 詳細は [`principles/Foundation/accessibility/overview.md`](./principles/Foundation/accessibility/overview.md) 参照
+- 詳細は [`principles/Foundation/accessibility/overview.mdx`](./principles/Foundation/accessibility/overview.mdx) 参照
 
 ---
 
@@ -180,3 +280,66 @@ Composite (Blocks) → components/composites/ComponentName/
 - semantic 色を追加したら `tokens/build/variables.css` が自動生成されることを `npm run tokens:build` で確認
 - 依存している product 側のビルドが壊れないか、本リポを `npm link` または公開バージョン経由で確認
 - 戦略レベルの変更 (Parts/Blocks 分類の変更、新カテゴリ追加等) は [`design-system-strategy.md`](./design-system-strategy.md) も同 PR で更新
+
+---
+
+## 9. principles リンク規約
+
+`.tsx` / `.guideline.mdx` から [`principles/`](./principles/) (デザイン原則) へ参照を貼る箇所は 2 つあり、それぞれ書き方を固定する。書き方を統一する目的は **grep で全リンクが拾えること** と **principles ファイル名変更時の追従コストを下げること**。
+
+### 9-1. `.tsx` JSDoc `@see` — リポ内パス形式
+
+```ts
+/**
+ * @see principles/Interaction/button/priority.mdx
+ * @see principles/Foundation/accessibility/touch-targets.mdx
+ */
+```
+
+- 拡張子は **必ず `.mdx`** (実体ファイルがすべて `.mdx` のため、`.md` は壊れリンク)
+- リポルートからの **相対パス** で書く (IDE のジャンプは効かないが、grep で追える)
+- `@see` で参照したパスは autodocs の Props 表には出ない (`react-docgen-typescript` が `@see` を拾わないため)。読者向けのリンクは下記 `.guideline.mdx` 側で書く
+
+### 9-2. `.guideline.mdx` 関連リンク — `?path=` クエリ形式
+
+Storybook 内でクリック遷移できるリンクは、`?path=/docs/<storyId>--docs` 形式の URL クエリで書く。
+
+```mdx
+関連: [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)
+```
+
+**`<storyId>` の作り方** (principles 側 `<Meta title="..." />` の値を変換):
+
+1. title を取得: 例 `Principles/Foundation/Accessibility/Keyboard Navigation`
+2. すべて **小文字** に
+3. `/` と **半角空白** を `-` に置換
+4. → `principles-foundation-accessibility-keyboard-navigation`
+5. 末尾に `--docs` を付与
+
+```
+"Principles/Foundation/Accessibility/Keyboard Navigation"
+   ↓ lowercase + replace(/[/ ]/g, '-')
+"principles-foundation-accessibility-keyboard-navigation"
+   ↓ append
+"?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs"
+```
+
+**なぜ `?path=` 形式か**:
+
+- `@storybook/addon-links` の `<LinkTo>` でも同じ URL を生成するが、JSX 記法は MDX の中で冗長になりプレーンな markdown リンクと比べて利点が薄い
+- 相対パス (`../../../principles/...mdx`) は Storybook docs iframe で 404 になる (実体ファイルは Vercel に上がらないため)
+- principles 側で `title` を変えると壊れる弱点はあるが、`<LinkTo>` でも同じく壊れるため共通
+
+### 9-3. 壊れリンクのチェック
+
+PR を出す前に下記コマンドで全 `.md` 参照が残っていないことを確認する:
+
+```sh
+# .tsx 内の壊れリンク (実体は .mdx)
+grep -rn "principles/[A-Za-z/_-]*\.md\b" components --include="*.tsx"
+
+# .guideline.mdx 内の相対パス形式 (?path= 形式に統一されているべき)
+grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
+```
+
+両コマンドの出力が空であること。

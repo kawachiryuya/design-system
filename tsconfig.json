@@ -17,7 +17,8 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@sb-blocks/*": [".storybook/blocks/*"]
     }
   },
   "include": ["components/**/*", ".storybook/**/*"]

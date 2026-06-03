@@ -35,8 +35,8 @@ export type LinkUnderline = 'always' | 'hover' | 'none';
  *   // 無効状態（クリック不可、aria-disabled 自動付与）
  *   <Link href="/admin" disabled>管理画面（権限が必要）</Link>
  *
- * @see principles/README.md
- * @see principles/Interaction/state/overview.md
+ * @see principles/README.mdx
+ * @see principles/Interaction/state/overview.mdx
  */
 export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'color'> {
   /** リンク先 URL（必須）。`disabled` 時は href が削除される。 */
@@ -102,10 +102,18 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       lg: 'text-lg',
     };
 
+    // hover/active の背景オーバーレイは color と組で持つ:
+    // - primary (緑文字) → 薄緑 overlay (色味を合わせる)
+    // - neutral / muted → 中性 (黒) overlay
+    //
+    // 注: text 色に `!` (Tailwind important) を付けるのは、Storybook docs 環境の
+    // `.sbdocs a` 標準スタイル (specificity 0,1,1) が Tailwind text utility
+    // (0,1,0) に勝ってしまうのを上書きするため。Link がどの環境でも自身の色を
+    // 保証するための意図的なコスト。
     const colorStyles = {
-      primary: 'text-onSurface-primary',
-      neutral: 'text-onSurface',
-      muted:   'text-onSurface-muted',
+      primary: '!text-onSurface-primary hover:bg-state-hover-on-primary active:bg-state-active-on-primary',
+      neutral: '!text-onSurface hover:bg-state-hover active:bg-state-active',
+      muted:   '!text-onSurface-muted hover:bg-state-hover active:bg-state-active',
     };
 
     const underlineStyles = {
@@ -121,8 +129,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       'rounded-xs',
       'transition-colors',
       'duration-normal',
-      'hover:bg-state-hover',
-      'active:bg-state-active',
+      // hover/active 背景は colorStyles 側で color に応じて変える
       'focus:outline-none',
       'focus-visible:ring-2',
       'focus-visible:ring-border-focus',
@@ -157,6 +164,10 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     return (
       <a
         ref={ref}
+        // data-ds-link で Storybook docs (.sbdocs a の青色リンク標準スタイル) と
+        // 識別。.storybook/tailwind.css で color: inherit / text-decoration: none に
+        // リセットし、Tailwind の text-* / underline 系クラスを当てさせる。
+        data-ds-link="true"
         href={disabled ? undefined : href}
         aria-disabled={disabled || undefined}
         className={classes}

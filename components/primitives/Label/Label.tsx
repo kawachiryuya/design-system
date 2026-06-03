@@ -25,7 +25,7 @@ export type LabelSize = 'small' | 'medium' | 'large';
  *   // 大サイズ（モバイル CTA フォーム）
  *   <Label htmlFor="phone" size="large" required>電話番号</Label>
  *
- * @see principles/Patterns/forms.md
+ * @see principles/Patterns/forms.mdx
  */
 export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   /** 関連付けるフォームフィールドの `id`（HTML `<label for="...">` に対応）。 */

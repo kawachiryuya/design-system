@@ -1,0 +1,147 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Primitives/Input/Guideline" />
+
+# Input — Guideline
+
+Props 表 / コード例 / 状態の見え方は **Docs (autodocs)** と **Stories タブ** を参照。
+本ページは「なぜそう作るか」「いつどう使い分けるか」を扱う設計の指針。
+
+---
+
+## 概要
+
+1 行のテキスト入力を受け付ける最小単位のフォームコンポーネント。
+ラベル / ヘルプテキスト / エラーメッセージを **一体管理** し、a11y 属性 (`aria-invalid` / `aria-describedby` / `aria-required`) を自動付与する。
+
+---
+
+## 使うとき
+
+1 行のテキスト入力を受ける場面に使う。代表シーンと組合せの手本:
+
+### ログイン / 認証
+
+`type="email"` と `type="password"` を `required` + `fullWidth` で並べる。エラー時は `error` + `errorMessage` をセットで指定 (型レベルで強制)。
+
+```tsx
+<Input label="メールアドレス" type="email" required fullWidth />
+<Input
+  label="パスワード"
+  type="password"
+  required
+  fullWidth
+  error
+  errorMessage="パスワードが正しくありません"
+/>
+```
+
+### 検索ボックス (単発)
+
+`type="search"` + `leadingIcon` で アイコン付きの入力欄。候補や履歴が要るなら `<SearchBar>` を使う。
+
+```tsx
+<Input label="検索" type="search" leadingIcon={<Icon name="search" />} />
+```
+
+### 住所 / カード情報フォーム
+
+複数 Input を縦に並べる。`fullWidth` で揃え、`helpText` で書式 (例: 「半角ハイフン区切り」) を案内する。
+
+### 数値入力 (シンプル)
+
+`type="number"` で単純な数量入力。`±` ボタンが要るなら `<NumberInput>` に切替。
+
+### インライン編集
+
+テーブル行・カード内に埋め込む `size="small"` の Input。`fullWidth` ではなく親要素の幅に合わせる。
+
+---
+
+## 使わないとき
+
+1 行テキスト入力以外の入力 UI が要る場面では、別コンポーネントを使う:
+
+| やろうとすること | 理由 | 使うべき別コンポーネント |
+|---|---|---|
+| **複数行** のテキスト (コメント / 説明文) | 改行できる入力は別コンポーネント | `<Textarea>` |
+| **数値スピナー** (±ボタン / step 操作) | 数値の増減 UI は専用パターン | `<NumberInput>` |
+| **候補表示 / 履歴付き検索** | 検索バーは UI 慣習が独立 | `<SearchBar>` |
+| **選択肢から 1 つ選ぶ** | 「入力」ではなく「選択」 | `<Select>` / `<Radio>` / `<SegmentedControl>` |
+| **複数選択** | フラグの組合せは別 UI | `<Checkbox>` / `<CheckboxGroup>` |
+| **ON/OFF の真偽値** | 2 値は専用コントロール | `<Switch>` / `<Checkbox>` |
+| **日付範囲 / カレンダー UI** | `type="date"` はネイティブ UI のみ、リッチなカレンダーは別 | (将来 `<DatePicker>`) |
+
+---
+
+## type / size の使い分け
+
+### type
+
+| type | 用途 | モバイル挙動 |
+|---|---|---|
+| `text` | 汎用 (名前 / 住所) | 標準キーボード |
+| `email` | メールアドレス | `@` キー表示 |
+| `password` | パスワード | マスク + 履歴除外 |
+| `number` | 整数 / 小数 | 数値キーボード |
+| `tel` | 電話番号 | テンキー |
+| `url` | URL | `.com` キー |
+| `search` | 検索キーワード | 「検索」キー |
+| `date` | 日付 | ネイティブ日付 picker |
+
+### size
+
+| size | 用途 | 高さ |
+|---|---|---|
+| `small` | 密集 UI (テーブル行・フィルタバー) | 40px (タッチターゲット未満、限定使用) |
+| `medium` | 標準的なフォーム | 48px (WCAG 2.5.5 を満たす) |
+| `large` | モバイル CTA フォーム | 64px |
+
+---
+
+## 利用ガイド
+
+### ラベル・ヘルプ・エラーの配置
+
+- **ラベルはフィールド上に配置**。プレースホルダだけで代用しない (入力後に消えると確認できなくなる)
+- **必須印 `*` はラベルに付ける**。`aria-required` も自動で立つ
+- **ヘルプテキストはフィールド直下**。書式 / 制約 (「半角英数字 6 文字以上」等) を簡潔に
+- **エラーは helpText を置き換える**。同時表示しない
+- **エラーメッセージは具体的に**。「入力してください」より「8 文字以上で入力してください」
+
+### 守ること (NG パターン)
+
+| やりがちな誤り | 問題 | 正しいやり方 |
+|---|---|---|
+| プレースホルダだけでラベル省略 | 入力後に何の欄か分からない / SR がラベルを読まない | `label` を必ず指定 |
+| 必須を `*` だけで伝える | SR が `*` を読まない | `required` で `aria-required` + ラベル `*` を両立 (本コンポーネントは自動) |
+| エラーを色だけで伝える | 色覚多様性に配慮できない | `error` + `errorMessage` (型レベルで強制) |
+| キーストロークごとにエラー表示 | 入力途中で叱るのは UX 悪化 | onBlur / 送信時にバリデーション |
+| ヘルプとエラーを同時表示 | 視覚的に冗長、SR にも重複 | 本コンポーネントは error 時に helpText を自動非表示 |
+| パスワード強度を視覚バーだけで伝える | SR ユーザに伝わらない | `helpText` で言葉でも示す |
+| `<input>` 直書きで自前ラベル付与 | a11y 属性の取りこぼし / 一貫性消失 | 必ず `<Input>` を使う |
+
+---
+
+## アクセシビリティ
+
+- **`<label htmlFor>`**: 自動付与。クリックでフォーカス、SR がラベルを読む
+- **`aria-required`**: `required` 時に自動付与
+- **`aria-invalid`**: `error: true` 時に自動付与
+- **`aria-describedby`**: `errorMessage` または `helpText` の id と関連付け
+- **`role="alert"`**: エラーメッセージ表示時に SR が即時通知
+- **キーボード**: `Tab` でフォーカス、`Enter` でフォーム送信
+- **タッチターゲット**: `size="medium"` 以上で WCAG 2.5.5 (44x44px) を満たす
+
+関連: [Inline Validation](?path=/docs/principles-interaction-feedback-inline-validation--docs) / [Forms](?path=/docs/principles-patterns-forms--docs) / [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)
+
+---
+
+## 関連
+
+- [Label](../Label/) — Input 内部で使用。単体でも使える
+- [Textarea](../Textarea/) — 複数行入力
+- [NumberInput](../../composites/NumberInput/) — 数値 + スピナー
+- [SearchBar](../../composites/SearchBar/) — 候補表示付き検索
+- [Select](../../composites/Select/) — 選択肢から選ぶ
+- [Checkbox](../../composites/Checkbox/) / [Radio](../../composites/Radio/) — 真偽値 / 単一選択

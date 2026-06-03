@@ -222,17 +222,37 @@
       "hover": {
         "value": "rgba(0, 0, 0, 0.08)",
         "type": "color",
-        "description": "ホバーオーバーレイ"
+        "description": "ホバーオーバーレイ（中性／色付き背景・透明背景に重ねる）"
       },
       "active": {
         "value": "rgba(0, 0, 0, 0.12)",
         "type": "color",
-        "description": "アクティブオーバーレイ"
+        "description": "アクティブオーバーレイ（中性）"
       },
       "dragged": {
         "value": "rgba(0, 0, 0, 0.16)",
         "type": "color",
-        "description": "ドラッグ中オーバーレイ"
+        "description": "ドラッグ中オーバーレイ（中性）"
+      },
+      "hover-on-primary": {
+        "value": "rgba(0, 137, 101, 0.08)",
+        "type": "color",
+        "description": "白系背景に primary 色味で重ねるホバー（secondary ボタン等）"
+      },
+      "active-on-primary": {
+        "value": "rgba(0, 137, 101, 0.12)",
+        "type": "color",
+        "description": "白系背景に primary 色味で重ねるアクティブ"
+      },
+      "hover-on-error": {
+        "value": "rgba(193, 59, 59, 0.08)",
+        "type": "color",
+        "description": "白系背景に error 色味で重ねるホバー（destructive ボタン等）"
+      },
+      "active-on-error": {
+        "value": "rgba(193, 59, 59, 0.12)",
+        "type": "color",
+        "description": "白系背景に error 色味で重ねるアクティブ"
       }
     }
   }

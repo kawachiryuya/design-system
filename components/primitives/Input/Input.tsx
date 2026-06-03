@@ -91,7 +91,7 @@ interface InputNormalProps extends InputBaseProps {
  *   // モバイル CTA フォーム（全幅 + large）
  *   <Input label="メール" type="email" size="large" fullWidth required />
  *
- * @see principles/Patterns/forms.md
+ * @see principles/Patterns/forms.mdx
  */
 export type InputProps =
   (InputErrorProps | InputNormalProps) &

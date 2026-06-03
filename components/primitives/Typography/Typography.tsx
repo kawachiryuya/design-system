@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * Typography のバリアント定義（視覚スタイル）
- * @see principles/Typography/scale.md
+ * @see principles/Typography/scale.mdx
  */
 export type TypographyVariant =
   | 'display'
@@ -73,7 +73,7 @@ export type TypographyElement =
  *     {longTitle}
  *   </Typography>
  *
- * @see principles/Typography/scale.md
+ * @see principles/Typography/scale.mdx
  */
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   /**
@@ -127,72 +127,28 @@ const defaultTag: Record<TypographyVariant, TypographyElement> = {
   label:     'span',
 };
 
-/** variant → Tailwind クラスのマップ（tokens/typography.json） */
+/**
+ * variant → Tailwind クラスのマップ
+ *
+ * `text-*` クラスは semantic typography トークン
+ * (`tokens/source/typography.json` の `typography-semantic`) に解決される。
+ * font-size / line-height / letter-spacing が semantic 1 クラスに集約されている。
+ *
+ * font-weight だけは `weight` prop で上書きする運用のため、別の `font-*` ユーティリティで指定する。
+ */
 const variantStyles: Record<TypographyVariant, string[]> = {
-  display: [
-    'text-5xl',          // 48px
-    'font-bold',
-    'leading-tight',
-    'tracking-tight',
-  ],
-  h1: [
-    'text-4xl',          // 36px
-    'font-bold',
-    'leading-tight',
-    'tracking-tight',
-  ],
-  h2: [
-    'text-3xl',          // 30px
-    'font-bold',
-    'leading-tight',
-    'tracking-tight',
-  ],
-  h3: [
-    'text-2xl',          // 24px
-    'font-semibold',
-    'leading-normal',
-    'tracking-normal',
-  ],
-  h4: [
-    'text-xl',           // 20px
-    'font-semibold',
-    'leading-normal',
-  ],
-  h5: [
-    'text-lg',           // 18px
-    'font-semibold',
-    'leading-normal',
-  ],
-  h6: [
-    'text-base',         // 16px
-    'font-semibold',
-    'leading-normal',
-  ],
-  'body-lg': [
-    'text-lg',           // 18px
-    'font-normal',
-    'leading-relaxed',
-  ],
-  body: [
-    'text-base',         // 16px
-    'font-normal',
-    'leading-normal',
-  ],
-  'body-sm': [
-    'text-sm',           // 14px
-    'font-normal',
-    'leading-normal',
-  ],
-  caption: [
-    'text-xs',           // 12px
-    'font-normal',
-    'leading-normal',
-  ],
-  label: [
-    'text-sm',           // 14px
-    'font-medium',
-    'leading-normal',
-  ],
+  display:   ['text-heading-display', 'font-bold'],
+  h1:        ['text-heading-xl',      'font-bold'],
+  h2:        ['text-heading-lg',      'font-bold'],
+  h3:        ['text-heading-md',      'font-semibold'],
+  h4:        ['text-heading-sm',      'font-semibold'],
+  h5:        ['text-heading-xs',      'font-semibold'],
+  h6:        ['text-heading-2xs',     'font-semibold'],
+  'body-lg': ['text-body-lg',         'font-normal'],
+  body:      ['text-body-md',         'font-normal'],
+  'body-sm': ['text-body-sm',         'font-normal'],
+  caption:   ['text-caption',         'font-normal'],
+  label:     ['text-label',           'font-medium'],
 };
 
 /** カラー → Tailwind クラスのマップ（semantic-colors.json） */

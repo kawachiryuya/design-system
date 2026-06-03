@@ -24,8 +24,8 @@ npm run build-storybook    # 静的サイトとして storybook-static/ へ出�
 ```
 design-system/
 ├── components/
-│   ├── primitives/    Parts: 単一 HTML 要素ラッパー (11 個)
-│   └── composites/    Blocks: 複合コンポーネント (19 個)
+│   ├── primitives/    Parts: 単一 HTML 要素ラッパー (12 個)
+│   └── composites/    Blocks: 複合コンポーネント (21 個)
 ├── tokens/
 │   ├── source/        グローバル / セマンティックトークン (JSON)
 │   ├── build/         Style Dictionary 自動生成成果物
@@ -43,13 +43,13 @@ design-system/
 
 ## コンポーネント一覧
 
-### Primitives (11)
+### Primitives (12)
 
-Button / Divider / Icon / Image / Input / Label / Link / Skeleton / Spinner / Textarea / Typography
+Button / Divider / Icon / Image / Input / Label / Link / Skeleton / Spinner / Textarea / Typography / VisuallyHidden
 
-### Composites (19)
+### Composites (21)
 
-Accordion / Alert / Avatar / Badge / Breadcrumb / Card / Checkbox + CheckboxGroup / EmptyState / FilterChip / NumberInput / Pagination / ProgressBar / Radio + RadioGroup / SearchBar / SegmentedControl / Select / Switch / Tabs / ToggleButton
+Accordion / Alert / Avatar / Badge / Breadcrumb / Card / Checkbox + CheckboxGroup / EmptyState / FilterChip / Modal / NumberInput / Pagination / ProgressBar / Radio + RadioGroup / SearchBar / SegmentedControl / Select / Switch / Tabs / Toast (+ ToastProvider, useToast) / ToggleButton
 
 各コンポーネントは `ComponentName.tsx` / `.stories.tsx` / `.md` / `index.ts` の 4 ファイル構成。
 

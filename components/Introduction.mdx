@@ -26,46 +26,42 @@ import { Meta } from '@storybook/addon-docs/blocks';
     </tr>
     <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Primitives</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Button・Input・Labelなど、単一HTML要素のラッパー（11コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Button・Input・Label・VisuallyHidden など、単一HTML要素のラッパー（12コンポーネント）</td>
     </tr>
     <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Composites</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Card・Tabs・CheckboxGroupなど、複数要素を組み合わせた複合コンポーネント（15コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Card・Tabs・Modal・Toast・CheckboxGroup など、複数要素を組み合わせた複合コンポーネント（21コンポーネント）</td>
     </tr>
     <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
-      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Patterns</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Modal・Toastなど、Compositesを組み合わせたセクション単位のパターン（準備中）</td>
+      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Principles</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Foundation・Layout・Interaction・Typography・Color などのデザイン原則ドキュメント</td>
     </tr>
     <tr>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>[Product名]</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>プロダクト固有のコンポーネント（任意）</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>プロダクト固有のコンポーネント（別リポジトリで管理）</td>
     </tr>
   </tbody>
 </table>
 
 ---
 
-## 設計思想：4層構造と依存ルール
+## 設計思想：Parts / Blocks と依存ルール
 
-Atomic Design の「依存方向の制約」を継承しつつ、分類の曖昧さを排除した構造です。
+戦略文書 `design-system-strategy.md` で定義した 2 層構成です。Atomic Design の「依存方向の制約」を継承しつつ、分類の曖昧さを排除しています。
 
-- **Primitives**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
-- **Composites**：Primitives を組み合わせた複合コンポーネント。Primitives のみ import 可。
-- **Patterns**：Composites を組み合わせたセクション単位のパターン。Composites + Primitives を import 可。
-- **プロダクト層**：すべてを import 可。デザインシステム外で管理。
+- **Primitives (= Parts)**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
+- **Composites (= Blocks)**：Primitives を組み合わせた複合コンポーネント。Primitives のみ import 可。
+- **プロダクト層**：すべてを import 可。本リポジトリ外（gunmaas など別プロダクトリポ）で管理。
 
 ```
 Primitives    他のコンポーネントを import しない
     ↑
 Composites    Primitives のみ import 可
     ↑
-Patterns      Composites + Primitives を import 可
-    ↑
-プロダクト層   すべてを import 可（デザインシステム外）
+プロダクト層   すべてを import 可（別リポジトリ）
 ```
 
-Patterns は「複数プロダクトで再利用される汎用パターン」のみ採用し、ビジネスロジックを含みません。
-プロダクト固有のコンポーネントは **[Product名]** カテゴリとして同じ Storybook 上で確認できます。
+プロダクト固有のコンポーネント（座席選択・運賃ラベル等のドメイン依存 UI）は本リポジトリには含めず、プロダクト側リポで本パッケージを依存として使う構成です。
 
 ---
 
@@ -147,6 +143,6 @@ npm run storybook
 npm run build-storybook
 ```
 
-**技術スタック：** React 18 · TypeScript · Tailwind CSS · Vite · Storybook 8
+**技術スタック：** React 18 · TypeScript 5 · Tailwind CSS 3 · Vite 6 · Storybook 10 · Style Dictionary 5
 
 </div>

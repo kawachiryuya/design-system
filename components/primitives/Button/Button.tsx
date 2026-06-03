@@ -1,18 +1,20 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 
-/** ボタンの優先度（1 画面に primary は通常 1 個に絞る） */
-export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
+/** ボタンの優先度（1画面に primary は通常1個に絞る） */
+export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive';
 
-/** ボタンのサイズ。タッチターゲット保証のため最小 40px（small/iconOnly） */
+/** ボタンのサイズ。タッチターゲット保証のため最小40px（small/iconOnly） */
 export type ButtonSize = 'small' | 'medium' | 'large';
 
 /** Variant / size など全 Button が共有するプロパティ */
 interface ButtonBaseProps {
   /**
    * ボタンのバリアント（優先度）。
-   * - `primary`: 主要アクション（保存・送信等）。1 画面 1 個推奨
+   * - `primary`: 主要アクション（保存・送信等）。1画面1個推奨
    * - `secondary`: 副次アクション（キャンセル・戻る等）
    * - `tertiary`: 補助アクション（テキストリンク的）
+   * - `destructive`: 破壊的アクション（削除・取り消し等）。**色だけに頼らずアイコン + 動詞ラベルで意図を補強する**
    * @default 'primary'
    */
   variant?: ButtonVariant;
@@ -28,6 +30,11 @@ interface ButtonBaseProps {
   isLoading?: boolean;
   /** 全幅表示（親要素の幅に追従）。フォーム送信ボタン等で使用。 */
   fullWidth?: boolean;
+  /**
+   * 操作不能化。`true` で視覚的に opacity-50、DOM にも `disabled` 属性が付く。
+   * `isLoading` 時には自動で disabled になる。
+   */
+  disabled?: boolean;
 }
 
 /**
@@ -69,7 +76,7 @@ interface ButtonRegularProps extends ButtonBaseProps {
 /**
  * Button Props — discriminated union
  *
- * 用途に応じて 2 つの形のいずれかで使う:
+ * 用途に応じて2つの形のいずれかで使う:
  * - **通常**: `<Button variant="primary">保存</Button>` — children 必須、icon は任意
  * - **Icon-only**: `<Button iconOnly icon={...} aria-label="..." />` — テキストなし、aria-label 必須
  *
@@ -97,11 +104,13 @@ interface ButtonRegularProps extends ButtonBaseProps {
  *   // Icon-only（aria-label 必須、TS が強制）
  *   <Button iconOnly icon={<Icon name="close" />} aria-label="閉じる" />
  *
- * @see principles/Interaction/button/priority.md
+ * @see principles/Interaction/button/priority.mdx
  */
 export type ButtonProps =
   (ButtonIconOnlyProps | ButtonRegularProps) &
-  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'aria-label'>;
+  // `disabled` は ButtonBaseProps で再宣言して JSDoc を付与しているため、
+  // React 由来 (JSDoc なし) の型を Omit して衝突を避ける。
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'aria-label' | 'disabled'>;
 
 /** Internal flexible type to allow destructuring across both discriminants */
 type _InternalButtonProps = ButtonBaseProps & {
@@ -112,6 +121,133 @@ type _InternalButtonProps = ButtonBaseProps & {
 } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'>;
 
 /**
+ * Button のスタイル定義 — `tailwind-variants` で variant マップを宣言的に保持。
+ *
+ * - base: 全 variant 共通 (フォーカスリング / disabled / アクティブ scale)
+ * - variants.variant: 4 種の見た目 (primary / secondary / tertiary / destructive)
+ *   hover/active overlay は `--color-state-*` semantic token を参照する
+ * - variants.size: text-size と gap (高さや幅は compoundVariants で iconOnly と組合せ)
+ * - variants.iconOnly: 形状 (rounded-full かどうか)
+ * - variants.fullWidth: w-full の付与
+ * - compoundVariants: iconOnly × size の組合せ (正方形 vs 通常モード)
+ *
+ * ## なぜ hover/active を `shadow-[inset_0_0_0_9999px_<token>]` で当てているか
+ *
+ * 各 variant の **背景色は既に決まっている** (`bg-surface-primary` / `bg-surface` / `bg-transparent`)
+ * ため、hover/active 時に `bg-` を当てると下地の variant 色を **置換** してしまう。
+ * inset box-shadow を巨大なオフセット (9999px) で重ねれば、下地を残したまま **半透明
+ * オーバーレイ** を被せられる (= Material Design の state layer と同等)。
+ * `--color-state-hover-*` は rgba 値なので、下地色に応じた自然な hover/active が出る。
+ */
+const buttonVariants = tv({
+  base: [
+    'inline-flex',
+    'items-center',
+    'justify-center',
+    'font-medium',
+    'transition-all',
+    'duration-normal', // 200ms (tokens/animation.json)
+    'focus:outline-none',
+    'focus-visible:ring-2',
+    'focus-visible:ring-offset-2',
+    'disabled:opacity-50',
+    'disabled:cursor-not-allowed',
+    'active:scale-[0.98]',
+    'disabled:active:scale-100',
+  ],
+  variants: {
+    variant: {
+      // 緑背景 + 白文字 → 中性 (黒) の hover overlay
+      primary: [
+        'bg-surface-primary',
+        'text-onSurface-inverse',
+        'focus-visible:ring-border-focus',
+        'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
+        'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
+        'disabled:hover:shadow-none',
+        'disabled:active:shadow-none',
+      ],
+      // 白背景 + 緑文字 → primary 色味の hover overlay
+      secondary: [
+        'bg-surface',
+        'text-onSurface-primary',
+        'border',
+        'border-primary-600',
+        'focus-visible:ring-border-focus',
+        'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-on-primary)]',
+        'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-on-primary)]',
+        'disabled:hover:shadow-none',
+        'disabled:active:shadow-none',
+      ],
+      // 透明背景 + 緑文字 → 文字色に合わせて primary 色味 overlay
+      tertiary: [
+        'bg-transparent',
+        'text-onSurface-primary',
+        'focus-visible:ring-border-focus',
+        'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-on-primary)]',
+        'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-on-primary)]',
+        'disabled:hover:shadow-none',
+        'disabled:active:shadow-none',
+      ],
+      // 白背景 + 赤文字 → error 色味の hover overlay
+      destructive: [
+        'bg-surface',
+        'text-onSurface-error',
+        'border',
+        'border-border-error',
+        'focus-visible:ring-border-error',
+        'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-on-error)]',
+        'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-on-error)]',
+        'disabled:hover:shadow-none',
+        'disabled:active:shadow-none',
+      ],
+    },
+    size: {
+      // 文字サイズと gap だけ。高さ・余白・角丸は iconOnly との compoundVariants で
+      small: 'text-sm gap-1',
+      medium: 'text-base gap-2',
+      large: 'text-lg gap-2',
+    },
+    iconOnly: {
+      true: 'rounded-full',
+      false: '',
+    },
+    fullWidth: {
+      true: 'w-full',
+      false: '',
+    },
+  },
+  compoundVariants: [
+    // icon-only モード: 正方形 (h × w 固定)
+    { iconOnly: true, size: 'small', class: 'h-10 w-10' },
+    { iconOnly: true, size: 'medium', class: 'h-12 w-12' },
+    { iconOnly: true, size: 'large', class: 'h-16 w-16' },
+    // 通常モード: min-h でタッチターゲット確保、py で長文時の上下余白
+    {
+      iconOnly: false,
+      size: 'small',
+      class: 'min-h-10 py-2 px-3 min-w-16 rounded-xs',
+    },
+    {
+      iconOnly: false,
+      size: 'medium',
+      class: 'min-h-12 py-3 px-4 min-w-20 rounded-sm',
+    },
+    {
+      iconOnly: false,
+      size: 'large',
+      class: 'min-h-16 py-4 px-6 min-w-24 rounded-md',
+    },
+  ],
+  defaultVariants: {
+    variant: 'primary',
+    size: 'medium',
+    iconOnly: false,
+    fullWidth: false,
+  },
+});
+
+/**
  * Button — Atomic Design: Atom
  *
  * @see ButtonProps for usage examples.
@@ -119,113 +255,30 @@ type _InternalButtonProps = ButtonBaseProps & {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const {
-      variant = 'primary',
-      size = 'medium',
+      variant,
+      size,
       isLoading = false,
       icon,
       iconPosition = 'left',
-      iconOnly = false,
-      fullWidth = false,
+      iconOnly,
+      fullWidth,
       disabled,
       children,
-      className = '',
+      className,
       type = 'button',
       ...rest
     } = props as _InternalButtonProps;
 
-    // Base styles - すべてのボタンに共通
-    const baseStyles = [
-      'inline-flex',
-      'items-center',
-      'justify-center',
-      'font-medium',
-      iconOnly ? 'rounded-full' : '', // 角丸は sizeStyles で個別指定
-      'transition-all',
-      'duration-normal', // 200ms (tokens/animation.json)
-      'focus:outline-none',
-      'focus-visible:ring-2',
-      'focus-visible:ring-offset-2',
-      'disabled:opacity-50',
-      'disabled:cursor-not-allowed',
-      // State overlay — inset box-shadow で背景色を維持したまま透過レイヤーを重ねる
-      // disabled 時は無効（shadow-none で上書き）
-      'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
-      'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
-      'active:scale-[0.98]',
-      'disabled:hover:shadow-none',
-      'disabled:active:shadow-none',
-      'disabled:active:scale-100',
-    ];
-
-    // Variant styles
-    const variantStyles = {
-      primary: [
-        'bg-surface-primary',
-        'text-onSurface-inverse',
-        'focus-visible:ring-border-focus',
-      ],
-      secondary: [
-        'bg-surface',
-        'text-onSurface-primary',
-        'border',
-        'border-primary-600',
-        'hover:!shadow-[inset_0_0_0_9999px_rgba(0,137,101,0.08)]',
-        'active:!shadow-[inset_0_0_0_9999px_rgba(0,137,101,0.12)]',
-        'focus-visible:ring-border-focus',
-      ],
-      tertiary: [
-        'bg-transparent',
-        'text-onSurface-primary',
-        'focus-visible:ring-border-focus',
-      ],
-    };
-
-    // Size styles (tokens/spacing.json)
-    // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
-    const sizeStyles = iconOnly
-      ? {
-          small: ['h-10', 'w-10', 'text-sm'],
-          medium: ['h-12', 'w-12', 'text-base'],
-          large: ['h-16', 'w-16', 'text-lg'],
-        }
-      : {
-          small: [
-            'h-10',  // 40px
-            'px-3',  // 12px
-            'text-sm', // 14px
-            'gap-1', // 4px (アイコンとテキストの間)
-            'min-w-16', // 64px — 短いラベルでも潰れない
-            'rounded-xs', // 4px
-          ],
-          medium: [
-            'h-12',  // 48px
-            'px-4',  // 16px
-            'text-base', // 16px
-            'gap-2', // 8px
-            'min-w-20', // 80px
-            'rounded-sm', // 8px
-          ],
-          large: [
-            'h-16',  // 64px
-            'px-6',  // 24px
-            'text-lg', // 18px
-            'gap-2', // 8px
-            'min-w-24', // 96px
-            'rounded-md', // 12px
-          ],
-        };
-
-    // Width styles
-    const widthStyles = fullWidth ? ['w-full'] : [];
-
-    // すべてのスタイルを結合
-    const buttonClasses = [
-      ...baseStyles,
-      ...variantStyles[variant],
-      ...sizeStyles[size],
-      ...widthStyles,
+    // variant / size / iconOnly / fullWidth のデフォルトは buttonVariants の
+    // defaultVariants に集約されているので、props 側では undefined を許す。
+    // className は tailwind-variants が tailwind-merge で衝突解消してくれる。
+    const buttonClasses = buttonVariants({
+      variant,
+      size,
+      iconOnly,
+      fullWidth,
       className,
-    ].join(' ');
+    });
 
     // アイコンの順序を決定
     const iconElement = icon && (

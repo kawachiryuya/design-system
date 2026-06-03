@@ -64,7 +64,7 @@ interface CheckboxNormalProps extends CheckboxBaseProps {
  *     errorMessage="同意が必要です"
  *   />
  *
- * @see principles/Patterns/forms.md
+ * @see principles/Patterns/forms.mdx
  */
 export type CheckboxProps =
   (CheckboxErrorProps | CheckboxNormalProps) &

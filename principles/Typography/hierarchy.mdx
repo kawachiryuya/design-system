@@ -34,7 +34,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 タイポグラフィシステムは以下のドキュメントで構成されます：
 
-- **[Typography Scale](./typography-scale.mdx)**: フォントサイズ、ウェイト、行間、文字間隔の定義（基盤）
+- **[Typography Scale](./scale.mdx)**: フォントサイズ、ウェイト、行間、文字間隔の定義（基盤）
 - **[Readability](./readability.mdx)**: 行長、段落間隔、コントラスト等の可読性要件
 - **[Font Families](./font-families.mdx)**: フォント選択、システムフォント、Webフォント
 
@@ -42,7 +42,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ## タイポグラフィ階層の定義
 
-このセクションでは、[Typography Scale](./typography-scale.mdx) で定義されたスケールを使って、各階層を定義します。
+このセクションでは、[Typography Scale](./scale.mdx) で定義されたスケールを使って、各階層を定義します。
 
 **基盤となるスケール**:
 - フォントサイズ: 1.25倍スケール（12px〜72px）
@@ -50,7 +50,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - 行間: 1.0〜2.0
 - 文字間隔: -0.05em〜0.1em
 
-→ 詳細は [Typography Scale](./typography-scale.mdx) 参照
+→ 詳細は [Typography Scale](./scale.mdx) 参照
 
 ### Display（ディスプレイ）
 
@@ -219,7 +219,7 @@ letterSpacing: 0.025em (wide)
 - 通常テキスト（14-18px）: 4.5:1以上
 - 大きなテキスト（18px以上）: 3:1以上
 
-→ 詳細は [Color Meaning](../Color/color-meaning.mdx)、[Accessibility](../Foundation/accessibility.mdx) 参照
+→ 詳細は [Semantic Colors](../Color/semantic-colors.mdx)、[Color Contrast](../Foundation/accessibility/color-contrast.mdx) 参照
 
 ## レスポンシブ対応
 
@@ -231,7 +231,7 @@ H2: 24px (mobile) → 36px (desktop)
 Body: 16px (全デバイス)
 ```
 
-→ 詳細は [Typography Scale](./typography-scale.mdx) 参照
+→ 詳細は [Typography Scale](./scale.mdx) 参照
 
 ## 可読性
 
@@ -263,7 +263,7 @@ Body: 16px (全デバイス)
 - rem単位使用でブラウザズームに対応
 - 200%ズームテスト必須（WCAG AA）
 
-→ 詳細は [Accessibility](../Foundation/accessibility.mdx) 参照
+→ 詳細は [Accessibility Overview](../Foundation/accessibility/overview.mdx) 参照
 
 ## 測定方法
 
@@ -279,12 +279,11 @@ Body: 16px (全デバイス)
 
 ## 関連原則
 
-- **[Typography Scale](./typography-scale.mdx)**: フォントサイズ、ウェイト、行間、文字間隔の定義（基盤）
+- **[Typography Scale](./scale.mdx)**: フォントサイズ、ウェイト、行間、文字間隔の定義（基盤）
 - **[Readability](./readability.mdx)**: 行長、段落間隔、可読性要件
 - **[Font Families](./font-families.mdx)**: フォント選択とWebフォント
-- **[Accessibility](../Foundation/accessibility.mdx)**: コントラスト比、ズーム対応
-- **[Spacing](../Layout/spacing.mdx)**: 行間、段落間の余白
-- **[Color Meaning](../Color/color-meaning.mdx)**: テキストカラーの選択
+- **[Accessibility](../Foundation/accessibility/overview.mdx)**: コントラスト比、ズーム対応
+- **[Semantic Colors](../Color/semantic-colors.mdx)**: テキストカラーの意味付け
 
 ## 関連コンポーネント
 

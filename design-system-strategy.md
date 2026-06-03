@@ -79,8 +79,9 @@ common/                      ← 汎用、将来 npm パッケージとして切
 グローバルトークン (common)
   値そのものを定義、プロダクトに依存しない。
 
-セマンティックトークン (product 側で定義)
-  役割名で参照、プロダクトごとに差し替え可能。
+セマンティックトークン (common にデフォルトを提供、product で override 可能)
+  役割名で参照。common 側にデフォルトを実装することで、単一 product でも追加設定なしに動作する。
+  product は tailwind.config.js の theme.extend で必要な部分だけ上書きする。
 ```
 
 ### 対象
@@ -91,7 +92,7 @@ common/                      ← 汎用、将来 npm パッケージとして切
 | タイポグラフィ | `--font-size-16`, `--font-weight-bold` | `--font-heading`, `--font-body` |
 | スペーシング | `--space-4`, `--space-8` | `--space-content-gap`, `--space-section-gap` |
 
-カラーは対応済み、タイポグラフィとスペーシングは追加対応予定。
+カラーとスペーシングは common にデフォルト semantic を実装済。タイポグラフィは本ドキュメント更新に合わせて common 側に追加する。
 
 ---
 
@@ -178,13 +179,14 @@ if (featureFlag.newDesign) {
 | **common (汎用)** | 本リポジトリ全体 (`components/`, `tokens/`, `principles/`) — npm パッケージ `@kawachiryuya/design-system` として配信 |
 | **[product-name] (プロダクト固有)** | 別リポジトリで管理 (本リポを npm 依存として参照)。[`gunmaas`](https://github.com/kawachiryuya/gunmaas) (鉄道予約) / [`rail-demo-lp`](https://github.com/kawachiryuya/rail-demo-lp) (LP) |
 | **グローバルトークン** | [`tokens/source/colors.json`](./tokens/source/colors.json) ほか primitive スケール |
-| **セマンティックトークン** | [`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) (WHERE × WHAT 構造) |
+| **セマンティックトークン** | [`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) (色: WHERE × WHAT 構造) / [`tokens/source/spacing.json`](./tokens/source/spacing.json) (`spacing-semantic`) / [`tokens/source/typography.json`](./tokens/source/typography.json) (`typography-semantic`) |
+| **設計原則ドキュメント** | [`principles/`](./principles/) (Color / Foundation / Interaction / Layout / Patterns / Platform / Typography、Storybook で参照) |
 | **検証サイト (Storybook)** | `npm run storybook` / https://design-system-storybook-murex.vercel.app |
 | **検証サイト (アプリ内検証)** | 別リポ `rail-demo` (旧 `demo/` を分離) を使用 |
 
 ### 進捗状況
 
-- Step 1 (トークン定義): カラーのセマンティック層完了。タイポグラフィ・スペーシングのセマンティック化は未着手
+- Step 1 (トークン定義): カラー・スペーシングのセマンティック層完了 (common 側にデフォルトを提供)。タイポグラフィのセマンティック層も追加済 (Typography コンポーネントの variant が参照)
 - Step 2 (Parts): 完了 (primitives 11 個)
 - Step 3 (Blocks): 完了 (composites 19 個)
 - Step 4 (レイアウト基礎): 未着手 — Layout 系コンポーネント (Grid, Stack, PageShell 等) は今後追加予定

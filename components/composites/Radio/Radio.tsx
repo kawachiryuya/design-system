@@ -34,7 +34,7 @@ export type RadioSize = 'small' | 'medium' | 'large';
  *   // エラー状態（バリデーションエラー時、通常 RadioGroup の error と連動）
  *   <Radio name="agree" value="yes" label="同意する" error />
  *
- * @see principles/Patterns/forms.md
+ * @see principles/Patterns/forms.mdx
  */
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
   /**

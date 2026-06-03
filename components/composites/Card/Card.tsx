@@ -59,7 +59,7 @@ export type CardFooterJustify = 'start' | 'end' | 'between';
  *     </Card.Footer>
  *   </Card>
  *
- * @see principles/README.md
+ * @see principles/README.mdx
  */
 export interface CardProps {
   /**

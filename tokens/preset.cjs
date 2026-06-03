@@ -24,6 +24,30 @@ try {
 const splitFontFamily = (s) =>
   typeof s === 'string' ? s.split(/\s*,\s*/) : s;
 
+// typography-semantic を Tailwind の theme.fontSize 形式に変換。
+// 各 leaf は { 'font-size', 'line-height', 'letter-spacing' (任意) } のオブジェクト。
+// font-weight はキーに含まれていても Tailwind の fontSize には注入しない
+// (variant の weight 上書きを font-* ユーティリティで効かせるため)。
+// ネストキーは kebab で連結: heading.display → 'heading-display'
+const flattenSemanticTypo = (node, prefix = '', out = {}) => {
+  if (node && typeof node === 'object' && node['font-size']) {
+    const opts = {};
+    if (node['line-height'])    opts.lineHeight    = String(node['line-height']);
+    if (node['letter-spacing']) opts.letterSpacing = String(node['letter-spacing']);
+    out[prefix.replace(/-$/, '')] = [node['font-size'], opts];
+    return out;
+  }
+  if (node && typeof node === 'object') {
+    for (const [k, v] of Object.entries(node)) {
+      flattenSemanticTypo(v, prefix + k + '-', out);
+    }
+  }
+  return out;
+};
+const semanticTypo = t['typography-semantic']
+  ? flattenSemanticTypo(t['typography-semantic'])
+  : {};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   theme: {
@@ -59,6 +83,11 @@ module.exports = {
       // Semantic spacing aliases (component / section)
       spacing: t['spacing-semantic'],
 
+      // Semantic typography (heading / body / label / caption)
+      // 例: <p className="text-heading-xl">…</p>
+      // 注: font-weight は意図的に含めない (variant の weight 上書きを font-* で効かせるため)
+      fontSize: semanticTypo,
+
       // ── Semantic color tokens (WHERE × WHAT) ──
       // CSS 変数経由で resolve（実体は tokens/build/variables.css）
       backgroundColor: {
@@ -86,6 +115,10 @@ module.exports = {
           hover:   'var(--color-state-hover)',
           active:  'var(--color-state-active)',
           dragged: 'var(--color-state-dragged)',
+          'hover-on-primary':  'var(--color-state-hover-on-primary)',
+          'active-on-primary': 'var(--color-state-active-on-primary)',
+          'hover-on-error':    'var(--color-state-hover-on-error)',
+          'active-on-error':   'var(--color-state-active-on-error)',
         },
       },
       textColor: {

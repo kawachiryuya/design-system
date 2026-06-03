@@ -114,5 +114,75 @@
         "type": "fontFamily"
       }
     }
+  },
+  "typography-semantic": {
+    "heading": {
+      "display": {
+        "font-size":      { "value": "{typography.font-size.5xl}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.bold}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.tight}", "type": "number" },
+        "letter-spacing": { "value": "{typography.letter-spacing.tight}", "type": "dimension" }
+      },
+      "xl": {
+        "font-size":      { "value": "{typography.font-size.4xl}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.bold}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.tight}", "type": "number" },
+        "letter-spacing": { "value": "{typography.letter-spacing.tight}", "type": "dimension" }
+      },
+      "lg": {
+        "font-size":      { "value": "{typography.font-size.3xl}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.bold}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.tight}", "type": "number" },
+        "letter-spacing": { "value": "{typography.letter-spacing.tight}", "type": "dimension" }
+      },
+      "md": {
+        "font-size":      { "value": "{typography.font-size.2xl}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.semibold}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" },
+        "letter-spacing": { "value": "{typography.letter-spacing.normal}", "type": "dimension" }
+      },
+      "sm": {
+        "font-size":      { "value": "{typography.font-size.xl}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.semibold}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
+      },
+      "xs": {
+        "font-size":      { "value": "{typography.font-size.lg}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.semibold}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
+      },
+      "2xs": {
+        "font-size":      { "value": "{typography.font-size.base}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.semibold}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
+      }
+    },
+    "body": {
+      "lg": {
+        "font-size":      { "value": "{typography.font-size.lg}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.regular}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.relaxed}", "type": "number" }
+      },
+      "md": {
+        "font-size":      { "value": "{typography.font-size.base}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.regular}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
+      },
+      "sm": {
+        "font-size":      { "value": "{typography.font-size.sm}", "type": "dimension" },
+        "font-weight":    { "value": "{typography.font-weight.regular}", "type": "fontWeight" },
+        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
+      }
+    },
+    "label": {
+      "font-size":      { "value": "{typography.font-size.sm}", "type": "dimension" },
+      "font-weight":    { "value": "{typography.font-weight.medium}", "type": "fontWeight" },
+      "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
+    },
+    "caption": {
+      "font-size":      { "value": "{typography.font-size.xs}", "type": "dimension" },
+      "font-weight":    { "value": "{typography.font-weight.regular}", "type": "fontWeight" },
+      "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
+    }
   }
 }

@@ -58,7 +58,7 @@ export interface AccordionItem {
  *     onChange={setOpenIds}
  *   />
  *
- * @see principles/README.md
+ * @see principles/README.mdx
  */
 export interface AccordionProps {
   /** 項目の配列。順序通りに表示される。 */

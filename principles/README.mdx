@@ -4,193 +4,118 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # デザインシステム原則ドキュメント
 
-**一貫性のある、アクセシブルで、美しいデジタル体験を構築するための完全ガイド**
+デザイナーと開発者が共通言語として参照する設計原則の集合です。
+
+各原則は **「なぜ・何を」** を語ります。**「どう作るか」** の実装規約は `AGENTS.md`、戦略・全体構造は `design-system-strategy.md` を参照してください。
 
 ---
 
-## 👋 このデザインシステムについて
+## クイックスタート
 
-62の原則ドキュメントからなる、実践的で包括的なデザインシステムです。デザイナーと開発者が協力して、高品質なユーザー体験を効率的に作り出すための共通言語を提供します。
+### 10 分で全体像を掴む
 
-**最終更新**: 2026年2月19日  
-**ステータス**: Phase 1〜4 完了（実用レベル）
-
-### デザインシステムとは？
-
-デザインとコードの間のギャップを埋める、再利用可能なコンポーネントと明確な原則の集合です。
-
-**このシステムが提供するもの**:
-- ✅ **原則**: なぜ・何を（このドキュメント群）
-- ✅ **パターン**: 実装のベストプラクティス
-- ✅ **ガイドライン**: アクセシビリティ・パフォーマンス・SEO
+1. **[Atomic Design Implementation](./Patterns/atomic-design-implementation.mdx)** (5 分)
+   コンポーネントの階層構造 (Primitives / Composites) を理解する
+2. **[Accessibility Overview](./Foundation/accessibility/overview.mdx)** (3 分)
+   すべての基礎。a11y とは何か、なぜ重要か
+3. **[Button Priority](./Interaction/button/priority.mdx)** (2 分)
+   Primary/Secondary/Tertiary の使い分け。最も頻出する原則
 
 ---
 
-## 🚀 クイックスタート
+## 役割別スタートガイド
 
-### 初めての方へ
+### デザイナー向け
 
-**10分で理解する**: 以下の順番で読む
+1. [Grid](./Layout/grid.mdx) — 12 カラムグリッド・ブレークポイント
+2. [Typography Scale](./Typography/scale.mdx) — 文字サイズ体系
+3. [Color Overview](./Color/overview.mdx) — カラーシステム
+4. [Hierarchy](./Foundation/hierarchy.mdx) — 視覚的ヒエラルキー
+5. 実践 → [Forms](./Patterns/forms.mdx) / [Navigation](./Patterns/navigation.mdx) / [Data Display](./Patterns/data-display.mdx)
 
-1. **[Atomic Design Implementation](./Patterns/atomic-design-implementation.mdx)** (5分)  
-   コンポーネントの階層構造（Atoms, Molecules, Organisms等）を理解
+### フロントエンド開発者向け
 
-2. **[Accessibility Overview](./Foundation/accessibility/overview.mdx)** (3分)  
-   すべての基礎。アクセシビリティとは何か、なぜ重要か
+1. [Atomic Design Implementation](./Patterns/atomic-design-implementation.mdx) — 階層構造
+2. [Responsiveness](./Foundation/responsiveness.mdx) — モバイルファースト
+3. [Button Priority](./Interaction/button/priority.mdx) + [Placement](./Interaction/button/placement.mdx) — ボタンの使い分け
+4. [States Overview](./Interaction/state/overview.mdx) — Interactive / Status の 2 カテゴリ
+5. [Feedback Overview](./Interaction/feedback/overview.mdx) — Toast / Loading / Validation の使い分け
+6. [Accessibility Overview](./Foundation/accessibility/overview.mdx) — a11y 実装の基本
 
-3. **[Button Priority](./Interaction/button/priority.mdx)** (2分)  
-   ボタンの分類（Primary, Secondary, Tertiary）。最もよく使う原則
+### プロダクトマネージャー向け
 
-### 役割別スタートガイド
-
-#### 🎨 デザイナー向け
-
-**基礎を固める（30分）**:
-1. [Spacing](./Layout/spacing.mdx) - 余白システム（8pxベース）
-2. [Grid](./Layout/grid.mdx) - 12カラムグリッド
-3. [Typography Scale](./Typography/scale.mdx) - 文字サイズ体系
-4. [Color Overview](./Color/overview.mdx) - カラーシステム
-5. [Hierarchy](./Foundation/hierarchy.mdx) - 視覚的ヒエラルキー
-
-**実践する（1時間）**:
-- [Forms](./Patterns/forms.mdx) - フォーム設計
-- [Navigation](./Patterns/navigation.mdx) - ナビゲーション
-- [Data Display](./Patterns/data-display.mdx) - テーブル・カード
-
-#### 💻 フロントエンド開発者向け
-
-**構造を理解する（30分）**:
-1. [Atomic Design Implementation](./Patterns/atomic-design-implementation.mdx) - コンポーネント階層
-2. [Consistency](./Foundation/consistency.mdx) - 一貫性の原則
-3. [Responsiveness](./Foundation/responsiveness.mdx) - モバイルファースト
-
-**実装する（2時間）**:
-- [Button Priority](./Interaction/button/priority.mdx) + [Placement](./Interaction/button/placement.mdx)
-- [States](./Interaction/state/overview.mdx) - 状態管理
-- [Feedback](./Interaction/feedback/overview.mdx) - フィードバックUI
-- [Accessibility](./Foundation/accessibility/overview.mdx) - アクセシビリティ対応
-
-**最適化する（1時間）**:
-- [Performance](./Platform/web/performance.mdx) - Core Web Vitals
-- [Browser Support](./Platform/web/browser-support.mdx) - ブラウザ対応
-- [SEO](./Platform/web/seo.mdx) - 検索エンジン最適化
-
-#### 📋 プロダクトマネージャー向け
-
-**UXの基礎を理解する（20分）**:
-1. [Accessibility Overview](./Foundation/accessibility/overview.mdx) - なぜアクセシビリティが重要か
-2. [Forms](./Patterns/forms.mdx) - 離脱率を下げるフォーム設計
-3. [Error Messages](./Typography/writing/error-messages.mdx) - ユーザーを責めないエラー
-
-**意思決定に活用する（30分）**:
-- [Performance](./Platform/web/performance.mdx) - パフォーマンスがコンバージョンに与える影響
-- [Native Patterns](./Platform/mobile/native-patterns.mdx) - iOS vs Android の違い
+1. [Accessibility Overview](./Foundation/accessibility/overview.mdx) — なぜ a11y が事業に効くか
+2. [Forms](./Patterns/forms.mdx) — 離脱を減らすフォーム設計
+3. [Error Messages](./Typography/writing/error-messages.mdx) — ユーザを責めないエラー
+4. [Performance](./Platform/web/performance.mdx) — Core Web Vitals とコンバージョン
 
 ---
 
-## 📚 ドキュメント構造（全62ファイル）
+## カテゴリ別ガイド
 
-### 🏗️ Foundation（基盤原則）- 10ファイル
+各カテゴリの代表的な原則のみ列挙します。サイドバーの Storybook ツリーから個別ファイルにアクセスできます。
 
-すべての原則の基礎。
+### Foundation (基盤)
 
-| ドキュメント | 概要 |
-|------------|------|
-| **[Accessibility](./Foundation/accessibility/overview.mdx)** | アクセシビリティ全般（7ファイル） |
-| **[Consistency](./Foundation/consistency.mdx)** | 一貫性の4レベル |
-| **[Hierarchy](./Foundation/hierarchy.mdx)** | 視覚的ヒエラルキー5つの手段 |
-| **[Responsiveness](./Foundation/responsiveness.mdx)** | モバイルファースト原則 |
+- [Hierarchy](./Foundation/hierarchy.mdx) — 視覚的ヒエラルキーを生む 5 つの手段
+- [Responsiveness](./Foundation/responsiveness.mdx) — モバイルファーストの考え方
+- [Accessibility](./Foundation/accessibility/overview.mdx) — overview / keyboard / screen-readers / contrast / focus / touch-targets / testing
 
-### 📐 Layout（レイアウト）- 3ファイル
+### Layout
 
-| ドキュメント | 概要 |
-|------------|------|
-| **[Spacing](./Layout/spacing.mdx)** | 8pxベース余白システム |
-| **[Grid](./Layout/grid.mdx)** | 12カラムグリッド・ブレークポイント |
-| **[Alignment](./Layout/alignment.mdx)** | 整列の原則 |
+- [Grid](./Layout/grid.mdx) — 12 カラム・ブレークポイント
+- [Alignment](./Layout/alignment.mdx) — 整列の原則
 
-### 🖱️ Interaction（インタラクション）- 18ファイル
+### Interaction
 
-| カテゴリ         | ドキュメント                                                                                                                                                                               | 概要                         |     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- | --- |
-| **Button**   | [Priority](./Interaction/button/priority.mdx)                                                                                                                                         | Primary/Secondary/Tertiary |     |
-|              | [Placement](./Interaction/button/placement.mdx)                                                                                                                                       | 配置ルール                      |     |
-| **States**   | [Overview](./Interaction/state/overview.mdx)                                                                                                                                         | 状態の2カテゴリ                   |     |
-|              | [Interactive States](./Interaction/state/interactive-states.mdx)                                                                                                                     | hover/focus/active         |     |
-|              | [Status States](./Interaction/state/status-states.mdx)                                                                                                                               | loading/error/success      |     |
-|              | [Transitions](./Interaction/state/state-transitions.mdx)                                                                                                                             | 遷移・アニメーション値                |     |
-| **Feedback** | [Overview](./Interaction/feedback/overview.mdx)                                                                                                                                       | フィードバック3原則                 |     |
-|              | [Toast](./Interaction/feedback/toast-notifications.mdx)                                                                                                                               | トースト通知                     |     |
-|              | [Inline Validation](./Interaction/feedback/inline-validation.mdx)                                                                                                                     | フォームバリデーション                |     |
-|              | [Loading](./Interaction/feedback/loading-indicators.mdx)                                                                                                                              | ローディング表示                   |     |
-|              | [Progress](./Interaction/feedback/progress-indicators.mdx)                                                                                                                            | 進捗表示                       |     |
-| **Gestures** | [Overview](./Interaction/gestures/overview.mdx)                                                                                                                                       | ジェスチャー3原則                  |     |
-|              | [Tap](./Interaction/gestures/tap.mdx) / [Swipe](./Interaction/gestures/swipe.mdx) / [Pinch](./Interaction/gestures/pinch-zoom.mdx) / [Long Press](./Interaction/gestures/long-press.mdx) | モバイル操作                     |     |
+- **Button** — [Priority](./Interaction/button/priority.mdx) / [Placement](./Interaction/button/placement.mdx)
+- **States** — [Overview](./Interaction/state/overview.mdx) / [Interactive States](./Interaction/state/interactive-states.mdx) / [Status States](./Interaction/state/status-states.mdx) / [Transitions](./Interaction/state/state-transitions.mdx)
+- **Feedback** — [Overview](./Interaction/feedback/overview.mdx) / [Toast](./Interaction/feedback/toast-notifications.mdx) / [Inline Validation](./Interaction/feedback/inline-validation.mdx) / [Loading](./Interaction/feedback/loading-indicators.mdx) / [Progress](./Interaction/feedback/progress-indicators.mdx)
+- **Gestures** — [Tap](./Interaction/gestures/tap.mdx) / [Swipe](./Interaction/gestures/swipe.mdx) / [Pinch Zoom](./Interaction/gestures/pinch-zoom.mdx) / [Long Press](./Interaction/gestures/long-press.mdx)
 
-### ✍️ Content（コンテンツ）- 15ファイル
+### Typography
 
-| カテゴリ | ドキュメント | 概要 |
-|---------|------------|------|
-| **Typography** | [Scale](./Typography/scale.mdx) | フォントサイズ・ウェイト・行間 |
-| | [Hierarchy](./Typography/hierarchy.mdx) | H1-H6, Body等 |
-| | [Readability](./Typography/readability.mdx) | 可読性 |
-| | [Font Families](./Typography/font-families.mdx) | フォント選択 |
-| **Iconography** | [Overview](./Typography/iconography/overview.mdx) + 3ファイル | アイコン使用原則 |
-| **Imagery** | [Overview](./Typography/imagery/overview.mdx) + 3ファイル | 画像・alt text・最適化 |
-| **Writing** | [Tone & Voice](./Typography/writing/tone-voice.mdx) | 文章のトーン |
-| | [Microcopy](./Typography/writing/microcopy.mdx) | ボタンラベル・ツールチップ |
-| | [Error Messages](./Typography/writing/error-messages.mdx) | エラー文言 |
+- [Scale](./Typography/scale.mdx) — フォントサイズ・ウェイト・行間
+- [Hierarchy](./Typography/hierarchy.mdx) — H1-H6, Body 等の使い分け
+- [Readability](./Typography/readability.mdx) — 行長・段落間隔
+- [Font Families](./Typography/font-families.mdx) — フォント選択
+- **Iconography** — [Overview](./Typography/iconography/overview.mdx) / [Sizes](./Typography/iconography/sizes.mdx) / [Styles](./Typography/iconography/styles.mdx) / [Semantic Icons](./Typography/iconography/semantic-icons.mdx)
+- **Imagery** — [Overview](./Typography/imagery/overview.mdx) / [Aspect Ratios](./Typography/imagery/aspect-ratios.mdx) / [Quality Optimization](./Typography/imagery/quality-optimization.mdx) / [Alt Text](./Typography/imagery/alt-text.mdx)
+- **Writing** — [Tone & Voice](./Typography/writing/tone-voice.mdx) / [Microcopy](./Typography/writing/microcopy.mdx) / [Error Messages](./Typography/writing/error-messages.mdx)
 
-### 🎨 Color（カラー）- 6ファイル
+### Color
 
-| ドキュメント | 概要 |
-|------------|------|
-| **[Overview](./Color/overview.mdx)** | カラーシステム概要 |
-| **[Palette](./Color/palette.mdx)** | 50-900スケール |
-| **[Semantic Colors](./Color/semantic-colors.mdx)** | Success/Error等 |
-| **[Brand Colors](./Color/brand-colors.mdx)** | ブランドカラー |
-| **[Neutral Colors](./Color/neutral-colors.mdx)** | グレースケール |
-| **[Color Usage](./Color/color-usage.mdx)** | 実際の使い方 |
+- [Overview](./Color/overview.mdx) — カラーシステム概要
+- [Palette](./Color/palette.mdx) — 50-900 スケール
+- [Semantic Colors](./Color/semantic-colors.mdx) — Success / Error / Warning / Info の意味
+- [Brand Colors](./Color/brand-colors.mdx) — ブランドカラー
+- [Neutral Colors](./Color/neutral-colors.mdx) — グレースケール
+- [Color Usage](./Color/color-usage.mdx) — コンポーネント別の色使用ガイド
 
-### 🎬 Motion（モーション）- 2ファイル
+### Patterns
 
-| ドキュメント | 概要 |
-|------------|------|
-| **[Animation](./motion/animation.mdx)** | アニメーション原則・イージング |
-| **[Transitions](./motion/transitions.mdx)** | ページ遷移・状態遷移 |
+- [Atomic Design Implementation](./Patterns/atomic-design-implementation.mdx)
+- [Forms](./Patterns/forms.mdx)
+- [Navigation](./Patterns/navigation.mdx)
+- [Data Display](./Patterns/data-display.mdx)
 
-### 🔧 Patterns（パターン）- 4ファイル
+### Platform
 
-| ドキュメント | 概要 |
-|------------|------|
-| **[Atomic Design](./Patterns/atomic-design-implementation.mdx)** | コンポーネント階層 |
-| **[Forms](./Patterns/forms.mdx)** | フォーム設計 |
-| **[Navigation](./Patterns/navigation.mdx)** | 6つのナビゲーションパターン |
-| **[Data Display](./Patterns/data-display.mdx)** | テーブル・リスト・カード |
-
-### 📱 Platform（プラットフォーム）- 6ファイル
-
-| カテゴリ | ドキュメント | 概要 |
-|---------|------------|------|
-| **Web** | [Browser Support](./Platform/web/browser-support.mdx) | ブラウザサポート方針 |
-| | [Performance](./Platform/web/performance.mdx) | Core Web Vitals |
-| | [SEO](./Platform/web/seo.mdx) | 検索エンジン最適化 |
-| **Mobile** | [iOS](./Platform/mobile/ios.mdx) | iOS固有の考慮 |
-| | [Android](./Platform/mobile/android.mdx) | Material Design |
-| | [Native Patterns](./Platform/mobile/native-patterns.mdx) | iOS vs Android比較 |
+- **Web** — [Browser Support](./Platform/web/browser-support.mdx) / [Performance](./Platform/web/performance.mdx) / [SEO](./Platform/web/seo.mdx)
+- **Mobile** — [iOS](./Platform/mobile/ios.mdx) / [Android](./Platform/mobile/android.mdx) / [Native Patterns](./Platform/mobile/native-patterns.mdx)
 
 ---
 
-## 🔍 ユースケース別ガイド
+## ユースケース別ガイド
 
 ### 新しいコンポーネントを作る
 
 **Button**:
-1. [Button Priority](./Interaction/button/priority.mdx) → どの種類のボタンか決める
+1. [Button Priority](./Interaction/button/priority.mdx) → 種類を決める
 2. [Action Placement](./Interaction/button/placement.mdx) → 配置を決める
-3. [Interactive States](./Interaction/state/interactive-states.mdx) → hover/focus/activeを実装
-4. [Keyboard Navigation](./Foundation/accessibility/keyboard-navigation.mdx) → Tab操作対応
-5. [Touch Targets](./Foundation/accessibility/touch-targets.mdx) → 44px以上を確保
+3. [Interactive States](./Interaction/state/interactive-states.mdx) → hover / focus / active 実装
+4. [Keyboard Navigation](./Foundation/accessibility/keyboard-navigation.mdx) → Tab 操作対応
+5. [Touch Targets](./Foundation/accessibility/touch-targets.mdx) → 44px 以上を確保
 
 **Form**:
 1. [Forms](./Patterns/forms.mdx) → 全体設計
@@ -201,112 +126,65 @@ import { Meta } from '@storybook/addon-docs/blocks';
 **Modal**:
 1. [Focus Management](./Foundation/accessibility/focus-management.mdx) → フォーカストラップ
 2. [Button Placement](./Interaction/button/placement.mdx) → ボタン配置
-3. [Transitions](./motion/transitions.mdx) → 開閉アニメーション
-4. [Keyboard Navigation](./Foundation/accessibility/keyboard-navigation.mdx) → Escで閉じる
+3. [Keyboard Navigation](./Foundation/accessibility/keyboard-navigation.mdx) → Esc で閉じる
 
 ### デザインを改善する
 
 **読みやすくしたい**:
-- [Readability](./Typography/readability.mdx) → 行長・段落間隔
-- [Hierarchy](./Foundation/hierarchy.mdx) → 視覚的優先度
-- [Color Contrast](./Foundation/accessibility/color-contrast.mdx) → コントラスト比
+- [Readability](./Typography/readability.mdx) — 行長・段落間隔
+- [Hierarchy](./Foundation/hierarchy.mdx) — 視覚的優先度
+- [Color Contrast](./Foundation/accessibility/color-contrast.mdx) — コントラスト比
 
 **使いやすくしたい**:
-- [Touch Targets](./Foundation/accessibility/touch-targets.mdx) → タップ領域
-- [Feedback Overview](./Interaction/feedback/overview.mdx) → フィードバック
-- [Error Messages](./Typography/writing/error-messages.mdx) → ユーザーを責めない文言
+- [Touch Targets](./Foundation/accessibility/touch-targets.mdx) — タップ領域
+- [Feedback Overview](./Interaction/feedback/overview.mdx) — フィードバック
+- [Error Messages](./Typography/writing/error-messages.mdx) — ユーザーを責めない文言
 
 **速くしたい**:
-- [Performance](./Platform/web/performance.mdx) → Core Web Vitals
-- [Imagery: Quality](./content/Typography/imagery/quality-optimization.mdx) → 画像最適化
+- [Performance](./Platform/web/performance.mdx) — Core Web Vitals
+- [Quality Optimization](./Typography/imagery/quality-optimization.mdx) — 画像最適化
 
 ---
 
-## 💡 ドキュメントの読み方
+## ドキュメントの読み方
 
 ### 効率的な学習方法
 
-1. **overview.md から始める**  
-   各カテゴリには overview.md があります。まずこれで全体像を把握。
+1. **各カテゴリの overview から読む** — 全体像を把握してから詳細に降りる
+2. **必要なトピックだけ読む** — 全部を読む必要はない
+3. **関連ドキュメントを辿る** — 各ファイルの末尾に関連リンクがある
+4. **チェックリストで確認** — 実装時に活用
 
-2. **必要なトピックだけ読む**  
-   62ファイルすべてを読む必要はありません。今必要なものだけでOK。
+### ドキュメントの構成テンプレート
 
-3. **関連ドキュメントを辿る**  
-   各ファイルの「関連ドキュメント」セクションで関連原則を発見。
+新規に原則 mdx を追加する場合、以下の構成に揃えてください:
 
-4. **チェックリストで確認**  
-   各ファイルの最後にチェックリストがあります。実装時に活用。
-
-### 各ドキュメントの構成
-
-すべてのドキュメントは統一された構成になっています：
-
+```markdown
+## メタ情報 (カテゴリ・適用範囲・ステータス・最終更新)
+## 原則の定義 (一文で要約)
+## なぜ必要か / 背景
+## 詳細説明 (✅/❌ の具体例つき)
+## チェックリスト
+## 関連原則 / 関連コンポーネント
+## バージョン履歴
 ```
-1. メタ情報（カテゴリ・適用範囲・ステータス・最終更新）
-2. 原則の定義（一文で要約）
-3. なぜ必要か / 背景
-4. 詳細説明（✅/❌ の具体例付き）
-5. チェックリスト
-6. 関連ドキュメント
-7. バージョン履歴
-```
+
+実装規約 (props 形式、トークン参照ルール等) は `AGENTS.md` を参照してください。
 
 ---
 
-## 🤝 ドキュメント管理
-
-### メンテナンス向けドキュメント
-
-- **[MASTER_PLAN.md](./MASTER_PLAN.mdx)** - 全体設計図・作成ルール・優先順位（482行）
-- **[IDEAL_STRUCTURE.md](./IDEAL_STRUCTURE.mdx)** - 理想的なドキュメント構造・命名規則
-
-新しいドキュメントを作成する際は、必ずこれらを参照してください。
-
----
-
-## 📖 参考リソース
+## 参考リソース
 
 ### 外部ガイドライン
 
-- [WCAG 2.1](https://www.w3.org/WAI/WCAG21/quickref/) - アクセシビリティ
-- [WAI-ARIA Practices](https://www.w3.org/WAI/ARIA/apg/) - ARIA実装パターン
-- [Material Design 3](https://m3.material.io/) - Googleのデザインシステム
-- [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) - Appleのガイドライン
+- [WCAG 2.1](https://www.w3.org/WAI/WCAG21/quickref/) — アクセシビリティ
+- [WAI-ARIA Practices](https://www.w3.org/WAI/ARIA/apg/) — ARIA 実装パターン
+- [Material Design 3](https://m3.material.io/) — Google のデザインシステム
+- [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) — Apple のガイドライン
 
 ### ツール
 
-- [Lighthouse](https://developers.google.com/web/tools/lighthouse) - パフォーマンス・アクセシビリティ監査
-- [axe DevTools](https://www.deque.com/axe/devtools/) - アクセシビリティチェック
-- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) - コントラスト比チェック
-- [Can I Use](https://caniuse.com/) - ブラウザ対応確認
-
----
-
-## 📊 システム統計
-
-- **総ドキュメント数**: 62ファイル（原則） + 3ファイル（管理）
-- **カテゴリ数**: 8（Foundation, Layout, Interaction, Content, Color, Motion, Patterns, Platform）
-- **総行数**: 約15,000行
-- **完成度**: Phase 1〜4 完了（実用レベル）
-- **最終更新**: 2026年2月19日
-
----
-
-## 🗺️ 次に読むべきドキュメント
-
-あなたの状況に応じて：
-
-| 状況 | 推奨ドキュメント |
-|------|----------------|
-| **全体を理解したい** | [MASTER_PLAN.md](./MASTER_PLAN.mdx) |
-| **すぐにコンポーネントを作りたい** | [Atomic Design](./Patterns/atomic-design-implementation.mdx) |
-| **アクセシビリティを学びたい** | [Accessibility Overview](./Foundation/accessibility/overview.mdx) |
-| **フォームを作りたい** | [Forms](./Patterns/forms.mdx) |
-| **パフォーマンスを改善したい** | [Performance](./Platform/web/performance.mdx) |
-| **モバイル対応したい** | [iOS](./Platform/mobile/ios.mdx) / [Android](./Platform/mobile/android.mdx) |
-
----
-
-**デザインシステムは、より良いユーザー体験を、より速く、より一貫して作るためのツールです。**  
-**まずは必要な部分から始めて、徐々に理解を深めていきましょう！**
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse) — パフォーマンス・a11y 監査
+- [axe DevTools](https://www.deque.com/axe/devtools/) — a11y チェック
+- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) — コントラスト比
+- [Can I Use](https://caniuse.com/) — ブラウザ対応確認

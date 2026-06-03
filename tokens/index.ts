@@ -23,6 +23,8 @@ export const SPACING = TOKENS.spacing;
 export const SPACING_SEMANTIC = TOKENS['spacing-semantic'];
 /** Typography（font-size / weight / line-height / letter-spacing / family） */
 export const TYPOGRAPHY = TOKENS.typography;
+/** Typography semantic aliases（heading / body / label / caption） */
+export const TYPOGRAPHY_SEMANTIC = TOKENS['typography-semantic'];
 /** Box shadows（elevation） */
 export const SHADOWS = TOKENS.shadow;
 /** Border radius */

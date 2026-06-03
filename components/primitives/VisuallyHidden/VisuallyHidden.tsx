@@ -38,6 +38,11 @@ export interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLElement> {
   as?: VisuallyHiddenElement;
   /** スクリーンリーダに読ませる内容（必須）。 */
   children: React.ReactNode;
+  /**
+   * `as="label"` のときに関連付ける form 要素の id (`<label htmlFor>` と同じ)。
+   * `as="span"` 等の場合は HTML レベルで無視されるため、型としては許容する。
+   */
+  htmlFor?: string;
 }
 
 /**

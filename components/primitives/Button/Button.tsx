@@ -112,14 +112,6 @@ export type ButtonProps =
   // React 由来 (JSDoc なし) の型を Omit して衝突を避ける。
   Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'aria-label' | 'disabled'>;
 
-/** Internal flexible type to allow destructuring across both discriminants */
-type _InternalButtonProps = ButtonBaseProps & {
-  iconOnly?: boolean;
-  icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
-  children?: React.ReactNode;
-} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'>;
-
 /**
  * Button のスタイル定義 — `tailwind-variants` で variant マップを宣言的に保持。
  *
@@ -254,35 +246,80 @@ const buttonVariants = tv({
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
+    // Spinner サイズは button size に追従させて視覚バランスを取る
+    // (small/large でも 16px だと小さく見える / 大きく見えるため)
+    const spinnerSize =
+      props.size === 'small' ? 'h-4 w-4' : props.size === 'large' ? 'h-6 w-6' : 'h-5 w-5';
+    const loadingSpinner = (
+      <svg
+        className={`animate-spin flex-shrink-0 ${spinnerSize}`}
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        />
+      </svg>
+    );
+
+    // iconOnly モード: TS は props を ButtonIconOnlyProps に絞り込む (icon 必須、children/iconPosition は never)
+    if (props.iconOnly) {
+      const {
+        iconOnly,
+        icon,
+        variant,
+        size,
+        isLoading = false,
+        fullWidth,
+        disabled,
+        className,
+        type = 'button',
+        ...rest
+      } = props;
+      return (
+        <button
+          ref={ref}
+          type={type}
+          disabled={disabled || isLoading}
+          className={buttonVariants({ variant, size, iconOnly, fullWidth, className })}
+          {...rest}
+        >
+          {isLoading ? loadingSpinner : (
+            <span className="flex-shrink-0 inline-flex items-center">{icon}</span>
+          )}
+        </button>
+      );
+    }
+
+    // 通常モード: TS は props を ButtonRegularProps に絞り込む (children 必須)
     const {
+      iconOnly,
+      icon,
+      iconPosition = 'left',
       variant,
       size,
       isLoading = false,
-      icon,
-      iconPosition = 'left',
-      iconOnly,
       fullWidth,
       disabled,
       children,
       className,
       type = 'button',
       ...rest
-    } = props as _InternalButtonProps;
-
-    // variant / size / iconOnly / fullWidth のデフォルトは buttonVariants の
-    // defaultVariants に集約されているので、props 側では undefined を許す。
-    // className は tailwind-variants が tailwind-merge で衝突解消してくれる。
-    const buttonClasses = buttonVariants({
-      variant,
-      size,
-      iconOnly,
-      fullWidth,
-      className,
-    });
-
-    // アイコンの順序を決定
-    const iconElement = icon && (
-      <span className="flex-shrink-0 flex items-center">{icon}</span>
+    } = props;
+    const iconWrap = icon && (
+      <span className="flex-shrink-0 inline-flex items-center">{icon}</span>
     );
 
     return (
@@ -290,35 +327,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         type={type}
         disabled={disabled || isLoading}
-        className={buttonClasses}
+        className={buttonVariants({ variant, size, iconOnly, fullWidth, className })}
         {...rest}
       >
-        {isLoading && (
-          <svg
-            className="animate-spin h-4 w-4 flex-shrink-0"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-        )}
-        {!isLoading && iconPosition === 'left' && iconElement}
+        {isLoading && loadingSpinner}
+        {!isLoading && iconPosition === 'left' && iconWrap}
         {children}
-        {!isLoading && iconPosition === 'right' && iconElement}
+        {!isLoading && iconPosition === 'right' && iconWrap}
       </button>
     );
   }

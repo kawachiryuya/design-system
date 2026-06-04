@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { tv } from 'tailwind-variants';
 import { Icon } from '../Icon';
 
 /** アスペクト比プリセット */
@@ -40,8 +41,8 @@ export type ImageRounded = 'none' | 'sm' | 'md' | 'lg' | 'full';
  *     fallback={<DefaultAvatar />}
  *   />
  *
- * @see principles/README.mdx
- * @see principles/Foundation/accessibility/overview.mdx
+ * @see principles/Typography/imagery/overview.mdx
+ * @see principles/Typography/imagery/alt-text.mdx
  */
 export interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   /** 画像 URL（必須）。 */
@@ -83,27 +84,56 @@ export interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElemen
   className?: string;
 }
 
-const aspectRatioStyles = {
-  square: 'aspect-square',
-  video: 'aspect-video',
-  portrait: 'aspect-[3/4]',
-  wide: 'aspect-[21/9]',
-  auto: '',
-};
+/**
+ * Image のスタイル定義 — `tailwind-variants` で aspectRatio × objectFit × rounded を
+ * 宣言的に保持。aspectRatio='auto' は img を bare で描画、それ以外は container div で
+ * ラップして absolute 配置するため、container と img で別 variants を用意する。
+ */
+const imageContainerVariants = tv({
+  base: 'relative overflow-hidden bg-surface-disabled',
+  variants: {
+    aspectRatio: {
+      square:   'aspect-square',
+      video:    'aspect-video',
+      portrait: 'aspect-[3/4]',
+      wide:     'aspect-[21/9]',
+      auto:     '',
+    },
+    rounded: {
+      none: 'rounded-none',
+      sm:   'rounded-xs',
+      md:   'rounded',
+      lg:   'rounded-lg',
+      full: 'rounded-full',
+    },
+  },
+});
 
-const objectFitStyles = {
-  cover: 'object-cover',
-  contain: 'object-contain',
-  fill: 'object-fill',
-};
-
-const roundedStyles = {
-  none: 'rounded-none',
-  sm: 'rounded-xs',
-  md: 'rounded',
-  lg: 'rounded-lg',
-  full: 'rounded-full',
-};
+const imageImgVariants = tv({
+  base: '',
+  variants: {
+    // aspectRatio='auto' は通常フロー、それ以外は container 内で absolute 配置
+    aspectRatio: {
+      auto:     'w-full h-auto block',
+      square:   'absolute inset-0 w-full h-full',
+      video:    'absolute inset-0 w-full h-full',
+      portrait: 'absolute inset-0 w-full h-full',
+      wide:     'absolute inset-0 w-full h-full',
+    },
+    objectFit: {
+      cover:   'object-cover',
+      contain: 'object-contain',
+      fill:    'object-fill',
+    },
+    rounded: {
+      none: 'rounded-none',
+      sm:   'rounded-xs',
+      md:   'rounded',
+      lg:   'rounded-lg',
+      full: 'rounded-full',
+    },
+  },
+});
 
 const FallbackPlaceholder: React.FC = () => (
   <div className="absolute inset-0 flex items-center justify-center bg-surface-disabled">
@@ -124,26 +154,11 @@ export const Image: React.FC<ImageProps> = ({
   rounded = 'none',
   lazy = true,
   fallback,
-  className = '',
+  className,
   ...props
 }) => {
   const [hasError, setHasError] = useState(false);
   const isDecorative = alt === '';
-
-  const containerClass = [
-    'relative',
-    'overflow-hidden',
-    'bg-surface-disabled',
-    aspectRatioStyles[aspectRatio],
-    roundedStyles[rounded],
-    className,
-  ].filter(Boolean).join(' ');
-
-  const imgClass = [
-    aspectRatio !== 'auto' ? 'absolute inset-0 w-full h-full' : 'w-full h-auto block',
-    objectFitStyles[objectFit],
-    roundedStyles[rounded],
-  ].join(' ');
 
   const imgElement = !hasError ? (
     <img
@@ -151,7 +166,7 @@ export const Image: React.FC<ImageProps> = ({
       alt={alt}
       loading={lazy ? 'lazy' : 'eager'}
       role={isDecorative ? 'presentation' : undefined}
-      className={imgClass}
+      className={imageImgVariants({ aspectRatio, objectFit, rounded })}
       onError={() => setHasError(true)}
       {...props}
     />
@@ -164,7 +179,7 @@ export const Image: React.FC<ImageProps> = ({
   }
 
   return (
-    <div className={containerClass}>
+    <div className={imageContainerVariants({ aspectRatio, rounded, className })}>
       {imgElement}
     </div>
   );

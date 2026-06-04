@@ -1,0 +1,140 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ImageStories from './Image.stories';
+import { Image } from './Image';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={ImageStories} で Image.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Image.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={ImageStories} name="Guideline" />
+
+# Image
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+`<img>` のラッパー。アスペクト比固定 / object-fit / 読み込みエラー時の fallback / `loading="lazy"` を統合管理する。**`alt` 属性を型レベルで必須化**し、意味のある画像は説明文字列、装飾画像は空文字 `""` を明示的に渡すことで `role="presentation"` を自動付与する。
+
+`aspectRatio` を指定すると container div で wrap して absolute 配置するため、画像読み込み完了前から **レイアウトシフトが発生しない**。
+
+---
+
+## Props
+
+下表は Image.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={ImageStories.Playground} />
+
+詳細: [Imagery Overview 原則](?path=/docs/principles-typography-imagery-overview--docs) / [Alt Text 原則](?path=/docs/principles-typography-imagery-alt-text--docs) / [Aspect Ratios 原則](?path=/docs/principles-typography-imagery-aspect-ratios--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="意味のある画像には説明的な alt を書く"
+  doExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="雪を頂いた山岳地帯の風景" aspectRatio="video" rounded="md" />
+    </div>
+  }
+  doCaption="画像の内容を伝える alt を書く。SR ユーザー / 読み込み失敗時のテキストブラウザ / Google 画像検索の全てに役立つ。"
+  dontExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="画像" aspectRatio="video" rounded="md" />
+    </div>
+  }
+  dontCaption="「画像」「写真」のような汎用語を alt に書くと SR ユーザーに情報が伝わらない。"
+/>
+
+<DoDontExample
+  label='装飾画像には alt="" を明示的に渡す'
+  doExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="" aspectRatio="wide" rounded="md" />
+    </div>
+  }
+  doCaption='alt="" で role="presentation" が自動付与され、SR から無視される。ヒーロー画像や装飾的な背景画像など、隣接テキストで意味が完結する画像で使う。'
+  dontExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="装飾的な背景画像" aspectRatio="wide" rounded="md" />
+    </div>
+  }
+  dontCaption="装飾画像に意味のある alt を付けると SR で冗長な読み上げが発生する。装飾なら空文字を明示する。"
+/>
+
+<DoDontExample
+  label="aspectRatio を指定して layout shift を防ぐ"
+  doExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="風景" aspectRatio="video" />
+    </div>
+  }
+  doCaption="aspectRatio を指定すると container 側で先に枠を確保し、画像読み込み完了でレイアウトがズレない (CLS スコア改善)。"
+  dontExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="風景" aspectRatio="auto" />
+    </div>
+  }
+  dontCaption="aspectRatio=auto で img の自然なサイズに任せると、読み込み完了の瞬間に高さが変わり layout shift が起きる。"
+/>
+
+<DoDontExample
+  label="Above-the-fold 画像は lazy=false に"
+  doExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="ヒーロー画像" aspectRatio="wide" lazy={false} />
+    </div>
+  }
+  doCaption="LCP (Largest Contentful Paint) になるヒーロー画像は lazy=false で eager 読み込み。lazy だと LCP が遅れる。"
+  dontExample={
+    <div className="w-48">
+      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="ヒーロー画像" aspectRatio="wide" />
+    </div>
+  }
+  dontCaption="デフォルト lazy=true のままだと above-the-fold 画像でも viewport に入ってから読み込み開始し、LCP が遅れる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| アイコン / 記号 | `<Icon>` | `<Image>` は raster / 写真、`<Icon>` は SVG ベクター |
+| プロフィール画像 + イニシャル fallback | `<Avatar>` | 顔写真特化、欠落時イニシャル表示の専用 UI |
+| 読み込み中の placeholder | `<Skeleton variant="rectangular">` | 画像の読み込み中表示は Skeleton |
+| 装飾の背景画像 (テキスト被せ等) | `background-image` CSS | `<img>` ではなく div の背景に |
+
+---
+
+## アクセシビリティ
+
+- **`alt` 型レベル必須**: TypeScript で alt 省略時に compile error。「忘れる」が原理的に起きない
+- **装飾画像は `alt=""`**: 空文字を渡すと `role="presentation"` 自動付与で SR から無視される
+- **`loading="lazy"` デフォルト**: 初期描画パフォーマンス向上。above-the-fold は明示的に `lazy={false}`
+- **エラー fallback**: `onError` で自動切替、視覚的に「壊れた」状態を見せない
+- **画像の意味**: 隣接テキストで意味が完結するなら装飾扱い、写真自体が情報なら descriptive alt
+
+関連: [Alt Text](?path=/docs/principles-typography-imagery-alt-text--docs) / [Quality Optimization](?path=/docs/principles-typography-imagery-quality-optimization--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- `<Icon>` — 読み込みエラー時のデフォルト fallback の placeholder アイコン (`name="image"`)
+
+### Image を組み合わせる代表的なコンポーネント
+
+- `<Card>` のサムネイル — ブログ記事カードなどで video 比率の Image をヘッダーに
+- `<Avatar>` — 内部実装で Image を使用 (alt + 円形 + イニシャル fallback)
+- `<Modal>` の画像ライトボックス — auto + max-w で表示

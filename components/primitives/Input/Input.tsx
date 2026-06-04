@@ -127,8 +127,10 @@ const inputVariants = tv({
     'transition-all',
     'duration-normal',
     'focus:outline-none',
-    'focus:ring-2',
-    'focus:ring-offset-0',
+    // focus-visible: は input/textarea で UA heuristic により click focus でも常に match。
+    // pseudo-states addon の focusVisible と整合し、modern a11y best practice にも沿う。
+    'focus-visible:ring-2',
+    'focus-visible:ring-offset-0',
     'disabled:opacity-50',
     'disabled:cursor-not-allowed',
     'disabled:bg-surface-disabled',
@@ -140,8 +142,8 @@ const inputVariants = tv({
       large:  'h-16 text-lg',
     },
     error: {
-      true:  'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus',
+      true:  'border-border-error focus-visible:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus-visible:border-border-focus focus-visible:ring-border-focus',
     },
     fullWidth: {
       true:  'w-full',

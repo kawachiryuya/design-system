@@ -96,25 +96,30 @@ export const States: Story = {
       focusVisible: ['#input-focus'],
     },
   },
+  // Error 状態は errorMessage が下に伸びる分セルが高くなる。
+  // gap-x-6 (24px) / gap-y-8 (32px) で隣接セルとの干渉を防ぐ。
+  // Caption の wrapper を w-full にして子要素 (Input) の fullWidth が
+  // grid セル幅に追従するようにする (Caption は items-start で width が
+  // shrink-to-fit になっていたため input natural width が cell からはみ出していた)。
   render: () => (
-    <div className="grid grid-cols-2 gap-4 items-start">
+    <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full">
       <Caption text="Default">
-        <Input label="Default" placeholder="入力してください" />
+        <Input label="Default" placeholder="入力してください" fullWidth />
       </Caption>
       <Caption text="Hover">
-        <Input id="input-hover" label="Hover" placeholder="入力してください" />
+        <Input id="input-hover" label="Hover" placeholder="入力してください" fullWidth />
       </Caption>
       <Caption text="Focus-visible">
-        <Input id="input-focus" label="Focus" placeholder="入力してください" />
+        <Input id="input-focus" label="Focus" placeholder="入力してください" fullWidth />
       </Caption>
       <Caption text="Filled (入力済み)">
-        <Input label="Filled" defaultValue="user@example.com" />
+        <Input label="Filled" defaultValue="user@example.com" fullWidth />
       </Caption>
       <Caption text="Error">
-        <Input label="Error" error errorMessage="8 文字以上で入力してください" defaultValue="abc" type="password" />
+        <Input label="Error" error errorMessage="8 文字以上で入力してください" defaultValue="abc" type="password" fullWidth />
       </Caption>
       <Caption text="Disabled">
-        <Input label="Disabled" disabled defaultValue="変更不可" />
+        <Input label="Disabled" disabled defaultValue="変更不可" fullWidth />
       </Caption>
     </div>
   ),

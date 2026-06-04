@@ -6,6 +6,61 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-04
+
+Primitive / Composite の判定基準を「単一 HTML 要素 + 状態なし」の **2 軸厳密化** (Option A) に切り替えた。これに合わせて Badge を `composites/` → `primitives/` に再配置。前回計画時 (memory 上) は 5 components 移動予定だったが、Switch / Checkbox / Radio は `<Label>` 内包・Group state あり、ProgressBar は label+track+fill の複数構造を持つため、新定義に厳密に従い **Badge のみ移動** した。
+
+### ⚠ BREAKING CHANGES
+
+- **Badge の path 移動** (TS catch): `components/composites/Badge` → [`components/primitives/Badge`](./components/primitives/Badge)。サブパス import (`@kawachiryuya/design-system/components/composites/Badge`) を直接使っていると import エラー。バレル export ([`components/index.ts`](./components/index.ts)) 経由なら無変更で動作
+- **Badge の Storybook story id 変更** (silent break): `composites-badge--*` → `primitives-badge--*`。サイドバー上のカテゴリも `Composites/Badge` → `Primitives/Badge` に移動。`?path=/story/composites-badge--*` 形式の URL リンクは壊れる
+
+### Changed
+
+- [`AGENTS.md`](./AGENTS.md) §2 — Primitive/Composite 判定を **2 軸厳密化**:
+  - Primitive: **単一の HTML 要素装飾 + 状態管理なし**
+  - Composite: 複数構造 / 状態管理 / 振る舞い (focus trap / portal / animation 等) のいずれか
+  - 判定の具体例表を追加 (Badge=Primitive、Switch/Checkbox/Radio/ProgressBar=Composite の根拠を明記)
+- [`components/Introduction.mdx`](./components/Introduction.mdx) — Primitives 12 → 13 / Composites 21 → 20 にカウント更新
+- [`components/index.ts`](./components/index.ts) — Primitives セクションに Badge を移動
+
+### Migration notes
+
+#### Badge のサブパス import
+
+```sh
+# サブパスを直接 import している場合
+# macOS (BSD sed)
+find . -type f \( -name "*.ts" -o -name "*.tsx" \) \
+  -not -path "./node_modules/*" -not -path "./dist/*" \
+  -exec sed -i '' "s|components/composites/Badge|components/primitives/Badge|g" {} +
+
+# Linux (GNU sed)
+find . -type f \( -name "*.ts" -o -name "*.tsx" \) \
+  -not -path "./node_modules/*" -not -path "./dist/*" \
+  -exec sed -i "s|components/composites/Badge|components/primitives/Badge|g" {} +
+```
+
+バレル export 経由 (`import { Badge } from '@kawachiryuya/design-system/components'`) なら **無変更**。
+
+#### Badge の Storybook URL
+
+旧:
+```
+?path=/story/composites-badge--default
+?path=/docs/composites-badge--guideline
+```
+
+新:
+```
+?path=/story/primitives-badge--default
+?path=/docs/primitives-badge--guideline
+```
+
+外部ドキュメント・Slack 等に貼った URL を貼り直すこと。
+
+---
+
 ## [0.3.0] - 2026-06-04
 
 本リリースは **Primitives 全 12 個の標準ストーリー構造への移行** をまとめた累積版。0.2.0 → 0.3.0 の間にトークン体系・Typography API・Storybook story id にまたがる **silent break を含む破壊的変更** を複数含むため、下流 product では下記 [Migration notes](#migration-notes) を一読すること。
@@ -138,6 +193,7 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/kawachiryuya/design-system/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/kawachiryuya/design-system/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/kawachiryuya/design-system/releases/tag/v0.2.0

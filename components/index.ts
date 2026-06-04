@@ -8,11 +8,12 @@
  *   import { Button, Input, Card } from '@kawachiryuya/design-system/components';
  *   import type { ButtonProps } from '@kawachiryuya/design-system/components';
  *
- * @see components/primitives/   — 単一 HTML 要素ラッパー（12 個）
- * @see components/composites/   — 複数 Primitive の組合せ or 状態あり（21 個）
+ * @see components/primitives/   — 単一 HTML 要素装飾 + 状態なし（13 個）
+ * @see components/composites/   — 複数構造 or 状態管理 or 振る舞い（20 個）
  */
 
-// ── Primitives (12) ──
+// ── Primitives (13) ──
+export * from './primitives/Badge';
 export * from './primitives/Button';
 export * from './primitives/Divider';
 export * from './primitives/Icon';
@@ -26,11 +27,10 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (21) ──
+// ── Composites (20) ──
 export * from './composites/Accordion';
 export * from './composites/Alert';
 export * from './composites/Avatar';
-export * from './composites/Badge';
 export * from './composites/Breadcrumb';
 export * from './composites/Card';
 export * from './composites/Checkbox';

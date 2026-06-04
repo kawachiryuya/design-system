@@ -36,8 +36,27 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 
 ### Primitive vs Composite
 
-- **Primitive** (`components/primitives/`): 単一 HTML 要素ラッパー (戦略上の Parts に対応)
-- **Composite** (`components/composites/`): 複数 Primitive の組合せ or 状態管理あり (戦略上の Blocks に対応)
+判定基準を **構造と状態の 2 軸** で厳密化する (2026-06-04 Phase 1)。
+
+- **Primitive** (`components/primitives/`): **単一の HTML 要素を装飾**する薄いラッパー、かつ **状態管理を持たない**。戦略上の Parts に対応
+- **Composite** (`components/composites/`): いずれかを満たす場合 (戦略上の Blocks に対応)
+  - 複数の HTML 要素 / Primitive を組み合わせる (例: Switch の `<Label>` + `<button>` 内包)
+  - 状態管理を持つ (例: Modal の open/close、CheckboxGroup の group state)
+  - 振る舞いを持つ (focus trap / portal / animation / overlay 等)
+
+判定の具体例:
+
+| Component | 判定 | 理由 |
+|---|---|---|
+| Button / Link / Icon / Typography / Label | Primitive | 単一 HTML 要素、状態なし |
+| Badge | Primitive | 単一 `<span>`、状態なし |
+| Spinner / Skeleton / Divider / VisuallyHidden | Primitive | 単一要素、状態なし |
+| Input / Textarea / Image | Primitive | 単一 HTML 要素 (`<input>` / `<textarea>` / `<img>`)、状態は uncontrolled or controlled prop のみ |
+| Switch | Composite | `<Label>` 内包 + `<button role="switch">`、label position 切替 |
+| Checkbox / Radio | Composite | `<Label>` + `<input>` + `<FormMessage>` を内包、`CheckboxGroup` / `RadioGroup` で group state |
+| ProgressBar | Composite | label + value 表示 + track + fill の **複数 `<div>` / `<span>`** 構造 |
+| Modal / Toast / Popover | Composite | portal / focus trap / overlay |
+| Card / Tabs / Accordion / Pagination | Composite | 構造の組合せ + 状態管理 |
 
 ### 禁則
 

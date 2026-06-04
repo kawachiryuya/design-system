@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
 import { Tabs } from './Tabs';
-import { Badge } from '../Badge/Badge';
+import { Badge } from '../../primitives/Badge/Badge';
 
 const sampleTabs = [
   {

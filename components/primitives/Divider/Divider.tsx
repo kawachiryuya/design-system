@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 
 /** Divider の向き */
 export type DividerOrientation = 'horizontal' | 'vertical';
@@ -27,7 +28,7 @@ export type DividerWeight = 'thin' | 'normal';
  *   // 太線（強調的な区切り）
  *   <Divider weight="normal" />
  *
- * @see principles/Layout/
+ * @see principles/Layout/alignment.mdx
  */
 export interface DividerProps {
   /**
@@ -54,6 +55,36 @@ export interface DividerProps {
 }
 
 /**
+ * Divider のボーダースタイル定義 — `tailwind-variants` で orientation × weight を宣言的に保持。
+ *
+ * - base: 共通の border 色
+ * - compoundVariants: 向き (top/left) × 太さ (1px/2px) の組合せ
+ *
+ * 注: Divider は orientation/label の組合せで描画 DOM が分岐 (hr / div / div+text) する。
+ *     ここで導出するのは border ユーティリティ class のみで、container DOM は JSX 側で決める。
+ */
+const dividerBorderVariants = tv({
+  base: 'border-border-muted',
+  variants: {
+    orientation: {
+      horizontal: '',
+      vertical:   '',
+    },
+    weight: {
+      thin:   '',
+      normal: '',
+    },
+  },
+  compoundVariants: [
+    { orientation: 'horizontal', weight: 'thin',   class: 'border-t' },
+    { orientation: 'horizontal', weight: 'normal', class: 'border-t-2' },
+    { orientation: 'vertical',   weight: 'thin',   class: 'border-l' },
+    { orientation: 'vertical',   weight: 'normal', class: 'border-l-2' },
+  ],
+  defaultVariants: { orientation: 'horizontal', weight: 'thin' },
+});
+
+/**
  * Divider — Atomic Design: Atom
  *
  * @see DividerProps for usage examples.
@@ -62,23 +93,16 @@ export const Divider: React.FC<DividerProps> = ({
   orientation = 'horizontal',
   label,
   weight = 'thin',
-  className = '',
+  className,
 }) => {
-  const borderColor = 'border-border-muted';
-  const hBorderClass = weight === 'thin' ? 'border-t' : 'border-t-2';
-  const vBorderClass = weight === 'thin' ? 'border-l' : 'border-l-2';
+  const borderClass = dividerBorderVariants({ orientation, weight });
 
   if (orientation === 'vertical') {
     return (
       <div
         role="separator"
         aria-orientation="vertical"
-        className={[
-          'self-stretch',
-          vBorderClass,
-          borderColor,
-          className,
-        ].join(' ')}
+        className={['self-stretch', borderClass, className].filter(Boolean).join(' ')}
       />
     );
   }
@@ -88,13 +112,13 @@ export const Divider: React.FC<DividerProps> = ({
       <div
         role="separator"
         aria-label={label}
-        className={['flex', 'items-center', 'gap-3', className].join(' ')}
+        className={['flex items-center gap-3', className].filter(Boolean).join(' ')}
       >
-        <div className={['flex-1', hBorderClass, borderColor].join(' ')} />
+        <div className={`flex-1 ${borderClass}`} />
         <span className="text-sm text-onSurface-muted whitespace-nowrap select-none">
           {label}
         </span>
-        <div className={['flex-1', hBorderClass, borderColor].join(' ')} />
+        <div className={`flex-1 ${borderClass}`} />
       </div>
     );
   }
@@ -102,14 +126,7 @@ export const Divider: React.FC<DividerProps> = ({
   return (
     <hr
       role="separator"
-      className={[
-        'w-full',
-        'border-0',
-        hBorderClass,
-        borderColor,
-        'm-0',
-        className,
-      ].join(' ')}
+      className={['w-full border-0 m-0', borderClass, className].filter(Boolean).join(' ')}
     />
   );
 };

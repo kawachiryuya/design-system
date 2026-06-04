@@ -1,0 +1,160 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as DividerStories from './Divider.stories';
+import { Divider } from './Divider';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={DividerStories} で Divider.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Divider.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={DividerStories} name="Guideline" />
+
+# Divider
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+セクション間の視覚的な区切り。`role="separator"` を自動付与し、SR にも区切りが伝わる。`orientation` で水平 (`<hr>`) / 垂直 (`<div>`) を切り替え、`label` で「または」などの意味的な区切り (text + 線 + 線) を表現できる。`weight` で線の太さを `thin` (1px、標準) / `normal` (2px、強調) に切り替え可能。
+
+---
+
+## Props
+
+下表は Divider.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={DividerStories.Playground} />
+
+詳細: [Layout Alignment 原則](?path=/docs/principles-layout-alignment--docs) / [Grid 原則](?path=/docs/principles-layout-grid--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="セクション間の視覚的区切りに使う"
+  doExample={
+    <div className="flex flex-col gap-2 w-64">
+      <span className="text-sm">基本情報</span>
+      <Divider />
+      <span className="text-sm">通知設定</span>
+    </div>
+  }
+  doCaption="関連の薄いセクションどうしを分けて、視線を整理する。設定画面・カード内の項目区切り等。"
+  dontExample={
+    <div className="flex flex-col gap-2 w-64">
+      <Divider />
+      <span className="text-sm">タイトル</span>
+      <Divider />
+    </div>
+  }
+  dontCaption="タイトル直前直後に Divider を当てて装飾的に「枠」を作るのは過剰。タイトルの font-weight や size で階層を表現すべき。"
+/>
+
+<DoDontExample
+  label="意味的な区切りには label を使う"
+  doExample={
+    <div className="flex flex-col gap-4 w-64">
+      <button type="button" className="w-full py-2 px-4 border border-border-default rounded text-sm">Google でログイン</button>
+      <Divider label="または" />
+      <input type="email" placeholder="メールアドレス" className="w-full px-3 py-2 border border-border-default rounded text-sm" />
+    </div>
+  }
+  doCaption="2 つの選択肢の「OR 関係」を視覚的に明示する。SR にも aria-label が伝わる。"
+  dontExample={
+    <div className="flex flex-col gap-2 w-64">
+      <button type="button" className="w-full py-2 px-4 border border-border-default rounded text-sm">Google でログイン</button>
+      <p className="text-sm text-center">または</p>
+      <input type="email" placeholder="メールアドレス" className="w-full px-3 py-2 border border-border-default rounded text-sm" />
+    </div>
+  }
+  dontCaption="「または」を素のテキストで配置すると、視覚的な区切り感がなく、文章の続きに見える。Divider label で線とセットにする。"
+/>
+
+<DoDontExample
+  label="vertical Divider は適切な高さの親で使う"
+  doExample={
+    <div className="flex items-center gap-3 h-8">
+      <span className="text-sm">利用規約</span>
+      <Divider orientation="vertical" />
+      <span className="text-sm">プライバシーポリシー</span>
+    </div>
+  }
+  doCaption="フッターのリンク区切り等、親の高さが明確で `flex items-center` がある場所で使う。`self-stretch` で親の高さに追従する。"
+  dontExample={
+    <div className="flex flex-col gap-1 border border-dashed border-border-muted p-3 w-full">
+      <span className="text-sm">縦並びの中で</span>
+      <Divider orientation="vertical" />
+      <em className="text-xs text-onSurface-error not-italic">↑ vertical Divider があるはずが、0 高さで不可視</em>
+      <span className="text-sm">vertical Divider を使う</span>
+    </div>
+  }
+  dontCaption="flex-col の親で vertical を使うと、`self-stretch` が横方向 (cross 軸) にしか効かず 0 高さの div になって不可視。意図せず「無いように見える」失敗パターン。"
+/>
+
+<DoDontExample
+  label="weight=normal は強調用途に限定する"
+  doExample={
+    <div className="flex flex-col gap-3 w-64">
+      <span className="text-sm">通常セクション</span>
+      <Divider weight="thin" />
+      <span className="text-sm">関連セクション</span>
+      <Divider weight="normal" />
+      <span className="text-sm font-semibold">明確に分けたい別カテゴリ</span>
+    </div>
+  }
+  doCaption="thin (1px) を標準にし、特に大きな区切り (カテゴリの境界等) でのみ normal (2px) を使う。"
+  dontExample={
+    <div className="flex flex-col gap-3 w-64">
+      <span className="text-sm">セクション A</span>
+      <Divider weight="normal" />
+      <span className="text-sm">セクション B</span>
+      <Divider weight="normal" />
+      <span className="text-sm">セクション C</span>
+    </div>
+  }
+  dontCaption="normal を多用すると線が画面の主役になりノイズに。普段は thin、強調したい箇所だけ normal の使い分けを保つ。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 見出しで階層を作る | `<Typography variant="h*">` | 区切り線で階層を作るのは過剰。font-size / weight で表現 |
+| Card / Modal の枠線 | `<Card>` / `<Modal>` | コンテナの責務、Divider は内部の区切り専用 |
+| ステータスを示す色帯 | `<Alert>` の bar / `<Badge>` | 区切り線は意味を持たない、色で意味を伝えるなら別 |
+| ナビゲーションのインジケーター | `<Tabs>` の under-line | tab 切替の active 表示は Tabs の責務 |
+
+---
+
+## アクセシビリティ
+
+- **`role="separator"`**: SR が「区切り」として認識し、セクション境界を伝えられる
+- **`aria-orientation="vertical"`**: 垂直方向時に明示。デフォルトは horizontal
+- **`aria-label` (label 指定時)**: 「または」「以上」などの意味的区切りを SR に伝達
+- **線のコントラスト (1.4.11)**: `border-border-muted` (`#e5e5e5`) は AA UI 部品要件 (3:1) ギリギリ。明確な区切りが必要なら weight を normal にして視認性を上げる
+- **装飾だけの目的では使わない**: ARIA `role="separator"` がノイズになる場合は `<div className="border-t border-border-muted" />` のような plain な装飾 div を使う
+
+関連: [Layout Alignment](?path=/docs/principles-layout-alignment--docs) / [Color Contrast](?path=/docs/principles-foundation-accessibility-color-contrast--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Divider は単独で完結する Primitive。
+
+### Divider を内部で使う代表的なコンポーネント
+
+- `<Card>` の footer 上 — content と action の区切り
+- `<Modal>` の header 下 / footer 上 — title / body / actions の区切り
+- 設定画面 / プロフィール画面 — セクション間の区切り
+- フッターのリンク群 (vertical) — utility リンクの区切り

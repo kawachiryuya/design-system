@@ -1,0 +1,137 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SpinnerStories from './Spinner.stories';
+import { Spinner } from './Spinner';
+import { Button } from '../Button/Button';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={SpinnerStories} で Spinner.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Spinner.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={SpinnerStories} name="Guideline" />
+
+# Spinner
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+処理中を示す円形のローディングインジケーター。`role="status"` + `aria-live="polite"` + `.sr-only` テキストを自動装備し、SR ユーザーにも「読み込み中」を伝える。size は xs (12px) から 2xl (64px) まで 6 段階、color は context に合わせて primary / neutral / white の 3 種。
+
+短時間 (1〜2 秒以内) の処理を示す用途。それより長い場合は **Skeleton** や **ProgressBar** で進捗を見せる方が UX 上良い。
+
+---
+
+## Props
+
+下表は Spinner.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={SpinnerStories.Playground} />
+
+詳細: [Loading Indicators 原則](?path=/docs/principles-interaction-feedback-loading-indicators--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="size は context に合わせて選ぶ"
+  doExample={
+    <div className="flex items-center gap-2 text-onSurface-muted">
+      <Spinner size="xs" color="neutral" />
+      <span className="text-sm">読み込み中...</span>
+    </div>
+  }
+  doCaption="テキスト隣には xs (12px) で text-sm の line-height と揃える。視線が散らずに自然に読める。"
+  dontExample={
+    <div className="flex items-center gap-2 text-onSurface-muted">
+      <Spinner size="lg" color="neutral" />
+      <span className="text-sm">読み込み中...</span>
+    </div>
+  }
+  dontCaption="text-sm の隣に lg (32px) を置くと視覚バランスが崩れ、Spinner が主役のように見えてしまう。"
+/>
+
+<DoDontExample
+  label="color は背景に合わせて選ぶ"
+  doExample={
+    <div className="bg-primary-700 p-3 rounded">
+      <Spinner size="md" color="white" />
+    </div>
+  }
+  doCaption="primary 背景 (濃い緑) の上には white を使うと十分なコントラストが取れる。"
+  dontExample={
+    <div className="bg-primary-700 p-3 rounded">
+      <Spinner size="md" color="primary" />
+    </div>
+  }
+  dontCaption="primary 背景に primary 色の Spinner だと回転しているのが見えない (色が混ざる)。"
+/>
+
+<DoDontExample
+  label="長時間の処理には ProgressBar / Skeleton を使う"
+  doExample={
+    <div className="flex flex-col gap-2 w-64">
+      <div className="h-4 bg-neutral-200 rounded animate-pulse" />
+      <div className="h-4 bg-neutral-200 rounded animate-pulse w-3/4" />
+      <div className="h-4 bg-neutral-200 rounded animate-pulse w-1/2" />
+    </div>
+  }
+  doCaption="3 秒以上かかる処理は Skeleton で「何が読み込まれるか」を予告する方が、ユーザーの待ち時間体感が短くなる。"
+  dontExample={
+    <Spinner size="xl" label="しばらくお待ちください" />
+  }
+  dontCaption="Spinner だけだと「何を待っているか」が伝わらず、長くなるほど不安を煽る。Spinner は短時間 (1〜2 秒) 限定。"
+/>
+
+<DoDontExample
+  label="label は context に合わせる"
+  doExample={<Spinner size="sm" color="primary" label="保存しています" />}
+  doCaption="現在の操作内容を label に書く (「保存しています」「送信中」など)。SR ユーザーが状況を把握できる。"
+  dontExample={<Spinner size="sm" color="primary" label="" />}
+  dontCaption="label を空にすると aria-label が空文字になり、SR で何も読まれない。最低でもデフォルトの「読み込み中」は残す。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 3 秒以上かかる長い処理を示す | `<Skeleton>` | コンテンツの形を予告して待ち時間体感を短縮 |
+| 進捗 % が分かる処理 | `<ProgressBar>` | 推定残り時間と完了を伝えられる |
+| 一度きりの状態通知 | `<Toast>` | 「読み込み完了」のような結果通知は Spinner ではなく Toast |
+| 永続的なステータス (オンライン / オフライン等) | `<Badge>` | Spinner は「現在処理中」を示す一時的な存在 |
+
+---
+
+## アクセシビリティ
+
+- **`role="status"`**: SR は live region として認識し、表示されたタイミングで読み上げる
+- **`aria-live="polite"`**: 現在の読み上げを中断せず、間が空いたら label を読む (ユーザー操作を妨げない)
+- **`aria-label`**: label prop の値が SR ラベルに反映される (デフォルト「読み込み中」)
+- **`.sr-only` テキスト**: aria-label に加えて視覚非表示テキストも出力 (一部の SR で aria-label を読まないケースの保険)
+- **SVG 自体は `aria-hidden="true"` + `focusable="false"`**: SR 二重読み上げと Tab 移動を防ぐ
+- **コントラスト (1.4.11)**: primary / neutral / white すべて適切な背景に対して 3:1 以上を満たす
+- **`prefers-reduced-motion`**: 未対応 (AAA 案件、別タスク)
+
+関連: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs) / [Feedback Overview](?path=/docs/principles-interaction-feedback-overview--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Spinner は単独で完結する Primitive (SVG + sr-only span のみ)。
+
+### Spinner を内部で使う代表的なコンポーネント
+
+- `<Button isLoading>` — Button の loading 状態で自動的に内部 Spinner を表示 (size 連動)
+- `<SearchBar>` — 検索処理中のインジケーター
+- (将来) フォーム送信中の表示など

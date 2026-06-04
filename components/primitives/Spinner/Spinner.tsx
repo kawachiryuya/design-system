@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 
 /** Spinner のサイズ */
 export type SpinnerSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -31,7 +32,7 @@ export type SpinnerColor = 'primary' | 'neutral' | 'white';
  *   // ニュートラル色（カード内）
  *   <Spinner size="md" color="neutral" />
  *
- * @see principles/README.mdx
+ * @see principles/Interaction/feedback/loading-indicators.mdx
  */
 export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -61,6 +62,33 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /**
+ * Spinner の SVG スタイル定義 — `tailwind-variants` で size + color マップを宣言的に保持。
+ *
+ * - base: animate-spin (Tailwind 標準の回転アニメ)
+ * - variants.size: w-N h-N 正方形
+ * - variants.color: text-* (currentColor を SVG が継承)
+ */
+const spinnerSvgVariants = tv({
+  base: 'animate-spin',
+  variants: {
+    size: {
+      xs:    'w-3 h-3',
+      sm:    'w-4 h-4',
+      md:    'w-6 h-6',
+      lg:    'w-8 h-8',
+      xl:    'w-12 h-12',
+      '2xl': 'w-16 h-16',
+    },
+    color: {
+      primary: 'text-onSurface-primary',
+      neutral: 'text-onSurface-muted',
+      white:   'text-onSurface-inverse',
+    },
+  },
+  defaultVariants: { size: 'md', color: 'primary' },
+});
+
+/**
  * Spinner — Atomic Design: Atom
  *
  * @see SpinnerProps for usage examples.
@@ -68,45 +96,25 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
   (
     {
-      size = 'md',
-      color = 'primary',
+      size,
+      color,
       label = '読み込み中',
-      className = '',
+      className,
       ...props
     },
     ref
   ) => {
-    // principles/Typography/scale.mdx に準拠
-    const sizePx = {
-      xs: 'w-3 h-3',   // 12px インライン（テキストと同じ高さ）
-      sm: 'w-4 h-4',   // 16px インライン
-      md: 'w-6 h-6',   // 24px コンポーネント内標準
-      lg: 'w-8 h-8',   // 32px コンポーネント中央
-      xl: 'w-12 h-12', // 48px 全画面オーバーレイ
-      '2xl': 'w-16 h-16', // 64px 特大
-    }[size];
-
-    const strokeColor = {
-      primary: 'text-onSurface-primary',
-      neutral: 'text-onSurface-muted',
-      white:   'text-onSurface-inverse',
-    }[color];
-
-    const wrapperClasses = ['inline-flex', 'items-center', 'justify-center', className]
-      .filter(Boolean)
-      .join(' ');
-
     return (
       <div
         ref={ref}
         role="status"
         aria-label={label}
         aria-live="polite"
-        className={wrapperClasses}
+        className={['inline-flex items-center justify-center', className].filter(Boolean).join(' ')}
         {...props}
       >
         <svg
-          className={`animate-spin ${sizePx} ${strokeColor}`}
+          className={spinnerSvgVariants({ size, color })}
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"

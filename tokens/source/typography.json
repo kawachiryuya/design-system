@@ -145,16 +145,6 @@
         "font-size":      { "value": "{typography.font-size.xl}", "type": "dimension" },
         "font-weight":    { "value": "{typography.font-weight.semibold}", "type": "fontWeight" },
         "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
-      },
-      "xs": {
-        "font-size":      { "value": "{typography.font-size.lg}", "type": "dimension" },
-        "font-weight":    { "value": "{typography.font-weight.semibold}", "type": "fontWeight" },
-        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
-      },
-      "2xs": {
-        "font-size":      { "value": "{typography.font-size.base}", "type": "dimension" },
-        "font-weight":    { "value": "{typography.font-weight.semibold}", "type": "fontWeight" },
-        "line-height":    { "value": "{typography.line-height.normal}", "type": "number" }
       }
     },
     "body": {

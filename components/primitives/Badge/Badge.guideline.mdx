@@ -1,0 +1,167 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as BadgeStories from './Badge.stories';
+import { Badge } from './Badge';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={BadgeStories} で Badge.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Badge.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={BadgeStories} name="Guideline" />
+
+# Badge
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+ステータス・カテゴリ・数値カウントなどを簡潔に示す **非 interactive なインラインラベル**。`<span>` ベースで状態 (hover / focus / active) を持たない。押せる UI が必要なら `<Button>` / `<Link>`、削除可能なタグなら `<FilterChip>` を使う。
+
+---
+
+## Props
+
+下表は Badge.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={BadgeStories.Playground} />
+
+詳細: [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="色だけに頼らず、テキスト + 色で意味を伝える"
+  doExample={
+    <div className="flex gap-2">
+      <Badge variant="success">完了</Badge>
+      <Badge variant="error">失敗</Badge>
+      <Badge variant="warning">警告</Badge>
+    </div>
+  }
+  doCaption="テキストラベルがあると、色覚特性や色味が見分けにくい環境でも意味が伝わる。"
+  dontExample={
+    <div className="flex gap-2">
+      <Badge variant="success" dot>{' '}</Badge>
+      <Badge variant="error" dot>{' '}</Badge>
+      <Badge variant="warning" dot>{' '}</Badge>
+    </div>
+  }
+  dontCaption="dot と色だけだとどれが何のステータスか読み取れない。色は補助で、テキストが主。"
+/>
+
+<DoDontExample
+  label="appearance は強調レベルで使い分ける"
+  doExample={
+    <div className="flex flex-col gap-2 items-start">
+      <Badge variant="error" appearance="solid">緊急</Badge>
+      <Badge variant="success" appearance="soft">完了</Badge>
+      <Badge variant="neutral" appearance="outline">下書き</Badge>
+    </div>
+  }
+  doCaption="solid=強調 (緊急・通知数)、soft=標準 (リスト内ステータス)、outline=控えめ (サブカテゴリ) の役割分担。"
+  dontExample={
+    <div className="flex gap-2">
+      <Badge variant="success" appearance="solid">完了</Badge>
+      <Badge variant="error" appearance="solid">失敗</Badge>
+      <Badge variant="warning" appearance="solid">警告</Badge>
+      <Badge variant="info" appearance="solid">情報</Badge>
+      <Badge variant="primary" appearance="solid">新着</Badge>
+    </div>
+  }
+  dontCaption="全部 solid にすると視線が分散し「どれが本当に重要か」が読み取れない。強調はピンポイントに使う。"
+/>
+
+<DoDontExample
+  label="ラベルは短く (1〜3 単語、目安 8 文字以内)"
+  doExample={
+    <div className="flex gap-2">
+      <Badge variant="success">配送済み</Badge>
+      <Badge variant="warning">配送中</Badge>
+      <Badge variant="neutral">準備中</Badge>
+    </div>
+  }
+  doCaption="短い動詞句・形容句なら一目でステータスが読み取れる。"
+  dontExample={
+    <Badge variant="warning" appearance="soft">この商品は現在配送中で明日には届きます</Badge>
+  }
+  dontCaption="バッジは whitespace-nowrap で 1 行固定。長文は折返さず横に伸びてレイアウトを壊す。長文は `<Alert>` か通常テキストへ。"
+/>
+
+<DoDontExample
+  label="変動する数値カウントは small + solid"
+  doExample={
+    <div className="flex gap-2 items-center">
+      <span className="text-sm">通知</span>
+      <Badge size="small" variant="error" appearance="solid">12</Badge>
+      <span className="text-sm">メッセージ</span>
+      <Badge size="small" variant="primary" appearance="solid">99+</Badge>
+    </div>
+  }
+  doCaption="高密度 UI で 1〜3 桁の数値を強調する標準パターン。99 超えは `99+` で固定幅を保つ。"
+  dontExample={
+    <div className="flex gap-2 items-center">
+      <span className="text-sm">通知</span>
+      <Badge size="medium" variant="error" appearance="outline">12345</Badge>
+    </div>
+  }
+  dontCaption="medium + outline + 5 桁では存在感が薄く、しかも文字幅で隣接要素を押し出す。カウントは小さく強く、桁数は丸める。"
+/>
+
+<DoDontExample
+  label="押せない UI として使う (Button/Link の代わりにしない)"
+  doExample={
+    <div className="flex gap-2 items-center">
+      <span className="text-sm">記事タグ:</span>
+      <Badge variant="neutral" appearance="outline">React</Badge>
+      <Badge variant="neutral" appearance="outline">TypeScript</Badge>
+    </div>
+  }
+  doCaption="Badge は表示専用。タグ自体に意味があり、押すアクションは持たない用途で使う。"
+  dontExample={
+    <Badge variant="primary" appearance="solid" onClick={() => {}} style={{ cursor: 'pointer' }}>
+      クリックして詳細
+    </Badge>
+  }
+  dontCaption="onClick / cursor:pointer を当てると「押せる」と誤解されるが、focusable でも keyboard 操作可でもない。押せる UI は `<Button>` / `<Link>` を使う。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+「これは Badge じゃないかも?」と迷ったときは下の表で目的に合うコンポーネントを探す:
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 押すと **アクションが起きる** | `<Button>` | キーボード操作・focus・role="button" を備えた専用コントロール |
+| 押すと **URL に遷移** する | `<Link>` | `<a>` でないと OS 機能 (右クリック新タブ等) / SEO が効かない |
+| **削除可能なタグ** (チップ) | `<FilterChip>` | 削除・選択トグルを持つフィルタ用 UI、Badge は非 interactive |
+| **インラインのお知らせ** (1 文以上) | `<Alert>` | 長文と icon + テキストの組合せに最適化、Badge は短文専用 |
+| **一時的なフィードバック** (操作直後の通知) | `<Toast>` | 自動消失・通知スタック対応 |
+
+---
+
+## アクセシビリティ
+
+- **role なし**: `<span>` のテキストそのものが意味を伝える前提。SR は通常テキストとして読み上げる
+- **色だけに頼らない**: テキスト + (任意で) `dot` の二重補強。WCAG 1.4.1 (色の使用) に沿う
+- **コントラスト**: 全 variant × appearance の組合せで前景/背景が semantic token (`text-onSurface-*` / `bg-surface-*`) を参照し、WCAG AA を満たす設計
+- **数値カウントの読み上げ**: `<Badge>12</Badge>` 単独だと「12」とだけ読まれる。親要素で文脈を補完するか、`aria-label` を付けて `<Badge aria-label="未読 12 件">12</Badge>` のように補強する
+- **dot は装飾**: `aria-hidden="true"` を自動付与。色情報は SR に伝わらないため、テキストでステータスを表現する
+
+関連: [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし (Badge は他のコンポーネントを import しない Primitive)。

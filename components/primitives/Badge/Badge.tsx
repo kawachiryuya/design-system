@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 
 /** Badge のセマンティックカラー */
 export type BadgeVariant = 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'info';
@@ -10,9 +11,83 @@ export type BadgeAppearance = 'solid' | 'soft' | 'outline';
 export type BadgeSize = 'small' | 'medium';
 
 /**
+ * Badge のスタイル定義 — `tailwind-variants` で variant × appearance × size を宣言的に保持。
+ *
+ * - base: 全 variant 共通 (inline-flex / 余白 / 角丸 / leading-none / whitespace-nowrap)
+ * - variants.size: 余白 + 文字サイズ
+ * - variants.appearance / variants.variant: 単独では空。色の決定は compoundVariants で
+ * - compoundVariants: 6 variant × 3 appearance の 18 組合せで bg/text/border を決める
+ *
+ * 色は semantic token (`bg-surface-*` / `text-onSurface-*` / `border-border-*`) を参照し、
+ * primitive 色 (`bg-blue-500` 等) は使わない (AGENTS.md §3)。
+ */
+const badgeVariants = tv({
+  base: [
+    'inline-flex',
+    'items-center',
+    'gap-[6px]',
+    'font-medium',
+    'rounded-xs',
+    'leading-none',
+    'whitespace-nowrap',
+  ],
+  variants: {
+    size: {
+      small: 'px-2 py-[2px] text-xs',
+      medium: 'px-[10px] py-1 text-xs',
+    },
+    appearance: { solid: '', soft: '', outline: '' },
+    variant: { neutral: '', primary: '', success: '', error: '', warning: '', info: '' },
+  },
+  compoundVariants: [
+    // solid: 塗りつぶし背景 + 反転テキスト
+    { appearance: 'solid', variant: 'neutral', class: 'bg-neutral-700 text-onSurface-inverse' },
+    { appearance: 'solid', variant: 'primary', class: 'bg-surface-primary text-onSurface-inverse' },
+    { appearance: 'solid', variant: 'success', class: 'bg-surface-success text-onSurface-inverse' },
+    { appearance: 'solid', variant: 'error',   class: 'bg-surface-error text-onSurface-inverse' },
+    { appearance: 'solid', variant: 'warning', class: 'bg-surface-warning text-onSurface-inverse' },
+    { appearance: 'solid', variant: 'info',    class: 'bg-surface-info text-onSurface-inverse' },
+    // soft: 薄い背景 + variant 色のテキスト
+    { appearance: 'soft', variant: 'neutral', class: 'bg-surface-disabled text-onSurface' },
+    { appearance: 'soft', variant: 'primary', class: 'bg-surface-secondary text-onSurface-primary' },
+    { appearance: 'soft', variant: 'success', class: 'bg-surface-success-muted text-onSurface-success' },
+    { appearance: 'soft', variant: 'error',   class: 'bg-surface-error-muted text-onSurface-error' },
+    { appearance: 'soft', variant: 'warning', class: 'bg-surface-warning-muted text-onSurface-warning' },
+    { appearance: 'soft', variant: 'info',    class: 'bg-surface-info-muted text-onSurface-info' },
+    // outline: 枠線のみ + variant 色のテキスト
+    { appearance: 'outline', variant: 'neutral', class: 'border border-border-strong text-onSurface' },
+    { appearance: 'outline', variant: 'primary', class: 'border border-border-primary text-onSurface-primary' },
+    { appearance: 'outline', variant: 'success', class: 'border border-border-success text-onSurface-success' },
+    { appearance: 'outline', variant: 'error',   class: 'border border-border-error text-onSurface-error' },
+    { appearance: 'outline', variant: 'warning', class: 'border border-border-warning text-onSurface-warning' },
+    { appearance: 'outline', variant: 'info',    class: 'border border-border-info text-onSurface-info' },
+  ],
+  defaultVariants: {
+    variant: 'neutral',
+    appearance: 'soft',
+    size: 'medium',
+  },
+});
+
+/**
+ * Dot の色マップ。
+ *
+ * solid appearance のときは反転背景に映える `bg-white/70` を使うため、
+ * このマップは soft / outline 用 (variant 色そのまま) のみ。
+ */
+const dotColorMap: Record<BadgeVariant, string> = {
+  neutral: 'bg-neutral-500',
+  primary: 'bg-surface-primary',
+  success: 'bg-surface-success',
+  error: 'bg-surface-error',
+  warning: 'bg-surface-warning',
+  info: 'bg-surface-info',
+};
+
+/**
  * Badge Props
  *
- * ステータス・カテゴリ・数値などを簡潔に表示するインラインラベル。
+ * ステータス・カテゴリ・数値などを簡潔に表示するインラインラベル。非 interactive。
  *
  * @example
  *   // 完了ステータス（success + soft）
@@ -72,16 +147,9 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 /**
- * Badge Component
+ * Badge — Primitive: 単一 `<span>` 装飾、状態なし
  *
- * Atomic Design: Atom
- *
- * ステータス・カテゴリ・数値などを簡潔に表示するラベル。
- *
- * @example
- * <Badge variant="success">完了</Badge>
- * <Badge variant="error" appearance="soft">エラー</Badge>
- * <Badge variant="warning" dot>注意</Badge>
+ * @see BadgeProps for usage examples.
  */
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   (
@@ -91,82 +159,21 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       size = 'medium',
       dot = false,
       children,
-      className = '',
+      className,
       ...props
     },
     ref
   ) => {
-    // Solid: 塗りつぶし（セマンティックトークン）
-    const solidStyles: Record<BadgeProps['variant'] & string, string> = {
-      neutral: 'bg-neutral-700 text-onSurface-inverse',
-      primary: 'bg-surface-primary text-onSurface-inverse',
-      success: 'bg-surface-success text-onSurface-inverse',
-      error:   'bg-surface-error text-onSurface-inverse',
-      warning: 'bg-surface-warning text-onSurface-inverse',
-      info:    'bg-surface-info text-onSurface-inverse',
-    };
-
-    // Soft: 薄い背景（セマンティックトークン）
-    const softStyles: Record<string, string> = {
-      neutral: 'bg-surface-disabled text-onSurface',
-      primary: 'bg-surface-secondary text-onSurface-primary',
-      success: 'bg-surface-success-muted text-onSurface-success',
-      error:   'bg-surface-error-muted text-onSurface-error',
-      warning: 'bg-surface-warning-muted text-onSurface-warning',
-      info:    'bg-surface-info-muted text-onSurface-info',
-    };
-
-    // Outline: 枠線のみ（セマンティックトークン）
-    const outlineStyles: Record<string, string> = {
-      neutral: 'border border-border-strong text-onSurface',
-      primary: 'border border-border-primary text-onSurface-primary',
-      success: 'border border-border-success text-onSurface-success',
-      error:   'border border-border-error text-onSurface-error',
-      warning: 'border border-border-warning text-onSurface-warning',
-      info:    'border border-border-info text-onSurface-info',
-    };
-
-    const dotColors: Record<string, string> = {
-      neutral: 'bg-neutral-500',
-      primary: 'bg-surface-primary',
-      success: 'bg-surface-success',
-      error:   'bg-surface-error',
-      warning: 'bg-surface-warning',
-      info:    'bg-surface-info',
-    };
-
-    const appearanceStyle =
-      appearance === 'solid'
-        ? solidStyles[variant!]
-        : appearance === 'outline'
-        ? outlineStyles[variant!]
-        : softStyles[variant!];
-
-    const sizeStyle = size === 'small' ? 'px-2 py-[2px] text-xs' : 'px-[10px] py-1 text-xs';
-
-    const badgeClasses = [
-      'inline-flex',
-      'items-center',
-      'gap-[6px]',
-      'font-medium',
-      'rounded-xs',
-      'leading-none',
-      'whitespace-nowrap',
-      sizeStyle,
-      appearanceStyle,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const v = variant ?? 'neutral';
-
     return (
-      <span ref={ref} className={badgeClasses} {...props}>
+      <span
+        ref={ref}
+        className={badgeVariants({ variant, appearance, size, className })}
+        {...props}
+      >
         {dot && (
           <span
             className={`inline-block w-[6px] h-[6px] rounded-full flex-shrink-0 ${
-              appearance === 'solid' ? 'bg-white/70' : dotColors[v]
+              appearance === 'solid' ? 'bg-white/70' : dotColorMap[variant]
             }`}
             aria-hidden="true"
           />

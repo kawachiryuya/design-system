@@ -1,10 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { Badge } from './Badge';
+import { Caption } from '@sb-blocks/Caption';
 
+/**
+ * Badge stories — 標準ストーリー構造に準拠
+ *
+ * 順序: Playground → Variants → Sizes → EdgeCases
+ * (States は Badge が非 interactive な `<span>` で hover/focus/active 等の状態を
+ *  持たないため省略 — Skeleton / Spinner / Divider と同じ扱い。
+ *  WithIcon は icon prop が無いため省略。dot は EdgeCases で扱う)
+ *
+ * Docs (Guideline) は Badge.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
+ */
 const meta: Meta<typeof Badge> = {
   title: 'Primitives/Badge',
   component: Badge,
-  tags: ['autodocs'],
   argTypes: {
     variant: {
       control: 'select',
@@ -20,89 +31,152 @@ const meta: Meta<typeof Badge> = {
     variant: 'neutral',
     appearance: 'soft',
     size: 'medium',
+    dot: false,
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof Badge>;
 
-export const Default: Story = {};
+// ── 1. Playground ──────────────────────────────────────────────
+// args を全開放、Controls から props を探索する起点。
+// `<span>` がレンダリングされ children テキストが反映されることを play test で保証。
 
-export const AllVariants: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Badge variant="neutral">Neutral</Badge>
-      <Badge variant="primary">Primary</Badge>
-      <Badge variant="success">Success</Badge>
-      <Badge variant="error">Error</Badge>
-      <Badge variant="warning">Warning</Badge>
-      <Badge variant="info">Info</Badge>
-    </div>
-  ),
+export const Playground: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Controls から variant / appearance / size / dot を切り替えて見え方を確認する起点。Badge は非 interactive な `<span>` で、ARIA role は付かない (テキストそのものが意味を伝える前提)。',
+      },
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const badge = canvas.getByText(args.children as string);
+    await expect(badge.tagName).toBe('SPAN');
+  },
 };
 
-export const AllAppearances: Story = {
+// ── 2. Variants ────────────────────────────────────────────────
+// 6 つの semantic color × 3 つの appearance を静的にマトリックスで並べる。
+// 「どの context でどの組合せを選ぶか」の判断材料を一覧で見せる。
+
+const VARIANTS = ['neutral', 'primary', 'success', 'error', 'warning', 'info'] as const;
+const APPEARANCES = ['solid', 'soft', 'outline'] as const;
+
+export const Variants: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '6 つの variant (色の意味) を 3 つの appearance (強度) で組み合わせたマトリックス。solid は強調・カウント、soft はリスト内ステータス、outline は控えめなカテゴリラベル。',
+      },
+    },
+  },
   render: () => (
-    <div className="flex flex-col gap-4">
-      {(['solid', 'soft', 'outline'] as const).map((appearance) => (
-        <div key={appearance} className="flex flex-wrap gap-2 items-center">
-          <span className="text-xs text-neutral-500 w-16">{appearance}</span>
-          {(['neutral', 'primary', 'success', 'error', 'warning', 'info'] as const).map((variant) => (
-            <Badge key={variant} variant={variant} appearance={appearance}>{variant}</Badge>
+    <div className="flex flex-col gap-6">
+      <Caption text="variant (color semantics) — default appearance = soft">
+        <div className="flex flex-wrap gap-2">
+          {VARIANTS.map((variant) => (
+            <Badge key={variant} variant={variant}>{variant}</Badge>
           ))}
         </div>
-      ))}
-    </div>
-  ),
-};
+      </Caption>
 
-export const AllSizes: Story = {
-  render: () => (
-    <div className="flex gap-3 items-center">
-      <Badge size="small" variant="success">Small</Badge>
-      <Badge size="medium" variant="success">Medium</Badge>
-    </div>
-  ),
-};
-
-export const WithDot: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Badge variant="success" dot>オンライン</Badge>
-      <Badge variant="error" dot>エラー</Badge>
-      <Badge variant="warning" dot>要確認</Badge>
-      <Badge variant="neutral" dot>オフライン</Badge>
-    </div>
-  ),
-};
-
-export const LongLabel: Story = {
-  name: '長いラベルテキスト',
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Badge variant="primary" appearance="soft">とても長いラベルテキストが入る場合</Badge>
-      <Badge variant="success" dot>非常に長い説明文のあるバッジ</Badge>
-      <Badge variant="neutral" appearance="outline">Long English text badge example</Badge>
-    </div>
-  ),
-};
-
-export const StatusBadges: Story = {
-  name: '実践例: ステータス表示',
-  render: () => (
-    <div className="flex flex-col gap-3 w-72">
-      {[
-        { label: '公開中', variant: 'success' as const, appearance: 'soft' as const, dot: true },
-        { label: '下書き', variant: 'neutral' as const, appearance: 'outline' as const },
-        { label: '要レビュー', variant: 'warning' as const, appearance: 'soft' as const, dot: true },
-        { label: '非公開', variant: 'error' as const, appearance: 'soft' as const },
-        { label: 'NEW', variant: 'primary' as const, appearance: 'solid' as const },
-      ].map(({ label, variant, appearance, dot }) => (
-        <div key={label} className="flex items-center justify-between px-3 py-2 rounded border border-neutral-200">
-          <span className="text-sm text-neutral-800">{label === 'NEW' ? 'プロ機能' : `記事「${label}の設定」`}</span>
-          <Badge variant={variant} appearance={appearance} dot={dot}>{label}</Badge>
+      <Caption text="appearance × variant マトリックス">
+        <div className="flex flex-col gap-3">
+          {APPEARANCES.map((appearance) => (
+            <div key={appearance} className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-onSurface-muted w-14 shrink-0">{appearance}</span>
+              {VARIANTS.map((variant) => (
+                <Badge key={variant} variant={variant} appearance={appearance}>
+                  {variant}
+                </Badge>
+              ))}
+            </div>
+          ))}
         </div>
-      ))}
+      </Caption>
+    </div>
+  ),
+};
+
+// ── 3. Sizes ───────────────────────────────────────────────────
+
+export const Sizes: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'small (px-2 py-[2px]) / medium (px-[10px] py-1) の見比べ。small は高密度 UI / テーブル / 数値カウント、medium は標準的なステータス表示。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex gap-4 items-center">
+      <Caption text="small">
+        <Badge size="small" variant="success">Small</Badge>
+      </Caption>
+      <Caption text="medium (default)">
+        <Badge size="medium" variant="success">Medium</Badge>
+      </Caption>
+    </div>
+  ),
+};
+
+// ── 4. EdgeCases ───────────────────────────────────────────────
+// dot 付き / 長文 / 数値カウント / 実践例ステータスリスト など、
+// 実際の組み合わせで起こる視覚バランスや崩れ方の確認用。
+
+export const EdgeCases: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'dot 付き (リアルタイム性) / 長文ラベル (whitespace-nowrap で 1 行固定) / 数値カウント / リスト内ステータス表示など、組合せで発生する視覚パターン。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <Caption text="dot — リアルタイム性 (処理中 / 接続中 / 新着等) を示唆">
+        <div className="flex flex-wrap gap-2">
+          {VARIANTS.map((variant) => (
+            <Badge key={variant} variant={variant} dot>{variant}</Badge>
+          ))}
+        </div>
+      </Caption>
+
+      <Caption text="長文ラベル — whitespace-nowrap で改行せず 1 行で表示 (折返ししたい場合は親側で wrap を許可)">
+        <div className="flex flex-wrap gap-2 max-w-md">
+          <Badge variant="primary" appearance="soft">とても長いラベルテキストが入る場合</Badge>
+          <Badge variant="success" dot>非常に長い説明文のあるバッジ</Badge>
+          <Badge variant="neutral" appearance="outline">Long English text badge example</Badge>
+        </div>
+      </Caption>
+
+      <Caption text="数値カウント — small + solid で通知バッジ風 (1〜3 桁を想定)">
+        <div className="flex gap-2 items-center">
+          <Badge size="small" variant="error" appearance="solid">1</Badge>
+          <Badge size="small" variant="error" appearance="solid">12</Badge>
+          <Badge size="small" variant="error" appearance="solid">99+</Badge>
+          <Badge size="small" variant="primary" appearance="solid">NEW</Badge>
+        </div>
+      </Caption>
+
+      <Caption text="実践例 — リスト内ステータス表示 (カードや行末に揃える定型パターン)">
+        <div className="flex flex-col gap-2 w-80">
+          {([
+            { label: '公開中', variant: 'success', appearance: 'soft', dot: true, item: '記事「公開中の設定」' },
+            { label: '下書き', variant: 'neutral', appearance: 'outline', dot: false, item: '記事「下書きの設定」' },
+            { label: '要レビュー', variant: 'warning', appearance: 'soft', dot: true, item: '記事「要レビューの設定」' },
+            { label: '非公開', variant: 'error', appearance: 'soft', dot: false, item: '記事「非公開の設定」' },
+            { label: 'NEW', variant: 'primary', appearance: 'solid', dot: false, item: 'プロ機能' },
+          ] as const).map(({ label, variant, appearance, dot, item }) => (
+            <div key={label} className="flex items-center justify-between px-3 py-2 rounded-xs border border-border-default">
+              <span className="text-sm text-onSurface">{item}</span>
+              <Badge variant={variant} appearance={appearance} dot={dot}>{label}</Badge>
+            </div>
+          ))}
+        </div>
+      </Caption>
     </div>
   ),
 };

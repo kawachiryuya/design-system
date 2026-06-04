@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import spacingToken from '../../tokens/spacing.json';
 
 const meta: Meta = {
-  title: 'Tokens/Spacing/Primitive',
+  title: 'Tokens/Spacing',
   parameters: {
     layout: 'padded',
   },

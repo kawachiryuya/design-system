@@ -1,0 +1,144 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as IconStories from './Icon.stories';
+import { Icon } from './Icon';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={IconStories} で Icon.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Icon.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={IconStories} name="Guideline" />
+
+# Icon
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+SVG アイコンのラッパー。`name` 経由で `iconRegistry` の登録済みアイコンを描画するのが基本パターン。`children` でカスタム SVG パスを直接渡すことも可能 (registry に無いアイコンの一時利用や product 固有アイコン)。サイズ・色・アクセシビリティの ARIA 属性を統一管理する。
+
+利用可能な `name` の全一覧はサイドバーの [**Library story**](?path=/story/primitives-icon--library) を開いて確認する。registry にないアイコンを追加したい場合は [`components/primitives/Icon/iconRegistry.ts`](./components/primitives/Icon/iconRegistry.ts) に追記する。
+
+---
+
+## Props
+
+下表は Icon.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={IconStories.Playground} />
+
+詳細: [Typography Scale 原則](?path=/docs/principles-typography-scale--docs) / [Iconography Sizes 原則](?path=/docs/principles-typography-iconography-sizes--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="意味のあるアイコンには label (or registry の label) を確保する"
+  doExample={
+    <div className="flex items-center gap-2 text-onSurface-error">
+      <Icon name="error" size="md" color="error" label="エラー" />
+      <span>送信に失敗しました</span>
+    </div>
+  }
+  doCaption="label が付くと role='img' + aria-label が自動付与され、SR で意味が伝わる。registry の label を使う場合はそのままで OK。"
+  dontExample={
+    <div className="flex items-center gap-2">
+      <Icon name="error" size="md" color="error" aria-hidden={true} />
+      <span>失敗</span>
+    </div>
+  }
+  dontCaption="装飾扱いだと SR ユーザーには赤いアイコンが見えず、テキストだけになる。色のみで意味を伝える危険な状態。"
+/>
+
+<DoDontExample
+  label="テキスト隣の装飾アイコンには label を付けない"
+  doExample={
+    <span className="inline-flex items-center gap-1">
+      新着 <Icon name="chevron_right" size="sm" />
+    </span>
+  }
+  doCaption="label を省くと aria-hidden='true' が自動付与され、SR は隣接テキスト「新着」だけを読む。冗長にならない。"
+  dontExample={
+    <span className="inline-flex items-center gap-1">
+      新着 <Icon name="chevron_right" size="sm" label="右矢印" />
+    </span>
+  }
+  dontCaption="「新着、右矢印」と二重に読み上げられ、意味が増えない情報で耳を疲れさせる。"
+/>
+
+<DoDontExample
+  label="registry にあるアイコンを優先する"
+  doExample={<Icon name="search" size="md" color="neutral" />}
+  doCaption="registry 経由なら viewBox / mode (fill/stroke) / label が一元管理され、デザイントークン更新も追従する。"
+  dontExample={
+    <Icon size="md" color="neutral" variant="stroke" label="検索">
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </Icon>
+  }
+  dontCaption="registry に同じ search アイコンがあるのに custom SVG で再実装すると、変更時の追従漏れと SVG パスのコピーミスのリスクが生まれる。"
+/>
+
+<DoDontExample
+  label="本文には sm / md を使う"
+  doExample={
+    <div className="flex items-center gap-2 text-base">
+      <Icon name="info" size="sm" color="info" />
+      <span>本文サイズに合わせて sm (20px) で揃える</span>
+    </div>
+  }
+  doCaption="本文の text-base (16px) に対して sm/md がバランスする。同じ行の中で「文字より少し大きい程度」が自然。"
+  dontExample={
+    <div className="flex items-center gap-2 text-base">
+      <Icon name="info" size="xl" color="info" />
+      <span>xl (48px) は本文に対して大きすぎる</span>
+    </div>
+  }
+  dontCaption="lg/xl は見出し横や空状態の図解など、装飾的に大きく見せたいケース専用。本文中に置くと視線が散る。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+「これは Icon じゃないかも?」と迷ったときは下の表で目的に合うコンポーネントを探す:
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| ロゴ / 商標 / プロダクト固有のグラフィック | `<img>` か `<Image>` | アイコン体系の整合性 (size / color) に乗らない |
+| ボタンとして押せるアイコン | `<Button iconOnly icon={...} aria-label="...">` | クリック領域 + フォーカス + 役割の Button responsibilities が要る |
+| 状態を示すドット / バッジ | `<Badge>` | テキストや数値と組み合わせるなら Badge |
+| 装飾的な区切り線 | `<Divider>` | 横線や縦線はアイコンではなく Divider |
+
+---
+
+## アクセシビリティ
+
+- **意味のあるアイコン (label あり)**: `role="img"` + `aria-label` が自動付与。SR で意味が伝わる
+- **装飾アイコン (label なし)**: `aria-hidden="true"` が自動付与。SR から無視される (隣接テキストが本体)
+- **キーボード**: SVG 自体は `focusable="false"` で Tab 移動から除外。クリック可能なアイコンは `<Button iconOnly>` で包む
+- **色のみの意味禁止**: アイコンの色 (error 赤、success 緑等) だけに意味を載せず、必ず **label + テキスト** の冗長表現で意味を伝える
+- **コントラスト**: `color="disabled"` (`#a3a3a3`) は WCAG 1.4.11 (3:1) を満たす UI 部品色
+
+関連: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs) / [Color Contrast](?path=/docs/principles-foundation-accessibility-color-contrast--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Icon は単独で完結する Primitive。
+
+### Icon を内部で使う代表的なコンポーネント
+
+- `<Button icon={<Icon ...>}>` / `<Button iconOnly icon={<Icon ...>}>` — Button の icon prop に渡す
+- `<Link external>` — `external` 時に内部で `open_in_new` アイコンを描画
+- (将来) `<Input leadingIcon={...} trailingIcon={...}>` — フォーム入力欄のアイコン
+- `<Alert>` / `<Toast>` — variant ごとの状態アイコン

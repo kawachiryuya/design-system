@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 import { getIconDef, type IconRenderMode } from './iconRegistry';
 
 /** Icon のサイズ（principles/Typography/scale.mdx） */
@@ -76,7 +77,7 @@ export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
   children?: React.ReactNode;
 }
 
-/** サイズ → px 値のマップ（principles/Typography/scale.mdx） */
+/** サイズ → px 値のマップ（principles/Typography/scale.mdx）。SVG の width/height に直接渡す。 */
 const sizePx = {
   sm:  20,
   md:  24,
@@ -84,17 +85,28 @@ const sizePx = {
   xl:  48,
 } as const;
 
-/** カラー → Tailwind クラスのマップ（semantic-colors.json） */
-const colorClass = {
-  inherit:  'text-current',
-  neutral:  'text-onSurface',
-  primary:  'text-onSurface-primary',
-  success:  'text-onSurface-success',
-  error:    'text-onSurface-error',
-  warning:  'text-onSurface-warning',
-  info:     'text-onSurface-info',
-  disabled: 'text-onSurface-disabled',
-} as const;
+/**
+ * Icon のスタイル定義 — `tailwind-variants` で color マップを宣言的に保持。
+ *
+ * size は SVG の `width` / `height` 属性 (px 数値) に直接渡すため class 化せず、
+ * variants では color のみを扱う。
+ */
+const iconVariants = tv({
+  base: ['inline-block', 'flex-shrink-0'],
+  variants: {
+    color: {
+      inherit:  'text-current',
+      neutral:  'text-onSurface',
+      primary:  'text-onSurface-primary',
+      success:  'text-onSurface-success',
+      error:    'text-onSurface-error',
+      warning:  'text-onSurface-warning',
+      info:     'text-onSurface-info',
+      disabled: 'text-onSurface-disabled',
+    },
+  },
+  defaultVariants: { color: 'inherit' },
+});
 
 /**
  * Icon — Atomic Design: Atom
@@ -106,11 +118,11 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
     {
       name,
       size = 'md',
-      color = 'inherit',
+      color,
       label,
       variant,
       children,
-      className = '',
+      className,
       ...props
     },
     ref
@@ -120,15 +132,6 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
     const mode = def?.mode ?? variant ?? 'stroke';
     const viewBox = def?.viewBox ?? '0 0 24 24';
     const px = sizePx[size];
-
-    const iconClasses = [
-      'inline-block',
-      'flex-shrink-0',
-      colorClass[color],
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
 
     const fillProps =
       mode === 'fill'
@@ -143,7 +146,7 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
         height={px}
         viewBox={viewBox}
         {...fillProps}
-        className={iconClasses}
+        className={iconVariants({ color, className })}
         aria-hidden={resolvedLabel ? undefined : true}
         aria-label={resolvedLabel}
         role={resolvedLabel ? 'img' : undefined}

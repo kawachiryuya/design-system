@@ -95,7 +95,7 @@ const LoadingSpinner: React.FC<{ size: number }> = ({ size }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="animate-spin text-onSurface-subtle"
+    className="animate-spin text-onSurface-muted"
     aria-hidden="true"
   >
     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
@@ -186,7 +186,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     'border-border',
     'bg-surface',
     'text-onSurface',
-    'placeholder:text-onSurface-subtle',
+    'placeholder:text-onSurface-muted',
     'transition-all',
     'duration-normal',
     'focus:outline-none',
@@ -205,7 +205,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const leadingClass = [
     'absolute',
     'pointer-events-none',
-    'text-onSurface-subtle',
+    'text-onSurface-muted',
     'flex',
     'items-center',
     'justify-center',
@@ -255,7 +255,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             type="button"
             aria-label="検索をクリア"
             onClick={handleClear}
-            className="flex items-center justify-center text-onSurface-subtle hover:text-onSurface-muted transition-colors
+            className="flex items-center justify-center text-onSurface-muted hover:text-onSurface-muted transition-colors
               focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded-xs"
           >
             <Icon name="close" size={s.iconSize} />

@@ -103,12 +103,7 @@
       "muted": {
         "value": "{color.neutral.500}",
         "type": "color",
-        "description": "サブテキスト・プレースホルダー"
-      },
-      "subtle": {
-        "value": "{color.neutral.400}",
-        "type": "color",
-        "description": "最も控えめなテキスト"
+        "description": "サブテキスト・プレースホルダー・装飾的な補助テキスト全般 (AA 4.69:1)"
       },
       "primary": {
         "value": "{color.primary.700}",

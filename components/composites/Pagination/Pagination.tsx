@@ -181,7 +181,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {pages.map((page, i) =>
         page === null ? (
-          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-subtle', s].join(' ')}>
+          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-muted', s].join(' ')}>
             …
           </span>
         ) : (

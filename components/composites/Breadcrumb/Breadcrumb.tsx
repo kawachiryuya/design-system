@@ -69,7 +69,7 @@ export interface BreadcrumbProps {
 }
 
 const ChevronSeparator = () => (
-  <Icon name="chevron_right" size="sm" className="text-onSurface-subtle flex-shrink-0" />
+  <Icon name="chevron_right" size="sm" className="text-onSurface-muted flex-shrink-0" />
 );
 
 const SlashSeparator = () => (

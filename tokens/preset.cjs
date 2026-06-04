@@ -125,7 +125,6 @@ module.exports = {
         onSurface: {
           DEFAULT:  'var(--color-on-default)',
           muted:    'var(--color-on-muted)',
-          subtle:   'var(--color-on-subtle)',
           primary:  'var(--color-on-primary)',
           success:  'var(--color-on-success)',
           error:    'var(--color-on-error)',

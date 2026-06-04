@@ -171,7 +171,7 @@ export const TableFilter: Story = {
             ? filtered.map((name) => (
                 <li key={name} className="px-3 py-2 text-sm text-onSurface">{name}</li>
               ))
-            : <li className="px-3 py-4 text-sm text-onSurface-subtle text-center">見つかりませんでした</li>
+            : <li className="px-3 py-4 text-sm text-onSurface-muted text-center">見つかりませんでした</li>
           }
         </ul>
       </div>

@@ -57,7 +57,7 @@ export const AllVariants: Story = {
         <Card key={variant} variant={variant}>
           <Card.Body>
             <p className="text-sm font-medium text-onSurface">{variant}</p>
-            <p className="text-xs text-onSurface-subtle mt-1">カードのバリアントサンプル</p>
+            <p className="text-xs text-onSurface-muted mt-1">カードのバリアントサンプル</p>
           </Card.Body>
         </Card>
       ))}
@@ -71,7 +71,7 @@ export const Clickable: Story = {
     <Card {...args} onClick={() => alert('カードをクリック')}>
       <Card.Body>
         <p className="text-sm font-medium text-onSurface">クリック可能なカード</p>
-        <p className="text-xs text-onSurface-subtle mt-1">onClick でハンドラーを指定</p>
+        <p className="text-xs text-onSurface-muted mt-1">onClick でハンドラーを指定</p>
       </Card.Body>
     </Card>
   ),
@@ -83,7 +83,7 @@ export const LinkCard: Story = {
     <Card variant="outlined" href="#" target="_blank">
       <Card.Body>
         <p className="text-sm font-medium text-onSurface">リンクカード</p>
-        <p className="text-xs text-onSurface-subtle mt-1">href を指定すると &lt;a&gt; でレンダリングされます</p>
+        <p className="text-xs text-onSurface-muted mt-1">href を指定すると &lt;a&gt; でレンダリングされます</p>
       </Card.Body>
     </Card>
   ),
@@ -139,7 +139,7 @@ export const NoticeCard: Story = {
         <p className="text-sm text-onSurface-muted">
           3月10日 02:00〜06:00 の間、サーバーメンテナンスを実施します。
         </p>
-        <p className="text-xs text-onSurface-subtle mt-2">2026.03.04</p>
+        <p className="text-xs text-onSurface-muted mt-2">2026.03.04</p>
       </Card.Body>
     </Card>
   ),
@@ -174,7 +174,7 @@ export const StatCard: Story = {
         { label: '平均セッション', value: '8m 32s', change: '+1m 12s', up: true },
       ].map(({ label, value, change, up }) => (
         <Card key={label} variant="outlined" padding="md">
-          <p className="text-xs text-onSurface-subtle">{label}</p>
+          <p className="text-xs text-onSurface-muted">{label}</p>
           <p className="text-xl font-bold text-onSurface mt-1">{value}</p>
           <p className={`text-xs mt-1 ${up ? 'text-success-600' : 'text-error-600'}`}>{change}</p>
         </Card>

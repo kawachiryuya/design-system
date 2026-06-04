@@ -22,11 +22,7 @@ export type TypographyVariant =
 
 /**
  * テキストカラー（semantic-colors.json の onSurface 系を反映）。
- *
- * 注: `subtle` (`#a3a3a3`) は WCAG AA (4.5:1) を満たさないため Typography の公開 API
- * からは除外。プレースホルダや純粋に装飾的な箇所では Tailwind ユーティリティ
- * (`text-onSurface-subtle`) を直接当てる選択肢が残る (ただし将来的に token 自体の
- * 整理を予定)。
+ * 全ての色は白背景に対して WCAG AA (4.5:1、disabled は対比要件免除) を満たす。
  */
 export type TypographyColor =
   | 'default'

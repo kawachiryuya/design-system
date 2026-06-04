@@ -141,7 +141,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       'border',
       'bg-surface',
       'text-onSurface',
-      'placeholder:text-onSurface-subtle',
+      'placeholder:text-onSurface-muted',
       'transition-all',
       'duration-normal',
       'focus:outline-none',
@@ -233,7 +233,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {leadingIcon && (
             <span
-              className={`absolute ${leadingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none flex items-center justify-center`}
+              className={`absolute ${leadingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
             >
               {leadingIcon}
             </span>
@@ -254,7 +254,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           {trailingIcon && (
             <span
-              className={`absolute ${trailingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none flex items-center justify-center`}
+              className={`absolute ${trailingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
             >
               {trailingIcon}
             </span>

@@ -192,7 +192,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {children}
           </select>
           {/* カスタム下矢印アイコン */}
-          <span className={`absolute ${sizeConfig.iconRight} top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-subtle flex items-center justify-center`}>
+          <span className={`absolute ${sizeConfig.iconRight} top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-muted flex items-center justify-center`}>
             <Icon name="expand_more" size={sizeConfig.iconSize} />
           </span>
         </div>

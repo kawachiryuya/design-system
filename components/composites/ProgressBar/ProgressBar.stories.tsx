@@ -118,7 +118,7 @@ export const StepProgress: Story = {
           {steps.map((step, i) => (
             <button key={step} type="button" onClick={() => setCurrent(i + 1)}
               className={`text-xs font-medium ${
-                i + 1 <= current ? 'text-onSurface-primary' : 'text-onSurface-subtle'
+                i + 1 <= current ? 'text-onSurface-primary' : 'text-onSurface-muted'
               }`}>
               {step}
             </button>

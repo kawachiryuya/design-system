@@ -15,6 +15,13 @@
   - `tokens-spacing--*` → `tokens-spacing-primitive--*` (旧 `Semantic` sub-story は削除、新規 `tokens-spacing-semantic--{component,section}` に分離)
   - `tokens-typography--*` → `tokens-typography-primitive--*` (新規 `tokens-typography-semantic--{headings,body,label-and-caption}` 追加)
   - Radius / Shadows / Animation は variant なしで変更なし
+- **未使用トークンを一括削除** (silent break): grep audit (2026-06-05 セッション) で本リポ内 / semantic 経由いずれも参照されない真の orphan を整理。下流が直接 utility class を使っていた場合は壊れる:
+  - `spacing.56` (224px) — `p-56` / `m-56` / `gap-56` 等の utility 消失
+  - `spacing-semantic` 全エントリ (`component.{sm,md,lg}` / `section.{sm,md,lg}`) — `gap-component-md` 等の utility 消失、`tokens/preset.cjs` の `extend.spacing` も削除、`Tokens/Spacing/Semantic` story も削除 (`?path=/story/tokens-spacing-semantic--*` URL は壊れる)
+  - `typography.font-size.6xl` (60px) — `text-6xl` 消失
+  - `typography.font-weight.light` (300) — `font-light` 消失
+  - `typography.line-height.loose` (2) — `leading-loose` 消失
+  - `typography.font-family.serif` — `font-serif` 消失 (mono / sans は維持)
 
 ### Added
 

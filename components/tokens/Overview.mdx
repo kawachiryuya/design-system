@@ -24,7 +24,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 │  下流 product で意図のままブランド override 可能 │
 │                                                  │
 │  例: color.surface.primary  →  color.primary.700 │
-│      spacing-semantic.component.md → spacing.2   │
+│      typography-semantic.heading.xl → font-size.4xl  │
 └──────────────────────────────────────────────────┘
                   ↓ Style Dictionary build
 ┌─ Tailwind utility classes ──────────────────────┐
@@ -56,7 +56,7 @@ semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;
 |---|---|---|---|
 | **Color** | [Tokens/Color/Primitive](?path=/story/tokens-color-primitive--palettes) | [Tokens/Color/Semantic](?path=/story/tokens-color-semantic--surface) | bg / surface / on / border / state の 5 軸 |
 | **Typography** | [Tokens/Typography/Primitive](?path=/story/tokens-typography-primitive--font-sizes) | [Tokens/Typography/Semantic](?path=/story/tokens-typography-semantic--headings) | heading / body / label / caption |
-| **Spacing** | [Tokens/Spacing/Primitive](?path=/story/tokens-spacing-primitive--scale) | [Tokens/Spacing/Semantic](?path=/story/tokens-spacing-semantic--component) | component / section の 2 軸 |
+| **Spacing** | [Tokens/Spacing/Primitive](?path=/story/tokens-spacing-primitive--scale) | (semantic 層なし) | 直接 `p-4` `gap-2` 等で primitive を引く運用 (v0.x で spacing-semantic は未使用のため削除済) |
 | **Radius** | [Tokens/Radius](?path=/story/tokens-radius--border-radius) | (semantic 層なし) | `radius.none / xs / sm / md / lg / full` を直接利用 |
 | **Shadows** | [Tokens/Shadows](?path=/story/tokens-shadows--elevations) | (semantic 層なし) | `shadow.xs / sm / md / lg / xl / 2xl` を直接利用 |
 | **Animation** | [Tokens/Animation](?path=/story/tokens-animation--durations) | (semantic 層なし) | duration / easing |

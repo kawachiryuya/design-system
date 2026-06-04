@@ -80,9 +80,6 @@ module.exports = {
     transitionTimingFunction: t.easing,
 
     extend: {
-      // Semantic spacing aliases (component / section)
-      spacing: t['spacing-semantic'],
-
       // Semantic typography (heading / body / label / caption)
       // 例: <p className="text-heading-xl">…</p>
       // 注: font-weight は意図的に含めない (variant の weight 上書きを font-* で効かせるため)

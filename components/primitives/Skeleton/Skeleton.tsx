@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 
 /** Skeleton の形状バリアント */
 export type SkeletonVariant = 'text' | 'circular' | 'rectangular' | 'rounded';
@@ -28,7 +29,7 @@ export type SkeletonVariant = 'text' | 'circular' | 'rectangular' | 'rounded';
  *   // アニメーション無効（複数並べる場合のパフォーマンス対策）
  *   <Skeleton variant="text" lines={5} animated={false} />
  *
- * @see principles/README.mdx
+ * @see principles/Interaction/feedback/loading-indicators.mdx
  */
 export interface SkeletonProps {
   /**
@@ -59,6 +60,36 @@ export interface SkeletonProps {
 }
 
 /**
+ * Skeleton のスタイル定義 — `tailwind-variants` で variant マップを宣言的に保持。
+ *
+ * - base: 背景色 (semantic skeleton 色)
+ * - variants.variant: 角丸の形状 (text=rounded / circular=rounded-full / rectangular=rounded-none / rounded=rounded-lg)
+ * - variants.animated: pulse animation の on/off
+ *
+ * size (width/height) は CSS 数値で渡すため class 化せず、style 属性で直接指定する。
+ */
+const skeletonVariants = tv({
+  base: 'bg-surface-skeleton',
+  variants: {
+    variant: {
+      text:        'rounded',
+      circular:    'rounded-full',
+      rectangular: 'rounded-none',
+      rounded:     'rounded-lg',
+    },
+    animated: {
+      true:  'animate-pulse',
+      false: '',
+    },
+  },
+  defaultVariants: { variant: 'text', animated: true },
+});
+
+/** width / height を CSS 値に変換 (number → px, string → そのまま) */
+const toCssSize = (v?: string | number) =>
+  v === undefined ? undefined : typeof v === 'number' ? `${v}px` : v;
+
+/**
  * Skeleton — Atomic Design: Atom
  *
  * @see SkeletonProps for usage examples.
@@ -69,59 +100,42 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   height,
   lines = 1,
   animated = true,
-  className = '',
+  className,
 }) => {
-  const baseStyles = [
-    'bg-surface-skeleton',
-    animated ? 'animate-pulse' : '',
-  ];
-
-  const variantStyles = {
-    text: 'rounded',
-    circular: 'rounded-full',
-    rectangular: 'rounded-none',
-    rounded: 'rounded-lg',
-  };
-
-  const getStyle = (w?: string | number, h?: string | number) => ({
-    width: w !== undefined ? (typeof w === 'number' ? `${w}px` : w) : undefined,
-    height: h !== undefined ? (typeof h === 'number' ? `${h}px` : h) : undefined,
-  });
-
+  // variant="text" + lines>1 のときは複数行を flex-col で組み立てる
   if (variant === 'text' && lines > 1) {
+    const lineClass = skeletonVariants({ variant: 'text', animated });
     return (
       <div
         role="status"
         aria-label="読み込み中"
         aria-busy="true"
-        className={['flex flex-col gap-2', className].join(' ')}
-        style={getStyle(width)}
+        className={['flex flex-col gap-2', className].filter(Boolean).join(' ')}
+        style={{ width: toCssSize(width) }}
       >
         {Array.from({ length: lines }).map((_, i) => (
           <div
             key={i}
-            className={[...baseStyles, variantStyles.text, 'h-4'].join(' ')}
-            style={{
-              width: i === lines - 1 ? '75%' : '100%',
-            }}
+            className={`${lineClass} h-4`}
+            style={{ width: i === lines - 1 ? '75%' : '100%' }}
           />
         ))}
       </div>
     );
   }
 
-  const defaultHeights = {
-    text: '1rem',
-    circular: width ? undefined : '2.5rem',
+  // variant ごとのデフォルトサイズ (width/height 未指定時のフォールバック)
+  const defaultHeights: Record<SkeletonVariant, string | undefined> = {
+    text:        '1rem',
+    circular:    width ? undefined : '2.5rem',
     rectangular: '8rem',
-    rounded: '8rem',
+    rounded:     '8rem',
   };
-
-  const defaultWidths = {
-    text: '100%',
-    circular: height ? undefined : '2.5rem',
+  const defaultWidths: Record<SkeletonVariant, string | undefined> = {
+    text:        '100%',
+    circular:    height ? undefined : '2.5rem',
     rectangular: '100%',
-    rounded: '100%',
+    rounded:     '100%',
   };
 
   return (
@@ -129,18 +143,10 @@ export const Skeleton: React.FC<SkeletonProps> = ({
       role="status"
       aria-label="読み込み中"
       aria-busy="true"
-      className={[
-        ...baseStyles,
-        variantStyles[variant],
-        className,
-      ].join(' ')}
+      className={skeletonVariants({ variant, animated, className })}
       style={{
-        width: width !== undefined
-          ? (typeof width === 'number' ? `${width}px` : width)
-          : defaultWidths[variant],
-        height: height !== undefined
-          ? (typeof height === 'number' ? `${height}px` : height)
-          : defaultHeights[variant],
+        width:  toCssSize(width)  ?? defaultWidths[variant],
+        height: toCssSize(height) ?? defaultHeights[variant],
       }}
     />
   );

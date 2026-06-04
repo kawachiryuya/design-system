@@ -1,0 +1,144 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SkeletonStories from './Skeleton.stories';
+import { Skeleton } from './Skeleton';
+import { Spinner } from '../Spinner/Spinner';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={SkeletonStories} で Skeleton.stories.tsx の Docs ページ本体として
+  この mdx を使用する。Skeleton.stories.tsx 側で tags: ['autodocs'] を付けないこと。
+*/}
+<Meta of={SkeletonStories} name="Guideline" />
+
+# Skeleton
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+読み込み中のコンテンツの形状を予告する placeholder。長時間処理 (3 秒以上目安) で **「何が読み込まれるか」を視覚的に伝える** ことで、ユーザーの待ち時間体感を短縮する。`role="status"` + `aria-busy="true"` 自動付与で SR にも「読み込み中」を伝える。
+
+4 形状 (text / circular / rectangular / rounded) を組み合わせて実コンテンツのレイアウトに近似させる。短時間処理 (1〜2 秒) には Skeleton ではなく **Spinner** が適切。
+
+---
+
+## Props
+
+下表は Skeleton.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={SkeletonStories.Playground} />
+
+詳細: [Loading Indicators 原則](?path=/docs/principles-interaction-feedback-loading-indicators--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="実コンテンツの形状に近づける"
+  doExample={
+    <div className="w-64 p-3 border border-border-muted rounded-lg space-y-3">
+      <Skeleton variant="rectangular" height={80} className="rounded-md" />
+      <div className="flex items-center gap-2">
+        <Skeleton variant="circular" width={24} height={24} />
+        <Skeleton variant="text" width="60%" />
+      </div>
+      <Skeleton variant="text" lines={2} />
+    </div>
+  }
+  doCaption="実際に表示されるコンテンツ (画像 + アバター + テキスト) の形に近似させると、ユーザーが「何が来るか」予測できて待ち時間が短く感じる。"
+  dontExample={
+    <div className="w-64">
+      <Skeleton variant="rectangular" height={140} />
+    </div>
+  }
+  dontCaption="単一の大きな矩形 1 つだと「何が来るか」が伝わらず、Spinner と変わらない情報量になる。コンテンツの構造を反映させる。"
+/>
+
+<DoDontExample
+  label="長時間処理は Skeleton、短時間は Spinner"
+  doExample={
+    <div className="w-64 space-y-2">
+      <Skeleton variant="text" lines={3} />
+    </div>
+  }
+  doCaption="3 秒以上かかる API レスポンス・画像ロード等は Skeleton で形を見せる。ユーザーが待ち時間中も「何を待っているか」を把握できる。"
+  dontExample={
+    <Spinner size="md" label="読み込み中" />
+  }
+  dontCaption="数秒以上の処理を Spinner で見せ続けると「何を待っているか」が分からず不安を煽る。短時間処理 (1〜2 秒) でのみ Spinner を使う。"
+/>
+
+<DoDontExample
+  label="lines は実テキストに近い行数にする"
+  doExample={
+    <Skeleton variant="text" lines={3} />
+  }
+  doCaption="本文の予想行数 (3〜5 行程度) を指定。読み込み後のコンテンツ高さと近くなり、レイアウトシフトが小さくなる。"
+  dontExample={
+    <Skeleton variant="text" lines={10} />
+  }
+  dontCaption="過剰な行数は画面の主役になりノイズに。3〜5 行で「ここに本文が来る」を伝えるだけで十分。"
+/>
+
+<DoDontExample
+  label="大量並列描画では animated=false を検討"
+  doExample={
+    <div className="flex flex-col gap-2 w-64">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Skeleton key={i} variant="text" animated={false} />
+      ))}
+    </div>
+  }
+  doCaption="20 個以上の Skeleton を並べる場合は pulse アニメを切ると CPU 負荷を下げられる。視覚的な「読み込み中」感は static でも伝わる。"
+  dontExample={
+    <div className="flex flex-col gap-2 w-64">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Skeleton key={i} variant="text" />
+      ))}
+    </div>
+  }
+  dontCaption="モバイルや低スペック端末で大量の animate-pulse はカクつき・電池消耗の原因に。並列数が多い時は animated=false が安全。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 1〜2 秒の短時間処理 | `<Spinner>` | 形を予告するメリットが薄い時間スケール |
+| 進捗 % が分かる処理 | `<ProgressBar>` | 推定残り時間と完了を伝えられる |
+| データなしの空状態 | `<EmptyState>` | 読み込みではなく「ない」を伝えるなら専用 |
+| エラー状態 | `<Alert>` | 読み込み失敗の通知は Alert |
+
+---
+
+## アクセシビリティ
+
+- **`role="status"`**: SR は live region として認識
+- **`aria-busy="true"`**: 「処理中」を SR に伝える。読み込み完了後に DOM を差し替えれば自動的に解除される
+- **`aria-label="読み込み中"`**: SR で文脈を伝える
+- **コントラスト**: `bg-surface-skeleton` (`#e5e5e5`) は背景白に対して 1.4.11 (3:1) ギリギリ。視認性が必要なら明示的に CSS でコントラスト調整
+- **`prefers-reduced-motion`**: 未対応 (AAA 案件、別タスク)。アニメーション過敏ユーザー向けに `animated={false}` で opt-out 可能
+
+関連: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs) / [Feedback Overview](?path=/docs/principles-interaction-feedback-overview--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Skeleton は単独で完結する Primitive (div + style 属性で図形を描画)。
+
+### Skeleton を組み合わせる代表的なコンポーネント
+
+- `<Card>` のローディング状態 — 画像 + アバター + テキスト + ボタンの合成
+- リスト系コンテンツのローディング — Avatar + テキスト 2 行 + チップの 4-N 行繰返し
+- 記事/詳細ページのローディング — タイトル + 著者 + ヒーロー画像 + 本文の合成

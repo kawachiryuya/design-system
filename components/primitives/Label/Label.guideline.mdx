@@ -1,0 +1,138 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as LabelStories from './Label.stories';
+import { Label } from './Label';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={LabelStories} で Label.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Label.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={LabelStories} name="Guideline" />
+
+# Label
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+フォームフィールドのラベル。**`<label htmlFor>` で input と紐づける** ことが本義で、視覚表示と SR 読み上げを一致させる。`required` (必須マーク `*`) と `optional` (任意マーク「（任意）」) で必須/任意の状態を視覚的・a11y 的に伝える。同時指定時は `required` が優先される。
+
+---
+
+## Props
+
+下表は Label.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={LabelStories.Playground} />
+
+詳細: [Forms 原則](?path=/docs/principles-patterns-forms--docs) / [Inline Validation 原則](?path=/docs/principles-interaction-feedback-inline-validation--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="label と input を htmlFor で必ず結ぶ"
+  doExample={
+    <div className="flex flex-col gap-1">
+      <Label htmlFor="do-email" required>メールアドレス</Label>
+      <input id="do-email" type="email" className="border border-border-default rounded px-3 py-2" />
+    </div>
+  }
+  doCaption="htmlFor で input の id と結ぶと、label クリックで input にフォーカス移動 + SR が input と label の関連を認識する。"
+  dontExample={
+    <div className="flex flex-col gap-1">
+      <Label required>メールアドレス</Label>
+      <input type="email" className="border border-border-default rounded px-3 py-2" />
+    </div>
+  }
+  dontCaption="htmlFor を省くと、label が単なる装飾テキストになり、クリックで input にフォーカスせず、SR で関連付けが失われる。"
+/>
+
+<DoDontExample
+  label="必須は色だけでなく記号でも示す"
+  doExample={
+    <Label required>メールアドレス</Label>
+  }
+  doCaption="`required` で `*` (赤) と aria-label='必須' が自動付与される。色 + 記号 + SR テキストの三重表現で、色覚特性に依存せず必須が伝わる。"
+  dontExample={
+    <Label>
+      <span className="text-onSurface-error">メールアドレス</span>
+    </Label>
+  }
+  dontCaption="ラベル文言を赤くしただけだと、色覚多様性ユーザーやモノクロ環境で必須が伝わらない。SR にも「必須」が読まれない。"
+/>
+
+<DoDontExample
+  label="任意項目には optional を付けて明示する"
+  doExample={
+    <Label optional>ニックネーム</Label>
+  }
+  doCaption="「（任意）」を明示すると、ユーザーは安心してスキップできる。必須項目との対比で迷いが減る。"
+  dontExample={
+    <Label>ニックネーム</Label>
+  }
+  dontCaption="マークなしだと、ユーザーは「必須かも?」と推測してしまう。同じフォーム内で必須項目が混在する場合は特に明示すべき。"
+/>
+
+<DoDontExample
+  label="label の disabled は input の disabled と連動させる"
+  doExample={
+    <div className="flex flex-col gap-1">
+      <Label htmlFor="do-disabled" disabled>読み取り専用フィールド</Label>
+      <input id="do-disabled" type="text" disabled defaultValue="変更不可" className="border border-border-default rounded px-3 py-2 bg-surface-disabled text-onSurface-disabled" />
+    </div>
+  }
+  doCaption="input の disabled と label の disabled を必ず両方指定。視覚的に「触れない領域」が一貫して表現される。"
+  dontExample={
+    <div className="flex flex-col gap-1">
+      <Label htmlFor="dont-disabled">読み取り専用フィールド</Label>
+      <input id="dont-disabled" type="text" disabled defaultValue="変更不可" className="border border-border-default rounded px-3 py-2 bg-surface-disabled text-onSurface-disabled" />
+    </div>
+  }
+  dontCaption="input だけ disabled で label がアクティブ色のまま。コントラストが揃わず、ユーザーが入力可能か迷う。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+「これは Label じゃないかも?」と迷ったときは下の表で目的に合うコンポーネントを探す:
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 見出し / 段落のテキスト装飾 | `<Typography>` | Label は `<label>` 専用、`htmlFor` を持たない用途には Typography |
+| ステータス / カテゴリのバッジ | `<Badge>` | 短いラベル表示でも form と無関係なら Badge |
+| ボタン内のテキスト | `<Button>` の children | Label は入力欄に対応する説明テキスト |
+| 何かを補足する説明文 (form 入力欄の下のヘルプテキスト等) | `<Typography variant="caption" color="muted">` | フィールドの説明は label とは別 |
+
+---
+
+## アクセシビリティ
+
+- **`<label htmlFor>` 必須**: input の `id` と結ぶことで SR が両者の関係を認識。label クリックで input にフォーカスが当たる
+- **必須マーク**: `*` の span に `aria-label="必須"` を自動付与。SR で「必須」と読まれる
+- **任意マーク**: 「（任意）」は通常テキストとして読まれる。色は `text-onSurface-muted` (#737373 = 4.69:1) で AA 通常テキスト要件を満たす
+- **disabled 連動**: `disabled` 時は `text-onSurface-disabled` + `cursor-not-allowed`。input 側の disabled と必ず連動させる
+- **色のみの意味禁止**: 必須は色 + 記号 (`*`) + SR テキスト (`aria-label`) の三重表現で伝える
+
+関連: [Forms](?path=/docs/principles-patterns-forms--docs) / [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Label は単独で完結する Primitive (span を使った required/optional マーカーは内部実装)。
+
+### Label を組み合わせる代表的なコンポーネント
+
+- `<Input>` / `<Textarea>` — フォーム入力欄と組合せ、`htmlFor` で結ぶ
+- `<Checkbox>` / `<Radio>` / `<Switch>` — 選択コントロールと組合せ
+- `<Select>` — セレクトボックスのラベル

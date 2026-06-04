@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 
 /** Label のサイズ */
 export type LabelSize = 'small' | 'medium' | 'large';
@@ -56,6 +57,32 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
 }
 
 /**
+ * Label のスタイル定義 — `tailwind-variants` で size / disabled を宣言的に保持。
+ *
+ * - base: 全 size 共通 (flex / font / select-none)
+ * - variants.size: text-size のみ (small=12px / medium=14px / large=16px)
+ * - variants.disabled: 操作不能化 (色 + cursor)
+ *
+ * required/optional マークは JSX 側で条件分岐。required と optional の同時指定は
+ * required を優先するフォールバックを JSX 側で実装。
+ */
+const labelVariants = tv({
+  base: ['inline-flex', 'items-center', 'gap-1', 'font-normal', 'leading-tight', 'select-none'],
+  variants: {
+    size: {
+      small:  'text-xs',
+      medium: 'text-sm',
+      large:  'text-base',
+    },
+    disabled: {
+      true:  'text-onSurface-disabled cursor-not-allowed',
+      false: 'text-onSurface cursor-pointer',
+    },
+  },
+  defaultVariants: { size: 'medium', disabled: false },
+});
+
+/**
  * Label — Atomic Design: Atom
  *
  * @see LabelProps for usage examples.
@@ -64,57 +91,26 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   (
     {
       htmlFor,
-      size = 'medium',
+      size,
       required = false,
       optional = false,
       disabled = false,
       children,
-      className = '',
+      className,
       ...props
     },
     ref
   ) => {
-    // Base styles
-    const baseStyles = [
-      'inline-flex',
-      'items-center',
-      'gap-1',
-      'font-normal',
-      'leading-tight',
-      'select-none',
-    ];
-
-    // Size styles (tokens/typography.json + spacing.json)
-    const sizeStyles = {
-      small: ['text-xs'],   // 12px
-      medium: ['text-sm'],  // 14px
-      large: ['text-base'], // 16px
-    };
-
-    // State styles
-    const stateStyles = disabled
-      ? ['text-onSurface-disabled', 'cursor-not-allowed']
-      : ['text-onSurface', 'cursor-pointer'];
-
-    const labelClasses = [
-      ...baseStyles,
-      ...sizeStyles[size],
-      ...stateStyles,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
     return (
       <label
         ref={ref}
         htmlFor={htmlFor}
-        className={labelClasses}
+        className={labelVariants({ size, disabled, className })}
         {...props}
       >
         {children}
 
-        {/* 必須マーク（required と optional は排他的。required を優先） */}
+        {/* 必須マーク (required と optional は排他的。required を優先) */}
         {required && !optional && (
           <span
             className="text-onSurface-error font-normal"
@@ -124,9 +120,9 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
           </span>
         )}
 
-        {/* 任意マーク */}
+        {/* 任意マーク。`text-onSurface-muted` で AA 4.5:1 (4.69:1) を確保 */}
         {optional && !required && (
-          <span className="text-onSurface-subtle font-normal text-xs">
+          <span className="text-onSurface-muted font-normal text-xs">
             （任意）
           </span>
         )}

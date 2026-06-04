@@ -1,137 +1,138 @@
-import { Meta } from '@storybook/addon-docs/blocks';
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as InputStories from './Input.stories';
+import { Input } from './Input';
+import { Icon } from '../Icon';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
-<Meta title="Primitives/Input/Guideline" />
+{/*
+  Meta of={InputStories} で Input.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Input.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={InputStories} name="Guideline" />
 
-# Input — Guideline
+# Input
 
-Props 表 / コード例 / 状態の見え方は **Docs (autodocs)** と **Stories タブ** を参照。
-本ページは「なぜそう作るか」「いつどう使い分けるか」を扱う設計の指針。
-
----
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
 
 ## 概要
 
-1 行のテキスト入力を受け付ける最小単位のフォームコンポーネント。
-ラベル / ヘルプテキスト / エラーメッセージを **一体管理** し、a11y 属性 (`aria-invalid` / `aria-describedby` / `aria-required`) を自動付与する。
+1 行のテキスト入力を受け付ける最小単位のフォームコンポーネント。**ラベル / ヘルプテキスト / エラーメッセージを一体管理** し、a11y 属性 (`aria-invalid` / `aria-describedby` / `aria-required`) を自動付与する。`error` と `errorMessage` は **discriminated union** で型レベルにセット必須化済で「エラー色だけで errorMessage 忘れ」が原理的に起きない。
+
+`type` で `email` / `password` / `number` 等を切替えるとモバイルでキーボードレイアウトが最適化される。
 
 ---
 
-## 使うとき
+## Props
 
-1 行のテキスト入力を受ける場面に使う。代表シーンと組合せの手本:
+下表は Input.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
 
-### ログイン / 認証
+<ArgTypes of={InputStories.Playground} />
 
-`type="email"` と `type="password"` を `required` + `fullWidth` で並べる。エラー時は `error` + `errorMessage` をセットで指定 (型レベルで強制)。
+詳細: [Forms 原則](?path=/docs/principles-patterns-forms--docs) / [Inline Validation 原則](?path=/docs/principles-interaction-feedback-inline-validation--docs) / [Touch Targets 原則](?path=/docs/principles-foundation-accessibility-touch-targets--docs)
 
-```tsx
-<Input label="メールアドレス" type="email" required fullWidth />
-<Input
-  label="パスワード"
-  type="password"
-  required
-  fullWidth
-  error
-  errorMessage="パスワードが正しくありません"
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="ラベルは必ず指定する (placeholder で代用しない)"
+  doExample={
+    <Input label="メールアドレス" type="email" placeholder="example@email.com" />
+  }
+  doCaption="`label` を指定すると上にラベル + htmlFor 連携 + aria-* が自動で揃う。入力後もラベルが残るので何の欄か常に分かる。"
+  dontExample={
+    <Input placeholder="メールアドレス" type="email" />
+  }
+  dontCaption="placeholder だけだと、入力を始めるとラベルが消えて何の欄か分からなくなる。SR もラベルを読まないので a11y も損なう。"
 />
-```
 
-### 検索ボックス (単発)
+<DoDontExample
+  label="必須は required prop で示す (自前 `*` で代用しない)"
+  doExample={
+    <Input label="ユーザー名" required helpText="3〜16 文字の英数字" />
+  }
+  doCaption="`required` を立てると `aria-required` 自動付与 + Label 内で `*` (aria-label='必須') が描画される。SR で「必須」が読まれる。"
+  dontExample={
+    <Input label="ユーザー名 *" helpText="3〜16 文字の英数字" />
+  }
+  dontCaption="ラベル文字列に手で `*` を埋め込むと SR で「*」を記号として読まれる (or 読まれない) ことがあり、必須が伝わらない。"
+/>
 
-`type="search"` + `leadingIcon` で アイコン付きの入力欄。候補や履歴が要るなら `<SearchBar>` を使う。
+<DoDontExample
+  label="エラーは error + errorMessage をセットで指定する (型レベル必須)"
+  doExample={
+    <Input label="パスワード" type="password" error errorMessage="8 文字以上で入力してください" defaultValue="abc" />
+  }
+  doCaption="`error` を立てると `errorMessage` が型レベルで必須 (discriminated union)。aria-invalid + aria-describedby + role='alert' が自動連携し、SR がエラーを即時読み上げる。"
+  dontExample={
+    <Input label="パスワード" type="password" defaultValue="abc" className="!border-error-500 !bg-error-50" />
+  }
+  dontCaption="自前 className で枠だけ赤くしても aria 属性が立たず、SR ユーザーにエラーが伝わらない。色覚多様性のあるユーザーにも色の違いだけでは伝わらない。"
+/>
 
-```tsx
-<Input label="検索" type="search" leadingIcon={<Icon name="search" />} />
-```
+<DoDontExample
+  label="ヘルプとエラーは同時に出さない (本コンポーネントは自動)"
+  doExample={
+    <div className="flex flex-col gap-3">
+      <Input label="ユーザー名" helpText="3〜16 文字の英数字" />
+      <Input label="ユーザー名 (エラー時)" error errorMessage="3 文字以上で入力してください" defaultValue="ab" helpText="3〜16 文字の英数字" />
+    </div>
+  }
+  doCaption="error 時は helpText が自動で非表示になり errorMessage に置き換わる (FormMessage 内部実装)。視覚的にも SR でも単一メッセージで明確。"
+  dontExample={
+    <div className="flex flex-col gap-1">
+      <input className="h-12 rounded-xs border border-border-error bg-surface-error-muted px-3" />
+      <p className="text-xs text-onSurface-muted">3〜16 文字の英数字</p>
+      <p className="text-xs text-onSurface-error">3 文字以上で入力してください</p>
+    </div>
+  }
+  dontCaption="自前で input + help + error を組み立てると同時表示・冗長読み上げ・aria 関連付け漏れが起きやすい。Input コンポーネントに任せる。"
+/>
 
-### 住所 / カード情報フォーム
+<DoDontExample
+  label="エラーは onBlur or 送信時に検証 (キーストロークごとは UX 悪化)"
+  doExample={
+    <Input label="メールアドレス" type="email" placeholder="example@email.com" helpText="フォーカスを外したタイミングで検証されます" />
+  }
+  doCaption="ユーザーがフィールドを離れる (onBlur) か送信ボタンを押した瞬間にバリデーション。入力途中に叱らないことで安心して入力できる。"
+  dontExample={
+    <Input label="メールアドレス" type="email" defaultValue="a" error errorMessage="正しいメールアドレスを入力してください" />
+  }
+  dontCaption="1 文字入力した直後にエラー表示するとユーザーが「途中なのに怒られている」感覚になり離脱率が上がる。"
+/>
 
-複数 Input を縦に並べる。`fullWidth` で揃え、`helpText` で書式 (例: 「半角ハイフン区切り」) を案内する。
+### 別コンポーネントの方が適切な場面
 
-### 数値入力 (シンプル)
-
-`type="number"` で単純な数量入力。`±` ボタンが要るなら `<NumberInput>` に切替。
-
-### インライン編集
-
-テーブル行・カード内に埋め込む `size="small"` の Input。`fullWidth` ではなく親要素の幅に合わせる。
-
----
-
-## 使わないとき
-
-1 行テキスト入力以外の入力 UI が要る場面では、別コンポーネントを使う:
-
-| やろうとすること | 理由 | 使うべき別コンポーネント |
+| やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| **複数行** のテキスト (コメント / 説明文) | 改行できる入力は別コンポーネント | `<Textarea>` |
-| **数値スピナー** (±ボタン / step 操作) | 数値の増減 UI は専用パターン | `<NumberInput>` |
-| **候補表示 / 履歴付き検索** | 検索バーは UI 慣習が独立 | `<SearchBar>` |
-| **選択肢から 1 つ選ぶ** | 「入力」ではなく「選択」 | `<Select>` / `<Radio>` / `<SegmentedControl>` |
-| **複数選択** | フラグの組合せは別 UI | `<Checkbox>` / `<CheckboxGroup>` |
-| **ON/OFF の真偽値** | 2 値は専用コントロール | `<Switch>` / `<Checkbox>` |
-| **日付範囲 / カレンダー UI** | `type="date"` はネイティブ UI のみ、リッチなカレンダーは別 | (将来 `<DatePicker>`) |
-
----
-
-## type / size の使い分け
-
-### type
-
-| type | 用途 | モバイル挙動 |
-|---|---|---|
-| `text` | 汎用 (名前 / 住所) | 標準キーボード |
-| `email` | メールアドレス | `@` キー表示 |
-| `password` | パスワード | マスク + 履歴除外 |
-| `number` | 整数 / 小数 | 数値キーボード |
-| `tel` | 電話番号 | テンキー |
-| `url` | URL | `.com` キー |
-| `search` | 検索キーワード | 「検索」キー |
-| `date` | 日付 | ネイティブ日付 picker |
-
-### size
-
-| size | 用途 | 高さ |
-|---|---|---|
-| `small` | 密集 UI (テーブル行・フィルタバー) | 40px (タッチターゲット未満、限定使用) |
-| `medium` | 標準的なフォーム | 48px (WCAG 2.5.5 を満たす) |
-| `large` | モバイル CTA フォーム | 64px |
-
----
-
-## 利用ガイド
-
-### ラベル・ヘルプ・エラーの配置
-
-- **ラベルはフィールド上に配置**。プレースホルダだけで代用しない (入力後に消えると確認できなくなる)
-- **必須印 `*` はラベルに付ける**。`aria-required` も自動で立つ
-- **ヘルプテキストはフィールド直下**。書式 / 制約 (「半角英数字 6 文字以上」等) を簡潔に
-- **エラーは helpText を置き換える**。同時表示しない
-- **エラーメッセージは具体的に**。「入力してください」より「8 文字以上で入力してください」
-
-### 守ること (NG パターン)
-
-| やりがちな誤り | 問題 | 正しいやり方 |
-|---|---|---|
-| プレースホルダだけでラベル省略 | 入力後に何の欄か分からない / SR がラベルを読まない | `label` を必ず指定 |
-| 必須を `*` だけで伝える | SR が `*` を読まない | `required` で `aria-required` + ラベル `*` を両立 (本コンポーネントは自動) |
-| エラーを色だけで伝える | 色覚多様性に配慮できない | `error` + `errorMessage` (型レベルで強制) |
-| キーストロークごとにエラー表示 | 入力途中で叱るのは UX 悪化 | onBlur / 送信時にバリデーション |
-| ヘルプとエラーを同時表示 | 視覚的に冗長、SR にも重複 | 本コンポーネントは error 時に helpText を自動非表示 |
-| パスワード強度を視覚バーだけで伝える | SR ユーザに伝わらない | `helpText` で言葉でも示す |
-| `<input>` 直書きで自前ラベル付与 | a11y 属性の取りこぼし / 一貫性消失 | 必ず `<Input>` を使う |
+| 複数行のテキスト (コメント・説明文) | `<Textarea>` | 改行できる入力は別コンポーネント |
+| 数値スピナー (± ボタン / step 操作) | `<NumberInput>` | 数値の増減 UI は専用パターン |
+| 候補表示 / 履歴付き検索 | `<SearchBar>` | 検索バーは UI 慣習が独立 |
+| 選択肢から 1 つ選ぶ | `<Select>` / `<Radio>` / `<SegmentedControl>` | 「入力」ではなく「選択」 |
+| 複数選択 | `<Checkbox>` / `<CheckboxGroup>` | フラグの組合せは別 UI |
+| ON/OFF の真偽値 | `<Switch>` / `<Checkbox>` | 2 値は専用コントロール |
+| 日付範囲 / カレンダー UI | (将来) `<DatePicker>` | `type="date"` はネイティブ UI のみ |
 
 ---
 
 ## アクセシビリティ
 
-- **`<label htmlFor>`**: 自動付与。クリックでフォーカス、SR がラベルを読む
+- **`<label htmlFor>` 自動連携**: `label` prop 指定で自動。クリックでフォーカス、SR がラベルを読む
 - **`aria-required`**: `required` 時に自動付与
 - **`aria-invalid`**: `error: true` 時に自動付与
-- **`aria-describedby`**: `errorMessage` または `helpText` の id と関連付け
-- **`role="alert"`**: エラーメッセージ表示時に SR が即時通知
+- **`aria-describedby`**: `errorMessage` または `helpText` の id と自動関連付け
+- **`role="alert"`** (FormMessage 内部): エラーメッセージ表示時に SR が即時通知
 - **キーボード**: `Tab` でフォーカス、`Enter` でフォーム送信
-- **タッチターゲット**: `size="medium"` 以上で WCAG 2.5.5 (44x44px) を満たす
+- **タッチターゲット**: `size="medium"` 以上で WCAG 2.5.5 (44x44px) を満たす。`small` は密集 UI 限定
+- **placeholder 色**: `text-onSurface-muted` (#737373) で AA 4.69:1 を満たす
+- **エラー色のみで伝えない**: `errorMessage` (型レベル必須) で言葉でも伝える
 
 関連: [Inline Validation](?path=/docs/principles-interaction-feedback-inline-validation--docs) / [Forms](?path=/docs/principles-patterns-forms--docs) / [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)
 
@@ -139,9 +140,14 @@ Props 表 / コード例 / 状態の見え方は **Docs (autodocs)** と **Stori
 
 ## 関連
 
-- [Label](../Label/) — Input 内部で使用。単体でも使える
-- [Textarea](../Textarea/) — 複数行入力
-- [NumberInput](../../composites/NumberInput/) — 数値 + スピナー
-- [SearchBar](../../composites/SearchBar/) — 候補表示付き検索
-- [Select](../../composites/Select/) — 選択肢から選ぶ
-- [Checkbox](../../composites/Checkbox/) / [Radio](../../composites/Radio/) — 真偽値 / 単一選択
+### 内部で利用するコンポーネント
+
+- `<Label>` — ラベル描画 + required `*` マーク + disabled 連動
+- `<FormMessage>` (内部 `_internal/`) — helpText / errorMessage の表示と aria 関連付けを統括
+
+### Input と組合せて使う代表的なコンポーネント
+
+- `<Button>` — フォーム送信ボタン
+- `<Checkbox>` / `<Radio>` — 同じフォーム内の選択コントロール
+- `<Select>` — 選択肢のドロップダウン
+- `<Textarea>` — 複数行入力 (Input の自然な拡張)

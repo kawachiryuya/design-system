@@ -1,11 +1,12 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 import { Label } from '../Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /** Input の HTML type。HTML `<input type="...">` 属性のサブセット。 */
 export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date';
 
-/** Input のサイズ。WCAG 2.5.5 AAA（44px）保証のため最小 40px。 */
+/** Input のサイズ。WCAG 2.5.5 AAA（44px）保証のため標準 medium 以上推奨。 */
 export type InputSize = 'small' | 'medium' | 'large';
 
 interface InputBaseProps {
@@ -18,7 +19,7 @@ interface InputBaseProps {
   type?: InputType;
   /**
    * サイズ。
-   * - `small` 40px、密集 UI 用
+   * - `small` 40px、密集 UI 用 (WCAG 2.5.5 未満なので限定使用)
    * - `medium` 48px、標準
    * - `large` 64px、モバイル CTA フォーム
    * @default 'medium'
@@ -104,6 +105,77 @@ type _InternalInputProps = InputBaseProps & {
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'>;
 
 /**
+ * Input のスタイル定義 — `tailwind-variants` で size × error × fullWidth × icon 有無を
+ * 宣言的に保持。padding は size × icon 有無の組合せで決まるため compoundVariants で導出。
+ *
+ * - base: 全 variant 共通 (border / bg / placeholder / transition / focus / disabled)
+ * - variants.size: 高さ + テキストサイズ (パディングは compound で決定)
+ * - variants.error: 通常 (border-border) vs エラー (border-error + bg-error-muted + focus 色)
+ * - variants.fullWidth: w-full の付与
+ * - variants.hasLeadingIcon / hasTrailingIcon: padding 計算用 (見た目に直接影響しない)
+ * - compoundVariants: size × hasLeadingIcon / hasTrailingIcon で左右の padding を決定
+ *   (アイコンスペース確保のため `pl-{N}` / `pr-{N}`)
+ */
+const inputVariants = tv({
+  base: [
+    'block',
+    'rounded-xs',
+    'border',
+    'bg-surface',
+    'text-onSurface',
+    'placeholder:text-onSurface-muted',
+    'transition-all',
+    'duration-normal',
+    'focus:outline-none',
+    'focus:ring-2',
+    'focus:ring-offset-0',
+    'disabled:opacity-50',
+    'disabled:cursor-not-allowed',
+    'disabled:bg-surface-disabled',
+  ],
+  variants: {
+    size: {
+      small:  'h-10 text-sm',
+      medium: 'h-12 text-base',
+      large:  'h-16 text-lg',
+    },
+    error: {
+      true:  'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus',
+    },
+    fullWidth: {
+      true:  'w-full',
+      false: '',
+    },
+    hasLeadingIcon: { true: '', false: '' },
+    hasTrailingIcon: { true: '', false: '' },
+  },
+  compoundVariants: [
+    // 左パディング: アイコン有時はアイコンスペース確保
+    { size: 'small',  hasLeadingIcon: true,  class: 'pl-10' },
+    { size: 'small',  hasLeadingIcon: false, class: 'pl-3' },
+    { size: 'medium', hasLeadingIcon: true,  class: 'pl-12' },
+    { size: 'medium', hasLeadingIcon: false, class: 'pl-3' },
+    { size: 'large',  hasLeadingIcon: true,  class: 'pl-12' },
+    { size: 'large',  hasLeadingIcon: false, class: 'pl-4' },
+    // 右パディング (mirror)
+    { size: 'small',  hasTrailingIcon: true,  class: 'pr-10' },
+    { size: 'small',  hasTrailingIcon: false, class: 'pr-3' },
+    { size: 'medium', hasTrailingIcon: true,  class: 'pr-12' },
+    { size: 'medium', hasTrailingIcon: false, class: 'pr-3' },
+    { size: 'large',  hasTrailingIcon: true,  class: 'pr-12' },
+    { size: 'large',  hasTrailingIcon: false, class: 'pr-4' },
+  ],
+  defaultVariants: { size: 'medium', error: false, fullWidth: false, hasLeadingIcon: false, hasTrailingIcon: false },
+});
+
+/** アイコン absolute 配置の left/right クラス (size 別) */
+const iconPositionClass = {
+  leading:  { small: 'left-3',  medium: 'left-3',  large: 'left-4'  },
+  trailing: { small: 'right-3', medium: 'right-3', large: 'right-4' },
+} as const;
+
+/**
  * Input — Atomic Design: Atom
  *
  * @see InputProps for usage examples.
@@ -123,95 +195,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       id,
       disabled,
       required,
-      className = '',
+      className,
       ...rest
     } = props as _InternalInputProps;
 
     const inputId = id || (label ? `input-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
     const errorId = inputId ? `${inputId}-error` : undefined;
-    const helpId = inputId ? `${inputId}-help` : undefined;
-
-    // Base wrapper styles
-    const wrapperStyles = ['flex', 'flex-col', 'gap-1', fullWidth ? 'w-full' : 'w-auto'].join(' ');
-
-    // Base input styles
-    const baseStyles = [
-      'block',
-      'rounded-xs',
-      'border',
-      'bg-surface',
-      'text-onSurface',
-      'placeholder:text-onSurface-muted',
-      'transition-all',
-      'duration-normal',
-      'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-offset-0',
-      'disabled:opacity-50',
-      'disabled:cursor-not-allowed',
-      'disabled:bg-surface-disabled',
-      fullWidth ? 'w-full' : '',
-    ];
-
-    // State styles
-    const stateStyles = error
-      ? [
-          'border-border-error',
-          'focus:border-border-error',
-          'focus:ring-border-error',
-          'bg-surface-error-muted',
-        ]
-      : [
-          'border-border',
-          'hover:border-border-strong',
-          'focus:border-border-focus',
-          'focus:ring-border-focus',
-        ];
-
-    // Size styles (tokens/spacing.json)
-    // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
-    const sizeStyles = {
-      small: [
-        'h-10',  // 40px
-        leadingIcon ? 'pl-10' : 'px-3',
-        trailingIcon ? 'pr-10' : 'px-3',
-        'text-sm',
-      ],
-      medium: [
-        'h-12',  // 48px
-        leadingIcon ? 'pl-12' : 'px-3',
-        trailingIcon ? 'pr-12' : 'px-3',
-        'text-base',
-      ],
-      large: [
-        'h-16',  // 64px
-        leadingIcon ? 'pl-12' : 'px-4',
-        trailingIcon ? 'pr-12' : 'px-4',
-        'text-lg',
-      ],
-    };
-
-    const inputClasses = [
-      ...baseStyles,
-      ...stateStyles,
-      ...sizeStyles[size],
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    // Icon container positioning
-    const leadingIconPosition = {
-      small: 'left-3',
-      medium: 'left-3',
-      large: 'left-4',
-    }[size];
-
-    const trailingIconPosition = {
-      small: 'right-3',
-      medium: 'right-3',
-      large: 'right-4',
-    }[size];
+    const helpId  = inputId ? `${inputId}-help`  : undefined;
 
     const describedBy = [
       error && errorId ? errorId : null,
@@ -221,7 +211,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       .join(' ') || undefined;
 
     return (
-      <div className={wrapperStyles}>
+      <div className={['flex flex-col gap-1', fullWidth ? 'w-full' : 'w-auto'].join(' ')}>
         {/* Label */}
         {label && (
           <Label htmlFor={inputId} size={size === 'large' ? 'large' : 'medium'} required={required} disabled={disabled}>
@@ -229,11 +219,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </Label>
         )}
 
-        {/* Input wrapper（アイコン配置のため） */}
+        {/* Input wrapper (アイコン absolute 配置のため) */}
         <div className="relative">
           {leadingIcon && (
             <span
-              className={`absolute ${leadingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
+              className={`absolute ${iconPositionClass.leading[size]} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
             >
               {leadingIcon}
             </span>
@@ -248,13 +238,20 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             aria-invalid={error || undefined}
             aria-required={required || undefined}
             aria-describedby={describedBy}
-            className={inputClasses}
+            className={inputVariants({
+              size,
+              error,
+              fullWidth,
+              hasLeadingIcon: Boolean(leadingIcon),
+              hasTrailingIcon: Boolean(trailingIcon),
+              className,
+            })}
             {...rest}
           />
 
           {trailingIcon && (
             <span
-              className={`absolute ${trailingIconPosition} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
+              className={`absolute ${iconPositionClass.trailing[size]} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
             >
               {trailingIcon}
             </span>

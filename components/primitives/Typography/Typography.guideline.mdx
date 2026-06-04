@@ -1,0 +1,148 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TypographyStories from './Typography.stories';
+import { Typography } from './Typography';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={TypographyStories} で Typography.stories.tsx の Docs ページ本体として
+  この mdx を使用する。Typography.stories.tsx 側で tags: ['autodocs'] を付けないこと
+  (二重生成になる)。
+*/}
+<Meta of={TypographyStories} name="Guideline" />
+
+# Typography
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+タイポグラフィヒエラルキーを実装したテキストコンポーネント。**設計の核** は `variant` (視覚スタイル) と `as` (HTML 意味論) の分離。`variant="h2" as="h3"` のように「見た目は大きいが文書構造上は小さい」を表現できる polymorphic 設計で、文書アウトラインとビジュアル階層を独立に扱える。
+
+`variant` は font-size + line-height + デフォルト font-weight を 1 トークンに集約しているため、`text-heading-xl` のような semantic typography token に対応する。weight は `variant` のデフォルトを `weight` prop で後勝ち上書きできる。
+
+---
+
+## Props
+
+下表は Typography.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={TypographyStories.Playground} />
+
+詳細: [Typography Scale 原則](?path=/docs/principles-typography-scale--docs) / [Typography Hierarchy 原則](?path=/docs/principles-typography-hierarchy--docs) / [Readability 原則](?path=/docs/principles-typography-readability--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="見出しは visual と semantic を分離する"
+  doExample={
+    <Typography variant="h2" as="h3">サイドバーの見出し</Typography>
+  }
+  doCaption="サイドバー等の脇役見出しは `as` で文書構造に合った要素 (h3) にしつつ、見た目だけ大きく見せる。SR の見出しジャンプ機能も正確に動く。"
+  dontExample={
+    <h3 className="text-2xl font-bold">サイドバーの見出し</h3>
+  }
+  dontCaption="HTML タグに直接 className でスタイルを当てると、デザイントークン更新を追従できず、見た目と HTML の整合性が崩れる。"
+/>
+
+<DoDontExample
+  label="文書アウトラインの階層を守る (h1 → h2 → h3 を飛ばさない)"
+  doExample={
+    <div className="flex flex-col gap-2">
+      <Typography as="h1" variant="h1">ページタイトル</Typography>
+      <Typography as="h2" variant="h2">セクション</Typography>
+      <Typography as="h3" variant="h3">サブセクション</Typography>
+    </div>
+  }
+  doCaption="`as` で 1 段ずつ順に降りる。SR のヘディングナビゲーションがツリー構造を正しく理解できる。"
+  dontExample={
+    <div className="flex flex-col gap-2">
+      <Typography as="h1" variant="h1">ページタイトル</Typography>
+      <Typography as="h4" variant="h3">いきなり h4</Typography>
+    </div>
+  }
+  dontCaption="`as` でアウトラインを飛ばすと、SR ユーザーが文書構造を把握しづらい。`variant` だけで見た目を変える分には問題ない。"
+/>
+
+<DoDontExample
+  label="色だけで意味を伝えない"
+  doExample={
+    <Typography variant="body" color="error">エラー: 送信に失敗しました</Typography>
+  }
+  doCaption="エラー色 (赤) + 「エラー:」というラベル文言で、色覚特性に依存せず意味が伝わる。"
+  dontExample={
+    <Typography variant="body" color="error">送信に失敗しました</Typography>
+  }
+  dontCaption="赤い文字「だけ」だと、色覚多様性のあるユーザーやモノクロ表示で意味が消える。色は補助、文言が本体。"
+/>
+
+<DoDontExample
+  label="本文は body 系 (16px) を使い、caption (12px) は注釈のみ"
+  doExample={
+    <Typography variant="body">本文はこのサイズで揃える。可読性とユーザー疲労のバランスが取れている。</Typography>
+  }
+  doCaption="body (16px) は WCAG 1.4.4 の「200% 拡大」にも耐える基本サイズ。長文段落の標準。"
+  dontExample={
+    <Typography variant="caption">本文を caption (12px) で書くと小さくて読めない</Typography>
+  }
+  dontCaption="caption は著作権・最終更新日・脚注のような「補助情報」専用。本文に使うと可読性が著しく落ちる。"
+/>
+
+<DoDontExample
+  label="truncate は width が確定している場所でのみ使う"
+  doExample={
+    <div className="w-48 border border-dashed border-border-muted p-2">
+      <Typography variant="h4" truncate>非常に長いカードタイトル</Typography>
+    </div>
+  }
+  doCaption="カード内タイトルなど width が固定されている場所では truncate で 1 行に収まる。"
+  dontExample={
+    <Typography variant="body" truncate>段落本文に truncate を当てると、画面幅に依存して任意の位置で「...」になり情報が欠落する</Typography>
+  }
+  dontCaption="本文段落に truncate は不適切。folder list や card title 等、`max-width` が確定している UI 部品に限定する。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+「これは Typography じゃないかも?」と迷ったときは下の表で目的に合うコンポーネントを探す:
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 押せるテキスト (URL 遷移) | `<Link>` | 文字色だけでなく `<a href>` を出す責務 |
+| ステータス / カテゴリ表示 | `<Badge>` | 「短いラベル + バッジ装飾」専用 UI |
+| フォーム入力のラベル | `<Label>` | `htmlFor` で input と紐づけ、`*` 必須記号も自動 |
+| アイコンとセットで意味を伝える | `<Icon>` + Typography の組合せ | Icon は単独で、テキスト装飾は Typography で |
+
+---
+
+## アクセシビリティ
+
+- **見出しの階層**: `as` で文書構造の `<h1>` 〜 `<h6>` を正しく出す。SR のヘディングジャンプ (`H` キー等) が機能する
+- **`variant` と `as` の分離**: 見た目だけ変えたいときは `variant` だけ変える。例: 「h2 サイズで `<p>`」は `variant="h2" as="p"`
+- **色のみの意味伝達禁止**: WCAG 1.4.1 (Use of Color) — 色を意味の唯一の伝達手段にしない。文言と組合せる
+- **可読性 (1.4.4 / 1.4.12)**: 本文は body (16px) 以上で書く。拡大 200% 時にも崩れない。`line-height` は variant で適切に設定済
+- **コントラスト (1.4.3)**: `color` の各 variant は背景 (`#ffffff`) 比 4.5:1 (大文字は 3:1) を満たすトークンを使用 (primary は darker な `#006f50` で 6.19:1)
+
+関連: [Typography Hierarchy](?path=/docs/principles-typography-hierarchy--docs) / [Readability](?path=/docs/principles-typography-readability--docs) / [Color Contrast](?path=/docs/principles-foundation-accessibility-color-contrast--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Typography は単独で完結する Primitive。
+
+### Typography を内部で使う / 組み合わせる代表的なコンポーネント
+
+- `<Link>` — 本文中のリンクは Typography の流れの中で Link が文字色・下線を制御
+- `<Label>` — フォームラベルは内部で Typography variant=label を使用
+- `<Card>` / `<Alert>` / `<Modal>` — 見出し・本文・キャプションは Typography variant の組合せで構成

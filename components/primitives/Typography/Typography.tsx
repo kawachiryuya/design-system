@@ -1,7 +1,11 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 
 /**
  * Typography のバリアント定義（視覚スタイル）
+ *
+ * h5 / h6 は h4 と視覚的差が小さく実利用も少ないため省略。
+ * 階層がさらに深い場合は `as` で <h5>/<h6> タグを指定しつつ `variant="h4"` で見た目を共有する。
  * @see principles/Typography/scale.mdx
  */
 export type TypographyVariant =
@@ -10,19 +14,23 @@ export type TypographyVariant =
   | 'h2'
   | 'h3'
   | 'h4'
-  | 'h5'
-  | 'h6'
   | 'body-lg'
   | 'body'
   | 'body-sm'
   | 'caption'
   | 'label';
 
-/** テキストカラー（semantic-colors.json の onSurface 系を反映） */
+/**
+ * テキストカラー（semantic-colors.json の onSurface 系を反映）。
+ *
+ * 注: `subtle` (`#a3a3a3`) は WCAG AA (4.5:1) を満たさないため Typography の公開 API
+ * からは除外。プレースホルダや純粋に装飾的な箇所では Tailwind ユーティリティ
+ * (`text-onSurface-subtle`) を直接当てる選択肢が残る (ただし将来的に token 自体の
+ * 整理を予定)。
+ */
 export type TypographyColor =
   | 'default'
   | 'muted'
-  | 'subtle'
   | 'disabled'
   | 'primary'
   | 'success'
@@ -69,7 +77,7 @@ export type TypographyElement =
  *
  * @example
  *   // 1 行省略（カード内タイトル等）
- *   <Typography variant="h5" truncate>
+ *   <Typography variant="h4" truncate>
  *     {longTitle}
  *   </Typography>
  *
@@ -111,15 +119,13 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
 }
 
-/** variant → デフォルト HTML タグのマップ */
+/** variant → デフォルト HTML タグのマップ (as prop 省略時の自動選択) */
 const defaultTag: Record<TypographyVariant, TypographyElement> = {
   display:  'h1',
   h1:       'h1',
   h2:       'h2',
   h3:       'h3',
   h4:       'h4',
-  h5:       'h5',
-  h6:       'h6',
   'body-lg': 'p',
   body:      'p',
   'body-sm': 'p',
@@ -128,42 +134,57 @@ const defaultTag: Record<TypographyVariant, TypographyElement> = {
 };
 
 /**
- * variant → Tailwind クラスのマップ
+ * Typography のスタイル定義 — `tailwind-variants` で variant マップを宣言的に保持。
  *
- * `text-*` クラスは semantic typography トークン
- * (`tokens/source/typography.json` の `typography-semantic`) に解決される。
- * font-size / line-height / letter-spacing が semantic 1 クラスに集約されている。
- *
- * font-weight だけは `weight` prop で上書きする運用のため、別の `font-*` ユーティリティで指定する。
+ * - variant: text-* (semantic typography token = font-size + line-height + letter-spacing) と
+ *   variant ごとのデフォルト font-weight をペアで保持
+ * - color: semantic-colors の onSurface 系
+ * - weight: variant のデフォルト font-weight を上書き (tailwind-merge が後勝ち解決)
+ * - truncate: 1 行省略 (truncate class)
  */
-const variantStyles: Record<TypographyVariant, string[]> = {
-  display:   ['text-heading-display', 'font-bold'],
-  h1:        ['text-heading-xl',      'font-bold'],
-  h2:        ['text-heading-lg',      'font-bold'],
-  h3:        ['text-heading-md',      'font-semibold'],
-  h4:        ['text-heading-sm',      'font-semibold'],
-  h5:        ['text-heading-xs',      'font-semibold'],
-  h6:        ['text-heading-2xs',     'font-semibold'],
-  'body-lg': ['text-body-lg',         'font-normal'],
-  body:      ['text-body-md',         'font-normal'],
-  'body-sm': ['text-body-sm',         'font-normal'],
-  caption:   ['text-caption',         'font-normal'],
-  label:     ['text-label',           'font-medium'],
-};
-
-/** カラー → Tailwind クラスのマップ（semantic-colors.json） */
-const colorStyles: Record<TypographyColor, string> = {
-  default:  'text-onSurface',
-  muted:    'text-onSurface-muted',
-  subtle:   'text-onSurface-subtle',
-  disabled: 'text-onSurface-disabled',
-  primary:  'text-onSurface-primary',
-  success:  'text-onSurface-success',
-  error:    'text-onSurface-error',
-  warning:  'text-onSurface-warning',
-  info:     'text-onSurface-info',
-  inherit:  'text-inherit',
-};
+const typographyVariants = tv({
+  base: '',
+  variants: {
+    variant: {
+      display:   'text-heading-display font-bold',
+      h1:        'text-heading-xl font-bold',
+      h2:        'text-heading-lg font-bold',
+      h3:        'text-heading-md font-semibold',
+      h4:        'text-heading-sm font-semibold',
+      'body-lg': 'text-body-lg font-normal',
+      body:      'text-body-md font-normal',
+      'body-sm': 'text-body-sm font-normal',
+      caption:   'text-caption font-normal',
+      label:     'text-label font-medium',
+    },
+    color: {
+      default:  'text-onSurface',
+      muted:    'text-onSurface-muted',
+      disabled: 'text-onSurface-disabled',
+      primary:  'text-onSurface-primary',
+      success:  'text-onSurface-success',
+      error:    'text-onSurface-error',
+      warning:  'text-onSurface-warning',
+      info:     'text-onSurface-info',
+      inherit:  'text-inherit',
+    },
+    weight: {
+      normal:   'font-normal',
+      medium:   'font-medium',
+      semibold: 'font-semibold',
+      bold:     'font-bold',
+    },
+    truncate: {
+      true: 'truncate',
+      false: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'body',
+    color: 'default',
+    truncate: false,
+  },
+});
 
 /**
  * Typography — Atomic Design: Atom
@@ -178,34 +199,23 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
     {
       variant = 'body',
       as,
-      color = 'default',
+      color,
       weight,
-      truncate = false,
+      truncate,
       children,
-      className = '',
+      className,
       ...props
     },
     ref
   ) => {
     const Tag = (as || defaultTag[variant]) as React.ElementType;
-
-    // weight 指定時は variant のデフォルト font-weight を除外して上書き
-    const baseStyles = weight
-      ? variantStyles[variant].filter((c) => !c.startsWith('font-'))
-      : variantStyles[variant];
-
-    const classes = [
-      ...baseStyles,
-      weight ? `font-${weight}` : '',
-      colorStyles[color],
-      truncate ? 'truncate' : '',
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
+    // weight が指定されれば variant の font-* を後勝ちで上書き (tailwind-merge が解決)
     return (
-      <Tag ref={ref} className={classes} {...props}>
+      <Tag
+        ref={ref}
+        className={typographyVariants({ variant, color, weight, truncate, className })}
+        {...props}
+      >
         {children}
       </Tag>
     );

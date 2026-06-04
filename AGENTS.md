@@ -343,3 +343,151 @@ grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
 ```
 
 両コマンドの出力が空であること。
+
+---
+
+## 10. 既存コンポーネントの標準ストーリー移行手順
+
+§5 は **新規追加** 時の規約。本節は **既存コンポーネント** を新標準 (Playground/Variants/Sizes/States/WithIcon/EdgeCases + Guideline mdx を Docs 化) に乗せ替えるときの **実作業手順**。
+
+リファレンスは [`components/primitives/Button/`](./components/primitives/Button/) 一式 (`.tsx` / `.stories.tsx` / `.guideline.mdx` / `index.ts`)。迷ったら Button をコピーして当てはめる。
+
+### 10-0. 進める単位
+
+**1 コンポーネント = 1 PR**。Primitives → Composites の順 (依存方向)。1 PR で複数を触ると review/revert の単位が壊れる。
+
+### 10-1. 監査 (5 分)
+
+下記をざっと読んで **新標準とのギャップ** を把握する:
+
+1. `ComponentName.tsx` — props 構造、variant の有無、icon prop の有無、native HTML 属性の継承パターン
+2. `ComponentName.stories.tsx` — 既存 story 数・命名、static render か args 依存か
+3. `ComponentName.md` または `ComponentName.guideline.mdx` (どちらか or 両方存在しうる)
+
+判定:
+
+| 観察 | アクション |
+|---|---|
+| variant prop あり | Variants 節を作る |
+| size prop あり | Sizes 節を作る |
+| icon prop あり | WithIcon 節を作る |
+| iconOnly のようなテキスト省略モードあり | discriminated union で `aria-label` を型レベル必須化 ([Button.tsx](./components/primitives/Button/Button.tsx) の `ButtonIconOnlyProps` パターン) |
+| 該当 prop なし | 節をまるごと省略 (順序は維持) |
+
+### 10-2. `.tsx` のリファクタ (必要時のみ)
+
+- **styling が文字列配列で書かれている** → `tailwind-variants` (`tv`) で variant マップに移行 ([Button.tsx:134](./components/primitives/Button/Button.tsx#L134) `buttonVariants` 参照)
+- **hover/active overlay を variant ごとに当てたい** → `--color-state-*` semantic token を `shadow-[inset_0_0_0_9999px_var(--color-state-...)]` で重ねる (Material state layer 同等)。下地の variant 色を残したまま半透明オーバーレイが可能
+- **discriminated union がある場合** → `props as _InternalType` でキャストせず、discriminant で **render を 2 分岐** する (Button.tsx の `if (props.iconOnly) { ... } else { ... }` パターン)
+- **native HTML 属性で JSDoc を上書きしたい** (例: `disabled`) → 自前 interface で再宣言し、`Omit<React.ButtonHTMLAttributes, 'disabled'>` で React 由来の型を除外する
+- **`@see principles/...` は `.mdx` 拡張子で統一** (§9-1)
+
+### 10-3. `.stories.tsx` の書き直し
+
+[`Button.stories.tsx`](./components/primitives/Button/Button.stories.tsx) を雛形にコピー → コンポーネント固有の prop で差し替え。
+
+**固定要素**:
+
+- `tags: ['autodocs']` は **付けない** (Guideline.mdx が Docs を兼ねる)
+- `argTypes` には **control 設定のみ**。`description` は `.tsx` JSDoc に集約 (§5)
+- `meta.args` で Playground の起点値を 1 セット用意
+- 各 story に `parameters.docs.description.story` で一行説明
+- Variants/Sizes/WithIcon/EdgeCases は **静的 render** (`render: () => <>...</>`)、args 非依存
+- States 節は `parameters.pseudo: { hover: ['#id'], focusVisible: ['#id'], active: ['#id'] }` で擬似状態を強制表示
+- Playground に `play` で最小限の動作テスト (`click → onClick.toHaveBeenCalled`)
+
+**節省略の判断**:
+
+| 節 | 省略してよい場合 |
+|---|---|
+| Variants | variant 概念がない (Skeleton, Spinner 等) |
+| Sizes | サイズ違いがない |
+| WithIcon | icon prop がない |
+| EdgeCases | 視覚的に壊れやすいケースがない (VisuallyHidden 等の極小コンポーネント) |
+| Playground / States | **絶対省略しない** (必須 2 節) |
+
+**EdgeCases に入れる候補**: `fullWidth + 長文 (折返し)` / `fullWidth + 長文 + 内側 span で truncate` / 短文 (min-width 確認) / 多言語 / icon-only モード時の長文 aria-label を視覚カタログに併記。`whitespace-nowrap` 単独などの「単なる崩れ」は入れない。
+
+### 10-4. `.guideline.mdx` の作成 / 書き直し
+
+[`Button.guideline.mdx`](./components/primitives/Button/Button.guideline.mdx) を雛形にコピー → 内容を差し替え。
+
+**冒頭テンプレ** (§5-規約):
+
+```mdx
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './ComponentName.stories';
+import { ComponentName } from './ComponentName';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={ComponentStories} name="Guideline" />
+
+# ComponentName
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+```
+
+**5 節構成**:
+
+1. `## 概要` — 1〜2 文で「何のためのコンポーネントか / いつ使うか / いつ使わないか」
+2. `## Props` — `<ArgTypes of={ComponentStories.Playground} />` のみ。表の Description は `.tsx` JSDoc から自動生成
+3. `## Do / Don't` — `<DoDontExample>` を 3〜5 ペア + 「別コンポーネントの方が適切な場面」表
+4. `## アクセシビリティ` — キーボード / ARIA / タッチターゲット / SR 配慮を箇条書き
+5. `## 関連` — `### 内部で利用するコンポーネント` (Icon, Spinner 等) のみ
+
+**principles へのリンクは `?path=` 形式** (§9-2)。
+
+### 10-5. 旧 `*.md` の削除
+
+`ComponentName.md` (旧 guideline 形式) が残っていれば `git rm` で削除。`.guideline.mdx` に内容を吸収済みのはず。
+
+### 10-6. 検証
+
+順番に走らせる:
+
+```sh
+# 1. 型チェック (新標準で型エラーゼロを保証)
+npx tsc --noEmit
+
+# 2. 壊れリンクチェック (§9-3)
+grep -rn "principles/[A-Za-z/_-]*\.md\b" components --include="*.tsx"
+grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
+
+# 3. Storybook 起動
+npm run storybook
+```
+
+http://localhost:6006 で目視確認:
+
+- [ ] サイドバーから旧「Docs」ノードが消え、「Guideline」が代わりに表示
+- [ ] story の順序が Playground → Variants → Sizes → States → WithIcon → EdgeCases (該当節のみ)
+- [ ] States story で Hover/Focus/Active が **マウス操作なしで** 強制表示されている
+- [ ] Guideline ページの ArgTypes 表に props と JSDoc description が並ぶ
+- [ ] DoDontExample (緑/赤バー) が表示
+- [ ] a11y addon タブで violation 0
+
+§5 末尾の「完了条件チェックリスト」を全項目通ったら PR を切る。
+
+### 10-7. PR とコミットメッセージ
+
+- title: `refactor(<ComponentName>): 標準ストーリー構造へ移行`
+- body: 監査結果と判断 (省略した節とその理由 / 新規追加した節)、検証結果のスクリーンショット
+- 1 PR で複数コンポーネントは触らない
+
+### 10-8. よくある詰まりどころ
+
+| 症状 | 原因と対処 |
+|---|---|
+| Guideline が Docs として表示されない / 二重に表示される | `.stories.tsx` に `tags: ['autodocs']` が残っている → 削除 |
+| ArgTypes 表の Description が空欄 | `.tsx` の Props に JSDoc コメントがない / `argTypes` 側に `description` を書いて JSDoc を上書きしている → JSDoc に一元化 |
+| Hover/Focus が pseudo で出ない | `parameters.pseudo` の id と story 内の `<Button id="...">` が不一致 |
+| MDX で `<DoDontExample>` が `Cannot resolve module` | `@sb-blocks/*` alias が読まれていない → Storybook を再起動 (`main.ts` 変更後は必須) |
+| Props 表の Default 列が消えない | sbdocs の CSS 上書きが効いていない → `.storybook/tailwind.css` の `.docblock-argstable` ルールを確認 |
+| `truncate` が効かない (ellipsis 出ない) | flex 子に `min-width: 0` がない → `<ComponentName><span className="min-w-0 truncate">long text</span></ComponentName>` の inner span パターンを使う |

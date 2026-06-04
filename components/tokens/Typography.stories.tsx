@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import typographyToken from '../../tokens/typography.json';
 
 const meta: Meta = {
-  title: 'Tokens/Typography',
+  title: 'Tokens/Typography/Primitive',
   parameters: {
     layout: 'padded',
   },

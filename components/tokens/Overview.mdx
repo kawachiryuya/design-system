@@ -1,0 +1,74 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Tokens/Overview" />
+
+# Tokens Overview
+
+このデザインシステムの token は **2 層構造** で設計されています。普段の実装では **Semantic 層を優先** して使い、Primitive 層は palette 拡張やトークン追加時の参照に使います。
+
+---
+
+## 2 層構造
+
+```text
+┌─ Primitive (Global) ────────────────────────────┐
+│  値そのものを定義する数値・色値のレイヤ          │
+│  プロダクトに依存しない、変更で全体に影響         │
+│                                                  │
+│  例: color.primary.700  →  "#006F50"             │
+│      spacing.4          →  "16px"                │
+└──────────────────────────────────────────────────┘
+                  ↓ Style Dictionary が参照
+┌─ Semantic ──────────────────────────────────────┐
+│  「役割名」で参照する意味付けのレイヤ            │
+│  下流 product で意図のままブランド override 可能 │
+│                                                  │
+│  例: color.surface.primary  →  color.primary.700 │
+│      spacing-semantic.component.md → spacing.2   │
+└──────────────────────────────────────────────────┘
+                  ↓ Style Dictionary build
+┌─ Tailwind utility classes ──────────────────────┐
+│  bg-surface-primary / text-onSurface-muted      │
+│  gap-component-md / text-heading-xl 等           │
+└──────────────────────────────────────────────────┘
+```
+
+semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;color.primary.700&#125;</code>` のように curly brace で primitive を指します。Storybook 上では読みやすさのため `→` で表記しています。
+
+---
+
+## いつどっちを使う?
+
+| 場面 | 使うレイヤ | 例 |
+|---|---|---|
+| **コンポーネント実装** (大半のケース) | **Semantic** | `bg-surface-primary` / `text-onSurface-muted` |
+| 既存 semantic に該当がないが汎用パレットから引きたい | (新しい) Semantic を追加 | `bg-surface-tertiary` を新設 |
+| product 側でブランドカラーを変えたい | Semantic を override | `surface-primary` を別 hex に |
+| 拡張・整理のため palette 全体を見たい | **Primitive** で参照 | `primary.50〜900` を確認 |
+
+**禁則**: 実装で `bg-primary-700` のような **primitive 直参照は禁止** ([AGENTS.md §3 トークン参照ルール](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) 参照)。理由は下流 product のブランド override が効かなくなるため。
+
+---
+
+## カテゴリ一覧
+
+| カテゴリ | Primitive | Semantic | 備考 |
+|---|---|---|---|
+| **Color** | [Tokens/Color/Primitive](?path=/story/tokens-color-primitive--palettes) | [Tokens/Color/Semantic](?path=/story/tokens-color-semantic--surface) | bg / surface / on / border / state の 5 軸 |
+| **Typography** | [Tokens/Typography/Primitive](?path=/story/tokens-typography-primitive--font-sizes) | [Tokens/Typography/Semantic](?path=/story/tokens-typography-semantic--headings) | heading / body / label / caption |
+| **Spacing** | [Tokens/Spacing/Primitive](?path=/story/tokens-spacing-primitive--scale) | [Tokens/Spacing/Semantic](?path=/story/tokens-spacing-semantic--component) | component / section の 2 軸 |
+| **Radius** | [Tokens/Radius](?path=/story/tokens-radius--border-radius) | (semantic 層なし) | `radius.none / xs / sm / md / lg / full` を直接利用 |
+| **Shadows** | [Tokens/Shadows](?path=/story/tokens-shadows--elevations) | (semantic 層なし) | `shadow.xs / sm / md / lg / xl / 2xl` を直接利用 |
+| **Animation** | [Tokens/Animation](?path=/story/tokens-animation--durations) | (semantic 層なし) | duration / easing |
+| **Breakpoints** | (Storybook 表示なし) | (semantic 層なし) | Tailwind `sm/md/lg/xl/2xl` で利用 |
+
+Radius / Shadows / Animation / Breakpoints は **semantic 層を持たない** = primitive 直参照運用です。将来用途別の意味付けが必要になった時点で追加する想定 (例: `radius-semantic.card → radius.md`)。
+
+---
+
+## 参照リソース
+
+- 詳しい token 階層と参照ルール: [AGENTS.md §3 トークン参照ルール](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール)
+- 設計戦略 (なぜこの構造か): [design-system-strategy.md](https://github.com/kawachiryuya/design-system/blob/main/design-system-strategy.md)
+- Style Dictionary 出力: `tokens/build/variables.css` (CSS 変数) / `tokens/build/tokens.ts` (TS export)
+- Tailwind 統合: [tokens/preset.cjs](https://github.com/kawachiryuya/design-system/blob/main/tokens/preset.cjs)

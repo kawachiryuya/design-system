@@ -1,0 +1,143 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as VisuallyHiddenStories from './VisuallyHidden.stories';
+import { VisuallyHidden } from './VisuallyHidden';
+import { Button } from '../Button';
+import { Icon } from '../Icon';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={VisuallyHiddenStories} で VisuallyHidden.stories.tsx の Docs ページ
+  本体としてこの mdx を使用する。stories 側で tags: ['autodocs'] を付けないこと。
+*/}
+<Meta of={VisuallyHiddenStories} name="Guideline" />
+
+# VisuallyHidden
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+**視覚的には非表示だが、DOM とアクセシビリティツリーには残るテキスト** を描画する。Tailwind の `sr-only` ユーティリティを用いる。a11y 補助の基盤コンポーネントとして、icon-only Button の補助ラベル / フォームラベルの省略 / aria-live 通知エリア / Modal close button の代替テキストなどで多用される。
+
+`as` で `span` / `div` / `p` / `label` のタグを切替可能。`as="label"` の場合は `htmlFor` で input と結べる。
+
+---
+
+## Props
+
+下表は VisuallyHidden.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={VisuallyHiddenStories.Playground} />
+
+詳細: [Screen Readers 原則](?path=/docs/principles-foundation-accessibility-screen-readers--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="icon-only な UI には SR 補助テキストを必ず付ける"
+  doExample={
+    <Button variant="tertiary">
+      <Icon name="favorite" />
+      <VisuallyHidden>お気に入りに追加</VisuallyHidden>
+    </Button>
+  }
+  doCaption="アイコンだけのボタンに VisuallyHidden で SR テキストを置くと、視覚ユーザーと SR ユーザーの両方に同じ情報が届く (Button iconOnly の aria-label と等価)。"
+  dontExample={
+    <Button variant="tertiary">
+      <Icon name="favorite" />
+    </Button>
+  }
+  dontCaption="アイコンだけだと SR ユーザーには「ボタン」としか読まれず、何のボタンか分からない。"
+/>
+
+<DoDontExample
+  label="display:none ではなく VisuallyHidden を使う"
+  doExample={
+    <p className="text-sm">
+      <VisuallyHidden>必須項目: </VisuallyHidden>
+      <span className="text-onSurface-error">*</span> メールアドレス
+    </p>
+  }
+  doCaption="`*` の意味 (必須) を VisuallyHidden で SR に伝える。視覚的には記号のみ、SR には「必須項目」が読まれる。"
+  dontExample={
+    <p className="text-sm">
+      <span className="hidden">必須項目: </span>
+      <span className="text-onSurface-error">*</span> メールアドレス
+    </p>
+  }
+  dontCaption="display:none は DOM とアクセシビリティツリー両方から消えるため SR に読まれない。VisuallyHidden は SR には残す。"
+/>
+
+<DoDontExample
+  label="aria-live で動的通知を SR に伝える"
+  doExample={
+    <VisuallyHidden role="status" aria-live="polite">
+      保存しました
+    </VisuallyHidden>
+  }
+  doCaption="状態変化の通知 (保存完了等) を視覚 Toast と並行して SR にも伝える。`role='status'` + `aria-live='polite'` で適切なタイミングで読まれる。"
+  dontExample={
+    <p className="hidden">保存しました</p>
+  }
+  dontCaption="`hidden` は SR からも見えないため通知が伝わらない。VisuallyHidden + aria-live が正しい方法。"
+/>
+
+<DoDontExample
+  label="充分な情報を持つ箇所には冗長付与しない"
+  doExample={
+    <Button>保存する</Button>
+  }
+  doCaption="ボタンに既に「保存する」のテキストがあれば、VisuallyHidden の追加は不要。SR ユーザーには「保存する、ボタン」と読まれる。"
+  dontExample={
+    <Button>
+      保存する
+      <VisuallyHidden>これは保存ボタンです</VisuallyHidden>
+    </Button>
+  }
+  dontCaption="既に明確なテキストがある箇所に補助を足すと「保存する、これは保存ボタンです、ボタン」と冗長に読まれて SR ユーザーが疲れる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| icon-only Button | `<Button iconOnly icon={...} aria-label="...">` | Button の専用 API で型レベルに aria-label を必須化 |
+| 視覚的にも見せたいが目立たせない | `<Typography color="muted">` | SR から消す必要がなければ通常の text |
+| 完全に DOM から消す | `display: none` / `hidden` 属性 | アクセシビリティツリーからも消したいなら専用 CSS |
+| Tooltip 風の追加説明 | (将来) `<Tooltip>` / `aria-describedby` | 補助情報を視覚的にも表示するなら Tooltip |
+
+---
+
+## アクセシビリティ
+
+- **`sr-only` クラス**: 視覚的には完全非表示 (1px サイズ + overflow:hidden + clip-path) だが、DOM とアクセシビリティツリーには残る
+- **`display: none` との違い**: display:none は両方から消えるため SR にも読まれない。VisuallyHidden は SR にだけ届く
+- **`hidden` 属性との違い**: hidden 属性も両方から消す。同様に VisuallyHidden が正解
+- **`as="label"` + `htmlFor`**: フォーム入力欄と紐づける場合に使う。視覚的には placeholder で代替する場面で有効
+- **`role="status"` + `aria-live="polite"`**: 動的通知に使う。VisuallyHidden は live region の親コンテナとして好相性
+- **冗長付与を避ける**: 既に SR にも読まれる情報がある箇所には VisuallyHidden を足さない
+
+関連: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。VisuallyHidden は単独で完結する Primitive (Tailwind `sr-only` 1 クラスのみ)。
+
+### VisuallyHidden を内部で使う代表的なコンポーネント
+
+- `<Spinner>` の `.sr-only` 補助テキスト (Spinner 内部実装で同等パターン)
+- `<Label>` の `*` (必須) マーク補助
+- (将来) Toast / Notification 系の aria-live announce

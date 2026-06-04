@@ -122,16 +122,10 @@
   text-decoration: none;
 }
 
-/* 本リポの <Link> コンポーネント — Storybook の .sbdocs a 標準スタイル (下線) を
-   Link 自身の underline ユーティリティ (no-underline / underline) と協調させるため、
-   text-decoration だけ inherit にリセット。
-   color は Link 側で `!text-onSurface-*` (!important utility) で勝たせる。
-   sbdocs 環境専用の干渉吸収であり、`!` の使用は Link.tsx 側の意図的選択。 */
-.sbdocs a[data-ds-link],
-.sbdocs a[data-ds-link]:hover,
-.sbdocs a[data-ds-link]:visited {
-  text-decoration: inherit;
-}
+/* 本リポの <Link> コンポーネント — Storybook の .sbdocs a 標準スタイル
+   (color: 青 / text-decoration: underline) との干渉は Link.tsx 側で
+   `!text-onSurface-*` + `!underline` / `!no-underline` (!important utility) で
+   勝たせる方針。sbdocs 環境専用の CSS は不要 (このコメントだけ残す)。 */
 
 /* ── Guideline ページの見出し・余白調整 ── */
 /* `---` (hr) によるセクション罫線を非表示にしてメリハリを余白で出す。

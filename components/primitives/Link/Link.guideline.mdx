@@ -1,107 +1,133 @@
-import { Meta } from '@storybook/addon-docs/blocks';
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as LinkStories from './Link.stories';
+import { Link } from './Link';
+import { Button } from '../Button';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
-<Meta title="Primitives/Link/Guideline" />
+{/*
+  Meta of={LinkStories} で Link.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Link.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={LinkStories} name="Guideline" />
 
-# Link — Guideline
+# Link
 
-Props 表 / コード例 / 状態の見え方は **Docs (autodocs)** と **Stories タブ** を参照。
-本ページは「なぜそう作るか」「いつどう使い分けるか」を扱う設計の指針。
-
----
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
 
 ## 概要
 
-`<a>` 要素のラッパー。**遷移を伴う操作** に使う。
-外部リンク時の `rel="noopener noreferrer"` / `target="_blank"` / 外部アイコン / `aria-disabled` を自動付与する。
+`<a>` 要素のラッパー。**押すと URL に遷移する** 操作に使う。外部リンクの `target="_blank"` / `rel="noopener noreferrer"` / 外部アイコン / `aria-disabled` を自動で付与する。遷移を伴わないアクション (送信・保存・削除等) には `<Button>` を使う。
 
 ---
 
-## 使うとき
+## Props
 
-押下時に **URL に遷移** する場面に使う。代表シーンと組合せの手本:
+下表は Link.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
 
-### 本文中の参照
+<ArgTypes of={LinkStories.Playground} />
 
-`color="primary"` + `underline="hover"` (デフォルト) で本文と区別。リンクテキストは「こちら」を避け、遷移先が分かる言葉にする。
-
-```
-詳細は<Link href="/docs">公式ドキュメント</Link>を参照してください。
-```
-
-### グローバルナビゲーション
-
-`color="neutral"` + `underline="none"` で周辺と馴染ませ、hover / focus でフィードバック。
-
-```
-[ ホーム | サービス | 料金 | 会社概要 | お問い合わせ ]
-```
-
-### 外部サイトへの誘導
-
-`external` を立てると `target=_blank` + `rel` + 末尾アイコンが付く。「外部リンクであること」をユーザーに事前に伝えられる。
-
-```tsx
-<Link href="https://example.com" external>公式ドキュメント</Link>
-  → 「公式ドキュメント ↗」
-```
-
-### フッターの規約リンク
-
-`color="muted"` + `underline="hover"` で控えめに。利用規約 / プライバシーポリシー等。
-
-### 「もっと見る」 (カード末尾)
-
-`color="primary"` で詳細ページへ遷移。Card 内のテキストとセットで使う。
+詳細: [Screen Readers 原則](?path=/docs/principles-foundation-accessibility-screen-readers--docs) / [Keyboard Navigation 原則](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)
 
 ---
 
-## 使わないとき
+## Do / Don't
 
-遷移以外の挙動が要る場面では、別コンポーネントを使う:
+<DoDontExample
+  label="リンクテキストは遷移先が分かる言葉にする"
+  doExample={
+    <p className="text-base leading-relaxed">
+      詳細は <Link href="#">利用規約</Link> を参照してください。
+    </p>
+  }
+  doCaption="動詞や具体名で書くと、SR の「リンク一覧」機能でも意味が取れる。"
+  dontExample={
+    <p className="text-base leading-relaxed">
+      詳細は <Link href="#">こちら</Link> を参照してください。
+    </p>
+  }
+  dontCaption="「こちら」「クリック」は文脈依存で、リンクだけを SR が読んだとき何に飛ぶか分からない。"
+/>
 
-| やろうとすること | 理由 | 使うべき別コンポーネント |
+<DoDontExample
+  label="ナビゲーションは color='neutral' で本文と区別する"
+  doExample={
+    <nav className="flex gap-6">
+      <Link href="#" color="neutral" underline="none">ホーム</Link>
+      <Link href="#" color="neutral" underline="none">サービス</Link>
+      <Link href="#" color="neutral" underline="none">会社概要</Link>
+    </nav>
+  }
+  doCaption="ナビゲーションは周辺と馴染ませて全体を読みやすく。hover で feedback を出す。"
+  dontExample={
+    <nav className="flex gap-6">
+      <Link href="#" color="primary">ホーム</Link>
+      <Link href="#" color="primary">サービス</Link>
+      <Link href="#" color="primary">会社概要</Link>
+    </nav>
+  }
+  dontCaption="primary はメインの CTA を示す色。ナビゲーション全部を主張色にすると優先度が消える。"
+/>
+
+<DoDontExample
+  label="外部リンクは external prop で予告する"
+  doExample={<Link href="https://example.com" external>公式ドキュメント</Link>}
+  doCaption="external で target=_blank + rel + 末尾アイコンが自動付与。ユーザーに「新タブが開く」を事前に伝えられる。"
+  dontExample={<Link href="https://example.com" target="_blank">公式ドキュメント</Link>}
+  dontCaption="自前で target を付けても rel='noopener' / 外部アイコン / SR 用 aria-label が付かず、タブナビゲーション攻撃の余地と UX の事前予告が抜ける。"
+/>
+
+<DoDontExample
+  label="色だけで区別せず、本文中のリンクは underline も併用する"
+  doExample={
+    <p className="text-base leading-relaxed">
+      お問合せは <Link href="#" underline="hover">サポート窓口</Link> までご連絡ください。
+    </p>
+  }
+  doCaption="hover で下線、色覚特性に依存しない冗長な手がかりを提供する。"
+  dontExample={
+    <p className="text-base leading-relaxed">
+      お問合せは <Link href="#" underline="none">サポート窓口</Link> までご連絡ください。
+    </p>
+  }
+  dontCaption="色だけだと、色覚多様性のあるユーザーや暗い画面ではリンクと気付けない。"
+/>
+
+<DoDontExample
+  label="遷移以外のアクションには Button を使う"
+  doExample={
+    <div className="flex items-center gap-3">
+      <Link href="#/profile">プロフィールへ</Link>
+      <Button>保存する</Button>
+    </div>
+  }
+  doCaption="URL を持つ操作は Link、その場で実行する操作は Button。SR の役割 (link / button) も適切に分かれる。"
+  dontExample={
+    <div className="flex items-center gap-3">
+      <Link href="#">保存する</Link>
+    </div>
+  }
+  dontCaption="アクションを Link で表現すると、SR が「リンク」と読み上げて遷移と誤解される。右クリックで「新タブで開く」も無意味。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+「これは Link じゃないかも?」と迷ったときは下の表で目的に合うコンポーネントを探す:
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| 押すと **アクションが実行** される (保存・送信・削除) | URL を持たない操作はボタン | `<Button>` |
-| **タブ切替** で URL は変えない | URL を変えないなら Tabs | `<Tabs>` |
-| **モーダル / Drawer を開く** | URL を持たないなら Button | `<Button>` + onClick |
-| 単なる **テキスト装飾** (色付け / 強調) | リンクは "押せる" 期待を生む | `<Typography>` 等 |
-
----
-
-## color / underline の使い分け
-
-### color
-
-| color | 用途 |
-|---|---|
-| `primary` | 主要リンク / 本文中の参照 / CTA リンク |
-| `neutral` | ナビゲーション / 見出し近くのリンク |
-| `muted` | フッター / 規約 / 補足リンク |
-
-### underline
-
-| underline | 用途 |
-|---|---|
-| `always` | 本文中のリンク (リンクと即座に分かる) |
-| `hover` | ボタン的なリンク / 本文中の標準 |
-| `none` | ナビゲーション / 周辺と区別が付く場合のみ |
-
-a11y 観点: 色だけで区別できない場合 (色覚多様性) は `underline` を有効にする。
-
----
-
-## 利用ガイド
-
-### 守ること (NG パターン)
-
-| やりがちな誤り | 問題 | 正しいやり方 |
-|---|---|---|
-| 「こちら」「クリック」のような非説明的リンクテキスト | SR のリンク一覧で意味が取れない | 遷移先が伝わる文言にする (「利用規約」「公式ドキュメント」) |
-| 色だけでリンクを示す (下線なし + 本文と同色) | リンクと気付かれない | `color` で区別、または `underline` を `always`/`hover` に |
-| `target="_blank"` の予告なし | 突然新タブが開いて混乱 | `external` で末尾アイコン表示し予告 |
-| 外部リンクで `rel="noopener"` 省略 | タブナビゲーション攻撃 / 性能影響 | 本コンポーネントは `external` で自動付与 |
-| ナビゲーションリンクに `<button>` タグ | SEO / OS 機能 (右クリック新タブ) が効かない | 必ず `<Link>` |
-| `<a>` を直書き | a11y / 外部リンク安全策の取りこぼし | 必ず `<Link>` でラップ |
+| 押すと **アクションが実行** される (保存・送信・削除) | `<Button>` | URL を持たない操作はボタン。SR の役割も `button` |
+| **タブ切替** で URL を変えない | `<Tabs>` | URL を変えないなら「選択」のコントロール |
+| **モーダル / Drawer を開く** | `<Button>` + onClick | URL を持たないなら Button |
+| 単なる **テキストの色付け** | `<Typography>` 等 | Link は "押せる" 期待を生むので装飾用には使わない |
+| **階層ナビゲーション** | `<Breadcrumb>` | 内部で Link を使う専用コンポーネント |
+| **ページ番号遷移** | `<Pagination>` | 内部で Link を使う専用コンポーネント |
 
 ---
 
@@ -109,10 +135,11 @@ a11y 観点: 色だけで区別できない場合 (色覚多様性) は `underli
 
 - **`<a href>`**: ネイティブ要素を使うので SR / OS 機能 (右クリック新タブ等) がフル機能
 - **`disabled`**: `aria-disabled="true"` + `href` 削除でフォーカス移動を防ぐ
-- **外部リンク**: `rel="noopener noreferrer"` を自動付与 (タブナビゲーション攻撃の防止)
-- **外部アイコン**: `aria-label="外部リンク"` 付きでアイコン化、SR にも伝達
+- **外部リンク**: `rel="noopener noreferrer"` を自動付与 (タブナビゲーション攻撃 / 性能影響の防止)
+- **外部アイコン**: `aria-label="外部リンク"` 付きで描画、SR にも「外部リンク」が伝わる
 - **フォーカス可視化**: `focus-visible:ring-2` でキーボード操作を明示
-- **リンクテキスト**: 「こちら」を避け、遷移先が分かる言葉に (SR の「リンク一覧」機能で意味が取れる)
+- **リンクテキスト**: 「こちら」「クリック」を避け、遷移先が分かる言葉に (SR の「リンク一覧」機能で意味が取れる)
+- **色覚多様性**: `underline="none"` は周辺と区別が付くナビゲーション等に限定。本文中は `underline="always"` か `hover` を使う
 
 関連: [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs) / [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs)
 
@@ -120,7 +147,6 @@ a11y 観点: 色だけで区別できない場合 (色覚多様性) は `underli
 
 ## 関連
 
-- [Button](../Button/) — アクション (遷移以外) には Button
-- [Typography](../Typography/) — 本文中の Link は Typography と組み合わせて使う
-- [Breadcrumb](../../composites/Breadcrumb/) — 階層ナビゲーションは内部で Link を使う
-- [Pagination](../../composites/Pagination/) — ページ遷移は Pagination
+### 内部で利用するコンポーネント
+
+- `<Icon>` — `external` 時の外部リンクアイコン (`open_in_new`) を内部で描画

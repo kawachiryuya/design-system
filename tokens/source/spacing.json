@@ -4,6 +4,10 @@
       "value": "0px",
       "type": "dimension"
     },
+    "0.5": {
+      "value": "2px",
+      "type": "dimension"
+    },
     "1": {
       "value": "4px",
       "type": "dimension"

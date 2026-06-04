@@ -24,9 +24,9 @@
         "description": "モーダルオーバーレイ"
       },
       "primary": {
-        "value": "{color.primary.600}",
+        "value": "{color.primary.700}",
         "type": "color",
-        "description": "主要アクション（Primaryボタン等）"
+        "description": "主要アクション（Primaryボタン等）。WCAG AA (白文字 6.19:1) を満たすため primary.700 を使用。"
       },
       "secondary": {
         "value": "{color.primary.50}",
@@ -111,9 +111,9 @@
         "description": "最も控えめなテキスト"
       },
       "primary": {
-        "value": "{color.primary.600}",
+        "value": "{color.primary.700}",
         "type": "color",
-        "description": "リンク・CTA"
+        "description": "リンク・CTA。白背景に対して WCAG AA (6.19:1) を満たすため primary.700 を使用。"
       },
       "success": {
         "value": "{color.success.700}",
@@ -163,14 +163,14 @@
         "description": "強調ボーダー"
       },
       "focus": {
-        "value": "{color.primary.600}",
+        "value": "{color.primary.700}",
         "type": "color",
-        "description": "フォーカスリング"
+        "description": "フォーカスリング (primary と視覚統一)"
       },
       "primary": {
-        "value": "{color.primary.600}",
+        "value": "{color.primary.700}",
         "type": "color",
-        "description": "選択・アクティブ枠"
+        "description": "選択・アクティブ枠 (primary と視覚統一)"
       },
       "error": {
         "value": "{color.error.600}",
@@ -235,14 +235,14 @@
         "description": "ドラッグ中オーバーレイ（中性）"
       },
       "hover-on-primary": {
-        "value": "rgba(0, 137, 101, 0.08)",
+        "value": "rgba(0, 111, 80, 0.08)",
         "type": "color",
-        "description": "白系背景に primary 色味で重ねるホバー（secondary ボタン等）"
+        "description": "白系背景に primary (primary.700) 色味で重ねるホバー（secondary ボタン等）"
       },
       "active-on-primary": {
-        "value": "rgba(0, 137, 101, 0.12)",
+        "value": "rgba(0, 111, 80, 0.12)",
         "type": "color",
-        "description": "白系背景に primary 色味で重ねるアクティブ"
+        "description": "白系背景に primary (primary.700) 色味で重ねるアクティブ"
       },
       "hover-on-error": {
         "value": "rgba(193, 59, 59, 0.08)",

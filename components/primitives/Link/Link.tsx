@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 import { Icon } from '../Icon';
 
 /** Link のテキストサイズ */
@@ -76,6 +77,71 @@ export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorEle
 }
 
 /**
+ * Link のスタイル定義 — `tailwind-variants` で variant マップを宣言的に保持。
+ *
+ * - base: 全 color/size 共通 (フォーカスリング / トランジション)
+ * - variants.color: 文字色 + hover/active overlay
+ *   primary は `--color-state-hover-on-primary` で薄緑、neutral/muted は中性 overlay
+ * - variants.size: text-size のみ
+ * - variants.underline: 下線の表示タイミング
+ * - variants.disabled: 操作不能化 (opacity + pointer-events)
+ *
+ * ## なぜ text 色に `!` (Tailwind important) を付けているか
+ * Storybook docs 環境の `.sbdocs a` 標準スタイル (specificity 0,1,1) が
+ * Tailwind text utility (0,1,0) に勝ってしまうため、Link がどの環境でも
+ * 自身の色を保証する意図的な ! 付与。data-ds-link 属性で CSS リセット併用。
+ */
+const linkVariants = tv({
+  base: [
+    'inline-flex',
+    'items-center',
+    'gap-1',
+    'rounded-xs',
+    // ホバー領域をテキストの周辺まで少し広げる (横 4px / 縦 2px)。
+    // 縦を 2px に抑えるのは、段落内インラインで行間が広がりすぎないため。
+    'px-1',
+    'py-0.5',
+    'transition-colors',
+    'duration-normal',
+    'focus:outline-none',
+    'focus-visible:ring-2',
+    'focus-visible:ring-border-focus',
+    'focus-visible:ring-offset-1',
+  ],
+  variants: {
+    color: {
+      primary: '!text-onSurface-primary hover:bg-state-hover-on-primary active:bg-state-active-on-primary',
+      neutral: '!text-onSurface hover:bg-state-hover active:bg-state-active',
+      muted:   '!text-onSurface-muted hover:bg-state-hover active:bg-state-active',
+    },
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg',
+    },
+    // text-decoration 系は `!important` (`!underline` / `!no-underline`) で勝たせる。
+    // Storybook docs の `.sbdocs a` 標準スタイル (specificity 0,1,1) が Tailwind の
+    // text-decoration ユーティリティ (0,1,0) に勝ってしまうのを上書きするため。
+    // color の `!text-onSurface-*` と同じ意図的コスト。
+    underline: {
+      always: '!underline underline-offset-2',
+      hover: '!no-underline hover:!underline hover:underline-offset-2',
+      none: '!no-underline',
+    },
+    disabled: {
+      true: 'opacity-40 cursor-not-allowed pointer-events-none',
+      false: 'cursor-pointer',
+    },
+  },
+  defaultVariants: {
+    color: 'primary',
+    size: 'md',
+    underline: 'hover',
+    disabled: false,
+  },
+});
+
+/**
  * Link — Atomic Design: Atom
  *
  * @see LinkProps for usage examples.
@@ -85,70 +151,17 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     {
       href,
       external = false,
-      size = 'md',
-      color = 'primary',
-      underline = 'hover',
+      size,
+      color,
+      underline,
       disabled = false,
       children,
-      className = '',
+      className,
       onClick,
       ...props
     },
     ref
   ) => {
-    const sizeStyles = {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
-    };
-
-    // hover/active の背景オーバーレイは color と組で持つ:
-    // - primary (緑文字) → 薄緑 overlay (色味を合わせる)
-    // - neutral / muted → 中性 (黒) overlay
-    //
-    // 注: text 色に `!` (Tailwind important) を付けるのは、Storybook docs 環境の
-    // `.sbdocs a` 標準スタイル (specificity 0,1,1) が Tailwind text utility
-    // (0,1,0) に勝ってしまうのを上書きするため。Link がどの環境でも自身の色を
-    // 保証するための意図的なコスト。
-    const colorStyles = {
-      primary: '!text-onSurface-primary hover:bg-state-hover-on-primary active:bg-state-active-on-primary',
-      neutral: '!text-onSurface hover:bg-state-hover active:bg-state-active',
-      muted:   '!text-onSurface-muted hover:bg-state-hover active:bg-state-active',
-    };
-
-    const underlineStyles = {
-      always: 'underline underline-offset-2',
-      hover: 'no-underline hover:underline hover:underline-offset-2',
-      none: 'no-underline',
-    };
-
-    const baseStyles = [
-      'inline-flex',
-      'items-center',
-      'gap-1',
-      'rounded-xs',
-      'transition-colors',
-      'duration-normal',
-      // hover/active 背景は colorStyles 側で color に応じて変える
-      'focus:outline-none',
-      'focus-visible:ring-2',
-      'focus-visible:ring-border-focus',
-      'focus-visible:ring-offset-1',
-    ];
-
-    const disabledStyles = disabled
-      ? ['opacity-40', 'cursor-not-allowed', 'pointer-events-none']
-      : ['cursor-pointer'];
-
-    const classes = [
-      ...baseStyles,
-      sizeStyles[size],
-      colorStyles[color],
-      underlineStyles[underline],
-      ...disabledStyles,
-      className,
-    ].join(' ');
-
     const externalProps = external
       ? { target: '_blank', rel: 'noopener noreferrer' }
       : {};
@@ -170,7 +183,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         data-ds-link="true"
         href={disabled ? undefined : href}
         aria-disabled={disabled || undefined}
-        className={classes}
+        className={linkVariants({ color, size, underline, disabled, className })}
         onClick={handleClick}
         {...externalProps}
         {...props}

@@ -1,8 +1,8 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, fn } from 'storybook/test';
 import { Button } from './Button';
 import { Icon } from '../Icon';
+import { Caption } from '@sb-blocks/Caption';
 
 /**
  * Button stories — 標準ストーリー構造に準拠
@@ -217,10 +217,3 @@ export const EdgeCases: Story = {
   ),
 };
 
-// ── 補助コンポーネント (Story render 内専用、States/EdgeCases で各サブ例にキャプションを添える) ──
-const Caption: React.FC<{ text: string; children: React.ReactNode }> = ({ text, children }) => (
-  <div className="flex flex-col gap-1 items-start">
-    <span className="text-xs text-onSurface-muted">{text}</span>
-    {children}
-  </div>
-);

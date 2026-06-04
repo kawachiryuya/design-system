@@ -1,4 +1,5 @@
 import React from 'react';
+import { tv } from 'tailwind-variants';
 import { Label } from '../Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
@@ -18,6 +19,10 @@ interface TextareaBaseProps {
   maxLength?: number;
   /**
    * リサイズ挙動。
+   * - `none` 固定サイズ
+   * - `vertical` 縦のみ (デフォルト、ユーザーが自由に高さ調整)
+   * - `horizontal` 横のみ
+   * - `both` 両方向
    * @default 'vertical'
    */
   resize?: TextareaResize;
@@ -89,6 +94,53 @@ type _InternalTextareaProps = TextareaBaseProps & {
 } & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 /**
+ * Textarea のスタイル定義 — `tailwind-variants` で error × fullWidth × resize × disabled を
+ * 宣言的に保持。Input と同じ borderr/focus パターンだが、高さは rows 属性で制御するため
+ * size variant は持たない。
+ */
+const textareaVariants = tv({
+  base: [
+    'block',
+    'rounded-xs',
+    'border',
+    'text-onSurface',
+    'placeholder:text-onSurface-muted',
+    'px-3',
+    'py-2',
+    'text-base',
+    'leading-normal',
+    'transition-all',
+    'duration-normal',
+    'focus:outline-none',
+    // focus-visible: は input/textarea で UA heuristic により click focus でも常に match。
+    // pseudo-states addon の focusVisible と整合し、modern a11y best practice にも沿う。
+    'focus-visible:ring-2',
+    'focus-visible:ring-offset-0',
+  ],
+  variants: {
+    error: {
+      true:  'border-border-error focus-visible:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus-visible:border-border-focus focus-visible:ring-border-focus bg-surface',
+    },
+    fullWidth: {
+      true:  'w-full',
+      false: '',
+    },
+    resize: {
+      none:       'resize-none',
+      vertical:   'resize-y',
+      horizontal: 'resize-x',
+      both:       'resize',
+    },
+    disabled: {
+      true:  'opacity-50 cursor-not-allowed bg-surface-disabled',
+      false: '',
+    },
+  },
+  defaultVariants: { error: false, fullWidth: false, resize: 'vertical', disabled: false },
+});
+
+/**
  * Textarea — Atomic Design: Atom
  *
  * @see TextareaProps for usage examples.
@@ -107,48 +159,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       disabled,
       required,
       id,
-      className = '',
+      className,
       ...rest
     } = props as _InternalTextareaProps;
 
     const textareaId = id || (label ? `textarea-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
     const errorId = textareaId ? `${textareaId}-error` : undefined;
-    const helpId = textareaId ? `${textareaId}-help` : undefined;
-
-    const resizeClass = {
-      none: 'resize-none',
-      vertical: 'resize-y',
-      horizontal: 'resize-x',
-      both: 'resize',
-    }[resize];
-
-    const stateStyles = error
-      ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted'
-      : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
-
-    const textareaClasses = [
-      'block',
-      'rounded-xs',
-      'border',
-      'text-onSurface',
-      'placeholder:text-onSurface-muted',
-      'px-3',
-      'py-2',
-      'text-base',
-      'leading-normal',
-      'transition-all',
-      'duration-normal',
-      'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-offset-0',
-      disabled ? 'opacity-50 cursor-not-allowed bg-surface-disabled' : '',
-      fullWidth ? 'w-full' : '',
-      resizeClass,
-      stateStyles,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+    const helpId  = textareaId ? `${textareaId}-help`  : undefined;
 
     const describedBy = [
       error && errorId ? errorId : null,
@@ -183,7 +200,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           aria-invalid={error || undefined}
           aria-required={required || undefined}
           aria-describedby={describedBy}
-          className={textareaClasses}
+          className={textareaVariants({ error, fullWidth, resize, disabled, className })}
           {...rest}
         />
         <FormMessage

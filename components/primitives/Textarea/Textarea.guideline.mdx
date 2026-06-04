@@ -1,0 +1,140 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TextareaStories from './Textarea.stories';
+import { Textarea } from './Textarea';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={TextareaStories} で Textarea.stories.tsx の Docs ページ本体として
+  この mdx を使用する。Textarea.stories.tsx 側で tags: ['autodocs'] を付けないこと。
+*/}
+<Meta of={TextareaStories} name="Guideline" />
+
+# Textarea
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+複数行のテキスト入力を受け付けるフォームコンポーネント。Input と同じ **ラベル / ヘルプテキスト / エラーメッセージの一体管理** + `error` + `errorMessage` の discriminated union による型レベル必須化 を踏襲しつつ、Textarea 固有の **文字数カウンター** (maxLength + currentLength) と **リサイズ挙動** (none/vertical/horizontal/both) を追加で持つ。
+
+長文入力 (コメント・要望・記事本文等) で使う。1 行で十分な場合は **Input** を選ぶ。
+
+---
+
+## Props
+
+下表は Textarea.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={TextareaStories.Playground} />
+
+詳細: [Forms 原則](?path=/docs/principles-patterns-forms--docs) / [Inline Validation 原則](?path=/docs/principles-interaction-feedback-inline-validation--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="長文入力には Textarea (1 行で十分なら Input)"
+  doExample={
+    <Textarea label="ご意見・ご要望" rows={4} placeholder="詳しくお聞かせください" />
+  }
+  doCaption="複数行を想定する入力 (コメント・要望・自己紹介等) は Textarea。改行を含む内容を自然に書ける。"
+  dontExample={
+    <Textarea label="お名前" rows={1} placeholder="例: 山田 花子" />
+  }
+  dontCaption="1 行で十分な入力 (氏名・メール・タイトル等) に Textarea を使うと、ユーザーが「ここは長く書く欄」と誤認する。1 行は Input を使う。"
+/>
+
+<DoDontExample
+  label="文字数制限がある場合は maxLength + counter で予告する"
+  doExample={
+    <Textarea label="自己紹介 (200 文字以内)" rows={3} maxLength={200} currentLength={45} defaultValue={"A".repeat(45)} onChange={() => {}} />
+  }
+  doCaption="maxLength + currentLength でカウンターを表示。ユーザーは残り文字数を把握しながら書ける。上限到達でカウンターが赤+太字になり明示。"
+  dontExample={
+    <Textarea label="自己紹介" rows={3} maxLength={200} defaultValue={"A".repeat(200)} onChange={() => {}} />
+  }
+  dontCaption="maxLength だけ指定して counter (currentLength) を渡さないと、ユーザーは何文字まで書けるか分からないまま打ち切られて困惑する。"
+/>
+
+<DoDontExample
+  label="エラーは error + errorMessage を型レベルでセット指定する"
+  doExample={
+    <Textarea label="お問い合わせ内容" error errorMessage="50 文字以上で詳しくご記入ください" defaultValue="壊れた" rows={3} />
+  }
+  doCaption="`error` を立てると `errorMessage` が型レベルで必須 (discriminated union)。aria-invalid + aria-describedby + role='alert' が自動連携し、SR がエラーを即時読み上げる。"
+  dontExample={
+    <Textarea label="お問い合わせ内容" defaultValue="壊れた" rows={3} className="!border-error-500 !bg-error-50" />
+  }
+  dontCaption="自前 className で枠を赤くしても aria 属性が立たず、SR ユーザーや色覚多様性のあるユーザーにエラーが伝わらない。"
+/>
+
+<DoDontExample
+  label="resize はデフォルト (vertical) を尊重する"
+  doExample={
+    <Textarea label="本文" resize="vertical" placeholder="ユーザーが必要に応じて縦に広げられる" rows={3} />
+  }
+  doCaption="vertical (デフォルト) はユーザーが内容に応じて縦に広げられる。Webform の事実上の標準。"
+  dontExample={
+    <Textarea label="本文" resize="none" placeholder="固定サイズ" rows={2} />
+  }
+  dontCaption="resize=none は固定サイズが必須な特殊ケース (チャット入力欄等) でのみ。一般フォームで使うと長文入力時にスクロールバーが内側に出て使いづらい。"
+/>
+
+<DoDontExample
+  label="placeholder ではなくラベルを優先する (Input と同じ規約)"
+  doExample={
+    <Textarea label="ご意見" placeholder="例: 〇〇について教えてください" rows={3} />
+  }
+  doCaption="label を必ず指定 + placeholder は補助的なヒントとして。入力後もラベルが残るので何の欄か常に分かる。"
+  dontExample={
+    <Textarea placeholder="ご意見" rows={3} />
+  }
+  dontCaption="placeholder だけだと、入力を始めるとラベルが消えて何の欄か分からなくなる。SR もラベルを読まない。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 1 行のテキスト入力 | `<Input>` | 改行不要な短い入力は Input |
+| リッチテキスト編集 (太字・リンク等) | (将来) `<RichTextEditor>` | プレーンテキスト以上の編集は別パターン |
+| Markdown プレビュー付き | (将来) `<MarkdownEditor>` | Textarea + プレビューパネルの組合せは別 UI |
+| コードエディタ | Monaco / CodeMirror 等の外部ライブラリ | シンタックスハイライト等はデザインシステムの範疇外 |
+
+---
+
+## アクセシビリティ
+
+- **`<label htmlFor>` 自動連携**: `label` prop 指定で自動。クリックでフォーカス、SR がラベルを読む
+- **`aria-required`**: `required` 時に自動付与
+- **`aria-invalid`**: `error: true` 時に自動付与
+- **`aria-describedby`**: `errorMessage` または `helpText` の id と自動関連付け
+- **`role="alert"`** (FormMessage 内部): エラーメッセージ表示時に SR が即時通知
+- **キーボード**: `Tab` でフォーカス、`Shift+Enter` / `Enter` で改行 (Enter は送信に取られない)
+- **文字数カウンター**: 視覚的に表示。上限超過で赤+太字 + SR には errorMessage で明示通知
+- **placeholder 色**: `text-onSurface-muted` (#737373) で AA 4.69:1 を満たす
+
+関連: [Inline Validation](?path=/docs/principles-interaction-feedback-inline-validation--docs) / [Forms](?path=/docs/principles-patterns-forms--docs) / [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- `<Label>` — ラベル描画 + required `*` マーク + disabled 連動 (Input と共通)
+- `<FormMessage>` (内部 `_internal/`) — helpText / errorMessage の表示と aria 関連付けを統括
+
+### Textarea と組合せて使う代表的なコンポーネント
+
+- `<Input>` — 同じフォーム内の単行入力 (氏名・メール等)
+- `<Button>` — フォーム送信ボタン
+- `<Checkbox>` — 同意事項などのフラグ

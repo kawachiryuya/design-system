@@ -491,3 +491,40 @@ http://localhost:6006 で目視確認:
 | MDX で `<DoDontExample>` が `Cannot resolve module` | `@sb-blocks/*` alias が読まれていない → Storybook を再起動 (`main.ts` 変更後は必須) |
 | Props 表の Default 列が消えない | sbdocs の CSS 上書きが効いていない → `.storybook/tailwind.css` の `.docblock-argstable` ルールを確認 |
 | `truncate` が効かない (ellipsis 出ない) | flex 子に `min-width: 0` がない → `<ComponentName><span className="min-w-0 truncate">long text</span></ComponentName>` の inner span パターンを使う |
+
+---
+
+## 11. Semver 規約
+
+本リポは [Semantic Versioning](https://semver.org/lang/ja/) に従い、変更は必ず [`CHANGELOG.md`](./CHANGELOG.md) に記録する。下流 product に **silent break (型では catch されない壊れ方)** を起こさないため、Tailwind class / Storybook URL / token CSS 変数の rename・削除も BREAKING として扱う。
+
+### 11-1. MAJOR / MINOR / PATCH の判定基準
+
+| 種別 | 例 |
+|---|---|
+| **MAJOR** (破壊的変更) | コンポーネント Props の型変更・rename・削除 / 既存 variant・size・color 値の削除 / semantic token の rename・削除 / Tailwind ユーティリティ class の rename・削除 (silent break) / コンポーネントの path 移動 (`primitives/` ↔ `composites/`) / Storybook story id の rename (URL リンク壊れ、silent break) / primary token の色相変更 (visual break、silent) |
+| **MINOR** (後方互換ある追加) | 新コンポーネント追加 / 既存コンポーネントに optional prop / 新 variant・size・color の追加 / 新 semantic token / 新 Tailwind ユーティリティ |
+| **PATCH** (修正・互換維持) | バグ修正 / a11y 修正で見た目同等 / 内部実装の refactor / Storybook story の追加・節内補強 (story id は維持) / docs/guideline 修正 |
+
+### 11-2. silent break 警告
+
+下記は **型で catch されない** ため、利用箇所を grep で機械的に洗い出せない:
+
+- Tailwind utility class (`text-onSurface-xxx` 等) — 文字列扱いのため TS は通る
+- CSS 変数 (`var(--color-xxx)`) — CSS 内・style 属性
+- Storybook URL (`?path=/story/...--xxx`) — 外部ドキュメント・Slack 等に貼られる
+- visual change (色相・余白の微調整) — テストではほぼ拾えない
+
+これらに該当する変更は、コミット時点で [`CHANGELOG.md`](./CHANGELOG.md) の **⚠ BREAKING CHANGES** に明記し、可能なら Migration notes に **置換用 sed コマンド or codemod 例** を添える。
+
+### 11-3. CHANGELOG 更新手順
+
+1. PR 単位で `[Unreleased]` セクションに追記 (`Added` / `Changed` / `Removed` / `Fixed` / `⚠ BREAKING CHANGES` のいずれかに振り分け)
+2. リリース時に `[Unreleased]` を `[x.y.z] - YYYY-MM-DD` に確定、`package.json` の `version` も同期
+3. 末尾のリンク参照を更新
+
+### 11-4. 0.x 期の運用
+
+`0.x` の間は破壊的変更を MINOR (0.y bump) に含めて差し支えないが、CHANGELOG の **⚠ BREAKING CHANGES** には必ず明記する。1.0.0 以降は厳密に MAJOR bump とする。
+
+

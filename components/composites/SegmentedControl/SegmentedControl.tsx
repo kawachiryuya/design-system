@@ -1,7 +1,7 @@
 import React from 'react';
 
 /** SegmentedControl のサイズ */
-export type SegmentedControlSize = 'small' | 'medium';
+export type SegmentedControlSize = 'sm' | 'md';
 
 /** SegmentedControl の選択肢アイテム */
 export interface SegmentedControlItem<T extends string | number> {
@@ -64,7 +64,7 @@ export interface SegmentedControlProps<T extends string | number> {
    * サイズ。
    * - `small` 40px、コンパクト UI（フィルターバー等）
    * - `medium` 48px、標準
-   * @default 'small'
+   * @default 'sm'
    */
   size?: SegmentedControlSize;
   /** aria-label（グループとしての用途を説明、a11y で推奨）。 */
@@ -80,12 +80,12 @@ export const SegmentedControl = <T extends string | number>({
   items,
   value,
   onChange,
-  size = 'small',
+  size = 'sm',
   'aria-label': ariaLabel,
 }: SegmentedControlProps<T>) => {
   const sizeStyles = {
-    small: 'h-10 px-3 text-sm',
-    medium: 'h-12 px-4 text-base',
+    sm: 'h-10 px-3 text-sm',
+    md: 'h-12 px-4 text-base',
   }[size];
 
   return (

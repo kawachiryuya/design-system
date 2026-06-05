@@ -8,7 +8,7 @@ const meta: Meta<typeof Switch> = {
   component: Switch,
   tags: ['autodocs'],
   argTypes: {
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     checked: { control: 'boolean' },
     disabled: { control: 'boolean' },
     labelPosition: { control: 'radio', options: ['left', 'right'] },
@@ -17,7 +17,7 @@ const meta: Meta<typeof Switch> = {
   },
   args: {
     label: 'ダークモード',
-    size: 'medium',
+    size: 'md',
   },
 };
 
@@ -76,9 +76,9 @@ export const AllSizes: Story = {
     const [s3, setS3] = useState(true);
     return (
       <div className="flex flex-col gap-4">
-        <Switch size="small" label="Small" checked={s1} onChange={setS1} />
-        <Switch size="medium" label="Medium（デフォルト）" checked={s2} onChange={setS2} />
-        <Switch size="large" label="Large" checked={s3} onChange={setS3} />
+        <Switch size="sm" label="Small" checked={s1} onChange={setS1} />
+        <Switch size="md" label="Medium（デフォルト）" checked={s2} onChange={setS2} />
+        <Switch size="lg" label="Large" checked={s3} onChange={setS3} />
       </div>
     );
   },

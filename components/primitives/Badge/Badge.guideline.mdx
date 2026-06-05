@@ -101,16 +101,16 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="flex gap-2 items-center">
       <span className="text-sm">通知</span>
-      <Badge size="small" variant="error" appearance="solid">12</Badge>
+      <Badge size="sm" variant="error" appearance="solid">12</Badge>
       <span className="text-sm">メッセージ</span>
-      <Badge size="small" variant="primary" appearance="solid">99+</Badge>
+      <Badge size="sm" variant="primary" appearance="solid">99+</Badge>
     </div>
   }
   doCaption="高密度 UI で 1〜3 桁の数値を強調する標準パターン。99 超えは `99+` で固定幅を保つ。"
   dontExample={
     <div className="flex gap-2 items-center">
       <span className="text-sm">通知</span>
-      <Badge size="medium" variant="error" appearance="outline">12345</Badge>
+      <Badge size="md" variant="error" appearance="outline">12345</Badge>
     </div>
   }
   dontCaption="medium + outline + 5 桁では存在感が薄く、しかも文字幅で隣接要素を押し出す。カウントは小さく強く、桁数は丸める。"

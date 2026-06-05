@@ -181,7 +181,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
           <div className="flex items-center justify-between">
-            <Label htmlFor={textareaId} size="medium" required={required} disabled={disabled}>
+            <Label htmlFor={textareaId} size="md" required={required} disabled={disabled}>
               {label}
             </Label>
             {showCounter && (

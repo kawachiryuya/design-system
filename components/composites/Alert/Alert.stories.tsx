@@ -56,7 +56,7 @@ export const Dismissible: Story = {
     ) : (
       <div className="flex items-center gap-3">
         <p className="text-sm text-onSurface-muted">アラートを閉じました</p>
-        <Button size="small" variant="tertiary" onClick={() => setVisible(true)}>
+        <Button size="sm" variant="tertiary" onClick={() => setVisible(true)}>
           再表示
         </Button>
       </div>
@@ -88,8 +88,8 @@ export const WithAction: Story = {
     <Alert variant="warning" title="メールアドレスが未確認です">
       <p>アカウントのすべての機能を使うにはメールアドレスの確認が必要です。</p>
       <div className="mt-3 flex gap-2">
-        <Button size="small">確認メールを再送</Button>
-        <Button size="small" variant="tertiary">後で行う</Button>
+        <Button size="sm">確認メールを再送</Button>
+        <Button size="sm" variant="tertiary">後で行う</Button>
       </div>
     </Alert>
   ),

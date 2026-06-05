@@ -3,7 +3,7 @@ import { Icon } from '../../primitives/Icon';
 import { Typography } from '../../primitives/Typography/Typography';
 
 /** NumberInput のサイズ */
-export type NumberInputSize = 'small' | 'medium';
+export type NumberInputSize = 'sm' | 'md';
 
 /**
  * NumberInput Props
@@ -24,7 +24,7 @@ export type NumberInputSize = 'small' | 'medium';
  *   <NumberInput
  *     value={qty}
  *     onChange={setQty}
- *     size="small"
+ *     size="sm"
  *     min={0}
  *     max={99}
  *     label="数量"
@@ -63,7 +63,7 @@ export interface NumberInputProps {
    * サイズ。
    * - `small` 40px、密集 UI 用
    * - `medium` 48px、標準
-   * @default 'medium'
+   * @default 'md'
    */
   size?: NumberInputSize;
   /**
@@ -94,7 +94,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   min = 0,
   max = Infinity,
   label,
-  size = 'medium',
+  size = 'md',
   disabled = false,
   decrementLabel = '減らす',
   incrementLabel = '増やす',
@@ -103,8 +103,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const atMax = value >= max;
 
   const sizeStyles = {
-    small: { container: 'h-10', button: 'w-10', display: 'w-8 text-sm' },
-    medium: { container: 'h-12', button: 'w-12', display: 'w-10 text-base' },
+    sm: { container: 'h-10', button: 'w-10', display: 'w-8 text-sm' },
+    md: { container: 'h-12', button: 'w-12', display: 'w-10 text-base' },
   }[size];
 
   return (

@@ -2,7 +2,7 @@ import React from 'react';
 import { tv } from 'tailwind-variants';
 
 /** Label のサイズ */
-export type LabelSize = 'small' | 'medium' | 'large';
+export type LabelSize = 'sm' | 'md' | 'lg';
 
 /**
  * Label Props
@@ -24,7 +24,7 @@ export type LabelSize = 'small' | 'medium' | 'large';
  *
  * @example
  *   // 大サイズ（モバイル CTA フォーム）
- *   <Label htmlFor="phone" size="large" required>電話番号</Label>
+ *   <Label htmlFor="phone" size="lg" required>電話番号</Label>
  *
  * @see principles/Patterns/forms.mdx
  */
@@ -33,8 +33,8 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
   htmlFor?: string;
   /**
    * ラベルのサイズ（typography トークンに対応）。
-   * - `small` 12px、`medium` 14px、`large` 16px
-   * @default 'medium'
+   * - `sm` 12px、`md` 14px、`lg` 16px
+   * @default 'md'
    */
   size?: LabelSize;
   /**
@@ -60,7 +60,7 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
  * Label のスタイル定義 — `tailwind-variants` で size / disabled を宣言的に保持。
  *
  * - base: 全 size 共通 (flex / font / select-none)
- * - variants.size: text-size のみ (small=12px / medium=14px / large=16px)
+ * - variants.size: text-size のみ (sm=12px / md=14px / lg=16px)
  * - variants.disabled: 操作不能化 (色 + cursor)
  *
  * required/optional マークは JSX 側で条件分岐。required と optional の同時指定は
@@ -70,16 +70,16 @@ const labelVariants = tv({
   base: ['inline-flex', 'items-center', 'gap-1', 'font-normal', 'leading-tight', 'select-none'],
   variants: {
     size: {
-      small:  'text-xs',
-      medium: 'text-sm',
-      large:  'text-base',
+      sm: 'text-xs',
+      md: 'text-sm',
+      lg: 'text-base',
     },
     disabled: {
       true:  'text-onSurface-disabled cursor-not-allowed',
       false: 'text-onSurface cursor-pointer',
     },
   },
-  defaultVariants: { size: 'medium', disabled: false },
+  defaultVariants: { size: 'md', disabled: false },
 });
 
 /**

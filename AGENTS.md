@@ -160,6 +160,8 @@ borderRadius: { ...t.radius,  DEFAULT: t.radius.md  },
 **対象カテゴリ**:
 - `radius`: `none / sm / md / lg / full` (5 段、中核 sm/md/lg + 境界 none/full)
 - `shadow`: `none / sm / md / lg` (4 段、中核 sm/md/lg + 境界 none)
+- **コンポーネントの `size` prop**: `Input` / `Label` / `Button` / `Badge` 等の Primitive、および `SearchBar` / `Radio` / `Checkbox` / `Switch` / `SegmentedControl` / `NumberInput` / `Select` 等の Composite で **`sm / md / lg` の文字列リテラル** に統一 (`small` / `medium` / `large` 表記は禁止)。これにより `<Button size="md">` / `rounded-md` / `shadow-md` / `text-md` が同じ `md` で並ぶ。Spinner (`xs/sm/md/lg/xl/2xl`) や Icon (`sm/md/lg/xl`)、Avatar (`xs/sm/md/lg/xl`) のように境界スケールを持つ component も、ラベル流派は `sm/md/lg` で揃える
+- **Button の Radius は size 連動**: `Button size="sm" → rounded-sm` / `size="md" → rounded-md` / `size="lg" → rounded-lg`。size と radius が同じラベルで揃うため設計が直感的
 
 **非対象**:
 - **`font-size`**: Tailwind の慣習で `text-base` が body text のデフォルトとして広く認知されているため、`base` ラベルをそのまま維持 (本リポでも `text-base` は 16px の body 用途)

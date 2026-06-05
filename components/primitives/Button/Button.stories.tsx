@@ -23,7 +23,7 @@ const meta: Meta<typeof Button> = {
   // argTypes には control 設定のみ書く。
   argTypes: {
     variant: { control: 'select', options: ['primary', 'secondary', 'tertiary', 'destructive'] },
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     isLoading: { control: 'boolean' },
     fullWidth: { control: 'boolean' },
     disabled: { control: 'boolean' },
@@ -35,7 +35,7 @@ const meta: Meta<typeof Button> = {
   args: {
     children: '保存',
     variant: 'primary',
-    size: 'medium',
+    size: 'md',
   },
 };
 
@@ -97,9 +97,9 @@ export const Sizes: Story = {
   },
   render: () => (
     <div className="flex flex-wrap gap-3 items-center">
-      <Button size="small">Small</Button>
-      <Button size="medium">Medium</Button>
-      <Button size="large">Large</Button>
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="lg">Large</Button>
     </div>
   ),
 };
@@ -200,9 +200,9 @@ export const EdgeCases: Story = {
       <Caption text="短文 (min-width が効いて潰れない)">
         {/* items-end で flex stretch を無効化 → 各 Button が size 別の高さを保つ */}
         <div className="flex gap-2 items-end">
-          <Button size="small">OK</Button>
-          <Button size="medium">OK</Button>
-          <Button size="large">OK</Button>
+          <Button size="sm">OK</Button>
+          <Button size="md">OK</Button>
+          <Button size="lg">OK</Button>
         </div>
       </Caption>
       <Caption text="iconOnly + 長文 aria-label (SR で読まれる文字列を併記)">

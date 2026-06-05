@@ -17,7 +17,7 @@ const meta: Meta<typeof Label> = {
   component: Label,
   argTypes: {
     htmlFor: { control: 'text' },
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     required: { control: 'boolean' },
     optional: { control: 'boolean' },
     disabled: { control: 'boolean' },
@@ -25,7 +25,7 @@ const meta: Meta<typeof Label> = {
   },
   args: {
     children: 'メールアドレス',
-    size: 'medium',
+    size: 'md',
   },
 };
 
@@ -92,9 +92,9 @@ export const Sizes: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-3">
-      <Label size="small" required>Small (12px)</Label>
-      <Label size="medium" required>Medium (14px) — デフォルト</Label>
-      <Label size="large" required>Large (16px)</Label>
+      <Label size="sm" required>Small (12px)</Label>
+      <Label size="md" required>Medium (14px) — デフォルト</Label>
+      <Label size="lg" required>Large (16px)</Label>
     </div>
   ),
 };

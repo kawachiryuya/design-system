@@ -15,7 +15,7 @@ const meta: Meta<typeof Select> = {
   component: Select,
   tags: ['autodocs'],
   argTypes: {
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     error: { control: 'boolean' },
     disabled: { control: 'boolean' },
     required: { control: 'boolean' },
@@ -59,13 +59,13 @@ export const Required: Story = {
 export const AllSizes: Story = {
   render: () => (
     <div className="flex flex-col gap-4 w-64">
-      <Select size="small" label="Small" placeholder="選択...">
+      <Select size="sm" label="Small" placeholder="選択...">
         {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
       </Select>
-      <Select size="medium" label="Medium（デフォルト）" placeholder="選択...">
+      <Select size="md" label="Medium（デフォルト）" placeholder="選択...">
         {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
       </Select>
-      <Select size="large" label="Large" placeholder="選択...">
+      <Select size="lg" label="Large" placeholder="選択...">
         {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
       </Select>
     </div>

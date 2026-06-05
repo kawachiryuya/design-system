@@ -10,7 +10,7 @@ const meta: Meta<typeof Checkbox> = {
   component: Checkbox,
   tags: ['autodocs'],
   argTypes: {
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     checked: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
     disabled: { control: 'boolean' },
@@ -22,7 +22,7 @@ const meta: Meta<typeof Checkbox> = {
   },
   args: {
     label: '利用規約に同意する',
-    size: 'medium',
+    size: 'md',
   },
 };
 
@@ -73,9 +73,9 @@ export const Disabled: Story = {
 export const AllSizes: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      <Checkbox size="small" label="Small" defaultChecked />
-      <Checkbox size="medium" label="Medium（デフォルト）" defaultChecked />
-      <Checkbox size="large" label="Large" defaultChecked />
+      <Checkbox size="sm" label="Small" defaultChecked />
+      <Checkbox size="md" label="Medium（デフォルト）" defaultChecked />
+      <Checkbox size="lg" label="Large" defaultChecked />
     </div>
   ),
 };

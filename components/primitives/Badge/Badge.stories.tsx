@@ -22,7 +22,7 @@ const meta: Meta<typeof Badge> = {
       options: ['neutral', 'primary', 'success', 'error', 'warning', 'info'],
     },
     appearance: { control: 'radio', options: ['solid', 'soft', 'outline'] },
-    size: { control: 'radio', options: ['small', 'medium'] },
+    size: { control: 'radio', options: ['sm', 'md'] },
     dot: { control: 'boolean' },
     children: { control: 'text' },
   },
@@ -30,7 +30,7 @@ const meta: Meta<typeof Badge> = {
     children: 'ラベル',
     variant: 'neutral',
     appearance: 'soft',
-    size: 'medium',
+    size: 'md',
     dot: false,
   },
 };
@@ -113,10 +113,10 @@ export const Sizes: Story = {
   render: () => (
     <div className="flex gap-4 items-center">
       <Caption text="small">
-        <Badge size="small" variant="success">Small</Badge>
+        <Badge size="sm" variant="success">Small</Badge>
       </Caption>
       <Caption text="medium (default)">
-        <Badge size="medium" variant="success">Medium</Badge>
+        <Badge size="md" variant="success">Medium</Badge>
       </Caption>
     </div>
   ),
@@ -154,10 +154,10 @@ export const EdgeCases: Story = {
 
       <Caption text="数値カウント — small + solid で通知バッジ風 (1〜3 桁を想定)">
         <div className="flex gap-2 items-center">
-          <Badge size="small" variant="error" appearance="solid">1</Badge>
-          <Badge size="small" variant="error" appearance="solid">12</Badge>
-          <Badge size="small" variant="error" appearance="solid">99+</Badge>
-          <Badge size="small" variant="primary" appearance="solid">NEW</Badge>
+          <Badge size="sm" variant="error" appearance="solid">1</Badge>
+          <Badge size="sm" variant="error" appearance="solid">12</Badge>
+          <Badge size="sm" variant="error" appearance="solid">99+</Badge>
+          <Badge size="sm" variant="primary" appearance="solid">NEW</Badge>
         </div>
       </Caption>
 

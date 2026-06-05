@@ -6,7 +6,7 @@ const meta: Meta = {
   title: 'Composites/SegmentedControl',
   tags: ['autodocs'],
   argTypes: {
-    size: { control: 'radio', options: ['small', 'medium'] },
+    size: { control: 'radio', options: ['sm', 'md'] },
   },
 };
 
@@ -44,7 +44,7 @@ export const Medium: Story = {
         ]}
         value={value}
         onChange={setValue}
-        size="medium"
+        size="md"
         aria-label="表示期間"
       />
     );

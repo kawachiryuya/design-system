@@ -3,7 +3,7 @@ import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /** Radio のサイズ */
-export type RadioSize = 'small' | 'medium' | 'large';
+export type RadioSize = 'sm' | 'md' | 'lg';
 
 /**
  * Radio Props
@@ -28,7 +28,7 @@ export type RadioSize = 'small' | 'medium' | 'large';
  *
  * @example
  *   // 大サイズ（モバイル CTA）
- *   <Radio name="size" value="lg" label="L サイズ" size="large" />
+ *   <Radio name="size" value="lg" label="L サイズ" size="lg" />
  *
  * @example
  *   // エラー状態（バリデーションエラー時、通常 RadioGroup の error と連動）
@@ -39,7 +39,7 @@ export type RadioSize = 'small' | 'medium' | 'large';
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
   /**
    * ラジオボタンのサイズ。
-   * @default 'medium'
+   * @default 'md'
    */
   size?: RadioSize;
   /** ラベルテキスト。未指定時はラジオボタンのみ表示。 */
@@ -124,7 +124,7 @@ export interface RadioGroupProps {
 export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
   (
     {
-      size = 'medium',
+      size = 'md',
       label,
       description,
       error = false,
@@ -137,7 +137,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
   ) => {
     const inputId = id || (label ? `radio-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
 
-    const sizePx = { small: 'w-4 h-4', medium: 'w-5 h-5', large: 'w-6 h-6' }[size];
+    const sizePx = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
 
     const inputClasses = [
       sizePx,
@@ -176,7 +176,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             {label && (
               <Label
                 htmlFor={inputId}
-                size={size === 'large' ? 'large' : 'medium'}
+                size={size === 'lg' ? 'lg' : 'md'}
                 disabled={disabled}
               >
                 {label}

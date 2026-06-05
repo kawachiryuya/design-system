@@ -108,16 +108,16 @@ export const AllSizes: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <RadioGroup legend="Small">
-        <Radio name="size-sm" value="a" label="オプション A" size="small" defaultChecked />
-        <Radio name="size-sm" value="b" label="オプション B" size="small" />
+        <Radio name="size-sm" value="a" label="オプション A" size="sm" defaultChecked />
+        <Radio name="size-sm" value="b" label="オプション B" size="sm" />
       </RadioGroup>
       <RadioGroup legend="Medium（デフォルト）">
-        <Radio name="size-md" value="a" label="オプション A" size="medium" defaultChecked />
-        <Radio name="size-md" value="b" label="オプション B" size="medium" />
+        <Radio name="size-md" value="a" label="オプション A" size="md" defaultChecked />
+        <Radio name="size-md" value="b" label="オプション B" size="md" />
       </RadioGroup>
       <RadioGroup legend="Large">
-        <Radio name="size-lg" value="a" label="オプション A" size="large" defaultChecked />
-        <Radio name="size-lg" value="b" label="オプション B" size="large" />
+        <Radio name="size-lg" value="a" label="オプション A" size="lg" defaultChecked />
+        <Radio name="size-lg" value="b" label="オプション B" size="lg" />
       </RadioGroup>
     </div>
   ),

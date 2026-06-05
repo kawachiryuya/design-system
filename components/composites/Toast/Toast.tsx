@@ -141,7 +141,7 @@ const ToastBody: React.FC<ToastContent & { onClose?: () => void }> = ({
         <div className="text-body-sm leading-relaxed">{description}</div>
         {action && (
           <div className="mt-2">
-            <Button variant="tertiary" size="small" onClick={action.onClick}>
+            <Button variant="tertiary" size="sm" onClick={action.onClick}>
               {action.label}
             </Button>
           </div>
@@ -149,7 +149,7 @@ const ToastBody: React.FC<ToastContent & { onClose?: () => void }> = ({
       </div>
 
       {onClose && (
-        <Button variant="tertiary" size="small" onClick={onClose}>
+        <Button variant="tertiary" size="sm" onClick={onClose}>
           <Icon name="close" size="sm" />
           <VisuallyHidden>閉じる</VisuallyHidden>
         </Button>

@@ -6,8 +6,8 @@ import { FormMessage } from '../../_internal/FormMessage';
 /** Input の HTML type。HTML `<input type="...">` 属性のサブセット。 */
 export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date';
 
-/** Input のサイズ。WCAG 2.5.5 AAA（44px）保証のため標準 medium 以上推奨。 */
-export type InputSize = 'small' | 'medium' | 'large';
+/** Input のサイズ。WCAG 2.5.5 AAA（44px）保証のため標準 md 以上推奨。 */
+export type InputSize = 'sm' | 'md' | 'lg';
 
 interface InputBaseProps {
   /**
@@ -19,10 +19,10 @@ interface InputBaseProps {
   type?: InputType;
   /**
    * サイズ。
-   * - `small` 40px、密集 UI 用 (WCAG 2.5.5 未満なので限定使用)
-   * - `medium` 48px、標準
-   * - `large` 64px、モバイル CTA フォーム
-   * @default 'medium'
+   * - `sm` 40px、密集 UI 用 (WCAG 2.5.5 未満なので限定使用)
+   * - `md` 48px、標準
+   * - `lg` 64px、モバイル CTA フォーム
+   * @default 'md'
    */
   size?: InputSize;
   /** 全幅表示（親要素の幅に追従）。フォーム内の入力で全幅を占めるレイアウトに使う。 */
@@ -90,7 +90,7 @@ interface InputNormalProps extends InputBaseProps {
  *
  * @example
  *   // モバイル CTA フォーム（全幅 + large）
- *   <Input label="メール" type="email" size="large" fullWidth required />
+ *   <Input label="メール" type="email" size="lg" fullWidth required />
  *
  * @see principles/Patterns/forms.mdx
  */
@@ -137,9 +137,9 @@ const inputVariants = tv({
   ],
   variants: {
     size: {
-      small:  'h-10 text-sm',
-      medium: 'h-12 text-base',
-      large:  'h-16 text-lg',
+      sm: 'h-10 text-sm',
+      md: 'h-12 text-base',
+      lg: 'h-16 text-lg',
     },
     error: {
       true:  'border-border-error focus-visible:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
@@ -154,27 +154,27 @@ const inputVariants = tv({
   },
   compoundVariants: [
     // 左パディング: アイコン有時はアイコンスペース確保
-    { size: 'small',  hasLeadingIcon: true,  class: 'pl-10' },
-    { size: 'small',  hasLeadingIcon: false, class: 'pl-3' },
-    { size: 'medium', hasLeadingIcon: true,  class: 'pl-12' },
-    { size: 'medium', hasLeadingIcon: false, class: 'pl-3' },
-    { size: 'large',  hasLeadingIcon: true,  class: 'pl-12' },
-    { size: 'large',  hasLeadingIcon: false, class: 'pl-4' },
+    { size: 'sm', hasLeadingIcon: true,  class: 'pl-10' },
+    { size: 'sm', hasLeadingIcon: false, class: 'pl-3' },
+    { size: 'md', hasLeadingIcon: true,  class: 'pl-12' },
+    { size: 'md', hasLeadingIcon: false, class: 'pl-3' },
+    { size: 'lg', hasLeadingIcon: true,  class: 'pl-12' },
+    { size: 'lg', hasLeadingIcon: false, class: 'pl-4' },
     // 右パディング (mirror)
-    { size: 'small',  hasTrailingIcon: true,  class: 'pr-10' },
-    { size: 'small',  hasTrailingIcon: false, class: 'pr-3' },
-    { size: 'medium', hasTrailingIcon: true,  class: 'pr-12' },
-    { size: 'medium', hasTrailingIcon: false, class: 'pr-3' },
-    { size: 'large',  hasTrailingIcon: true,  class: 'pr-12' },
-    { size: 'large',  hasTrailingIcon: false, class: 'pr-4' },
+    { size: 'sm', hasTrailingIcon: true,  class: 'pr-10' },
+    { size: 'sm', hasTrailingIcon: false, class: 'pr-3' },
+    { size: 'md', hasTrailingIcon: true,  class: 'pr-12' },
+    { size: 'md', hasTrailingIcon: false, class: 'pr-3' },
+    { size: 'lg', hasTrailingIcon: true,  class: 'pr-12' },
+    { size: 'lg', hasTrailingIcon: false, class: 'pr-4' },
   ],
-  defaultVariants: { size: 'medium', error: false, fullWidth: false, hasLeadingIcon: false, hasTrailingIcon: false },
+  defaultVariants: { size: 'md', error: false, fullWidth: false, hasLeadingIcon: false, hasTrailingIcon: false },
 });
 
 /** アイコン absolute 配置の left/right クラス (size 別) */
 const iconPositionClass = {
-  leading:  { small: 'left-3',  medium: 'left-3',  large: 'left-4'  },
-  trailing: { small: 'right-3', medium: 'right-3', large: 'right-4' },
+  leading:  { sm: 'left-3',  md: 'left-3',  lg: 'left-4'  },
+  trailing: { sm: 'right-3', md: 'right-3', lg: 'right-4' },
 } as const;
 
 /**
@@ -186,7 +186,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (props, ref) => {
     const {
       type = 'text',
-      size = 'medium',
+      size = 'md',
       error = false,
       errorMessage,
       helpText,
@@ -216,7 +216,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className={['flex flex-col gap-1', fullWidth ? 'w-full' : 'w-auto'].join(' ')}>
         {/* Label */}
         {label && (
-          <Label htmlFor={inputId} size={size === 'large' ? 'large' : 'medium'} required={required} disabled={disabled}>
+          <Label htmlFor={inputId} size={size === 'lg' ? 'lg' : 'md'} required={required} disabled={disabled}>
             {label}
           </Label>
         )}

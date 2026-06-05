@@ -27,8 +27,8 @@ export const Default: Story = {
         <p className="text-sm text-onSurface-muted">ここにコンテンツが入ります。</p>
       </Card.Body>
       <Card.Footer>
-        <Button size="small" variant="tertiary">キャンセル</Button>
-        <Button size="small">保存</Button>
+        <Button size="sm" variant="tertiary">キャンセル</Button>
+        <Button size="sm">保存</Button>
       </Card.Footer>
     </Card>
   ),
@@ -43,8 +43,8 @@ export const WithoutDivider: Story = {
         <p className="text-sm text-onSurface-muted">divider=false で Header/Footer のボーダーを非表示にできます。</p>
       </Card.Body>
       <Card.Footer divider={false}>
-        <Button size="small" variant="tertiary">キャンセル</Button>
-        <Button size="small">保存</Button>
+        <Button size="sm" variant="tertiary">キャンセル</Button>
+        <Button size="sm">保存</Button>
       </Card.Footer>
     </Card>
   ),
@@ -118,8 +118,8 @@ export const LongContent: Story = {
         </p>
       </Card.Body>
       <Card.Footer>
-        <Button size="small" variant="tertiary">キャンセル</Button>
-        <Button size="small">保存</Button>
+        <Button size="sm" variant="tertiary">キャンセル</Button>
+        <Button size="sm">保存</Button>
       </Card.Footer>
     </Card>
   ),
@@ -132,7 +132,7 @@ export const NoticeCard: Story = {
       <Card.Header divider={false}>
         <div className="flex items-center justify-between">
           <span>メンテナンスのお知らせ</span>
-          <Badge variant="warning" appearance="soft" size="small">重要</Badge>
+          <Badge variant="warning" appearance="soft" size="sm">重要</Badge>
         </div>
       </Card.Header>
       <Card.Body>
@@ -156,8 +156,8 @@ export const ActionCard: Story = {
         </p>
       </Card.Body>
       <Card.Footer>
-        <Button size="small" variant="tertiary">キャンセル</Button>
-        <Button size="small">保存</Button>
+        <Button size="sm" variant="tertiary">キャンセル</Button>
+        <Button size="sm">保存</Button>
       </Card.Footer>
     </Card>
   ),

@@ -30,6 +30,8 @@
   - `radius.lg`: 旧 16px → **12px** (旧 md の値が繰り上がる)
   - `radius.full`: 9999px (不変)
   - 影響: `rounded-xs` の callsite は `rounded-sm` に置換 (本リポ内 17 ファイル sed 済、値は 4px で等価)。**ただし `rounded-sm` / `rounded-md` / `rounded-lg` の callsite はそのままで値だけ小さくなる** (sm: 8px→4px / md: 12px→8px / lg: 16px→12px)。下流の見栄え調整は follow-up
+- **コンポーネント `size` prop の命名統一** (API breaking): `small / medium / large` 流派の Component (Input / Label / Button / Badge / SearchBar / Radio / Checkbox / Switch / SegmentedControl / NumberInput / Select) を **`sm / md / lg`** に一括 rename。Radius / Shadow が `sm / md / lg` に揃ったのに合わせ、`<Button size="md">` / `rounded-md` / `shadow-md` / `text-md` が同じ `md` で並ぶ整合性を取った。Badge / SegmentedControl / NumberInput は元から 2 段なので `sm / md`。Link / Icon / Spinner / Avatar / Pagination / ProgressBar / EmptyState / Modal は元から `sm/md/lg` 流派で変更なし。**下流の callsite 修正**: `sed -i '' -e 's/size="small"/size="sm"/g; s/size="medium"/size="md"/g; s/size="large"/size="lg"/g' src/**/*.tsx` で機械置換可能。型レベルで TS が catch するため、置換漏れはコンパイルエラーで検出される
+- **`Button` の Radius が size 連動に変更** (silent break): 従来は `sm → rounded-sm` / `md → rounded-sm` / `lg → rounded-md` のように md と lg だけ別の段数を当てていたが、命名統一に合わせて **`sm → rounded-sm` / `md → rounded-md` / `lg → rounded-lg`** の 1:1 マッピングに整理。視覚的には `md` Button の角丸が 4px → 8px、`lg` Button の角丸が 8px → 12px に増える (size に合わせて角丸も大きくなる、自然な関係に)。`sm` Button は不変
 - **`shadow` トークン再編** (silent break): スケールを `none / xs / sm / md / lg / xl / 2xl` (7 段) → `none / sm / md / lg` (4 段) に整理し、中核を `sm / md / lg` に揃えた (`md = default` 規約と整合)。値も全体的に **より subtle 寄りに再定義** (Tailwind デフォルトに寄せた):
   - `shadow.xs` / `shadow.xl` / `shadow.2xl` 削除 → 同名 utility 消失
   - `shadow.sm`: `0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1)` (subtle base、Tailwind の `shadow` 既定値)

@@ -4,7 +4,7 @@ import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /** Select のサイズ */
-export type SelectSize = 'small' | 'medium' | 'large';
+export type SelectSize = 'sm' | 'md' | 'lg';
 
 interface SelectBaseProps {
   /**
@@ -12,7 +12,7 @@ interface SelectBaseProps {
    * - `small` 40px、密集 UI 用
    * - `medium` 48px、標準
    * - `large` 64px、モバイル CTA フォーム
-   * @default 'medium'
+   * @default 'md'
    */
   size?: SelectSize;
   /** ラベルテキスト。指定すると `<label>` 要素が自動生成され `htmlFor`/`aria-*` 関連付けされる。 */
@@ -74,7 +74,7 @@ interface SelectNormalProps extends SelectBaseProps {
  *
  * @example
  *   // 全幅 + 大サイズ
- *   <Select label="国" size="large" fullWidth>
+ *   <Select label="国" size="lg" fullWidth>
  *     <option value="jp">Japan</option>
  *   </Select>
  *
@@ -105,7 +105,7 @@ type _InternalSelectProps = SelectBaseProps & {
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   (props, ref) => {
     const {
-      size = 'medium',
+      size = 'md',
       label,
       placeholder,
       error = false,
@@ -126,9 +126,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
     const sizeConfig = {
-      small: { style: 'h-10 pl-3 pr-10 text-sm', iconSize: 'sm' as const, iconRight: 'right-3' },
-      medium: { style: 'h-12 pl-3 pr-12 text-base', iconSize: 'sm' as const, iconRight: 'right-3' },
-      large: { style: 'h-16 pl-4 pr-12 text-lg', iconSize: 'md' as const, iconRight: 'right-4' },
+      sm: { style: 'h-10 pl-3 pr-10 text-sm', iconSize: 'sm' as const, iconRight: 'right-3' },
+      md: { style: 'h-12 pl-3 pr-12 text-base', iconSize: 'sm' as const, iconRight: 'right-3' },
+      lg: { style: 'h-16 pl-4 pr-12 text-lg', iconSize: 'md' as const, iconRight: 'right-4' },
     }[size];
 
     const sizeStyles = sizeConfig.style;
@@ -168,7 +168,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
-          <Label htmlFor={selectId} size={size === 'large' ? 'large' : 'medium'} required={required} disabled={disabled}>
+          <Label htmlFor={selectId} size={size === 'lg' ? 'lg' : 'md'} required={required} disabled={disabled}>
             {label}
           </Label>
         )}

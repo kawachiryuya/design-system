@@ -172,7 +172,7 @@ const ModalRoot: React.FC<ModalProps> = ({
             </h2>
           ) : <span aria-hidden className="flex-1" />}
           {!hideCloseButton && (
-            <Button variant="tertiary" size="small" onClick={onClose}>
+            <Button variant="tertiary" size="sm" onClick={onClose}>
               <Icon name="close" />
               <VisuallyHidden>閉じる</VisuallyHidden>
             </Button>

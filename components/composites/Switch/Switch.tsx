@@ -2,7 +2,7 @@ import React from 'react';
 import { Label } from '../../primitives/Label/Label';
 
 /** Switch のサイズ */
-export type SwitchSize = 'small' | 'medium' | 'large';
+export type SwitchSize = 'sm' | 'md' | 'lg';
 
 /** ラベル位置 */
 export type SwitchLabelPosition = 'left' | 'right';
@@ -37,7 +37,7 @@ export type SwitchLabelPosition = 'left' | 'right';
  *
  * @example
  *   // 小サイズ + 高密度 UI
- *   <Switch label="WiFi" size="small" checked={wifi} onChange={setWifi} />
+ *   <Switch label="WiFi" size="sm" checked={wifi} onChange={setWifi} />
  *
  * @see principles/Patterns/forms.mdx
  * @see principles/Interaction/state/overview.mdx
@@ -55,7 +55,7 @@ export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
    * - `small` トラック 32px（密集 UI）
    * - `medium` トラック 44px（標準）
    * - `large` トラック 56px（モバイル設定画面）
-   * @default 'medium'
+   * @default 'md'
    */
   size?: SwitchSize;
   /** ラベルテキスト。クリックでもトグルする。 */
@@ -84,7 +84,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     {
       checked = false,
       onChange,
-      size = 'medium',
+      size = 'md',
       label,
       description,
       labelPosition = 'right',
@@ -112,15 +112,15 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
 
     // Track sizes
     const trackSize = {
-      small: 'w-8 h-4',
-      medium: 'w-[44px] h-6',
-      large: 'w-[56px] h-8',
+      sm: 'w-8 h-4',
+      md: 'w-[44px] h-6',
+      lg: 'w-[56px] h-8',
     }[size];
 
     // Thumb sizes and positions
-    const thumbSize = { small: 'w-3 h-3', medium: 'w-5 h-5', large: 'w-6 h-6' }[size];
-    const thumbOff = { small: 'translate-x-[2px]', medium: 'translate-x-[2px]', large: 'translate-x-1' }[size];
-    const thumbOn = { small: 'translate-x-[18px]', medium: 'translate-x-[22px]', large: 'translate-x-[28px]' }[size];
+    const thumbSize = { sm: 'w-3 h-3', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
+    const thumbOff = { sm: 'translate-x-[2px]', md: 'translate-x-[2px]', lg: 'translate-x-1' }[size];
+    const thumbOn = { sm: 'translate-x-[18px]', md: 'translate-x-[22px]', lg: 'translate-x-[28px]' }[size];
 
 
     const trackClasses = [
@@ -162,7 +162,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         {label && (
           <Label
             htmlFor={switchId}
-            size={size === 'large' ? 'large' : 'medium'}
+            size={size === 'lg' ? 'lg' : 'md'}
             disabled={disabled}
             onClick={!disabled ? handleClick : undefined}
           >

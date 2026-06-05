@@ -7,7 +7,7 @@ const meta: Meta<typeof NumberInput> = {
   component: NumberInput,
   tags: ['autodocs'],
   argTypes: {
-    size: { control: 'radio', options: ['small', 'medium'] },
+    size: { control: 'radio', options: ['sm', 'md'] },
     disabled: { control: 'boolean' },
   },
 };
@@ -25,7 +25,7 @@ export const Default: Story = {
 export const Small: Story = {
   render: () => {
     const [value, setValue] = useState(3);
-    return <NumberInput value={value} onChange={setValue} min={1} max={6} size="small" label="人数" />;
+    return <NumberInput value={value} onChange={setValue} min={1} max={6} size="sm" label="人数" />;
   },
 };
 

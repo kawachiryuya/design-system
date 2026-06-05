@@ -17,7 +17,7 @@ const meta: Meta<typeof Input> = {
   component: Input,
   argTypes: {
     type: { control: 'select', options: ['text', 'email', 'password', 'number', 'tel', 'url', 'search', 'date'] },
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     error: { control: 'boolean' },
     disabled: { control: 'boolean' },
     required: { control: 'boolean' },
@@ -33,7 +33,7 @@ const meta: Meta<typeof Input> = {
     label: 'メールアドレス',
     placeholder: 'example@email.com',
     type: 'email',
-    size: 'medium',
+    size: 'md',
   },
   decorators: [(Story) => <div className="w-80"><Story /></div>],
 };
@@ -73,9 +73,9 @@ export const Sizes: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-4">
-      <Input label="Small (40px)" size="small" placeholder="密集 UI 用" />
-      <Input label="Medium (48px) — デフォルト" size="medium" placeholder="標準フォーム" />
-      <Input label="Large (64px)" size="large" placeholder="モバイル CTA" />
+      <Input label="Small (40px)" size="sm" placeholder="密集 UI 用" />
+      <Input label="Medium (48px) — デフォルト" size="md" placeholder="標準フォーム" />
+      <Input label="Large (64px)" size="lg" placeholder="モバイル CTA" />
     </div>
   ),
 };

@@ -2,7 +2,7 @@ import React, { useId, useRef } from 'react';
 import { Icon } from '../../primitives/Icon';
 
 /** SearchBar のサイズ */
-export type SearchBarSize = 'small' | 'medium' | 'large';
+export type SearchBarSize = 'sm' | 'md' | 'lg';
 
 /**
  * SearchBar Props
@@ -22,7 +22,7 @@ export type SearchBarSize = 'small' | 'medium' | 'large';
  *
  * @example
  *   // 全幅 + 大サイズ（モバイルヘッダー）
- *   <SearchBar value={q} onChange={setQ} size="large" fullWidth />
+ *   <SearchBar value={q} onChange={setQ} size="lg" fullWidth />
  *
  * @example
  *   // ローディング中（onSearch から非同期処理中）
@@ -61,7 +61,7 @@ export interface SearchBarProps {
    * - `small` 32px、密集 UI 用（テーブルヘッダー等）
    * - `medium` 40px、標準
    * - `large` 48px、目立たせる検索（ヘッダー）
-   * @default 'medium'
+   * @default 'md'
    */
   size?: SearchBarSize;
   /** 全幅表示（親要素の幅に追従）。 */
@@ -113,7 +113,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
   onClear,
   placeholder = '検索...',
-  size = 'medium',
+  size = 'md',
   fullWidth = false,
   isLoading = false,
   disabled = false,
@@ -124,7 +124,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const sizeStyles = {
-    small: {
+    sm: {
       container: 'h-8',
       input: 'text-sm pl-8 pr-8',
       icon: 'left-2',
@@ -132,7 +132,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       iconSize: 'sm' as const,
       spinnerPx: 16,
     },
-    medium: {
+    md: {
       container: 'h-10',
       input: 'text-base pl-8 pr-10',
       icon: 'left-2',
@@ -140,7 +140,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       iconSize: 'sm' as const,
       spinnerPx: 20,
     },
-    large: {
+    lg: {
       container: 'h-12',
       input: 'text-lg pl-10 pr-12',
       icon: 'left-3',

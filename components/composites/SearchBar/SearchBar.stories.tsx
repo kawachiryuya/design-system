@@ -8,7 +8,7 @@ const meta: Meta<typeof SearchBar> = {
   component: SearchBar,
   tags: ['autodocs'],
   argTypes: {
-    size: { control: 'radio', options: ['small', 'medium', 'large'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     fullWidth: { control: 'boolean' },
     isLoading: { control: 'boolean' },
     disabled: { control: 'boolean' },
@@ -18,7 +18,7 @@ const meta: Meta<typeof SearchBar> = {
   args: {
     value: '',
     placeholder: '検索...',
-    size: 'medium',
+    size: 'md',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);
@@ -39,9 +39,9 @@ export const WithValue: Story = {
     const [v3, setV3] = useState('Large value');
     return (
       <div className="flex flex-col gap-3 w-80">
-        <SearchBar size="small" value={v1} onChange={setV1} placeholder="検索..." />
-        <SearchBar size="medium" value={v2} onChange={setV2} placeholder="検索..." />
-        <SearchBar size="large" value={v3} onChange={setV3} placeholder="検索..." />
+        <SearchBar size="sm" value={v1} onChange={setV1} placeholder="検索..." />
+        <SearchBar size="md" value={v2} onChange={setV2} placeholder="検索..." />
+        <SearchBar size="lg" value={v3} onChange={setV3} placeholder="検索..." />
       </div>
     );
   },
@@ -54,9 +54,9 @@ export const AllSizes: Story = {
     const [q3, setQ3] = useState('');
     return (
       <div className="flex flex-col gap-3 w-80">
-        <SearchBar size="small" value={q1} onChange={setQ1} placeholder="Small" />
-        <SearchBar size="medium" value={q2} onChange={setQ2} placeholder="Medium（デフォルト）" />
-        <SearchBar size="large" value={q3} onChange={setQ3} placeholder="Large" />
+        <SearchBar size="sm" value={q1} onChange={setQ1} placeholder="Small" />
+        <SearchBar size="md" value={q2} onChange={setQ2} placeholder="Medium（デフォルト）" />
+        <SearchBar size="lg" value={q3} onChange={setQ3} placeholder="Large" />
       </div>
     );
   },
@@ -69,9 +69,9 @@ export const Loading: Story = {
     const [v3, setV3] = useState('Large loading');
     return (
       <div className="flex flex-col gap-3 w-80">
-        <SearchBar size="small" value={v1} onChange={setV1} isLoading placeholder="検索..." />
-        <SearchBar size="medium" value={v2} onChange={setV2} isLoading placeholder="検索..." />
-        <SearchBar size="large" value={v3} onChange={setV3} isLoading placeholder="検索..." />
+        <SearchBar size="sm" value={v1} onChange={setV1} isLoading placeholder="検索..." />
+        <SearchBar size="md" value={v2} onChange={setV2} isLoading placeholder="検索..." />
+        <SearchBar size="lg" value={v3} onChange={setV3} isLoading placeholder="検索..." />
       </div>
     );
   },
@@ -164,7 +164,7 @@ export const TableFilter: Story = {
 
     return (
       <div className="w-80 space-y-3">
-        <SearchBar value={query} onChange={setQuery} size="small"
+        <SearchBar value={query} onChange={setQuery} size="sm"
           fullWidth placeholder="ユーザーを検索..." />
         <ul className="divide-y divide-border-muted border border-border-muted rounded">
           {filtered.length > 0

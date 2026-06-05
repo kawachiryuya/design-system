@@ -4,8 +4,8 @@ import { tv } from 'tailwind-variants';
 /** ボタンの優先度（1画面に primary は通常1個に絞る） */
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive';
 
-/** ボタンのサイズ。タッチターゲット保証のため最小40px（small/iconOnly） */
-export type ButtonSize = 'small' | 'medium' | 'large';
+/** ボタンのサイズ。タッチターゲット保証のため最小 40px（sm / iconOnly） */
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /** Variant / size など全 Button が共有するプロパティ */
 interface ButtonBaseProps {
@@ -19,11 +19,11 @@ interface ButtonBaseProps {
    */
   variant?: ButtonVariant;
   /**
-   * サイズ。WCAG 2.5.5 AAA（44px）を満たす。
-   * - `small`: 40px、密集 UI 用
-   * - `medium`: 48px、標準
-   * - `large`: 64px、モバイル CTA / メインアクション
-   * @default 'medium'
+   * サイズ。WCAG 2.5.5 AAA（44px）を満たす。Radius は size に連動 (`sm→rounded-sm` / `md→rounded-md` / `lg→rounded-lg`)。
+   * - `sm`: 40px、密集 UI 用
+   * - `md`: 48px、標準
+   * - `lg`: 64px、モバイル CTA / メインアクション
+   * @default 'md'
    */
   size?: ButtonSize;
   /** ローディング状態。`true` で disabled + spinner 表示。 */
@@ -96,7 +96,7 @@ interface ButtonRegularProps extends ButtonBaseProps {
  *
  * @example
  *   // 全幅 + large（モバイル CTA）
- *   <Button variant="primary" size="large" fullWidth>
+ *   <Button variant="primary" size="lg" fullWidth>
  *     購入する
  *   </Button>
  *
@@ -196,9 +196,9 @@ const buttonVariants = tv({
     },
     size: {
       // 文字サイズと gap だけ。高さ・余白・角丸は iconOnly との compoundVariants で
-      small: 'text-sm gap-1',
-      medium: 'text-base gap-2',
-      large: 'text-lg gap-2',
+      sm: 'text-sm gap-1',
+      md: 'text-base gap-2',
+      lg: 'text-lg gap-2',
     },
     iconOnly: {
       true: 'rounded-full',
@@ -211,29 +211,30 @@ const buttonVariants = tv({
   },
   compoundVariants: [
     // icon-only モード: 正方形 (h × w 固定)
-    { iconOnly: true, size: 'small', class: 'h-10 w-10' },
-    { iconOnly: true, size: 'medium', class: 'h-12 w-12' },
-    { iconOnly: true, size: 'large', class: 'h-16 w-16' },
+    { iconOnly: true, size: 'sm', class: 'h-10 w-10' },
+    { iconOnly: true, size: 'md', class: 'h-12 w-12' },
+    { iconOnly: true, size: 'lg', class: 'h-16 w-16' },
     // 通常モード: min-h でタッチターゲット確保、py で長文時の上下余白
+    // Radius は size と連動 (sm→rounded-sm / md→rounded-md / lg→rounded-lg)
     {
       iconOnly: false,
-      size: 'small',
+      size: 'sm',
       class: 'min-h-10 py-2 px-3 min-w-16 rounded-sm',
     },
     {
       iconOnly: false,
-      size: 'medium',
-      class: 'min-h-12 py-3 px-4 min-w-20 rounded-sm',
+      size: 'md',
+      class: 'min-h-12 py-3 px-4 min-w-20 rounded-md',
     },
     {
       iconOnly: false,
-      size: 'large',
-      class: 'min-h-16 py-4 px-6 min-w-24 rounded-md',
+      size: 'lg',
+      class: 'min-h-16 py-4 px-6 min-w-24 rounded-lg',
     },
   ],
   defaultVariants: {
     variant: 'primary',
-    size: 'medium',
+    size: 'md',
     iconOnly: false,
     fullWidth: false,
   },
@@ -247,9 +248,9 @@ const buttonVariants = tv({
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     // Spinner サイズは button size に追従させて視覚バランスを取る
-    // (small/large でも 16px だと小さく見える / 大きく見えるため)
+    // (sm/lg でも 16px だと小さく見える / 大きく見えるため)
     const spinnerSize =
-      props.size === 'small' ? 'h-4 w-4' : props.size === 'large' ? 'h-6 w-6' : 'h-5 w-5';
+      props.size === 'sm' ? 'h-4 w-4' : props.size === 'lg' ? 'h-6 w-6' : 'h-5 w-5';
     const loadingSpinner = (
       <svg
         className={`animate-spin flex-shrink-0 ${spinnerSize}`}

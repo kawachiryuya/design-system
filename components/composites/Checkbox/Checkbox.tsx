@@ -3,12 +3,12 @@ import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 
 /** Checkbox のサイズ */
-export type CheckboxSize = 'small' | 'medium' | 'large';
+export type CheckboxSize = 'sm' | 'md' | 'lg';
 
 interface CheckboxBaseProps {
   /**
    * チェックボックスのサイズ。
-   * @default 'medium'
+   * @default 'md'
    */
   size?: CheckboxSize;
   /** ラベルテキスト。未指定時はチェックボックスのみ表示。 */
@@ -84,7 +84,7 @@ type _InternalCheckboxProps = CheckboxBaseProps & {
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   (props, ref) => {
     const {
-      size = 'medium',
+      size = 'md',
       label,
       description,
       error = false,
@@ -108,7 +108,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     const inputId = id || (label ? `checkbox-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
     const errorId = inputId ? `${inputId}-error` : undefined;
 
-    const sizePx = { small: 'w-4 h-4', medium: 'w-5 h-5', large: 'w-6 h-6' }[size];
+    const sizePx = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
 
     const inputClasses = [
       sizePx,
@@ -151,7 +151,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
               {label && (
                 <Label
                   htmlFor={inputId}
-                  size={size === 'large' ? 'large' : 'medium'}
+                  size={size === 'lg' ? 'lg' : 'md'}
                   disabled={disabled}
                 >
                   {label}

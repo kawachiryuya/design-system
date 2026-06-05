@@ -8,7 +8,7 @@ export type BadgeVariant = 'neutral' | 'primary' | 'success' | 'error' | 'warnin
 export type BadgeAppearance = 'solid' | 'soft' | 'outline';
 
 /** Badge のサイズ */
-export type BadgeSize = 'small' | 'medium';
+export type BadgeSize = 'sm' | 'md';
 
 /**
  * Badge のスタイル定義 — `tailwind-variants` で variant × appearance × size を宣言的に保持。
@@ -33,8 +33,8 @@ const badgeVariants = tv({
   ],
   variants: {
     size: {
-      small: 'px-2 py-[2px] text-xs',
-      medium: 'px-[10px] py-1 text-xs',
+      sm: 'px-2 py-[2px] text-xs',
+      md: 'px-[10px] py-1 text-xs',
     },
     appearance: { solid: '', soft: '', outline: '' },
     variant: { neutral: '', primary: '', success: '', error: '', warning: '', info: '' },
@@ -65,7 +65,7 @@ const badgeVariants = tv({
   defaultVariants: {
     variant: 'neutral',
     appearance: 'soft',
-    size: 'medium',
+    size: 'md',
   },
 });
 
@@ -103,13 +103,13 @@ const dotColorMap: Record<BadgeVariant, string> = {
  *
  * @example
  *   // 枠線のみ（控えめなカテゴリラベル）
- *   <Badge variant="primary" appearance="outline" size="small">
+ *   <Badge variant="primary" appearance="outline" size="sm">
  *     ベータ
  *   </Badge>
  *
  * @example
  *   // 数値カウント
- *   <Badge variant="error" appearance="solid" size="small">12</Badge>
+ *   <Badge variant="error" appearance="solid" size="sm">12</Badge>
  *
  * @see principles/Color/semantic-colors.mdx
  */
@@ -132,9 +132,9 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   appearance?: BadgeAppearance;
   /**
    * サイズ。
-   * - `small` 高密度 UI / 数値カウント
-   * - `medium` 標準
-   * @default 'medium'
+   * - `sm` 高密度 UI / 数値カウント
+   * - `md` 標準
+   * @default 'md'
    */
   size?: BadgeSize;
   /**
@@ -156,7 +156,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     {
       variant = 'neutral',
       appearance = 'soft',
-      size = 'medium',
+      size = 'md',
       dot = false,
       children,
       className,

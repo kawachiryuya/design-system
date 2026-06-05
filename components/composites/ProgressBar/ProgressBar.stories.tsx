@@ -88,10 +88,10 @@ export const AnimatedDemo: Story = {
           label={progress >= 100 ? 'アップロード完了' : 'ファイルをアップロード中...'}
           showValue />
         <div className="flex gap-2 justify-end">
-          <Button size="small" variant="tertiary" onClick={() => { setProgress(0); setRunning(false); }}>
+          <Button size="sm" variant="tertiary" onClick={() => { setProgress(0); setRunning(false); }}>
             リセット
           </Button>
-          <Button size="small" onClick={() => { setProgress(0); setRunning(true); }}
+          <Button size="sm" onClick={() => { setProgress(0); setRunning(true); }}
             disabled={running}>
             開始
           </Button>
@@ -125,9 +125,9 @@ export const StepProgress: Story = {
           ))}
         </div>
         <div className="flex gap-2 justify-end">
-          <Button size="small" variant="tertiary" disabled={current === 1}
+          <Button size="sm" variant="tertiary" disabled={current === 1}
             onClick={() => setCurrent((c) => c - 1)}>戻る</Button>
-          <Button size="small" disabled={current === steps.length}
+          <Button size="sm" disabled={current === steps.length}
             onClick={() => setCurrent((c) => c + 1)}>次へ</Button>
         </div>
       </div>

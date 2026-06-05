@@ -40,6 +40,7 @@
 - [`AGENTS.md`](./AGENTS.md) を再構成 — §5 (旧「新規追加時の規約」147 行) と §10 (旧「既存移行手順」148 行) で重複していた **規約本体 (4 ファイル構成 / 標準 7 節 / Guideline 5 節 / DoDontExample / 完了条件)** を §5「コンポーネント実装規約 (新規・既存共通)」に集約し SSoT 化。§6 (新規追加) / §7 (既存移行) は §5 への delta + 手順だけに薄くした。旧 §7 検証フロー + §8 変更時に守ること は §10 に統合。`States` 節の必須要件を「状態を持つ component で必須、非 interactive (Badge / Skeleton / Spinner / Divider / VisuallyHidden) は省略可」と明文化 (既成事実だった運用を規約化)。外部参照は §3 (`Badge.tsx`) と §11 (`CHANGELOG.md`) のみで、両者とも番号変わらず無影響
 - `bg.default` の値定義を 生 hex `#F5F7F5` から `{color.primary.25}` への参照に変更 (M1)。値は不変、構造のみ統一 (semantic は全 primitive 経由になる)
 - `Tokens/Color/Primitive` story を **shade 数を palette ごとに動的取得** するよう改修 — Primary (11 shade) と他 (10 shade) の混在に対応
+- `state.hover-on-primary` / `state.active-on-primary` / `state.hover-on-error` / `state.active-on-error` を **ハードコード rgba から CSS `color-mix()` + primitive 参照に変更** (H2)。`color-mix(in srgb, {color.primary.700} 8%, transparent)` のような value にすることで Style Dictionary が build 時に primitive を展開し、`primary.700` / `error.600` を変更すれば次の build で自動連動 (silent link 解消)。視覚出力は等価 (RGB 値 + 同じ alpha)。**ブラウザ要件**: `color-mix()` 対応で Safari 16.4+ / Chrome 111+ / Firefox 113+ (2023 春以降) が必要
 
 ### Removed
 

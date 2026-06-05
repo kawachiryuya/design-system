@@ -230,24 +230,24 @@
         "description": "ドラッグ中オーバーレイ（中性）"
       },
       "hover-on-primary": {
-        "value": "rgba(0, 111, 80, 0.08)",
+        "value": "color-mix(in srgb, {color.primary.700} 8%, transparent)",
         "type": "color",
         "description": "白系背景に primary (primary.700) 色味で重ねるホバー（secondary ボタン等）"
       },
       "active-on-primary": {
-        "value": "rgba(0, 111, 80, 0.12)",
+        "value": "color-mix(in srgb, {color.primary.700} 12%, transparent)",
         "type": "color",
         "description": "白系背景に primary (primary.700) 色味で重ねるアクティブ"
       },
       "hover-on-error": {
-        "value": "rgba(193, 59, 59, 0.08)",
+        "value": "color-mix(in srgb, {color.error.600} 8%, transparent)",
         "type": "color",
-        "description": "白系背景に error 色味で重ねるホバー（destructive ボタン等）"
+        "description": "白系背景に error (error.600) 色味で重ねるホバー（destructive ボタン等）"
       },
       "active-on-error": {
-        "value": "rgba(193, 59, 59, 0.12)",
+        "value": "color-mix(in srgb, {color.error.600} 12%, transparent)",
         "type": "color",
-        "description": "白系背景に error 色味で重ねるアクティブ"
+        "description": "白系背景に error (error.600) 色味で重ねるアクティブ"
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as ShadowsStories from './Shadows.stories';
 
 <Meta of={ShadowsStories} name="Guideline" />
@@ -13,6 +13,13 @@ import * as ShadowsStories from './Shadows.stories';
 
 ---
 
+## カタログ
+
+- [Elevations](?path=/story/tokens-shadows--elevations) — 4 段のエレベーション (浮き感) を立体プレビューで比較
+- [TokenValues](?path=/story/tokens-shadows--token-values) — 各 shadow の CSS `box-shadow` 値 (詳細リスト)
+
+---
+
 ## 設計方針
 
 - **中核 sm/md/lg の 3 段**: Radius と同じ哲学。選択肢を絞ってデザイン判断を容易に
@@ -24,7 +31,7 @@ import * as ShadowsStories from './Shadows.stories';
 
 ---
 
-## 使い分けの目安
+## 迷ったらこれ
 
 | 段階 | 用途 | 例 |
 |---|---|---|
@@ -32,18 +39,6 @@ import * as ShadowsStories from './Shadows.stories';
 | `sm` | ごく浅い elevation、subtle なリフト感 | (現状本リポでは未使用、将来 Hover 用) |
 | `md` | 標準的なリフト感、bare `shadow` 同等 | Card (elevated) / Toast |
 | `lg` | 強めの elevation、視線を引く | Modal / Card hover |
-
----
-
-## エレベーション
-
-<Story of={ShadowsStories.Elevations} />
-
----
-
-## トークン値 (詳細)
-
-<Story of={ShadowsStories.TokenValues} />
 
 ---
 

@@ -140,8 +140,8 @@ export const EdgeCases: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-6">
-      <Caption text='color="inherit" — 親の text-error-500 を継承して赤くなる'>
-        <div className="text-error-700 flex items-center gap-2">
+      <Caption text='color="inherit" — 親の text-red-500 を継承して赤くなる'>
+        <div className="text-red-700 flex items-center gap-2">
           <Icon name="error" size="md" color="inherit" />
           <span>エラーメッセージのアイコンと文字が同色</span>
         </div>

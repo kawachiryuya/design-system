@@ -67,28 +67,28 @@ const variantConfig: Record<ToastVariant, {
 }> = {
   success: {
     container: 'bg-surface-success-muted border border-border-success-muted text-onSurface-success',
-    icon: 'text-success-500',
+    icon: 'text-green-500',
     iconName: 'check_circle',
     ariaLive: 'polite',
     role: 'status',
   },
   error: {
     container: 'bg-surface-error-muted border border-border-error-muted text-onSurface-error',
-    icon: 'text-error-500',
+    icon: 'text-red-500',
     iconName: 'error',
     ariaLive: 'assertive',
     role: 'alert',
   },
   warning: {
     container: 'bg-surface-warning-muted border border-border-warning-muted text-onSurface-warning',
-    icon: 'text-warning-600',
+    icon: 'text-orange-600',
     iconName: 'warning',
     ariaLive: 'polite',
     role: 'status',
   },
   info: {
     container: 'bg-surface-info-muted border border-border-info-muted text-onSurface-info',
-    icon: 'text-info-500',
+    icon: 'text-blue-500',
     iconName: 'info',
     ariaLive: 'polite',
     role: 'status',

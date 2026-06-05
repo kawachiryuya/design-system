@@ -7,70 +7,41 @@ import * as ColorsStories from './Colors.stories';
 
 ## 概要
 
-OKLCH ベースで知覚明度を統一したカラーパレット。各 palette は **10 段 + 例外** で構成され、shade は基本 50 (最薄) → 900 (最濃) の数値。
+OKLCH ベースで知覚明度を統一したカラーパレット。**Primitive 層は hue 名のみ** (`teal` / `green` / `red` / `orange` / `blue` / `neutral` 等) で構成し、`primary` / `success` / `error` 等の **役割名は [Semantic 層](?path=/docs/tokens-color-semantic--guideline) でのみ** 定義する (2 層アーキテクチャの純度を保つ設計)。
 
-利用 utility (※ **コンポーネント実装では直接使わない**): `bg-{palette}-{shade}` / `text-{palette}-{shade}` / `border-{palette}-{shade}`
+各 palette は 10 段 (`50` / `100` / ... / `900`) のスケールで、`bg-{palette}-{shade}` / `text-{palette}-{shade}` / `border-{palette}-{shade}` の utility で参照可能。
 
-**禁則**: 実装では `bg-primary-700` のような primitive 直参照は **禁止**。必ず [Semantic 層](?path=/docs/tokens-color-semantic--guideline) (`bg-surface-primary` 等) を経由する。理由: 下流 product が brand palette を override したときに自動連動させるため。
-
----
-
-## Primitive → Semantic 逆リンク
-
-各 swatch の右下に **「その shade を参照している semantic token 名」** を表示しています ([`semantic-colors.json`](https://github.com/kawachiryuya/design-system/blob/main/tokens/source/semantic-colors.json) から逆引き)。
-
-例: `primary.700` swatch の右下に `→ surface.primary, on.primary, border-primary, state.hover (color-mix 内)` のように表示。
-
-参照のない shade (`primary.500` / `neutral.300` 等) は何も表示されません = palette を変えても直接的には影響しない。「`primary.700` を変えると何に影響するか」を即座に判断できる導線です。
+**禁則**: 実装では `bg-teal-700` のような primitive 直参照は **禁止**。必ず [Semantic 層](?path=/docs/tokens-color-semantic--guideline) (`bg-surface-primary` 等) を経由する。理由: 下流 product が brand palette を override したときに自動連動させるため。
 
 ---
 
 ## 設計方針
 
-- **OKLCH ベース**: 知覚明度を palette 間で揃えるため。同じ shade 番号なら異なる palette でも体感の明度が近い
+- **Primitive は hue 名のみ**: `primary` のような role 名は持たない。Semantic 層 (`surface.primary` 等) で初めて役割を当てる
+- **OKLCH ベース**: 知覚明度を palette 間で揃える。同じ shade 番号なら異なる palette でも体感の明度が近い (50: L=0.97 → 900: L=0.31)
 - **shade 数値スケール (50〜900)**: Tailwind / Material 慣習に準拠
-- **`primary.25` は bg.default 専用の例外 shade**: ページ最下層に brand canvas を敷くために追加 ([AGENTS.md §3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
-- **6 palette + base**: brand (primary) + neutral + 4 機能色 (success/error/warning/info) + base (white/black)
+- **`teal.25` は `bg.default` 専用の例外 shade**: ページ最下層に brand canvas を敷くために追加 ([AGENTS.md §3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+- **13 hue + base**: teal / neutral / green / red / orange / blue (semantic で参照される 6 hue) + yellow / lime / cyan / sky / violet / purple / pink (下流用予備 7 hue) + base (white / black / transparent)
 
 ---
 
-## Base (絶対基準色)
+## カタログ
 
-<Story of={ColorsStories.Base} />
+White / Black から各 hue palette まで、全 palette を横ストリップで縦に並べて表示。同 shade を縦に揃えて palette 間の明度・彩度を比較可能。
 
----
-
-## Neutral
-
-<Story of={ColorsStories.Neutral} />
+<Story of={ColorsStories.Catalog} />
 
 ---
 
-## Primary
+## 下流 product での palette override
 
-<Story of={ColorsStories.Primary} />
-
----
-
-## 機能色 (Functional)
-
-<Story of={ColorsStories.Functional} />
-
----
-
-## 補助 palette (Extra)
-
-本リポの semantic 層では参照しない補助 palette。**下流 product がブランドカラーや図表 / カテゴリ分類で使う予備** として、hue 30° 刻みで wheel を埋めるよう用意した 7 種類 (`yellow` / `lime` / `cyan` / `sky` / `violet` / `purple` / `pink`)。
-
-既存 palette と同じ OKLCH 明度カーブ (50: L=0.97 → 900: L=0.31) で生成しているため、shade 番号ごとの体感の明度は全 palette で揃う。
-
-利用例 (下流 product 側):
+Extra palette を brand 色として採用する例:
 
 ```js
 // tailwind.config.js
 module.exports = {
   presets: [require('design-system/tokens/preset.cjs')],
-  // 補助 palette を semantic 上書きに使う
+  // Extra palette を semantic 上書きに使う
   theme: {
     extend: {
       backgroundColor: { brand: 'var(--color-violet-600)' },
@@ -79,12 +50,10 @@ module.exports = {
 };
 ```
 
-<Story of={ColorsStories.Extra} />
-
 ---
 
 ## 関連
 
-- [Tokens/Color/Semantic](?path=/docs/tokens-color-semantic--guideline) — 実装で使う semantic 層
+- [Tokens/Color/Semantic](?path=/docs/tokens-color-semantic--guideline) — 実装で使う semantic 層 (`surface.primary` で teal を参照)
 - [Tokens/Overview](?path=/docs/tokens-overview--docs) — 2 層構造の説明
 - [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — token 参照ルール

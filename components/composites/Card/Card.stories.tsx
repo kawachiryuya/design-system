@@ -176,7 +176,7 @@ export const StatCard: Story = {
         <Card key={label} variant="outlined" padding="md">
           <p className="text-xs text-onSurface-muted">{label}</p>
           <p className="text-xl font-bold text-onSurface mt-1">{value}</p>
-          <p className={`text-xs mt-1 ${up ? 'text-success-600' : 'text-error-600'}`}>{change}</p>
+          <p className={`text-xs mt-1 ${up ? 'text-green-600' : 'text-red-600'}`}>{change}</p>
         </Card>
       ))}
     </div>

@@ -111,12 +111,12 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 
 ```jsonc
 // ✅ OK
-"surface": { "primary": { "value": "{color.primary.700}" } }
+"surface": { "primary": { "value": "{color.teal.700}" } }
 // ❌ NG
 "surface": { "primary": { "value": "#006F50" } }
 ```
 
-理由: 生 hex は下流 product が primary palette を override しても connect しない (silent link)。`{color.X.Y}` で参照しておけば下流の override に自動追従する。**2026-06-04 以降、`bg.default` も含めて semantic は全て primitive 経由**。
+理由: 生 hex は下流 product が hue palette (`teal` 等) を override しても connect しない (silent link)。`{color.X.Y}` で参照しておけば下流の override に自動追従する。**2026-06-04 以降、`bg.default` も含めて semantic は全て primitive 経由**。
 
 **3-2. 透過オーバーレイは `color-mix()` で primitive と連動させる**
 
@@ -125,9 +125,9 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 ```jsonc
 // ✅ OK
 "hover-on-primary": {
-  "value": "color-mix(in srgb, {color.primary.700} 8%, transparent)"
+  "value": "color-mix(in srgb, {color.teal.700} 8%, transparent)"
 }
-// ❌ NG (旧バージョンのハードコード、primary.700 変更時に手動更新必要)
+// ❌ NG (旧バージョンのハードコード、teal.700 変更時に手動更新必要)
 "hover-on-primary": {
   "value": "rgba(0, 111, 80, 0.08)"
 }
@@ -137,9 +137,15 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 
 中性 (黒/白) オーバーレイ (`state.hover` 等) は primitive 依存がないので `rgba(0, 0, 0, 0.08)` 等の生 rgba でよい。
 
-**3-3. `primary.25` は `bg.default` 専用**
+**3-3. `teal.25` は `bg.default` 専用**
 
-`color.primary.25` (#F5F7F5) は brand 色の最薄 tint として bg.default 専用に用意した。Text / Border / 他用途では使わない (description にも明記)。「ページ最下層に brand canvas を敷く」設計のための専用 token。
+`color.teal.25` (#F5F7F5) は brand 色の最薄 tint として bg.default 専用に用意した。Text / Border / 他用途では使わない (description にも明記)。「ページ最下層に brand canvas を敷く」設計のための専用 token。
+
+**3-5. Primitive Color は hue 名、role 名は Semantic 層に集約**
+
+Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `green` / `red` / `orange` / `blue` / `neutral` / 他 7 補助 hue) で構成する。`primary` / `success` / `error` / `warning` / `info` のような **role 名は Semantic 層** (`surface.primary` / `on.success` 等) でのみ定義し、Primitive 層には持ち込まない。
+
+理由: 2 層アーキテクチャの純度を保つため。`primary` は概念上「ブランドの中核色」というロール (= 意味付け) であり、teal という色相そのものではない。下流 product が brand を別 hue に変えたい場合、Semantic 層で `surface.primary` の参照先を `{color.violet.700}` 等に差し替えるだけで Primitive 層は触らない設計。
 
 **3-4. semantic-only スケール (z-index / opacity / focus-ring)**
 

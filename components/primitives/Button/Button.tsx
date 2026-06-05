@@ -164,7 +164,7 @@ const buttonVariants = tv({
         'bg-surface',
         'text-onSurface-primary',
         'border',
-        'border-primary-600',
+        'border-teal-600',
         'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-on-primary)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-on-primary)]',

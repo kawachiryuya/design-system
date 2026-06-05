@@ -72,7 +72,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="`error` を立てると `errorMessage` が型レベルで必須 (discriminated union)。aria-invalid + aria-describedby + role='alert' が自動連携し、SR がエラーを即時読み上げる。"
   dontExample={
-    <Input label="パスワード" type="password" defaultValue="abc" className="!border-error-500 !bg-error-50" />
+    <Input label="パスワード" type="password" defaultValue="abc" className="!border-red-500 !bg-red-50" />
   }
   dontCaption="自前 className で枠だけ赤くしても aria 属性が立たず、SR ユーザーにエラーが伝わらない。色覚多様性のあるユーザーにも色の違いだけでは伝わらない。"
 />

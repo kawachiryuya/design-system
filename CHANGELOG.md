@@ -8,6 +8,16 @@
 
 ### ⚠ BREAKING CHANGES
 
+- **Primitive Color palette key rename** (API + silent break): 2 層アーキテクチャ純度を保つため、Primitive 層から **role 名を排除して hue 名に統一**:
+  - `primary` → `teal`
+  - `success` → `green`
+  - `error` → `red`
+  - `warning` → `orange`
+  - `info` → `blue`
+  - 影響: Tailwind utility (`bg-primary-700` → `bg-teal-700`)、CSS 変数 (`--color-primary-700` → `--color-teal-700`)、Style Dictionary TS export (`PrimaryColor700` → `TealColor700` 等)。**Semantic 層のキー (`surface.primary` / `on.success` 等) は変更なし**、value の参照先のみ自動連動
+  - 下流 product 移行: `sed -i '' -E 's/(bg|text|border|hover:bg|hover:text)-primary-([0-9])/\1-teal-\2/g; s/(bg|text|border)-success-([0-9])/\1-green-\2/g; ...' src/**/*.{tsx,ts}` 等で機械置換可能
+  - 本リポ内は 31 callsite を自動 sed 済 (Alert / Toast / Card / Button / Spinner / Icon / 各 mdx)
+  - AGENTS.md §3-5 に「Primitive Color は hue 名、role 名は Semantic 層に集約」の規約を新設
 - **Badge の Storybook story id 変更** (silent break): 旧 5 story (Default / AllVariants / AllAppearances / AllSizes / WithDot / LongLabel / StatusBadges) を新標準節 (Playground / Variants / Sizes / EdgeCases) に集約。`?path=/story/primitives-badge--default` 等の旧 URL は壊れる。新 id は `--playground` / `--variants` / `--sizes` / `--edge-cases`
 - **`typography-semantic.heading.xs` / `heading.2xs` 削除** (silent break): Tailwind utility `text-heading-xs` / `text-heading-2xs` が生成されなくなる。Typography コンポーネントは v0.3 で h5/h6 を削除済 (h4 までに統一) で、これらのセマンティック token は orphan として残っていた。下流で直接 utility を使っていた場合は `text-heading-sm` (h4 相当) に置換: `sed -i 's/text-heading-xs/text-heading-sm/g; s/text-heading-2xs/text-heading-sm/g' src/**/*.tsx`
 - **Storybook の Tokens 系 story id 変更** (silent break): カテゴリ → レイヤの入れ子構造に再編した。旧 URL は壊れる:

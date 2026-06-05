@@ -2,7 +2,7 @@
   "color": {
     "bg": {
       "default": {
-        "value": "{color.primary.25}",
+        "value": "{color.teal.25}",
         "type": "color",
         "description": "ページ最下層。primary 最薄 tint を引くことで、下流 product が brand 色を override すると bg も連動して追従する設計"
       }
@@ -24,52 +24,52 @@
         "description": "モーダルオーバーレイ"
       },
       "primary": {
-        "value": "{color.primary.700}",
+        "value": "{color.teal.700}",
         "type": "color",
         "description": "主要アクション（Primaryボタン等）。WCAG AA (白文字 6.19:1) を満たすため primary.700 を使用。"
       },
       "secondary": {
-        "value": "{color.primary.50}",
+        "value": "{color.teal.50}",
         "type": "color",
         "description": "選択状態・アクティブ項目"
       },
       "success": {
-        "value": "{color.success.500}",
+        "value": "{color.green.500}",
         "type": "color",
         "description": "成功の強調塗り（バッジ・ドット等）"
       },
       "success-muted": {
-        "value": "{color.success.50}",
+        "value": "{color.green.50}",
         "type": "color",
         "description": "成功Alert背景等"
       },
       "error": {
-        "value": "{color.error.500}",
+        "value": "{color.red.500}",
         "type": "color",
         "description": "エラーの強調塗り（バッジ・ドット等）"
       },
       "error-muted": {
-        "value": "{color.error.50}",
+        "value": "{color.red.50}",
         "type": "color",
         "description": "エラーAlert背景等"
       },
       "warning": {
-        "value": "{color.warning.400}",
+        "value": "{color.orange.400}",
         "type": "color",
         "description": "警告の強調塗り（バッジ・ドット等）"
       },
       "warning-muted": {
-        "value": "{color.warning.50}",
+        "value": "{color.orange.50}",
         "type": "color",
         "description": "警告Alert背景等"
       },
       "info": {
-        "value": "{color.info.500}",
+        "value": "{color.blue.500}",
         "type": "color",
         "description": "情報の強調塗り（バッジ・ドット等）"
       },
       "info-muted": {
-        "value": "{color.info.50}",
+        "value": "{color.blue.50}",
         "type": "color",
         "description": "情報Alert背景等"
       },
@@ -106,27 +106,27 @@
         "description": "サブテキスト・プレースホルダー・装飾的な補助テキスト全般 (AA 4.69:1)"
       },
       "primary": {
-        "value": "{color.primary.700}",
+        "value": "{color.teal.700}",
         "type": "color",
         "description": "リンク・CTA。白背景に対して WCAG AA (6.19:1) を満たすため primary.700 を使用。"
       },
       "success": {
-        "value": "{color.success.700}",
+        "value": "{color.green.700}",
         "type": "color",
         "description": "成功テキスト・アイコン"
       },
       "error": {
-        "value": "{color.error.700}",
+        "value": "{color.red.700}",
         "type": "color",
         "description": "エラーテキスト"
       },
       "warning": {
-        "value": "{color.warning.700}",
+        "value": "{color.orange.700}",
         "type": "color",
         "description": "警告テキスト"
       },
       "info": {
-        "value": "{color.info.700}",
+        "value": "{color.blue.700}",
         "type": "color",
         "description": "情報テキスト"
       },
@@ -158,32 +158,32 @@
         "description": "強調ボーダー"
       },
       "focus": {
-        "value": "{color.primary.700}",
+        "value": "{color.teal.700}",
         "type": "color",
         "description": "フォーカスリング (primary と視覚統一)"
       },
       "primary": {
-        "value": "{color.primary.700}",
+        "value": "{color.teal.700}",
         "type": "color",
         "description": "選択・アクティブ枠 (primary と視覚統一)"
       },
       "error": {
-        "value": "{color.error.600}",
+        "value": "{color.red.600}",
         "type": "color",
         "description": "エラー枠"
       },
       "success": {
-        "value": "{color.success.600}",
+        "value": "{color.green.600}",
         "type": "color",
         "description": "成功枠"
       },
       "warning": {
-        "value": "{color.warning.600}",
+        "value": "{color.orange.600}",
         "type": "color",
         "description": "警告枠"
       },
       "info": {
-        "value": "{color.info.600}",
+        "value": "{color.blue.600}",
         "type": "color",
         "description": "情報枠"
       },
@@ -193,22 +193,22 @@
         "description": "非活性ボーダー"
       },
       "success-muted": {
-        "value": "{color.success.200}",
+        "value": "{color.green.200}",
         "type": "color",
         "description": "成功コンテナ枠（Alert等）"
       },
       "error-muted": {
-        "value": "{color.error.200}",
+        "value": "{color.red.200}",
         "type": "color",
         "description": "エラーコンテナ枠（Alert等）"
       },
       "warning-muted": {
-        "value": "{color.warning.200}",
+        "value": "{color.orange.200}",
         "type": "color",
         "description": "警告コンテナ枠（Alert等）"
       },
       "info-muted": {
-        "value": "{color.info.200}",
+        "value": "{color.blue.200}",
         "type": "color",
         "description": "情報コンテナ枠（Alert等）"
       }
@@ -230,22 +230,22 @@
         "description": "ドラッグ中オーバーレイ（中性）"
       },
       "hover-on-primary": {
-        "value": "color-mix(in srgb, {color.primary.700} 8%, transparent)",
+        "value": "color-mix(in srgb, {color.teal.700} 8%, transparent)",
         "type": "color",
         "description": "白系背景に primary (primary.700) 色味で重ねるホバー（secondary ボタン等）"
       },
       "active-on-primary": {
-        "value": "color-mix(in srgb, {color.primary.700} 12%, transparent)",
+        "value": "color-mix(in srgb, {color.teal.700} 12%, transparent)",
         "type": "color",
         "description": "白系背景に primary (primary.700) 色味で重ねるアクティブ"
       },
       "hover-on-error": {
-        "value": "color-mix(in srgb, {color.error.600} 8%, transparent)",
+        "value": "color-mix(in srgb, {color.red.600} 8%, transparent)",
         "type": "color",
         "description": "白系背景に error (error.600) 色味で重ねるホバー（destructive ボタン等）"
       },
       "active-on-error": {
-        "value": "color-mix(in srgb, {color.error.600} 12%, transparent)",
+        "value": "color-mix(in srgb, {color.red.600} 12%, transparent)",
         "type": "color",
         "description": "白系背景に error (error.600) 色味で重ねるアクティブ"
       }

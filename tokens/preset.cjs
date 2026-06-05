@@ -54,20 +54,22 @@ module.exports = {
     // ── Core (overrides Tailwind defaults) ──
     spacing: t.spacing,
     colors: {
-      primary: t.color.primary,
+      // Primitive palette は **hue 名** で表現 (2 層アーキテクチャの純度を保つため)。
+      // brand / 機能色の役割名は semantic-colors.json (surface.primary / on.success 等)
+      // で担う。13 palette × 10 shade で hue wheel を 30° 刻みで埋める。
+      teal:    t.color.teal,
       neutral: t.color.neutral,
-      success: t.color.success,
-      error: t.color.error,
-      warning: t.color.warning,
-      info: t.color.info,
-      // 追加 palette (30° 刻みで hue wheel を埋める、下流 product の brand 色用)
-      yellow: t.color.yellow,
-      lime:   t.color.lime,
-      cyan:   t.color.cyan,
-      sky:    t.color.sky,
-      violet: t.color.violet,
-      purple: t.color.purple,
-      pink:   t.color.pink,
+      green:   t.color.green,
+      red:     t.color.red,
+      orange:  t.color.orange,
+      blue:    t.color.blue,
+      yellow:  t.color.yellow,
+      lime:    t.color.lime,
+      cyan:    t.color.cyan,
+      sky:     t.color.sky,
+      violet:  t.color.violet,
+      purple:  t.color.purple,
+      pink:    t.color.pink,
       white: t.color.base.white,
       black: t.color.base.black,
       transparent: t.color.base.transparent,

@@ -113,31 +113,58 @@ function PaletteStrip({ palette }: { palette: Palette }) {
 }
 
 /**
- * White / Black を 1-shade palette として扱い、他の palette と並列に並べられるよう整形。
+ * Base (White / Black) を 1 行に横並びで圧縮表示。
+ * 他 hue palette の strip と「同じ swatch 幅 × 同じ高さ」で揃え、catalog 全体の縦幅を抑える。
  */
-const BASE_PALETTES: Palette[] = [
-  { name: 'white', label: 'White', shades: { '': colorsToken.color.base.white.value } },
-  { name: 'black', label: 'Black', shades: { '': colorsToken.color.base.black.value } },
+const BASE_COLORS = [
+  { label: 'White', hex: colorsToken.color.base.white.value },
+  { label: 'Black', hex: colorsToken.color.base.black.value },
 ];
 
-/** 全 palette を sidebar 1 列に並べた表示順 (Base → semantic で参照される hue → Extra) */
-const CATALOG_PALETTES: Palette[] = [
-  ...BASE_PALETTES,
-  ...['neutral', 'teal', 'green', 'red', 'orange', 'blue'].map((k) => ALL_PALETTES[k]),
-  ...EXTRA_PALETTES,
-];
+/** semantic で参照される hue (Tokens/Color/Semantic で `surface.primary` 等の参照先になる) */
+const HUE_PALETTES: Palette[] = ['neutral', 'teal', 'green', 'red', 'orange', 'blue'].map(
+  (k) => ALL_PALETTES[k],
+);
+
+function BaseRow() {
+  return (
+    <div className="flex gap-2">
+      {BASE_COLORS.map((c) => {
+        const dark = isDark(c.hex);
+        const subColor = dark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.5)';
+        return (
+          <div key={c.label} className="flex-shrink-0">
+            <p className="text-body-sm font-semibold text-onSurface m-0 mb-2">{c.label}</p>
+            <div
+              className="rounded-md border border-border-muted flex flex-col items-center justify-center px-2 py-4 gap-[2px]"
+              style={{ backgroundColor: c.hex, color: dark ? '#FFFFFF' : '#171717', width: '64px' }}
+            >
+              <span className="text-[10px] font-mono leading-none" style={{ color: subColor }}>
+                {c.hex}
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export const Catalog: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Primitive Color の全体カタログ。White / Black から各 hue palette まで横ストリップで縦に並べ、cross-palette 比較を容易に。同 shade を縦に揃えて palette 間の明度・彩度を比較できる。',
+        story: 'Primitive Color の全体カタログ。White / Black から各 hue palette まで横ストリップで縦に並べ、cross-palette 比較を容易に。White / Black は 1 行に横並び圧縮。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6 min-w-[640px]">
-      {CATALOG_PALETTES.map((palette) => (
+      <BaseRow />
+      {HUE_PALETTES.map((palette) => (
+        <PaletteStrip key={palette.name} palette={palette} />
+      ))}
+      {EXTRA_PALETTES.map((palette) => (
         <PaletteStrip key={palette.name} palette={palette} />
       ))}
     </div>

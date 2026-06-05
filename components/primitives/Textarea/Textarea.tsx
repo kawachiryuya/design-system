@@ -112,7 +112,9 @@ const textareaVariants = tv({
     'py-2',
     'text-base',
     'leading-normal',
-    'transition-all',
+    // transition-colors のみ (transition-all だと border-width も transition されて
+    // 1→2px の間に内側コンテンツ領域が動的に収縮し「高さが変わる」ように見える)
+    'transition-colors',
     'duration-normal',
     'focus:outline-none',
     // ring は **キーボード Tab のみ** (:focus-visible)。border は :focus で常に出る

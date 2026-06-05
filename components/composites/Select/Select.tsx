@@ -147,7 +147,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       'text-onSurface',
       'appearance-none',
       'cursor-pointer',
-      'transition-all',
+      // transition-colors のみ (transition-all だと border-width も transition されて
+      // 1→2px の間に内側コンテンツ領域が動的に収縮し「高さが変わる」ように見える)
+      'transition-colors',
       'duration-normal',
       'focus:outline-none',
       'focus-visible:ring-focus',

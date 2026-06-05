@@ -128,7 +128,10 @@ const inputVariants = tv({
     'bg-surface',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
-    'transition-all',
+    // transition-colors のみ (transition-all だと border-width も transition されて
+    // 1→2px の間に内側コンテンツ領域が動的に収縮し「高さが変わる」ように見える)。
+    // border 色 / 背景色 / text 色だけスムーズ、border-width は瞬時に変わる
+    'transition-colors',
     'duration-normal',
     'focus:outline-none',
     // ring は **キーボード Tab のみ** (:focus-visible)。border は :focus で常に出る

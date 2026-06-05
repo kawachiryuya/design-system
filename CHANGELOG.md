@@ -6,6 +6,14 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **Style Dictionary `outputReferences: true` 有効化** (ランタイム brand override 対応): `style-dictionary.config.js` の web-css 出力に `outputReferences: true` を追加し、primitive 参照 (`{color.teal.700}` 等) を build 時に hex 解決せず `var(--color-teal-700)` として CSS 出力するように変更。これにより **下流 product は CSS 変数 1 行 override で全 semantic chain にランタイム伝播**:
+  - 例: `--color-teal-700` を violet 値に override → `--color-surface-primary` / `--color-on-primary` / `--color-border-focus` / `--color-state-hover-primary` 等が全て自動的に violet ベースに切り替わる
+  - SD 再 build 不要、`tailwind.config.js` の preset 継承もそのまま、product 側はオーバーライド CSS 1 行で済む
+  - color-mix() を使った state.hover-primary 等の透過 overlay も自動連動
+  - AGENTS.md §3-1 にランタイム連動の仕組みと利用例を追記
+
 ### ⚠ BREAKING CHANGES
 
 - **Semantic state token を整理 + 命名統一** (silent break、軸 5): orphan 削除と命名一貫化:

@@ -118,6 +118,17 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 
 理由: 生 hex は下流 product が hue palette (`teal` 等) を override しても connect しない (silent link)。`{color.X.Y}` で参照しておけば下流の override に自動追従する。**2026-06-04 以降、`bg.default` も含めて semantic は全て primitive 経由**。
 
+**ランタイム連動**: Style Dictionary は `outputReferences: true` (style-dictionary.config.js) で primitive 参照を build 時に解決せず `var(--color-teal-700)` として CSS 出力する。これにより **下流 product は CSS 変数を 1 行 override するだけで全 semantic chain に伝播** (再 build 不要):
+
+```css
+/* product 側 */
+:root {
+  --color-teal-700: #5B4C99;  /* brand を violet 系に変更 */
+}
+/* → --color-surface-primary, --color-on-primary, --color-border-focus,
+       --color-state-hover-primary 等が自動的に violet ベースに切り替わる */
+```
+
 **3-2. 透過オーバーレイは `color-mix()` で primitive と連動させる**
 
 primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、CSS `color-mix()` + Style Dictionary 参照で書く:

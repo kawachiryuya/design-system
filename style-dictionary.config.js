@@ -200,7 +200,15 @@ export default {
         {
           destination: 'variables.css',
           format: 'css/variables',
-          options: { selector: ':root' }
+          // outputReferences: true で {color.teal.700} 等の primitive 参照を
+          // var(--color-teal-700) として出力 (build 時に値解決しない)。
+          // これにより下流 product が CSS 変数 (`--color-teal-700` 等) を
+          // override すると、semantic / state 等の参照先 token 全てに
+          // ランタイムで自動連動 (Style Dictionary 再 build 不要)。
+          // 例: state.hover-primary = color-mix(... var(--color-teal-700) 8% ...)
+          //     → product が --color-teal-700 を violet 値に override すると
+          //       hover-primary も violet tint に自動変化
+          options: { selector: ':root', outputReferences: true }
         }
       ]
     },

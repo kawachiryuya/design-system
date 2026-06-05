@@ -109,7 +109,8 @@ const textareaVariants = tv({
     'py-2',
     'text-base',
     'leading-normal',
-    'transition-all',
+    // transition-colors のみ (詳細は Input.tsx 同セクションのコメント参照)
+    'transition-colors',
     'duration-normal',
     'focus:outline-none',
     // focus 表現は border 色変化 + inset ring (詳細は Input.tsx 同セクションのコメント参照)

@@ -124,7 +124,11 @@ const inputVariants = tv({
     'bg-surface',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
-    'transition-all',
+    // transition-colors のみ (transition-all だと box-shadow も transition 対象になり、
+    // CSS の `inset` キーワードが discrete (連続補間不可) なため inset ring が
+    // 「一瞬 outside + offset gap」を経由して切り替わるチラつきが出る)。
+    // border 色は smooth、inset ring は瞬時に出る挙動が最もクリーン
+    'transition-colors',
     'duration-normal',
     'focus:outline-none',
     // input/textarea/select の focus 表現は **border 色変化 + inset ring** の組合せ。

@@ -145,7 +145,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       'text-onSurface',
       'appearance-none',
       'cursor-pointer',
-      'transition-all',
+      // transition-colors のみ (詳細は Input.tsx 同セクションのコメント参照)
+      'transition-colors',
       'duration-normal',
       'focus:outline-none',
       'focus:ring-1',

@@ -103,28 +103,21 @@ const textareaVariants = tv({
     'block',
     'rounded-sm',
     'border',
-    // :focus (click + keyboard) で border を 1px → 2px に。ring とセットで段階的な focus 表現
-    // (詳細は Input.tsx の同コメント参照)
-    'focus:border-2',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
     'px-3',
     'py-2',
     'text-base',
     'leading-normal',
-    // transition-colors のみ (transition-all だと border-width も transition されて
-    // 1→2px の間に内側コンテンツ領域が動的に収縮し「高さが変わる」ように見える)
     'transition-colors',
     'duration-normal',
     'focus:outline-none',
-    // ring は **キーボード Tab のみ** (:focus-visible)。border は :focus で常に出る
-    'focus-visible:ring-focus',
-    'focus-visible:ring-offset-focus',
+    // focus 表現は border 色変化のみ (詳細は Input.tsx 同セクションのコメント参照)
   ],
   variants: {
     error: {
-      true:  'border-border-error focus:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus-visible:ring-border-focus bg-surface',
+      true:  'border-border-error focus:border-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus:border-border-focus bg-surface',
     },
     fullWidth: {
       true:  'w-full',

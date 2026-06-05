@@ -121,22 +121,20 @@ const inputVariants = tv({
     'block',
     'rounded-sm',
     'border',
-    // :focus (click + keyboard) で border を 1px → 2px に。box-sizing: border-box
-    // (Tailwind preflight) のおかげで外形サイズは不変、内側のコンテンツ領域だけ 1px 縮む。
-    // 「マウスクリック = border 強調のみ」「キーボード Tab = + ring」の二段階表現
-    'focus:border-2',
     'bg-surface',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
-    // transition-colors のみ (transition-all だと border-width も transition されて
-    // 1→2px の間に内側コンテンツ領域が動的に収縮し「高さが変わる」ように見える)。
-    // border 色 / 背景色 / text 色だけスムーズ、border-width は瞬時に変わる
     'transition-colors',
     'duration-normal',
     'focus:outline-none',
-    // ring は **キーボード Tab のみ** (:focus-visible)。border は :focus で常に出る
-    'focus-visible:ring-focus',
-    'focus-visible:ring-offset-focus',
+    // input/textarea/select の focus 表現は **border 色変化のみ**。
+    // ring (outer focus indicator) は使わない:
+    // - Material Design 3 / Carbon / Polaris 等の主流 DS と同じパターン
+    // - border-width は変えない (固定 1px) ため layout/height シフトなし
+    // - Chrome の UA heuristic で input click が focus-visible マッチする問題を回避
+    // - 色覚多様性配慮: border-border-focus は十分なコントラストを持つ semantic 色
+    // (Button / Radio / Switch 等の **border を持たない or 小さな塗り図形** な
+    //  component は引き続き ring を使う、要素の構造に応じた使い分け)
     'disabled:opacity-disabled',
     'disabled:cursor-not-allowed',
     'disabled:bg-surface-disabled',
@@ -148,8 +146,8 @@ const inputVariants = tv({
       lg: 'h-16 text-lg',
     },
     error: {
-      true:  'border-border-error focus:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus-visible:ring-border-focus',
+      true:  'border-border-error focus:border-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus:border-border-focus',
     },
     fullWidth: {
       true:  'w-full',

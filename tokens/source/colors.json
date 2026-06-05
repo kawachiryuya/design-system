@@ -1,6 +1,10 @@
 {
   "color": {
     "primary": {
+      "25": {
+        "value": "#F5F7F5",
+        "type": "color"
+      },
       "50": {
         "value": "#E4FCF2",
         "type": "color"

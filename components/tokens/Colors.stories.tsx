@@ -11,10 +11,6 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-type Shade = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-
-const SHADES: Shade[] = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
-
 const PALETTE_LABELS: Record<string, string> = {
   primary: 'Primary (Teal)',
   neutral: 'Neutral (Gray)',
@@ -24,12 +20,12 @@ const PALETTE_LABELS: Record<string, string> = {
   info: 'Info (Blue)',
 };
 
-type PaletteEntry = { name: string; label: string; colors: Record<Shade, string> };
+type PaletteEntry = { name: string; label: string; colors: Record<string, string> };
 
 const ALL_PALETTES: Record<string, PaletteEntry> = Object.fromEntries(
   Object.entries(colorsToken)
     .filter(([key]) => key in PALETTE_LABELS)
-    .map(([name, colors]) => [name, { name, label: PALETTE_LABELS[name], colors: colors as Record<Shade, string> }]),
+    .map(([name, colors]) => [name, { name, label: PALETTE_LABELS[name], colors: colors as Record<string, string> }]),
 );
 
 const FUNCTIONAL_PALETTES: PaletteEntry[] = ['success', 'error', 'warning', 'info'].map((k) => ALL_PALETTES[k]);
@@ -41,14 +37,19 @@ function isDark(hex: string): boolean {
   return (r * 299 + g * 587 + b * 114) / 1000 < 128;
 }
 
-function ColorSwatch({ shade, hex }: { shade: string; hex: string }) {
+function ColorSwatch({
+  shade,
+  hex,
+  isFirst,
+  isLast,
+}: { shade: string; hex: string; isFirst: boolean; isLast: boolean }) {
   const dark = isDark(hex);
   return (
     <div
       style={{
         backgroundColor: hex,
         padding: '12px 8px',
-        borderRadius: shade === '50' ? '8px 8px 0 0' : shade === '900' ? '0 0 8px 8px' : '0',
+        borderRadius: isFirst ? '8px 8px 0 0' : isLast ? '0 0 8px 8px' : '0',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -65,14 +66,22 @@ function ColorSwatch({ shade, hex }: { shade: string; hex: string }) {
 }
 
 function PaletteBlock({ palette }: { palette: PaletteEntry }) {
+  // 各 palette は自身の shade keys (10 段または primary のみ 11 段) を保持
+  const shades = Object.keys(palette.colors);
   return (
     <div style={{ minWidth: '180px', flex: '1 1 180px' }}>
       <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600, color: '#404040' }}>
         {palette.label}
       </p>
       <div style={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #E5E5E5' }}>
-        {SHADES.map((shade) => (
-          <ColorSwatch key={shade} shade={shade} hex={palette.colors[shade]} />
+        {shades.map((shade, i) => (
+          <ColorSwatch
+            key={shade}
+            shade={shade}
+            hex={palette.colors[shade]}
+            isFirst={i === 0}
+            isLast={i === shades.length - 1}
+          />
         ))}
       </div>
     </div>

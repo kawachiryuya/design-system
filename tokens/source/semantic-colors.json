@@ -2,9 +2,9 @@
   "color": {
     "bg": {
       "default": {
-        "value": "#F5F7F5",
+        "value": "{color.primary.25}",
         "type": "color",
-        "description": "ページ最下層"
+        "description": "ページ最下層。primary 最薄 tint を引くことで、下流 product が brand 色を override すると bg も連動して追従する設計"
       }
     },
     "surface": {

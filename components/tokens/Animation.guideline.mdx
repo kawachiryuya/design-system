@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as AnimationStories from './Animation.stories';
 
 <Meta of={AnimationStories} name="Guideline" />
@@ -7,13 +7,25 @@ import * as AnimationStories from './Animation.stories';
 
 ## 概要
 
-トランジション / アニメーションの **duration** (時間) と **easing** (緩急) の token。Tailwind の `transitionDuration` / `transitionTimingFunction` に統合済み。
+トランジション / アニメーションを定義する **2 つの軸**:
 
-利用 utility:
-- `duration-{key}` — `duration-fast` / `duration-normal` / `duration-slow` / `duration-slower`
-- `ease-{key}` — `ease-out` / `ease-in-out` / `ease-linear` / `ease-in`
+- **duration** (動きの長さ) = 開始から終了までの時間
+  - `duration-fast` (100ms) / `duration-normal` (200ms) / `duration-slow` (300ms) / `duration-slower` (500ms)
+- **easing** (動きのカーブ) = その時間内での加減速のパターン
+  - `ease-out` (減速) / `ease-in-out` (両端緩急) / `ease-linear` (一定) / `ease-in` (加速)
 
-例: `<button className="transition-colors duration-normal ease-out">…</button>`
+**両方を組み合わせて使う**。例: `duration-normal ease-out` = 「200ms で減速しながら動く」。Tailwind の `transitionDuration` / `transitionTimingFunction` に統合済み。
+
+```tsx
+<button className="transition-colors duration-normal ease-out">…</button>
+```
+
+---
+
+## カタログ
+
+- [Durations](?path=/story/tokens-animation--durations) — 動きの長さの 4 段階 (同じ easing で自動ループ、純粋に時間差を比較)
+- [Easings](?path=/story/tokens-animation--easings) — 速度カーブの 4 種 (同じ duration で自動ループ、純粋に加減速差を比較)
 
 ---
 
@@ -21,20 +33,8 @@ import * as AnimationStories from './Animation.stories';
 
 - **意味の伝わるラベル**: ms 数値直書きより `fast / normal / slow` の役割名で
 - **`normal` (200ms) を default**: 大半の UI トランジション (hover / focus / open) の標準速度
-- **`fast` (100ms) は微細な反応 / `slower` (500ms) は強調されたモーション**: 速さに応じた意味付け
+- **`fast` (100ms) は微細な反応 / `slower` (500ms) は強調されたモーション**
 - **easing は最小 4 種**: `out` (減速、大半の UI 用)、`in-out` (両端緩急、modal open 等)、`linear` (ローディング等)、`in` (退出)
-
----
-
-## デュレーション
-
-<Story of={AnimationStories.Durations} />
-
----
-
-## イージング
-
-<Story of={AnimationStories.Easings} />
 
 ---
 

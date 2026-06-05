@@ -22,7 +22,20 @@
   - `typography.font-weight.light` (300) — `font-light` 消失
   - `typography.line-height.loose` (2) — `leading-loose` 消失
   - `typography.font-family.serif` — `font-serif` 消失 (mono / sans は維持)
-- **`rounded` / `shadow` (bare) の挙動変更** (silent break): `tokens/preset.cjs` で `borderRadius` / `boxShadow` に `DEFAULT: md` エイリアスを追加。これまで Tailwind 設定上 DEFAULT が無く **bare 形は CSS が生成されず 0 / no-shadow で描画されていた** (= 実質 broken) が、本変更で `rounded` ≒ `rounded-md` (12px)、`shadow` ≒ `shadow-md` (dropdown レベル) と解決されるようになる。下流で `rounded` / `shadow` を bare で書いていた箇所は意図と異なる見栄え (角丸 12px, 中強度の影) になる可能性があるので、必要に応じて `rounded-xs` / `shadow-sm` 等の明示 class に書き換えるか、`rounded-none` / `shadow-none` で 0 化する
+- **`rounded` / `shadow` (bare) の挙動変更** (silent break): `tokens/preset.cjs` で `borderRadius` / `boxShadow` に `DEFAULT: md` エイリアスを追加。これまで Tailwind 設定上 DEFAULT が無く **bare 形は CSS が生成されず 0 / no-shadow で描画されていた** (= 実質 broken) が、本変更で `rounded` ≒ `rounded-md` (8px)、`shadow` ≒ `shadow-md` (中強度) と解決されるようになる。下流で `rounded` / `shadow` を bare で書いていた箇所は意図と異なる見栄え (角丸 8px, 中強度の影) になる可能性があるので、必要に応じて `rounded-sm` / `shadow-sm` 等の明示 class に書き換えるか、`rounded-none` / `shadow-none` で 0 化する
+- **`radius` トークン再編** (silent break): スケールを `none / xs / sm / md / lg / full` (6 段) → `none / sm / md / lg / full` (5 段) に整理し、中核を `sm / md / lg` に揃えた (`md = default` 規約と整合)。**ラベルを 1 段上にシフト** (旧 xs の値が新 sm に、旧 sm が新 md に、旧 md が新 lg に)、旧 lg (16px) は削除:
+  - `radius.xs` 削除 → `rounded-xs` utility 消失
+  - `radius.sm`: 旧 8px → **4px** (旧 xs の値が繰り上がる)
+  - `radius.md`: 旧 12px → **8px** (旧 sm の値が繰り上がる、`md = default` の標準値)
+  - `radius.lg`: 旧 16px → **12px** (旧 md の値が繰り上がる)
+  - `radius.full`: 9999px (不変)
+  - 影響: `rounded-xs` の callsite は `rounded-sm` に置換 (本リポ内 17 ファイル sed 済、値は 4px で等価)。**ただし `rounded-sm` / `rounded-md` / `rounded-lg` の callsite はそのままで値だけ小さくなる** (sm: 8px→4px / md: 12px→8px / lg: 16px→12px)。下流の見栄え調整は follow-up
+- **`shadow` トークン再編** (silent break): スケールを `none / xs / sm / md / lg / xl / 2xl` (7 段) → `none / sm / md / lg` (4 段) に整理し、中核を `sm / md / lg` に揃えた (`md = default` 規約と整合)。値も全体的に **より subtle 寄りに再定義** (Tailwind デフォルトに寄せた):
+  - `shadow.xs` / `shadow.xl` / `shadow.2xl` 削除 → 同名 utility 消失
+  - `shadow.sm`: `0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1)` (subtle base、Tailwind の `shadow` 既定値)
+  - `shadow.md`: `0 2px 4px -1px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.06)` (中強度、dropdown / card)
+  - `shadow.lg`: `0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)` (旧 `md` 相当、modal / popover)
+  - 影響: `shadow-xs` の callsite は `shadow-sm` に置換 (本リポ内 1 ファイル sed 済、視覚的にはやや強い側に変化)。`shadow-xl` / `shadow-2xl` の callsite (本リポ内なし) は `shadow-lg` で代替するか PJ 側 extend。**既存 `shadow-sm` / `shadow-md` / `shadow-lg` の callsite は値だけ全体的に弱くなる** (旧スケールが強すぎたため意図された調整)
 
 ### Added
 

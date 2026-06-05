@@ -119,7 +119,7 @@ type _InternalInputProps = InputBaseProps & {
 const inputVariants = tv({
   base: [
     'block',
-    'rounded-xs',
+    'rounded-sm',
     'border',
     'bg-surface',
     'text-onSurface',

@@ -139,7 +139,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     const selectClasses = [
       'block',
-      'rounded-xs',
+      'rounded-sm',
       'border',
       'text-onSurface',
       'appearance-none',

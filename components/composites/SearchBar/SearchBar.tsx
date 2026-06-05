@@ -181,7 +181,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   const inputClass = [
     'w-full',
-    'rounded-xs',
+    'rounded-sm',
     'border',
     'border-border',
     'bg-surface',
@@ -256,7 +256,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             aria-label="検索をクリア"
             onClick={handleClear}
             className="flex items-center justify-center text-onSurface-muted hover:text-onSurface-muted transition-colors
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded-xs"
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded-sm"
           >
             <Icon name="close" size={s.iconSize} />
           </button>

@@ -170,7 +170,7 @@ export const EdgeCases: Story = {
             { label: '非公開', variant: 'error', appearance: 'soft', dot: false, item: '記事「非公開の設定」' },
             { label: 'NEW', variant: 'primary', appearance: 'solid', dot: false, item: 'プロ機能' },
           ] as const).map(({ label, variant, appearance, dot, item }) => (
-            <div key={label} className="flex items-center justify-between px-3 py-2 rounded-xs border border-border-default">
+            <div key={label} className="flex items-center justify-between px-3 py-2 rounded-sm border border-border-default">
               <span className="text-sm text-onSurface">{item}</span>
               <Badge variant={variant} appearance={appearance} dot={dot}>{label}</Badge>
             </div>

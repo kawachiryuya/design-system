@@ -101,7 +101,7 @@ const imageContainerVariants = tv({
     },
     rounded: {
       none: 'rounded-none',
-      sm:   'rounded-xs',
+      sm:   'rounded-sm',
       md:   'rounded',
       lg:   'rounded-lg',
       full: 'rounded-full',
@@ -127,7 +127,7 @@ const imageImgVariants = tv({
     },
     rounded: {
       none: 'rounded-none',
-      sm:   'rounded-xs',
+      sm:   'rounded-sm',
       md:   'rounded',
       lg:   'rounded-lg',
       full: 'rounded-full',

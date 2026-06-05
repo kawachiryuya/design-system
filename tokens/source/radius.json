@@ -4,20 +4,16 @@
       "value": "0",
       "type": "dimension"
     },
-    "xs": {
+    "sm": {
       "value": "4px",
       "type": "dimension"
     },
-    "sm": {
+    "md": {
       "value": "8px",
       "type": "dimension"
     },
-    "md": {
-      "value": "12px",
-      "type": "dimension"
-    },
     "lg": {
-      "value": "16px",
+      "value": "12px",
       "type": "dimension"
     },
     "full": {

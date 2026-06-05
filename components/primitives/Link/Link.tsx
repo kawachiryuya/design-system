@@ -96,7 +96,7 @@ const linkVariants = tv({
     'inline-flex',
     'items-center',
     'gap-1',
-    'rounded-xs',
+    'rounded-sm',
     // ホバー領域をテキストの周辺まで少し広げる (横 4px / 縦 2px)。
     // 縦を 2px に抑えるのは、段落内インラインで行間が広がりすぎないため。
     'px-1',

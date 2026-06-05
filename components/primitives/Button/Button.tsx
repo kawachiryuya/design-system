@@ -218,7 +218,7 @@ const buttonVariants = tv({
     {
       iconOnly: false,
       size: 'small',
-      class: 'min-h-10 py-2 px-3 min-w-16 rounded-xs',
+      class: 'min-h-10 py-2 px-3 min-w-16 rounded-sm',
     },
     {
       iconOnly: false,

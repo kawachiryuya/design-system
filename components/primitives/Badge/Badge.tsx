@@ -27,7 +27,7 @@ const badgeVariants = tv({
     'items-center',
     'gap-[6px]',
     'font-medium',
-    'rounded-xs',
+    'rounded-sm',
     'leading-none',
     'whitespace-nowrap',
   ],

@@ -101,7 +101,7 @@ type _InternalTextareaProps = TextareaBaseProps & {
 const textareaVariants = tv({
   base: [
     'block',
-    'rounded-xs',
+    'rounded-sm',
     'border',
     'text-onSurface',
     'placeholder:text-onSurface-muted',

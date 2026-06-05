@@ -145,7 +145,9 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 
 ### サイズスケール内の `md = default` 規約
 
-サイズスケール (`none/xs/sm/md/lg/...`) を持つカテゴリでは、**`md` をカノニカルなデフォルト値** とする。source token には DEFAULT キーを足さず (size label の純度を保つため)、`tokens/preset.cjs` で `DEFAULT` エイリアスを `md` にマップする:
+サイズスケールを持つカテゴリでは、**`md` をカノニカルなデフォルト値** とし、**中核は `sm / md / lg` の 3 段で揃える**。境界値 (`none` / `full`) は必要に応じて追加するが、`xs` / `xl` / `2xl` のような外側の段はデフォルトでは持たない (実利用が薄く、`md = default` の見え方を歪めるため)。
+
+source token には DEFAULT キーを足さず (size label の純度を保つため)、`tokens/preset.cjs` で `DEFAULT` エイリアスを `md` にマップする:
 
 ```js
 // tokens/preset.cjs
@@ -156,8 +158,8 @@ borderRadius: { ...t.radius,  DEFAULT: t.radius.md  },
 これにより `rounded` ≒ `rounded-md`、`shadow` ≒ `shadow-md` で動く。
 
 **対象カテゴリ**:
-- `radius`: `none/xs/sm/md/lg/full` (6 段)
-- `shadow`: `none/xs/sm/md/lg/xl/2xl` (7 段)
+- `radius`: `none / sm / md / lg / full` (5 段、中核 sm/md/lg + 境界 none/full)
+- `shadow`: `none / sm / md / lg` (4 段、中核 sm/md/lg + 境界 none)
 
 **非対象**:
 - **`font-size`**: Tailwind の慣習で `text-base` が body text のデフォルトとして広く認知されているため、`base` ラベルをそのまま維持 (本リポでも `text-base` は 16px の body 用途)

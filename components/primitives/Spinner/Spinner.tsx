@@ -1,5 +1,5 @@
 import React from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 
 /** Spinner のサイズ */
 export type SpinnerSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';

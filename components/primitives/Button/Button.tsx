@@ -1,5 +1,5 @@
 import React from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 
 /** ボタンの優先度（1画面に primary は通常1個に絞る） */
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive';

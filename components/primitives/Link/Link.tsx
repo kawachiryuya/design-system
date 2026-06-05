@@ -1,5 +1,5 @@
 import React from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 import { Icon } from '../Icon';
 
 /** Link のテキストサイズ */

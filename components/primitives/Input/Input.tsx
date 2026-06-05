@@ -1,5 +1,5 @@
 import React from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 import { Label } from '../Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 

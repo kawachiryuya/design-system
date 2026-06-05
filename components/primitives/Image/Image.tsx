@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 import { Icon } from '../Icon';
 
 /** アスペクト比プリセット */

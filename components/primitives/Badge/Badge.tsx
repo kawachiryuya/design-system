@@ -1,5 +1,5 @@
 import React from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 
 /** Badge のセマンティックカラー */
 export type BadgeVariant = 'neutral' | 'primary' | 'success' | 'error' | 'warning' | 'info';

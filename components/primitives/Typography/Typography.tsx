@@ -1,42 +1,5 @@
 import React from 'react';
-import { createTV } from 'tailwind-variants';
-
-/**
- * Typography 専用の tv() — tailwind-merge を拡張して `text-heading-*` / `text-body-*`
- * / `text-label` / `text-caption` を font-size として認識させる。
- *
- * 既定の tailwind-merge は custom な `text-*` を text-color group に押し込むため、
- * `text-heading-display` (font-size) と `text-onSurface` (color) を同 group の競合と
- * 誤判定し後勝ちで font-size 側が消える。そのせいで Typography の Variants が全部
- * body サイズに潰れていた (font-weight だけは別 group なので適用される)。
- *
- * 解決: font-size group に semantic typography utility を明示登録 → text-color とは
- * 別 group になり共存する。
- */
-const tv = createTV({
-  twMergeConfig: {
-    extend: {
-      classGroups: {
-        'font-size': [
-          {
-            text: [
-              'heading-display',
-              'heading-xl',
-              'heading-lg',
-              'heading-md',
-              'heading-sm',
-              'body-lg',
-              'body-md',
-              'body-sm',
-              'label',
-              'caption',
-            ],
-          },
-        ],
-      },
-    },
-  },
-});
+import { tv } from '../../_internal/tv';
 
 /**
  * Typography のバリアント定義（視覚スタイル）

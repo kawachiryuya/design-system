@@ -1,5 +1,5 @@
 import React from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 
 /** Label のサイズ */
 export type LabelSize = 'sm' | 'md' | 'lg';

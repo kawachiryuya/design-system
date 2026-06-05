@@ -1,5 +1,5 @@
 import React from 'react';
-import { tv } from 'tailwind-variants';
+import { tv } from '../../_internal/tv';
 import { getIconDef, type IconRenderMode } from './iconRegistry';
 
 /** Icon のサイズ（principles/Typography/scale.mdx） */

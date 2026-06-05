@@ -8,6 +8,18 @@
 
 ### ⚠ BREAKING CHANGES
 
+- **Semantic state token を整理 + 命名統一** (silent break、軸 5): orphan 削除と命名一貫化:
+  - `state.dragged` 削除 (0 callsite、真の orphan)
+  - `state.hover-on-primary` → `state.hover-primary` (`-on-` 接頭辞を削除、「primary 背景上で」と「primary 色味の」の二重解釈を解消)
+  - `state.active-on-primary` → `state.active-primary`
+  - `state.hover-on-error` → `state.hover-error`
+  - `state.active-on-error` → `state.active-error`
+  - `state.hover` / `state.active` (中性) は不変
+  - **見た目変化なし** (Button 全 variant 含めて token 値は同じ、命名のみ整理)
+  - 影響: Tailwind utility (`bg-state-hover-on-primary` → `bg-state-hover-primary` 等)、CSS 変数 (`--color-state-hover-on-primary` → `--color-state-hover-primary` 等)
+  - 本リポ内: Button (CSS var 経由 6 callsite) + Link (1 callsite) を sed 機械置換済
+  - 下流 product 移行: `sed -i '' -E 's/(bg-state-|--color-state-)hover-on-/\1hover-/g; s/(bg-state-|--color-state-)active-on-/\1active-/g' src/**/*.{tsx,ts,css}` で機械置換
+  - AGENTS.md §3-2 に state token 命名規約 (中性 vs 色味付き、`state.{state}-{role}` 形式) を明文化
 - **Semantic border token を強度軸 (subtle/default/strong/emphasis) に再構成** (API + silent break): 軸 4 の方針 (`{role}-{intensity}` 命名で強度語彙を全 role に一律適用) を実装:
   - `border.muted` → `border.subtle`
   - `border.disabled` → `border.subtle` (同値だったため統合)

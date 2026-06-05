@@ -120,15 +120,15 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 
 **3-2. 透過オーバーレイは `color-mix()` で primitive と連動させる**
 
-primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は、CSS `color-mix()` + Style Dictionary 参照で書く:
+primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、CSS `color-mix()` + Style Dictionary 参照で書く:
 
 ```jsonc
 // ✅ OK
-"hover-on-primary": {
+"hover-primary": {
   "value": "color-mix(in srgb, {color.teal.700} 8%, transparent)"
 }
 // ❌ NG (旧バージョンのハードコード、teal.700 変更時に手動更新必要)
-"hover-on-primary": {
+"hover-primary": {
   "value": "rgba(0, 111, 80, 0.08)"
 }
 ```
@@ -136,6 +136,13 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 `color-mix()` 対応ブラウザ: Safari 16.4 / Chrome 111 / Firefox 113 以降 (2023 春以降)。
 
 中性 (黒/白) オーバーレイ (`state.hover` 等) は primitive 依存がないので `rgba(0, 0, 0, 0.08)` 等の生 rgba でよい。
+
+**state token 命名規約**:
+- **中性 overlay** (汎用、どの背景にも重ねられる): `state.hover` / `state.active`
+- **色味付き overlay** (白系背景に重ねて role 感を出す): `state.{state}-{role}` 形式 — `state.hover-primary` / `state.active-primary` / `state.hover-error` / `state.active-error`
+- 新規 role 追加時 (例: success/warning/info 用のホバー) は `state.hover-{role}` のパターンに従う
+
+旧 `state.hover-on-X` 命名は、「on-」が「X 背景の上に」と読まれる紛らわしさを解消するため `state.hover-X` に統一済 (CHANGELOG 軸 5)。
 
 **3-3. `bg.default` は brand から独立した中性 canvas**
 

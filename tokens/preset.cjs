@@ -139,13 +139,13 @@ module.exports = {
           inset:     'var(--color-surface-inset)',
         },
         state: {
-          hover:   'var(--color-state-hover)',
-          active:  'var(--color-state-active)',
-          dragged: 'var(--color-state-dragged)',
-          'hover-on-primary':  'var(--color-state-hover-on-primary)',
-          'active-on-primary': 'var(--color-state-active-on-primary)',
-          'hover-on-error':    'var(--color-state-hover-on-error)',
-          'active-on-error':   'var(--color-state-active-on-error)',
+          // State layer (Material 3 流): 中性 overlay (汎用) + brand/error tinted overlay (白系背景用)
+          hover:  'var(--color-state-hover)',
+          active: 'var(--color-state-active)',
+          'hover-primary':  'var(--color-state-hover-primary)',
+          'active-primary': 'var(--color-state-active-primary)',
+          'hover-error':    'var(--color-state-hover-error)',
+          'active-error':   'var(--color-state-active-error)',
         },
       },
       textColor: {

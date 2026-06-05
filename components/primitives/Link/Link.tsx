@@ -81,7 +81,7 @@ export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorEle
  *
  * - base: 全 color/size 共通 (フォーカスリング / トランジション)
  * - variants.color: 文字色 + hover/active overlay
- *   primary は `--color-state-hover-on-primary` で薄緑、neutral/muted は中性 overlay
+ *   primary は `--color-state-hover-primary` で薄緑、neutral/muted は中性 overlay
  * - variants.size: text-size のみ
  * - variants.underline: 下線の表示タイミング
  * - variants.disabled: 操作不能化 (opacity + pointer-events)
@@ -110,7 +110,7 @@ const linkVariants = tv({
   ],
   variants: {
     color: {
-      primary: '!text-onSurface-primary hover:bg-state-hover-on-primary active:bg-state-active-on-primary',
+      primary: '!text-onSurface-primary hover:bg-state-hover-primary active:bg-state-active-primary',
       neutral: '!text-onSurface hover:bg-state-hover active:bg-state-active',
       muted:   '!text-onSurface-muted hover:bg-state-hover active:bg-state-active',
     },

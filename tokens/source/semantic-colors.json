@@ -217,37 +217,32 @@
       "hover": {
         "value": "rgba(0, 0, 0, 0.08)",
         "type": "color",
-        "description": "ホバーオーバーレイ（中性／色付き背景・透明背景に重ねる）"
+        "description": "中性 hover overlay (8% black)。色付き背景・透明背景どちらに重ねても汎用的に機能。Primary Button (緑bg) や Pagination 等で利用"
       },
       "active": {
         "value": "rgba(0, 0, 0, 0.12)",
         "type": "color",
-        "description": "アクティブオーバーレイ（中性）"
+        "description": "中性 active overlay (12% black)"
       },
-      "dragged": {
-        "value": "rgba(0, 0, 0, 0.16)",
-        "type": "color",
-        "description": "ドラッグ中オーバーレイ（中性）"
-      },
-      "hover-on-primary": {
+      "hover-primary": {
         "value": "color-mix(in srgb, {color.teal.700} 8%, transparent)",
         "type": "color",
-        "description": "白系背景に primary (primary.700) 色味で重ねるホバー（secondary ボタン等）"
+        "description": "白系背景に brand (teal.700) 色味を重ねる hover (Secondary/Tertiary Button 等)"
       },
-      "active-on-primary": {
+      "active-primary": {
         "value": "color-mix(in srgb, {color.teal.700} 12%, transparent)",
         "type": "color",
-        "description": "白系背景に primary (primary.700) 色味で重ねるアクティブ"
+        "description": "白系背景に brand (teal.700) 色味を重ねる active"
       },
-      "hover-on-error": {
+      "hover-error": {
         "value": "color-mix(in srgb, {color.red.600} 8%, transparent)",
         "type": "color",
-        "description": "白系背景に error (error.600) 色味で重ねるホバー（destructive ボタン等）"
+        "description": "白系背景に error (red.600) 色味を重ねる hover (Destructive Button 等)"
       },
-      "active-on-error": {
+      "active-error": {
         "value": "color-mix(in srgb, {color.red.600} 12%, transparent)",
         "type": "color",
-        "description": "白系背景に error (error.600) 色味で重ねるアクティブ"
+        "description": "白系背景に error (red.600) 色味を重ねる active"
       }
     }
   }

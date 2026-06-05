@@ -33,9 +33,11 @@ const SEMANTIC = (typographyTokens as any)['typography-semantic'] as {
 const formatRef = (v: string): string =>
   v.startsWith('{') ? v.slice(1, -1).replace(/^typography\./, '') : v;
 
-const SAMPLE = '見出しテキスト · The quick brown fox';
+const HEADING_SAMPLE = '見出しテキスト · The quick brown fox';
 const BODY_SAMPLE =
   'デザインシステムは React・TypeScript・Tailwind CSS を使って構築されています。一貫した UI 品質と開発体験を提供します。';
+const LABEL_SAMPLE = 'フォーム入力ラベル';
+const CAPTION_SAMPLE = '© 2026 design-system · 最終更新: 2026-06-04';
 
 const StyleMeta: React.FC<{ name: string; twClass: string; spec: StyleSpec }> = ({
   name,
@@ -66,79 +68,50 @@ const StyleMeta: React.FC<{ name: string; twClass: string; spec: StyleSpec }> = 
   </div>
 );
 
-export const Headings: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '見出し用 5 段階 (display / xl / lg / md / sm)。`text-heading-{key}` utility、Typography component の `variant="display" | "h1" | "h2" | "h3" | "h4"` にマッピング。',
-      },
-    },
-  },
-  render: () => {
-    const order: Array<keyof typeof SEMANTIC.heading> = ['display', 'xl', 'lg', 'md', 'sm'];
-    return (
-      <div className="flex flex-col gap-6">
-        {order.map((key) => {
-          const spec = SEMANTIC.heading[key];
-          const twClass = `text-heading-${key}`;
-          return (
-            <div key={key} className="border border-border-subtle rounded-md p-4 bg-surface">
-              <div className={`${twClass} text-onSurface`}>{SAMPLE}</div>
-              <StyleMeta name={`heading.${key}`} twClass={twClass} spec={spec} />
-            </div>
-          );
-        })}
-      </div>
-    );
-  },
+type Entry = {
+  name: string;
+  twClass: string;
+  spec: StyleSpec;
+  sample: string;
+  /** caption は muted で表示する慣習なのでフラグで切替 */
+  muted?: boolean;
 };
 
-export const Body: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '本文用 3 段階 (lg / md / sm)。`text-body-{key}` utility、Typography component の `variant="body-lg" | "body" | "body-sm"` にマッピング。',
-      },
-    },
-  },
-  render: () => {
-    const order: Array<keyof typeof SEMANTIC.body> = ['lg', 'md', 'sm'];
-    return (
-      <div className="flex flex-col gap-6 max-w-prose">
-        {order.map((key) => {
-          const spec = SEMANTIC.body[key];
-          const twClass = `text-body-${key}`;
-          return (
-            <div key={key} className="border border-border-subtle rounded-md p-4 bg-surface">
-              <p className={`${twClass} text-onSurface`}>{BODY_SAMPLE}</p>
-              <StyleMeta name={`body.${key}`} twClass={twClass} spec={spec} />
-            </div>
-          );
-        })}
-      </div>
-    );
-  },
-};
+const ENTRIES: Entry[] = [
+  ...(['display', 'xl', 'lg', 'md', 'sm'] as const).map((k) => ({
+    name: `heading.${k}`,
+    twClass: `text-heading-${k}`,
+    spec: SEMANTIC.heading[k],
+    sample: HEADING_SAMPLE,
+  })),
+  ...(['lg', 'md', 'sm'] as const).map((k) => ({
+    name: `body.${k}`,
+    twClass: `text-body-${k}`,
+    spec: SEMANTIC.body[k],
+    sample: BODY_SAMPLE,
+  })),
+  { name: 'label', twClass: 'text-label', spec: SEMANTIC.label, sample: LABEL_SAMPLE },
+  { name: 'caption', twClass: 'text-caption', spec: SEMANTIC.caption, sample: CAPTION_SAMPLE, muted: true },
+];
 
-export const LabelAndCaption: Story = {
-  name: 'Label & Caption',
+export const Catalog: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'フォームラベル用 `label` (14px medium) と注釈用 `caption` (12px regular)。Typography component の `variant="label" | "caption"` にマッピング。',
+        story: 'Semantic typography 全 10 token を大→小の順で一覧。`heading.{display,xl,lg,md,sm}` / `body.{lg,md,sm}` / `label` / `caption`。各 token は font-size + font-weight + line-height + letter-spacing をセットで保持。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6 max-w-prose">
-      <div className="border border-border-subtle rounded-md p-4 bg-surface">
-        <span className="text-label text-onSurface">フォーム入力ラベル</span>
-        <StyleMeta name="label" twClass="text-label" spec={SEMANTIC.label} />
-      </div>
-      <div className="border border-border-subtle rounded-md p-4 bg-surface">
-        <p className="text-caption text-onSurface-muted">© 2026 design-system · 最終更新: 2026-06-04</p>
-        <StyleMeta name="caption" twClass="text-caption" spec={SEMANTIC.caption} />
-      </div>
+      {ENTRIES.map((e) => (
+        <div key={e.name} className="border border-border-subtle rounded-md p-4 bg-surface">
+          <p className={`m-0 ${e.twClass} ${e.muted ? 'text-onSurface-muted' : 'text-onSurface'}`}>
+            {e.sample}
+          </p>
+          <StyleMeta name={e.name} twClass={e.twClass} spec={e.spec} />
+        </div>
+      ))}
     </div>
   ),
 };

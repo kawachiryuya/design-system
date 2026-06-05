@@ -6,8 +6,13 @@
 
 ## [Unreleased]
 
+### ⚠ BREAKING CHANGES (in Unreleased)
+
+- **Tokens/Typography/Semantic の Storybook story id 変更** (silent break): 3 story (`headings` / `body` / `label-and-caption`) を 1 つの `catalog` に統合し、`?path=/story/tokens-typography-semantic--{headings,body,label-and-caption}` の旧 URL は壊れる。新 URL は `?path=/story/tokens-typography-semantic--catalog`。理由: heading / body / label / caption は同じ semantic typography 軸内の役割で、別軸ではないため AGENTS.md §3-6 (軸 1 つ = 1 story) に整合。
+
 ### Changed (in Unreleased)
 
+- **AGENTS.md §3-6 に Token Catalog Story / Guideline の規約を新設**: `components/tokens/` 配下の token カタログ専用構造を明文化。flat catalog (subsection 禁止) / Catalog を Guideline から分離 (Story 埋め込み禁止 → link list) / 標準セクション (概要 / カタログ / 設計方針 / 迷ったらこれ / 関連) を固定。Animation / Shadows / FocusRing / Typography / Typography-Semantic 等の既存 Guideline を順次適用。
 - **AGENTS.md §3-4-3 に Container ペアパターン規約を新設** (軸 2、構造変更なし): Material 3 流の Container ペア (role / on-role / role-container / on-role-container) を本リポ命名で実現する規約を明文化。実態は既に揃っており命名 (`-muted` / `secondary`) を本リポ semantic 規約として確定:
   - Brand: `surface.primary` + `on.inverse` + `surface.secondary` + `on.primary` (ペア揃)
   - Success/Error/Warning/Info: `surface.X` + `on.inverse` + `surface.X-muted` + `on.X` (ペア揃)

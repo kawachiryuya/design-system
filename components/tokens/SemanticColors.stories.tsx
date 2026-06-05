@@ -36,16 +36,6 @@ const pick = (group: Record<string, Entry>, keys: string[]) =>
       sourceValue: formatValue(group[key].value),
     }));
 
-/** group 内の指定 keys を除いた残り (state indicator 等のフォールバック用) */
-const rest = (group: Record<string, Entry>, excluded: string[]) =>
-  Object.entries(group)
-    .filter(([k]) => !excluded.includes(k))
-    .map(([key, entry]) => ({
-      key,
-      description: entry.description ?? '',
-      sourceValue: formatValue(entry.value),
-    }));
-
 const Section: React.FC<{ title: string; intro?: React.ReactNode; children: React.ReactNode }> = ({
   title,
   intro,
@@ -105,18 +95,17 @@ const SurfaceCard: React.FC<{ entry: ReturnType<typeof pick>[number]; prefix?: s
   </div>
 );
 
-export const Surface: Story = {
-  name: 'Background & Surface',
+export const Background: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'ページ最下層 (`bg.default`) と コンテンツサーフェス (`surface.*`)。Layer 階層 / 特殊役割 / Brand / Functional / State indicator にグループ分け。',
+        story: 'ページ最下層の canvas (`bg.default`)。brand から独立した中性、bg-background utility 経由で参照。Surface (elevated 層) とは別 namespace。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-10">
-      <Section title="Background (ページ最下層)" intro="bg-background utility 経由。brand から独立した中性 canvas。">
+      <Section title="bg (ページ最下層)" intro="brand から独立した中性 canvas。下流 product が brand を override しても bg は変わらない (Multi-product hub 設計)。">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {pick(SC.bg, ['default']).map((e) => (
             <div key={e.key} className="border border-border-subtle rounded-md p-3 bg-surface">
@@ -126,7 +115,20 @@ export const Surface: Story = {
           ))}
         </div>
       </Section>
+    </div>
+  ),
+};
 
+export const Surface: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'コンテンツサーフェス (`surface.*`)。Layer 階層 / 特殊役割 / Brand / Functional / State indicator の 5 グループに分類。Background (`bg.default`) は別 story 参照。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-10">
       <Section title="Layer 階層 (depth)" intro="ページ→入れ子→深い入れ子の elevation 階層 (Carbon 流 numeric)。bg-surface (DEFAULT) は layer-1 を指す。">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {pick(SC.surface, SURFACE_LAYER).map((e) => <SurfaceCard key={e.key} entry={e} />)}

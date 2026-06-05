@@ -150,8 +150,13 @@ module.exports = {
       },
       textColor: {
         onSurface: {
+          // 階層軸 (default → soft → muted) — hierarchy 名称で
+          // primary/secondary/tertiary の役割名 (`primary` = brand) との衝突を回避。
+          // disabled は state 軸 (操作不能、legible 要件免除) で hierarchy とは別軌道
           DEFAULT:  'var(--color-on-default)',
+          soft:     'var(--color-on-soft)',
           muted:    'var(--color-on-muted)',
+          // 役割 (functional / state)
           primary:  'var(--color-on-primary)',
           success:  'var(--color-on-success)',
           error:    'var(--color-on-error)',

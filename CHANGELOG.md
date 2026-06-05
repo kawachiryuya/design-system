@@ -28,6 +28,7 @@
 - [`Badge.guideline.mdx`](./components/primitives/Badge/Badge.guideline.mdx) — `<Meta of={...} name="Guideline" />` で Docs を兼ねる新規ファイル。GuidelineToc + ArgTypes + DoDontExample 5 ペア + 別コンポーネント表 + a11y セクション
 - [`components/tokens/Overview.mdx`](./components/tokens/Overview.mdx) — Tokens の 2 層構造 (Primitive / Semantic) と使い分けを説明する新規 landing page、カテゴリ別の story 一覧へのリンク + AGENTS.md §3 参照
 - `color.primary.25` (#F5F7F5) — primary palette を 10 → 11 段に拡張。bg.default 専用の最薄 tint で、下流 product が brand 色を override すると bg もそれに連動して追従する設計 (M1)。Tailwind utility `bg-primary-25` / CSS 変数 `--color-primary-25` が新規に生成される
+- [`components/tokens/Breakpoints.stories.tsx`](./components/tokens/Breakpoints.stories.tsx) — 新規 Storybook story (`Tokens/Breakpoints`)。Tailwind 標準と同じ 5 段階 (sm/md/lg/xl/2xl) を視覚バーで表示 + mobile-first 規約 + 本リポ内の利用状況 (`sm:` のみ使用) を明文化。Overview の category 表からも参照できるよう更新
 - [`components/tokens/SemanticColors.stories.tsx`](./components/tokens/SemanticColors.stories.tsx) — semantic-colors.json の bg / surface / on / border / state を視覚カタログ化 (4 sub-story、card-based、Tailwind class + source 参照 + description を併記)
 - [`components/tokens/SemanticTypography.stories.tsx`](./components/tokens/SemanticTypography.stories.tsx) — typography-semantic の heading / body / label / caption を実テキストサンプルで視覚化
 - [`components/tokens/SemanticSpacing.stories.tsx`](./components/tokens/SemanticSpacing.stories.tsx) — spacing-semantic の component / section をバー幅で視覚化

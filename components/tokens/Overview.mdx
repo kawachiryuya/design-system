@@ -60,7 +60,7 @@ semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;
 | **Radius** | [Tokens/Radius](?path=/story/tokens-radius--border-radius) | (semantic 層なし) | `radius.none / xs / sm / md / lg / full` を直接利用 |
 | **Shadows** | [Tokens/Shadows](?path=/story/tokens-shadows--elevations) | (semantic 層なし) | `shadow.xs / sm / md / lg / xl / 2xl` を直接利用 |
 | **Animation** | [Tokens/Animation](?path=/story/tokens-animation--durations) | (semantic 層なし) | duration / easing |
-| **Breakpoints** | (Storybook 表示なし) | (semantic 層なし) | Tailwind `sm/md/lg/xl/2xl` で利用 |
+| **Breakpoints** | [Tokens/Breakpoints](?path=/story/tokens-breakpoints--scale) | (semantic 層なし) | mobile-first 前提、`sm:` で tablet+ に widening。本リポ内では `sm:` のみ使用中、`md/lg/xl/2xl:` も Tailwind 標準と同値で利用可能 |
 
 Radius / Shadows / Animation / Breakpoints は **semantic 層を持たない** = primitive 直参照運用です。将来用途別の意味付けが必要になった時点で追加する想定 (例: `radius-semantic.card → radius.md`)。
 

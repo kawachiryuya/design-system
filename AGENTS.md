@@ -149,6 +149,13 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 - `opacity`: `disabled / muted / spinner-track / spinner-spin` の意味付き 4 値。`opacity-disabled` のように使う
 - `focus-ring`: `ring-focus` (width=2px) / `ring-offset-focus` (offset=2px)。色は `border-focus` (semantic-colors) と組合せる: `focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus`
 
+**なぜ semantic-only か** (≠ color/spacing の 2 層構成): これらは **palette 的に再利用される primitive 層が概念上存在しない** ため。
+- `z-index = 1000` という値自体は意味を持たず「modal レイヤ」という役割名で初めて意図が立つ。`z-index.layer-1: 1000 → z-modal: layer-1` のような primitive を挟むと中継が無価値
+- `opacity` は 0.0〜1.0 の連続値で palette 化できない。Tailwind 既定の `opacity-0/5/10/.../100` が事実上の primitive 役
+- `focus-ring` はそもそも 1〜2 値しかなく palette を作る意義がない
+
+下流 product 側で override したいときは PJ の `tailwind.config.js` で `theme.extend.zIndex.modal = '...'` のように **semantic 名を直接書き換える**。
+
 ---
 
 ### サイズスケール内の `md = default` 規約

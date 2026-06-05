@@ -115,7 +115,7 @@ const textareaVariants = tv({
     // focus-visible: は input/textarea で UA heuristic により click focus でも常に match。
     // pseudo-states addon の focusVisible と整合し、modern a11y best practice にも沿う。
     'focus-visible:ring-focus',
-    'focus-visible:ring-offset-0',
+    'focus-visible:ring-offset-focus',
   ],
   variants: {
     error: {

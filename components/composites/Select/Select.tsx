@@ -148,7 +148,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       'duration-normal',
       'focus:outline-none',
       'focus:ring-focus',
-      'focus:ring-offset-0',
+      'focus:ring-offset-focus',
       'w-full',
       disabled ? 'opacity-disabled cursor-not-allowed bg-surface-disabled' : '',
       sizeStyles,

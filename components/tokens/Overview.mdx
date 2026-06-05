@@ -69,6 +69,8 @@ Radius / Shadows / Animation / Breakpoints は **semantic 層を持たない** =
 
 Z-Index / Opacity / Focus Ring は逆に **primitive 層を持たず semantic 名のみ** の運用です。これらは「具体値」より「役割名」で意図が伝わる種類のスケール (例: `z-modal` のほうが `z-1300` より読みやすい)。
 
+**なぜ 2 層にしないか**: これらは color/spacing と違って **palette 的に再利用される primitive 層が概念上存在しません**。`z-index = 1000` 自体に意味はなく「modal レイヤ」という役割で初めて意図が立ち、`opacity` は連続値 (0.0〜1.0) で palette 化に意味がなく、`focus-ring` は 1〜2 値しかありません。無理に primitive 層を挟むと `z-index.layer-1: 1000` のような中継が増えるだけで価値がない、という判断です。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring) 参照。
+
 ### サイズスケールの `md = default` 規約
 
 `radius` / `shadow` のような size label 系カテゴリは、**中核を `sm / md / lg` の 3 段に揃え、`md` をカノニカルなデフォルト値** としています。`tokens/preset.cjs` の `DEFAULT: md` エイリアスにより、bare 形 (`rounded` / `shadow`) も `md` に解決されます。`xs` や `xl` のような外側の段は、source token 純度を保つためデフォルトでは持たず、必要が出た時点で追加する方針です。詳細は [AGENTS.md §3 サイズスケール内の `md = default` 規約](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#サイズスケール内の-md--default-規約) 参照。

@@ -115,7 +115,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={disabled || atMin}
-          className={`${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:opacity-30 transition-colors`}
+          className={`${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:opacity-disabled transition-colors`}
           aria-label={decrementLabel}
         >
           <Icon name="remove" size="sm" color="inherit" />
@@ -127,7 +127,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           type="button"
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={disabled || atMax}
-          className={`${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:opacity-30 transition-colors`}
+          className={`${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:opacity-disabled transition-colors`}
           aria-label={incrementLabel}
         >
           <Icon name="add" size="sm" color="inherit" />

@@ -129,7 +129,7 @@ const linkVariants = tv({
       none: '!no-underline',
     },
     disabled: {
-      true: 'opacity-40 cursor-not-allowed pointer-events-none',
+      true: 'opacity-disabled cursor-not-allowed pointer-events-none',
       false: 'cursor-pointer',
     },
   },

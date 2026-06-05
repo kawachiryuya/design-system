@@ -103,6 +103,9 @@ const textareaVariants = tv({
     'block',
     'rounded-sm',
     'border',
+    // :focus (click + keyboard) で border を 1px → 2px に。ring とセットで段階的な focus 表現
+    // (詳細は Input.tsx の同コメント参照)
+    'focus:border-2',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
     'px-3',
@@ -112,15 +115,14 @@ const textareaVariants = tv({
     'transition-all',
     'duration-normal',
     'focus:outline-none',
-    // focus-visible: は input/textarea で UA heuristic により click focus でも常に match。
-    // pseudo-states addon の focusVisible と整合し、modern a11y best practice にも沿う。
+    // ring は **キーボード Tab のみ** (:focus-visible)。border は :focus で常に出る
     'focus-visible:ring-focus',
     'focus-visible:ring-offset-focus',
   ],
   variants: {
     error: {
-      true:  'border-border-error focus-visible:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus-visible:border-border-focus focus-visible:ring-border-focus bg-surface',
+      true:  'border-border-error focus:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus-visible:ring-border-focus bg-surface',
     },
     fullWidth: {
       true:  'w-full',

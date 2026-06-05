@@ -121,14 +121,17 @@ const inputVariants = tv({
     'block',
     'rounded-sm',
     'border',
+    // :focus (click + keyboard) で border を 1px → 2px に。box-sizing: border-box
+    // (Tailwind preflight) のおかげで外形サイズは不変、内側のコンテンツ領域だけ 1px 縮む。
+    // 「マウスクリック = border 強調のみ」「キーボード Tab = + ring」の二段階表現
+    'focus:border-2',
     'bg-surface',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
     'transition-all',
     'duration-normal',
     'focus:outline-none',
-    // focus-visible: は input/textarea で UA heuristic により click focus でも常に match。
-    // pseudo-states addon の focusVisible と整合し、modern a11y best practice にも沿う。
+    // ring は **キーボード Tab のみ** (:focus-visible)。border は :focus で常に出る
     'focus-visible:ring-focus',
     'focus-visible:ring-offset-focus',
     'disabled:opacity-disabled',
@@ -142,8 +145,8 @@ const inputVariants = tv({
       lg: 'h-16 text-lg',
     },
     error: {
-      true:  'border-border-error focus-visible:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus-visible:border-border-focus focus-visible:ring-border-focus',
+      true:  'border-border-error focus:border-border-error focus-visible:ring-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus-visible:ring-border-focus',
     },
     fullWidth: {
       true:  'w-full',

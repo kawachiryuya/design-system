@@ -133,22 +133,25 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     const sizeStyles = sizeConfig.style;
 
+    // :focus (click + keyboard) で border 強調、:focus-visible (Tab のみ) で + ring。
+    // Input/Textarea と同じ二段階 focus 表現
     const stateStyles = error
-      ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted'
-      : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
+      ? 'border-border-error focus:border-border-error focus-visible:ring-border-error bg-surface-error-muted'
+      : 'border-border hover:border-border-strong focus:border-border-focus focus-visible:ring-border-focus bg-surface';
 
     const selectClasses = [
       'block',
       'rounded-sm',
       'border',
+      'focus:border-2',
       'text-onSurface',
       'appearance-none',
       'cursor-pointer',
       'transition-all',
       'duration-normal',
       'focus:outline-none',
-      'focus:ring-focus',
-      'focus:ring-offset-focus',
+      'focus-visible:ring-focus',
+      'focus-visible:ring-offset-focus',
       'w-full',
       disabled ? 'opacity-disabled cursor-not-allowed bg-surface-disabled' : '',
       sizeStyles,

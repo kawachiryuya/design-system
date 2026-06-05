@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import shadowsToken from '../../tokens/source/shadows.json';
-import { TokenPageHeader, TokenSectionHeading } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Shadows',
@@ -21,48 +20,57 @@ const SHADOWS: ShadowEntry[] = Object.entries(shadowsToken.shadow).map(
 
 export const Elevations: Story = {
   name: 'エレベーション',
+  parameters: {
+    docs: {
+      description: {
+        story: '中核 sm/md/lg + 境界 none の 4 段。md がデフォルトで bare 形 `shadow` ≒ `shadow-md`。',
+      },
+    },
+  },
   render: () => (
-    <div>
-      <TokenPageHeader
-        title="Shadows"
-        intro="中核 sm/md/lg + 境界 none の 4 段。md がデフォルトで、bare 形 shadow ≒ shadow-md。"
-        utility="shadow-{key}"
-      />
-      <div className="flex flex-wrap gap-8 mb-12">
-        {SHADOWS.map((s) => (
-          <div key={s.key} className="flex flex-col items-center gap-3">
-            <div
-              className={`w-20 h-20 bg-surface rounded-md ${s.tw} ${s.key === 'none' ? 'border border-border-muted' : ''}`}
-            />
-            <div className="text-center flex flex-col gap-1">
-              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
-                {s.key}
-              </code>
-              <span className="text-xs font-mono text-onSurface-muted">{s.tw}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <TokenSectionHeading>トークン値</TokenSectionHeading>
-      <div className="flex flex-col gap-2">
-        {SHADOWS.map((s) => (
+    <div className="flex flex-wrap gap-8">
+      {SHADOWS.map((s) => (
+        <div key={s.key} className="flex flex-col items-center gap-3">
           <div
-            key={s.key}
-            className="flex items-center gap-4 py-[10px] px-4 rounded-md border border-border-muted bg-surface"
-          >
-            <code className="bg-surface-inset text-onSurface px-2 py-[2px] rounded-sm font-mono text-xs flex-shrink-0 min-w-[72px]">
+            className={`w-20 h-20 bg-surface rounded-md ${s.tw} ${s.key === 'none' ? 'border border-border-muted' : ''}`}
+          />
+          <div className="text-center flex flex-col gap-1">
+            <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
               {s.key}
             </code>
-            <span className="font-mono text-xs text-onSurface-muted flex-shrink-0 min-w-[90px]">
-              {s.tw}
-            </span>
-            <span className="font-mono text-xs text-onSurface-muted break-all">
-              {s.value}
-            </span>
+            <span className="text-xs font-mono text-onSurface-muted">{s.tw}</span>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const TokenValues: Story = {
+  name: 'トークン値',
+  parameters: {
+    docs: {
+      description: {
+        story: '各 shadow の CSS box-shadow 値。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-2">
+      {SHADOWS.map((s) => (
+        <div
+          key={s.key}
+          className="flex items-center gap-4 py-[10px] px-4 rounded-md border border-border-muted bg-surface"
+        >
+          <code className="bg-surface-inset text-onSurface px-2 py-[2px] rounded-sm font-mono text-xs flex-shrink-0 min-w-[72px]">
+            {s.key}
+          </code>
+          <span className="font-mono text-xs text-onSurface-muted flex-shrink-0 min-w-[90px]">
+            {s.tw}
+          </span>
+          <span className="font-mono text-xs text-onSurface-muted break-all">{s.value}</span>
+        </div>
+      ))}
     </div>
   ),
 };

@@ -1,0 +1,59 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as TypographyStories from './Typography.stories';
+
+<Meta of={TypographyStories} name="Guideline" />
+
+# Typography (Primitive)
+
+## 概要
+
+タイポグラフィの primitive 層。font-size / weight / line-height / letter-spacing / family の 5 軸を持つ。`text-{key}` / `font-{key}` / `leading-{key}` / `tracking-{key}` / `font-{family}` の utility で参照。
+
+**禁則**: コンポーネント実装では原則 [Semantic 層](?path=/docs/tokens-typography-semantic--guideline) (`text-heading-xl` / `text-body-md` 等) を使う。primitive (`text-2xl` 等) 直接利用は限定的に。
+
+---
+
+## 設計方針
+
+- **font-size**: Tailwind 標準スケール (xs〜5xl) を採用、9 段
+- **font-weight**: regular / medium / semibold / bold の 4 段。light は orphan として削除済
+- **line-height**: tight (1.25) / normal (1.5) / relaxed (1.75) の 3 段。loose は orphan として削除済
+- **letter-spacing**: tight (-0.02em) / normal / wide の 3 段
+- **font-family**: sans / mono の 2 種。serif は orphan として削除済
+
+---
+
+## フォントサイズ
+
+<Story of={TypographyStories.FontSizes} />
+
+---
+
+## フォントウェイト
+
+<Story of={TypographyStories.FontWeights} />
+
+---
+
+## 行間 (line-height)
+
+<Story of={TypographyStories.LineHeights} />
+
+---
+
+## 字間 (letter-spacing)
+
+<Story of={TypographyStories.LetterSpacings} />
+
+---
+
+## フォントファミリー
+
+<Story of={TypographyStories.FontFamilies} />
+
+---
+
+## 関連
+
+- [Tokens/Typography/Semantic](?path=/docs/tokens-typography-semantic--guideline) — 実装で使う semantic 層
+- [Primitives/Typography](?path=/docs/primitives-typography--guideline) — Typography コンポーネント

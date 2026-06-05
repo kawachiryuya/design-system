@@ -1,0 +1,51 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as SemanticTypographyStories from './SemanticTypography.stories';
+
+<Meta of={SemanticTypographyStories} name="Guideline" />
+
+# Typography (Semantic)
+
+## 概要
+
+タイポグラフィの semantic 層。`heading.{display,xl,lg,md,sm}` / `body.{lg,md,sm}` / `label` / `caption` の 10 種類を「役割名」で参照する。Typography コンポーネントの `variant` prop と 1:1 対応。
+
+利用 utility:
+- `text-heading-{display,xl,lg,md,sm}` — 見出し
+- `text-body-{lg,md,sm}` — 本文
+- `text-label` — フォームラベル
+- `text-caption` — 注釈
+
+各 token は font-size + (任意の) font-weight + line-height + letter-spacing をセットで保持し、Tailwind の `fontSize` extend で 1 utility class として生成される。
+
+---
+
+## 設計方針
+
+- **役割名で意図を表現**: `text-2xl` ではなく `text-heading-md` と書くことで「これは見出し」が明確
+- **font-weight を含まない utility**: Typography variant の weight 上書きを `font-{weight}` で効かせるため、font-size utility には weight を注入しない (preset.cjs の `flattenSemanticTypo` で意図的に省略)
+- **heading は 5 段、body は 3 段**: 大半の UI に必要十分
+
+---
+
+## Headings (見出し)
+
+<Story of={SemanticTypographyStories.Headings} />
+
+---
+
+## Body (本文)
+
+<Story of={SemanticTypographyStories.Body} />
+
+---
+
+## Label & Caption
+
+<Story of={SemanticTypographyStories.LabelAndCaption} />
+
+---
+
+## 関連
+
+- [Tokens/Typography/Primitive](?path=/docs/tokens-typography-primitive--guideline) — 参照元の primitive スケール
+- [Primitives/Typography](?path=/docs/primitives-typography--guideline) — `variant` prop で semantic を選択する component

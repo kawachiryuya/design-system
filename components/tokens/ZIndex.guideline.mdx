@@ -1,0 +1,36 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as ZIndexStories from './ZIndex.stories';
+
+<Meta of={ZIndexStories} name="Guideline" />
+
+# Z-Index
+
+## 概要
+
+重なり順を **意味のあるラベル** で表現する semantic スケール。`z-50` ではなく `z-modal` / `z-toast` と書くことでコードから意図が読める。
+
+利用 utility: `z-{key}` (`z-dropdown` / `z-sticky` / `z-overlay` / `z-modal` / `z-popover` / `z-toast` / `z-tooltip`)。
+
+Tailwind 既定の `z-0/10/.../50` も並存しますが、本リポでは原則 semantic ラベルを使う方針。
+
+---
+
+## 設計方針
+
+- **primitive 層を持たず semantic 名のみ**: `z-index = 1000` という数値そのものに意味はなく「modal レイヤ」という役割名で初めて意図が立つ。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)
+- **7 layer 設計**: dropdown (inline) → sticky → overlay → modal → popover → toast → tooltip の重なり順
+- **値は 1000 から 100 刻み**: 衝突や挿入余地を持たせるため十分大きく
+- **Modal は実質 OS 管理**: ネイティブ `<dialog>` を採用しているため z-index 指定が不要。スケールは将来 Popover / Tooltip / Dropdown 追加時の予約
+
+---
+
+## 重なり順 (下から上)
+
+<Story of={ZIndexStories.Layers} />
+
+---
+
+## 関連
+
+- [AGENTS.md §3-4 semantic-only スケール](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring) — 設計判断の根拠
+- [Composites/Toast](?path=/docs/composites-toast--guideline) — `z-toast` の代表的利用先

@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import radiusToken from '../../tokens/source/radius.json';
-import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Radius',
@@ -21,32 +20,32 @@ const RADII: RadiusEntry[] = Object.entries(radiusToken.radius).map(
 
 export const BorderRadius: Story = {
   name: '角丸',
+  parameters: {
+    docs: {
+      description: {
+        story: '中核 sm/md/lg + 境界 none/full の 5 段。md がデフォルトで bare 形 `rounded` ≒ `rounded-md`。',
+      },
+    },
+  },
   render: () => (
-    <div>
-      <TokenPageHeader
-        title="Border Radius"
-        intro="中核 sm/md/lg + 境界 none/full の 5 段。md がデフォルトで、bare 形 rounded ≒ rounded-md。"
-        utility="rounded-{key}"
-      />
-      <div className="flex flex-wrap gap-8">
-        {RADII.map((r) => (
-          <div key={r.key} className="flex flex-col items-center gap-3">
-            <div
-              className="w-20 h-20 bg-surface-primary"
-              style={{
-                borderRadius: r.value === '9999px' ? '9999px' : r.value,
-              }}
-            />
-            <div className="text-center flex flex-col gap-1">
-              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
-                {r.key}
-              </code>
-              <span className="text-xs font-mono text-onSurface-muted">{r.value}</span>
-              <span className="text-xs font-mono text-onSurface-muted">{r.tw}</span>
-            </div>
+    <div className="flex flex-wrap gap-8">
+      {RADII.map((r) => (
+        <div key={r.key} className="flex flex-col items-center gap-3">
+          <div
+            className="w-20 h-20 bg-surface-primary"
+            style={{
+              borderRadius: r.value === '9999px' ? '9999px' : r.value,
+            }}
+          />
+          <div className="text-center flex flex-col gap-1">
+            <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
+              {r.key}
+            </code>
+            <span className="text-xs font-mono text-onSurface-muted">{r.value}</span>
+            <span className="text-xs font-mono text-onSurface-muted">{r.tw}</span>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   ),
 };

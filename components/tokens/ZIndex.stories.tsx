@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Z-Index',
@@ -22,34 +21,31 @@ const LAYERS: Layer[] = [
 
 export const Layers: Story = {
   name: 'レイヤ',
+  parameters: {
+    docs: {
+      description: {
+        story: '重なり順を意味のあるラベルで表現する 7 layer。Tailwind 既定の `z-0/10/.../50` も並存。',
+      },
+    },
+  },
   render: () => (
-    <div className="max-w-[900px]">
-      <TokenPageHeader
-        title="Z-Index"
-        intro="重なり順を意味のあるラベルで表現する semantic スケール。Tailwind 既定の z-0/10/.../50 も並存。"
-        utility="z-{key}"
-      >
-        Modal は <code className="bg-surface-inset text-onSurface px-[6px] py-[1px] rounded-sm font-mono text-xs">&lt;dialog&gt;</code> を採用しているため OS の top layer 管理で z-index 指定が実質不要。将来 Popover/Tooltip/Dropdown 追加時の予約スケール。
-      </TokenPageHeader>
-
-      <div className="flex flex-col gap-2">
-        {LAYERS.map((l) => (
-          <div
-            key={l.key}
-            className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-muted bg-surface"
-            style={{ gridTemplateColumns: '140px 80px 1fr' }}
-          >
-            <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
-              z-{l.key}
-            </code>
-            <code className="font-mono text-xs text-onSurface-muted">{l.value}</code>
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-onSurface">{l.description}</span>
-              <span className="text-xs text-onSurface-muted">例: {l.example}</span>
-            </div>
+    <div className="flex flex-col gap-2">
+      {LAYERS.map((l) => (
+        <div
+          key={l.key}
+          className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-muted bg-surface"
+          style={{ gridTemplateColumns: '140px 80px 1fr' }}
+        >
+          <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
+            z-{l.key}
+          </code>
+          <code className="font-mono text-xs text-onSurface-muted">{l.value}</code>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm text-onSurface">{l.description}</span>
+            <span className="text-xs text-onSurface-muted">例: {l.example}</span>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   ),
 };

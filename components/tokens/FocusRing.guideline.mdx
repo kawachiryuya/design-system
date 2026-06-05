@@ -1,0 +1,54 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as FocusRingStories from './FocusRing.stories';
+
+<Meta of={FocusRingStories} name="Guideline" />
+
+# Focus Ring
+
+## 概要
+
+a11y 上重要なフォーカスリングを semantic 化。下流 product で `tailwind.config.js` の token override で一括変更可能。色は別 token (`border-focus`) と組合せて使う。
+
+利用 utility (組合せ):
+
+```html
+focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus
+```
+
+---
+
+## 設計方針
+
+- **width / offset を semantic 化**: `ring-2` / `ring-offset-2` の数値直書きを避け、`ring-focus` / `ring-offset-focus` で意図を表現
+- **色は border-focus (semantic-colors) を使う**: 色変更は別 token、太さは別 token、で関心分離
+- **primitive 層を持たない**: 1〜2 値しかなく palette 化に意味がないため。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)
+
+---
+
+## どの component で outer ring を使うか
+
+| 要素 | focus 表現 |
+|---|---|
+| **Button / Link / Radio / Checkbox / Switch / Tabs / Pagination / ToggleButton** | **outer ring** (offset 付き) |
+| **Input / Textarea / Select** | border 色変化 + inset ring (border ベースの form control 専用パターン) |
+
+input 系が outer ring を使わない理由: ブラウザの UA heuristic で click 時にも `:focus-visible` がマッチする問題を回避するため。border 強調で focus を表現。
+
+---
+
+## width / offset
+
+<Story of={FocusRingStories.Tokens} />
+
+---
+
+## 視覚サンプル
+
+<Story of={FocusRingStories.Samples} />
+
+---
+
+## 関連
+
+- [Tokens/Color/Semantic - Border](?path=/docs/tokens-color-semantic--border) — `border-focus` の色定義
+- [AGENTS.md §3-4 semantic-only スケール](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)

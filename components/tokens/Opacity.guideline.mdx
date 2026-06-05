@@ -1,0 +1,41 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as OpacityStories from './Opacity.stories';
+
+<Meta of={OpacityStories} name="Guideline" />
+
+# Opacity
+
+## 概要
+
+意味付けされた opacity (透明度) 値の 4 種。`opacity-50` ではなく `opacity-disabled` と書くことでコードから意図が読める。
+
+利用 utility: `opacity-{key}` (`opacity-disabled` / `opacity-muted` / `opacity-spinner-track` / `opacity-spinner-spin`)。
+
+Tailwind 既定の `opacity-0/5/10/.../100` も並存しますが、本リポでは原則 semantic ラベルを使う方針。
+
+---
+
+## 設計方針
+
+- **primitive 層を持たず semantic 名のみ**: 数値そのものに意味はなく、用途名で参照する方が読みやすい。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)
+- **`disabled` (0.5)** が大半の disabled 状態の標準値
+- **Spinner 用の `spinner-track` (0.25) / `spinner-spin` (0.75)** は SVG パスの opacity に使う
+
+---
+
+## 既知の制約
+
+`opacity` プロパティは **要素全体 (背景 / border / text / 子孫)** に適用されるため、強い背景色を持つ要素 (Button primary 等) では半透明で透けて見える問題があります。将来的に色ベースの disabled (`bg-{disabled-*}` + `text-onSurface-disabled`) へ移行する選択肢あり (現状は scope 外)。詳細は memory: project_disabled_opacity_vs_color。
+
+---
+
+## 値一覧
+
+<Story of={OpacityStories.Values} />
+
+---
+
+## 関連
+
+- [Primitives/Spinner](?path=/docs/primitives-spinner--guideline) — `spinner-track` / `spinner-spin` の代表的利用先
+- [AGENTS.md §3-4 semantic-only スケール](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring) — 設計判断の根拠

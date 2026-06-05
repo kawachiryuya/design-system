@@ -1,0 +1,53 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as ShadowsStories from './Shadows.stories';
+
+<Meta of={ShadowsStories} name="Guideline" />
+
+# Shadows
+
+## 概要
+
+エレベーション (浮き感) を表現する box-shadow の 4 段スケール。中核は `sm / md / lg` の 3 段、`none` は影なし (Card outlined 等)。`md` がカノニカルなデフォルトで、bare 形の `shadow` も `shadow-md` に解決される。
+
+利用 utility: `shadow-{key}` (`shadow-sm` / `shadow-md` / `shadow-lg` / `shadow-none`)。
+
+---
+
+## 設計方針
+
+- **中核 sm/md/lg の 3 段**: Radius と同じ哲学。選択肢を絞ってデザイン判断を容易に
+- **`md` を default に**: `tokens/preset.cjs` で `boxShadow` に `DEFAULT: md` エイリアスを付与
+- **Tailwind 既定よりやや subtle 寄り**: 過剰な elevation を避けて落ち着いた印象に
+- **xs / xl / 2xl は持たない**: 実利用が薄いため
+
+詳細: [AGENTS.md §3 サイズスケール内の `md = default` 規約](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#サイズスケール内の-md--default-規約)
+
+---
+
+## 使い分けの目安
+
+| 段階 | 用途 | 例 |
+|---|---|---|
+| `none` | 影を出さない、border で輪郭表現 | Card (outlined) / Alert |
+| `sm` | ごく浅い elevation、subtle なリフト感 | (現状本リポでは未使用、将来 Hover 用) |
+| `md` | 標準的なリフト感、bare `shadow` 同等 | Card (elevated) / Toast |
+| `lg` | 強めの elevation、視線を引く | Modal / Card hover |
+
+---
+
+## エレベーション
+
+<Story of={ShadowsStories.Elevations} />
+
+---
+
+## トークン値 (詳細)
+
+<Story of={ShadowsStories.TokenValues} />
+
+---
+
+## 関連
+
+- [Tokens/Radius](?path=/docs/tokens-radius--guideline) — 同じ `sm/md/lg` 3 段スケール
+- [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — token 参照ルール

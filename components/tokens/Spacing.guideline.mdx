@@ -1,0 +1,39 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as SpacingStories from './Spacing.stories';
+
+<Meta of={SpacingStories} name="Guideline" />
+
+# Spacing
+
+## 概要
+
+`8px` (= `spacing.2`) を基準とした数値スケール。コンポーネント内外の余白すべてに使う共通単位。Tailwind の `spacing` に統合済みで、以下の utility 経由で参照する:
+
+- `p-{key}` / `px-{key}` / `py-{key}` — padding
+- `m-{key}` / `mx-{key}` / `my-{key}` — margin
+- `gap-{key}` — flex / grid gap
+
+例: `<div className="p-4 gap-2">…</div>` は内側 padding 16px、子要素間 gap 8px。
+
+---
+
+## 設計方針
+
+- **8px ベース**: 主要スケールは 8 の倍数 (`spacing.2` = 8px、`spacing.4` = 16px、`spacing.6` = 24px、…)。視覚的なリズムが生まれる
+- **4px 単位の細かい刻みも併存**: `spacing.1` (4px) や `spacing.3` (12px) など、密な UI で必要な細かさにも対応
+- **数値スケール、semantic 層なし**: 「ボタンの padding は何 px」のような role-name 化はせず、数値で直接参照。理由は spacing が多用途すぎて意味付けが分散するため
+
+---
+
+## スケール
+
+下の story で全段階の bar 視覚を確認できます。
+
+<Story of={SpacingStories.Scale} />
+
+---
+
+## 関連
+
+- [Tokens/Overview](?path=/docs/tokens-overview--docs) — トークン全体の 2 層構造説明
+- [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — token 参照ルール (semantic 優先 / primitive 直接利用禁止)

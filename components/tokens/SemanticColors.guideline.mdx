@@ -1,0 +1,62 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as SemanticColorsStories from './SemanticColors.stories';
+
+<Meta of={SemanticColorsStories} name="Guideline" />
+
+# Color (Semantic)
+
+## 概要
+
+**実装では必ずこの semantic 層を使う**。Primitive palette (`primary.700` 等) を「役割名」で参照することで、下流 product が brand 色を override したときに自動連動する設計。
+
+5 つのカテゴリ:
+
+| カテゴリ | 役割 | 利用 utility |
+|---|---|---|
+| **bg** | ページ最下層の canvas | `bg-background` |
+| **surface** | カード / モーダル / 状態色の塗り | `bg-surface-{key}` |
+| **on** | テキスト色 (surface 上に重ねる) | `text-onSurface[-{key}]` |
+| **border** | ボーダー色 | `border-border[-{key}]` |
+| **state** | hover / active のオーバーレイ (rgba) | `bg-state-{key}` |
+
+各 token は [`tokens/source/semantic-colors.json`](https://github.com/kawachiryuya/design-system/blob/main/tokens/source/semantic-colors.json) で `{ value: "{color.X.Y}", type, description }` の形で定義され、`value` で primitive を参照。
+
+---
+
+## 設計方針
+
+- **value は必ず primitive 参照、生 hex は禁止**: 下流 override に連動するため (詳細 [AGENTS.md §3-1](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+- **state は `color-mix()` で primitive と連動**: 透過オーバーレイも primitive 変更に自動追従 ([§3-2](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+- **`primary.25` は `bg.default` 専用**: brand 色の最薄 tint、他用途では使わない ([§3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+
+---
+
+## Background & Surface
+
+<Story of={SemanticColorsStories.Surface} />
+
+---
+
+## Text (on)
+
+<Story of={SemanticColorsStories.Text} />
+
+---
+
+## Border
+
+<Story of={SemanticColorsStories.Border} />
+
+---
+
+## State (overlay)
+
+<Story of={SemanticColorsStories.State} />
+
+---
+
+## 関連
+
+- [Tokens/Color/Primitive](?path=/docs/tokens-color-primitive--guideline) — palette と逆リンク
+- [Tokens/Overview](?path=/docs/tokens-overview--docs) — 2 層構造の説明
+- [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — semantic token 定義の規約 (3-1 / 3-2 / 3-3)

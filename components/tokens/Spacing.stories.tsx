@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import spacingToken from '../../tokens/source/spacing.json';
-import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Spacing',
@@ -20,38 +19,38 @@ const SPACING_SCALE: SpacingEntry[] = Object.entries(spacingToken.spacing).map(
 
 export const Scale: Story = {
   name: 'スペーシングスケール',
+  parameters: {
+    docs: {
+      description: {
+        story: '8px (= spacing.2) を基準とした数値スケール。Tailwind の spacing utility (`p-{key}` / `m-{key}` / `gap-{key}`) に統合済み。',
+      },
+    },
+  },
   render: () => (
-    <div>
-      <TokenPageHeader
-        title="Spacing Scale"
-        intro="8px (= spacing.2) を基準とした数値スケール。Tailwind の spacing に統合済み。"
-        utility="p-{key} / m-{key} / gap-{key}"
-      />
-      <div className="flex flex-col gap-3">
-        {SPACING_SCALE.map((s) => {
-          const px = parseInt(s.value, 10);
-          return (
-            <div key={s.key} className="flex items-center gap-4">
-              <div className="w-12 flex-shrink-0 text-right">
-                <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
-                  {s.key}
-                </code>
-              </div>
-              <div
-                className="h-5 bg-surface-primary rounded-sm flex-shrink-0"
-                style={{ width: Math.max(px, 2), transition: 'width 0.2s' }}
-                aria-hidden
-              />
-              <span className="font-mono text-xs text-onSurface-muted flex-shrink-0">
-                {s.value}
-              </span>
-              <span className="font-mono text-xs text-onSurface-muted">
-                p-{s.key} / gap-{s.key} / m-{s.key}
-              </span>
+    <div className="flex flex-col gap-3">
+      {SPACING_SCALE.map((s) => {
+        const px = parseInt(s.value, 10);
+        return (
+          <div key={s.key} className="flex items-center gap-4">
+            <div className="w-12 flex-shrink-0 text-right">
+              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
+                {s.key}
+              </code>
             </div>
-          );
-        })}
-      </div>
+            <div
+              className="h-5 bg-surface-primary rounded-sm flex-shrink-0"
+              style={{ width: Math.max(px, 2) }}
+              aria-hidden
+            />
+            <span className="font-mono text-xs text-onSurface-muted flex-shrink-0">
+              {s.value}
+            </span>
+            <span className="font-mono text-xs text-onSurface-muted">
+              p-{s.key} / gap-{s.key} / m-{s.key}
+            </span>
+          </div>
+        );
+      })}
     </div>
   ),
 };

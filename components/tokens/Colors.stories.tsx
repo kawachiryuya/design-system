@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import colorsToken from '../../tokens/source/colors.json';
 import semanticColors from '../../tokens/source/semantic-colors.json';
-import { TokenPageHeader, TokenSectionHeading } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Color/Primitive',
@@ -42,16 +41,6 @@ const FUNCTIONAL_PALETTES: Palette[] = ['success', 'error', 'warning', 'info'].m
   (k) => ALL_PALETTES[k],
 );
 
-/**
- * Primitive → Semantic 逆引きマップを構築する。
- *
- * semantic-colors.json の各 entry の value (`{color.primary.700}` 等) を解析し、
- * 「primary.700」キーに対して `["surface.primary", "border-border-strong", ...]`
- * のように使用元 semantic token 名を集める。
- *
- * value に primitive 参照がない (rgba hardcode / color-mix の中で参照しない場合) は無視。
- * color-mix(...) 内の `{color.X.Y}` 参照も拾う (state.* の中身)。
- */
 type SCEntry = { value: string; type?: string; description?: string };
 const buildReverseIndex = (): Record<string, string[]> => {
   const index: Record<string, string[]> = {};
@@ -62,7 +51,7 @@ const buildReverseIndex = (): Record<string, string[]> => {
       const matches = [...entry.value.matchAll(refPattern)];
       const semanticName = key === 'default' ? groupName : `${groupName}.${key}`;
       for (const m of matches) {
-        const primitiveKey = m[1]; // e.g. "primary.700"
+        const primitiveKey = m[1];
         if (!index[primitiveKey]) index[primitiveKey] = [];
         if (!index[primitiveKey].includes(semanticName)) {
           index[primitiveKey].push(semanticName);
@@ -142,48 +131,69 @@ function PaletteBlock({ palette }: { palette: Palette }) {
   );
 }
 
-export const Palettes: Story = {
-  name: 'グローバルカラー',
+export const Base: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'White / Black の絶対基準色。`bg-white` / `bg-black` で直接参照。',
+      },
+    },
+  },
   render: () => (
-    <div>
-      <TokenPageHeader
-        title="Global Colors"
-        intro="OKLCH ベースで知覚明度を統一したカラーパレット。各 palette の shade は semantic-colors.json から参照されて bg-surface-* / text-onSurface-* / border-border-* 等の utility になる (実装では semantic 経由で参照、primitive 直接利用は禁止)。"
-        utility="bg-{palette}-{shade} / text-{palette}-{shade} (※ 利用は禁止、semantic 経由で)"
-      >
-        各 shade の右下に <strong>→ surface.primary</strong> のように <strong>その shade を参照している semantic token</strong> を表示しています (semantic-colors.json から逆引き)。参照のない shade は何も表示されません。
-      </TokenPageHeader>
+    <div className="flex gap-4">
+      {[
+        { label: 'White', hex: colorsToken.color.base.white.value, tw: 'white' },
+        { label: 'Black', hex: colorsToken.color.base.black.value, tw: 'black' },
+      ].map((item) => (
+        <div key={item.label} className="text-center">
+          <div
+            className="w-20 h-20 rounded-md border border-border-muted"
+            style={{ backgroundColor: item.hex }}
+          />
+          <p className="m-0 mt-2 text-body-sm font-semibold text-onSurface">{item.label}</p>
+          <p className="m-0 text-xs font-mono text-onSurface-muted">{item.hex}</p>
+          <p className="m-0 mt-[2px] text-xs font-mono text-onSurface-muted">bg-{item.tw}</p>
+        </div>
+      ))}
+    </div>
+  ),
+};
 
-      <TokenSectionHeading>Base</TokenSectionHeading>
-      <div className="flex gap-4 mb-2">
-        {[
-          { label: 'White', hex: colorsToken.color.base.white.value, tw: 'white' },
-          { label: 'Black', hex: colorsToken.color.base.black.value, tw: 'black' },
-        ].map((item) => (
-          <div key={item.label} className="text-center">
-            <div
-              className="w-20 h-20 rounded-md border border-border-muted"
-              style={{ backgroundColor: item.hex }}
-            />
-            <p className="m-0 mt-2 text-body-sm font-semibold text-onSurface">{item.label}</p>
-            <p className="m-0 text-xs font-mono text-onSurface-muted">{item.hex}</p>
-            <p className="m-0 mt-[2px] text-xs font-mono text-onSurface-muted">bg-{item.tw}</p>
-          </div>
-        ))}
-      </div>
+export const Neutral: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Grayscale 10 段。text / border / surface 各方面に幅広く参照される。',
+      },
+    },
+  },
+  render: () => <PaletteBlock palette={ALL_PALETTES['neutral']} />,
+};
 
-      <TokenSectionHeading>Neutral (Grayscale)</TokenSectionHeading>
-      <PaletteBlock palette={ALL_PALETTES['neutral']} />
+export const Primary: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'ブランドカラー (Teal)。primary.25 は bg.default 専用、primary.700 が surface.primary の主体。',
+      },
+    },
+  },
+  render: () => <PaletteBlock palette={ALL_PALETTES['primary']} />,
+};
 
-      <TokenSectionHeading>Primary</TokenSectionHeading>
-      <PaletteBlock palette={ALL_PALETTES['primary']} />
-
-      <TokenSectionHeading>機能色</TokenSectionHeading>
-      <div className="flex flex-wrap gap-6">
-        {FUNCTIONAL_PALETTES.map((palette) => (
-          <PaletteBlock key={palette.name} palette={palette} />
-        ))}
-      </div>
+export const Functional: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'success / error / warning / info の 4 機能色。各 10 段で UI 状態を表現。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-wrap gap-6">
+      {FUNCTIONAL_PALETTES.map((palette) => (
+        <PaletteBlock key={palette.name} palette={palette} />
+      ))}
     </div>
   ),
 };

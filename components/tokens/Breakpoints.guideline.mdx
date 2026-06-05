@@ -1,0 +1,34 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as BreakpointsStories from './Breakpoints.stories';
+
+<Meta of={BreakpointsStories} name="Guideline" />
+
+# Breakpoints
+
+## 概要
+
+Tailwind 標準と同じ 5 段階のレスポンシブ breakpoint。mobile-first 前提で、prefix なしの class が最小幅 (mobile) を表し、`sm:` 以上の prefix で viewport がその値以上に達したときのみスタイルを適用する (widening 方向)。
+
+利用 utility: `sm:` / `md:` / `lg:` / `xl:` / `2xl:` のプレフィックス。
+
+例: `<div className="flex-col sm:flex-row">…</div>` は mobile で縦並び、640px 以上で横並び。
+
+---
+
+## 設計方針
+
+- **mobile-first**: prefix なし = mobile、prefix で広げる方向。逆方向 (mobile only) は `max-{key}:` で
+- **Tailwind 標準値をそのまま採用**: 640 / 768 / 1024 / 1280 / 1536 px。下流 product のエコシステムと互換
+- **現状本リポ内では `sm:` のみ使用**: `md/lg/xl/2xl:` は未使用 (mobile / tablet までの軽い適応に留めている)。ただし下流 product が必要時に使えるよう 5 段階を維持
+
+---
+
+## スケール
+
+<Story of={BreakpointsStories.Scale} />
+
+---
+
+## 関連
+
+- [Tailwind CSS Docs - Responsive Design](https://tailwindcss.com/docs/responsive-design) — utility 構文の公式リファレンス

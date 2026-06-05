@@ -1,0 +1,65 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import * as ColorsStories from './Colors.stories';
+
+<Meta of={ColorsStories} name="Guideline" />
+
+# Color (Primitive)
+
+## 概要
+
+OKLCH ベースで知覚明度を統一したカラーパレット。各 palette は **10 段 + 例外** で構成され、shade は基本 50 (最薄) → 900 (最濃) の数値。
+
+利用 utility (※ **コンポーネント実装では直接使わない**): `bg-{palette}-{shade}` / `text-{palette}-{shade}` / `border-{palette}-{shade}`
+
+**禁則**: 実装では `bg-primary-700` のような primitive 直参照は **禁止**。必ず [Semantic 層](?path=/docs/tokens-color-semantic--guideline) (`bg-surface-primary` 等) を経由する。理由: 下流 product が brand palette を override したときに自動連動させるため。
+
+---
+
+## Primitive → Semantic 逆リンク
+
+各 swatch の右下に **「その shade を参照している semantic token 名」** を表示しています ([`semantic-colors.json`](https://github.com/kawachiryuya/design-system/blob/main/tokens/source/semantic-colors.json) から逆引き)。
+
+例: `primary.700` swatch の右下に `→ surface.primary, on.primary, border-primary, state.hover (color-mix 内)` のように表示。
+
+参照のない shade (`primary.500` / `neutral.300` 等) は何も表示されません = palette を変えても直接的には影響しない。「`primary.700` を変えると何に影響するか」を即座に判断できる導線です。
+
+---
+
+## 設計方針
+
+- **OKLCH ベース**: 知覚明度を palette 間で揃えるため。同じ shade 番号なら異なる palette でも体感の明度が近い
+- **shade 数値スケール (50〜900)**: Tailwind / Material 慣習に準拠
+- **`primary.25` は bg.default 専用の例外 shade**: ページ最下層に brand canvas を敷くために追加 ([AGENTS.md §3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+- **6 palette + base**: brand (primary) + neutral + 4 機能色 (success/error/warning/info) + base (white/black)
+
+---
+
+## Base (絶対基準色)
+
+<Story of={ColorsStories.Base} />
+
+---
+
+## Neutral
+
+<Story of={ColorsStories.Neutral} />
+
+---
+
+## Primary
+
+<Story of={ColorsStories.Primary} />
+
+---
+
+## 機能色 (Functional)
+
+<Story of={ColorsStories.Functional} />
+
+---
+
+## 関連
+
+- [Tokens/Color/Semantic](?path=/docs/tokens-color-semantic--guideline) — 実装で使う semantic 層
+- [Tokens/Overview](?path=/docs/tokens-overview--docs) — 2 層構造の説明
+- [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — token 参照ルール

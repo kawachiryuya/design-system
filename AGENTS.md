@@ -103,6 +103,46 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 - **CSS 変数**: `var(--color-surface-primary)` → `tokens/build/variables.css` を `@import`
 - **Tailwind**: `tokens/preset.cjs` 経由。各 PJ の `tailwind.config.js` で `presets: [require('.../tokens/preset.cjs')]` で継承
 
+### semantic token を定義するときの規約
+
+[`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) で新規 semantic token を追加・更新するときの規約 (token メンテナ向け、利用側は §3 上記まででよい)。
+
+**3-1. value は必ず primitive 参照、生 hex は禁止**
+
+```jsonc
+// ✅ OK
+"surface": { "primary": { "value": "{color.primary.700}" } }
+// ❌ NG
+"surface": { "primary": { "value": "#006F50" } }
+```
+
+理由: 生 hex は下流 product が primary palette を override しても connect しない (silent link)。`{color.X.Y}` で参照しておけば下流の override に自動追従する。**2026-06-04 以降、`bg.default` も含めて semantic は全て primitive 経由**。
+
+**3-2. 透過オーバーレイは `color-mix()` で primitive と連動させる**
+
+primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は、CSS `color-mix()` + Style Dictionary 参照で書く:
+
+```jsonc
+// ✅ OK
+"hover-on-primary": {
+  "value": "color-mix(in srgb, {color.primary.700} 8%, transparent)"
+}
+// ❌ NG (旧バージョンのハードコード、primary.700 変更時に手動更新必要)
+"hover-on-primary": {
+  "value": "rgba(0, 111, 80, 0.08)"
+}
+```
+
+`color-mix()` 対応ブラウザ: Safari 16.4 / Chrome 111 / Firefox 113 以降 (2023 春以降)。
+
+中性 (黒/白) オーバーレイ (`state.hover` 等) は primitive 依存がないので `rgba(0, 0, 0, 0.08)` 等の生 rgba でよい。
+
+**3-3. `primary.25` は `bg.default` 専用**
+
+`color.primary.25` (#F5F7F5) は brand 色の最薄 tint として bg.default 専用に用意した。Text / Border / 他用途では使わない (description にも明記)。「ページ最下層に brand canvas を敷く」設計のための専用 token。
+
+---
+
 ### 例外
 
 PJ 側 (本リポを依存として使う product 側) で、ブランド固有の見栄え調整のために primitive スケールを extend する場合は OK (ただし semantic を上書きする方を推奨)。

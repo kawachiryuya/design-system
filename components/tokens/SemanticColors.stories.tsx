@@ -5,8 +5,8 @@ import semanticColors from '../../tokens/source/semantic-colors.json';
 /**
  * Semantic color tokens の可視化カタログ。
  *
- * 入力: `tokens/source/semantic-colors.json` (source、`{ value, type, description }` 構造)。
- * 表示: グループごとに sub-section 分けし、各 token の Tailwind class + description + 視覚プレビューを描画。
+ * 入力: `tokens/source/semantic-colors.json` (`{ value, type, description }` 構造)。
+ * 表示: 各 token を Tailwind class + description + 視覚プレビューで一覧。
  */
 const meta: Meta = {
   title: 'Tokens/Color/Semantic',
@@ -36,20 +36,6 @@ const pick = (group: Record<string, Entry>, keys: string[]) =>
       sourceValue: formatValue(group[key].value),
     }));
 
-const Section: React.FC<{ title: string; intro?: React.ReactNode; children: React.ReactNode }> = ({
-  title,
-  intro,
-  children,
-}) => (
-  <section className="flex flex-col gap-3">
-    <div>
-      <h3 className="text-heading-sm m-0 text-onSurface">{title}</h3>
-      {intro && <p className="m-0 mt-1 text-body-sm text-onSurface-muted">{intro}</p>}
-    </div>
-    {children}
-  </section>
-);
-
 const CardHeader: React.FC<{
   name: string;
   twClass: string;
@@ -66,28 +52,46 @@ const CardHeader: React.FC<{
   </div>
 );
 
-// ── Surface ──────────────────────────────────────────────────
-// グループ: Layer 階層 / 特殊役割 / Brand / Functional (intense + container) / State indicator
+// ── Background ───────────────────────────────────────────────
 
-const SURFACE_LAYER = ['layer-1', 'layer-2', 'layer-3'];
-const SURFACE_SPECIAL = ['inset', 'overlay'];
-const SURFACE_BRAND = ['primary', 'secondary'];
-const SURFACE_FUNCTIONAL = [
+export const Background: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'ページ最下層の背景。brand から独立した中性、下流 product が brand を変えても変わらない。',
+      },
+    },
+  },
+  render: () => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {pick(SC.bg, ['default']).map((e) => (
+        <div key={e.key} className="border border-border-subtle rounded-md p-3 bg-surface">
+          <div className="bg-background h-16 rounded-sm border border-border-subtle" />
+          <CardHeader name={`bg.${e.key}`} twClass="bg-background" source={e.sourceValue} description={e.description} />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+// ── Surface ──────────────────────────────────────────────────
+
+const SURFACE_ORDER = [
+  'layer-1', 'layer-2', 'layer-3',
+  'inset', 'overlay',
+  'primary', 'secondary',
   'success', 'success-muted',
   'error', 'error-muted',
   'warning', 'warning-muted',
   'info', 'info-muted',
+  'disabled', 'skeleton', 'neutral',
 ];
-const SURFACE_STATE = ['disabled', 'skeleton', 'neutral'];
 
-const SurfaceCard: React.FC<{ entry: ReturnType<typeof pick>[number]; prefix?: string }> = ({
-  entry,
-  prefix = 'surface',
-}) => (
+const SurfaceCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry }) => (
   <div className="border border-border-subtle rounded-md p-3 bg-background">
     <div className={`${tw('bg-surface', entry.key)} h-16 rounded-sm border border-border-subtle`} />
     <CardHeader
-      name={`${prefix}.${entry.key}`}
+      name={`surface.${entry.key}`}
       twClass={tw('bg-surface', entry.key)}
       source={entry.sourceValue}
       description={entry.description}
@@ -95,79 +99,28 @@ const SurfaceCard: React.FC<{ entry: ReturnType<typeof pick>[number]; prefix?: s
   </div>
 );
 
-export const Background: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'ページ最下層の canvas (`bg.default`)。brand から独立した中性、bg-background utility 経由で参照。Surface (elevated 層) とは別 namespace。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-10">
-      <Section title="bg (ページ最下層)" intro="brand から独立した中性 canvas。下流 product が brand を override しても bg は変わらない (Multi-product hub 設計)。">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {pick(SC.bg, ['default']).map((e) => (
-            <div key={e.key} className="border border-border-subtle rounded-md p-3 bg-surface">
-              <div className="bg-background h-16 rounded-sm border border-border-subtle" />
-              <CardHeader name={`bg.${e.key}`} twClass="bg-background" source={e.sourceValue} description={e.description} />
-            </div>
-          ))}
-        </div>
-      </Section>
-    </div>
-  ),
-};
-
 export const Surface: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'コンテンツサーフェス (`surface.*`)。Layer 階層 / 特殊役割 / Brand / Functional / State indicator の 5 グループに分類。Background (`bg.default`) は別 story 参照。',
+        story: 'カード / モーダル / 役割色の塗り。階層 (`layer-1/2/3`) → 特殊役割 (`inset`/`overlay`) → Brand → 機能色 → 状態マーカーの順で並ぶ。機能色の組合せは Container Pairs story を参照。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-10">
-      <Section title="Layer 階層 (depth)" intro="ページ→入れ子→深い入れ子の elevation 階層 (Carbon 流 numeric)。bg-surface (DEFAULT) は layer-1 を指す。">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {pick(SC.surface, SURFACE_LAYER).map((e) => <SurfaceCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="特殊役割" intro="depth 軸とは別の用途 (input 凹み / modal 背景マスク)。">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {pick(SC.surface, SURFACE_SPECIAL).map((e) => <SurfaceCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="Brand" intro="Primary ボタンや選択状態の brand 色。primary (intense) と secondary (container) のペア。">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {pick(SC.surface, SURFACE_BRAND).map((e) => <SurfaceCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="Functional (Container ペア)" intro="success/error/warning/info の状態色。intense (X) + container (X-muted) のペア。Alert / Badge solid 等で利用。">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {pick(SC.surface, SURFACE_FUNCTIONAL).map((e) => <SurfaceCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="State indicator" intro="disabled / skeleton / status marker (offline 等) 用。container 単独で text counterpart は不要 (status は小さな塗りなので)。">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {pick(SC.surface, SURFACE_STATE).map((e) => <SurfaceCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      {pick(SC.surface, SURFACE_ORDER).map((e) => <SurfaceCard key={e.key} entry={e} />)}
     </div>
   ),
 };
 
 // ── Text (on) ────────────────────────────────────────────────
-// グループ: Hierarchy / Role / State
 
-const ON_HIERARCHY = ['default', 'soft', 'muted'];
-const ON_ROLE = ['primary', 'success', 'error', 'warning', 'info'];
-const ON_STATE = ['disabled', 'inverse'];
+const ON_ORDER = [
+  'default', 'soft', 'muted',
+  'primary', 'success', 'error', 'warning', 'info',
+  'disabled', 'inverse',
+];
 
 const OnTextCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry }) => {
   const bgClass = entry.key === 'inverse' ? 'bg-surface-primary' : 'bg-surface';
@@ -193,44 +146,27 @@ export const Text: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'テキスト色のセマンティック token。Hierarchy 軸 (default/soft/muted)、Role 軸 (primary/success/error/warning/info)、State 軸 (disabled/inverse) の 3 グループに分類。`inverse` は色面背景上で白文字。',
+        story: 'surface に載せるテキスト色。階層 (`default`/`soft`/`muted`) → 役割 (`primary`/`success`/...) → 状態 (`disabled`/`inverse`) の順。`inverse` は色付き背景に載せる白文字。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-10">
-      <Section title="Hierarchy (階層)" intro="主テキスト → 副テキスト → 補助テキストの 3 段。Material 3 / Polaris 流の階層軸。">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {pick(SC.on, ON_HIERARCHY).map((e) => <OnTextCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="Role (役割)" intro="brand 色 (primary) と状態色 (success/error/warning/info) の役割別。Link や状態通知メッセージで使う。">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {pick(SC.on, ON_ROLE).map((e) => <OnTextCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="State (状態)" intro="disabled は操作不能、inverse は色面背景上の反転テキスト (Primary ボタン等)。">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {pick(SC.on, ON_STATE).map((e) => <OnTextCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {pick(SC.on, ON_ORDER).map((e) => <OnTextCard key={e.key} entry={e} />)}
     </div>
   ),
 };
 
 // ── Border ───────────────────────────────────────────────────
-// グループ: 強度軸 (neutral) / Role × intensity / Interactive
 
-const BORDER_INTENSITY = ['subtle', 'default', 'strong', 'emphasis'];
-const BORDER_ROLE = [
+const BORDER_ORDER = [
+  'subtle', 'default', 'strong', 'emphasis',
   'success-subtle', 'success-emphasis',
   'error-subtle', 'error-emphasis',
   'warning-subtle', 'warning-emphasis',
   'info-subtle', 'info-emphasis',
+  'focus',
 ];
-const BORDER_INTERACTIVE = ['focus'];
 
 const BorderCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry }) => (
   <div className="bg-surface rounded-md p-3">
@@ -248,38 +184,24 @@ export const Border: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'ボーダー色のセマンティック token。強度軸 (subtle/default/strong/emphasis) / Role × intensity / Interactive の 3 グループ。Primer 流の {role}-{intensity} 命名。',
+        story: 'ボーダー色。強度軸 (`subtle`/`default`/`strong`/`emphasis`) → 機能色 × 強度 → `focus` の順。`focus` はキーボード focus リング兼 brand selected 状態。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-10">
-      <Section title="強度軸 (neutral)" intro="subtle → default → strong → emphasis の 4 段。container 枠 / 区切り / 強調枠など neutral border の用途別。">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {pick(SC.border, BORDER_INTENSITY).map((e) => <BorderCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="Role × intensity" intro="success/error/warning/info の機能色 × subtle (container 枠、Alert 等) / emphasis (強調枠、Badge outline 等) のペア。">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {pick(SC.border, BORDER_ROLE).map((e) => <BorderCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
-
-      <Section title="Interactive" intro="focus ring 用 (キーボード focus + Branded selected の interactive 表現)。強度軸とは独立。">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {pick(SC.border, BORDER_INTERACTIVE).map((e) => <BorderCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      {pick(SC.border, BORDER_ORDER).map((e) => <BorderCard key={e.key} entry={e} />)}
     </div>
   ),
 };
 
 // ── State (overlay) ──────────────────────────────────────────
-// グループ: 中性 / 色付き
 
-const STATE_NEUTRAL = ['hover', 'active'];
-const STATE_TINTED = ['hover-primary', 'active-primary', 'hover-error', 'active-error'];
+const STATE_ORDER = [
+  'hover', 'active',
+  'hover-primary', 'active-primary',
+  'hover-error', 'active-error',
+];
 
 const StateCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry }) => (
   <div className="bg-surface rounded-md p-3 border border-border-subtle">
@@ -310,23 +232,86 @@ export const State: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'hover / active のオーバーレイ token。中性 (どの背景にも汎用)、色付き (白系背景に brand/error tint を重ねる) の 2 グループ。color-mix() で primitive と連動 (outputReferences 経由でランタイム brand override も伝播)。',
+        story: 'hover / active のオーバーレイ。中性 (どの背景にも汎用) → 色付き (白系背景に brand / error 色味を重ねる) の順。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-10">
-      <Section title="中性 overlay" intro="rgba 黒で汎用的に重ねる。Primary Button (緑bg) や Pagination 等で利用。dark mode では rgba 白に反転する想定 (将来対応)。">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {pick(SC.state, STATE_NEUTRAL).map((e) => <StateCard key={e.key} entry={e} />)}
-        </div>
-      </Section>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {pick(SC.state, STATE_ORDER).map((e) => <StateCard key={e.key} entry={e} />)}
+    </div>
+  ),
+};
 
-      <Section title="色付き overlay (tinted)" intro="白系背景に brand (teal) / error (red) 色味を重ねる。Secondary/Tertiary/Destructive Button 等で brand 感を保持。">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {pick(SC.state, STATE_TINTED).map((e) => <StateCard key={e.key} entry={e} />)}
+// ── Container Pairs ──────────────────────────────────────────
+
+type PairRole = {
+  role: 'success' | 'error' | 'warning' | 'info';
+  label: string;
+};
+const PAIR_ROLES: PairRole[] = [
+  { role: 'success', label: '成功' },
+  { role: 'error', label: 'エラー' },
+  { role: 'warning', label: '警告' },
+  { role: 'info', label: '情報' },
+];
+
+const PairRow: React.FC<{ pair: PairRole }> = ({ pair }) => {
+  const { role, label } = pair;
+  const solidTokens = [
+    `surface.${role}`,
+    `on.inverse`,
+    `border.${role}-emphasis`,
+  ];
+  const softTokens = [
+    `surface.${role}-muted`,
+    `on.${role}`,
+    `border.${role}-subtle`,
+  ];
+
+  return (
+    <section className="border border-border-subtle rounded-md p-4 bg-surface flex flex-col gap-3">
+      <h4 className="text-heading-xs m-0 text-onSurface">{label} ({role})</h4>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="flex flex-col gap-2">
+          <code className="text-xs font-mono text-onSurface-muted">強い塗り (Badge / dot) — 主張</code>
+          <div className={`bg-surface-${role} border-2 border-border-${role}-emphasis rounded-md p-3 flex items-center gap-2`}>
+            <span className="inline-block w-2 h-2 rounded-full bg-onSurface-inverse" />
+            <span className="text-onSurface-inverse text-sm font-medium">{label}バッジ</span>
+          </div>
+          <ul className="m-0 pl-4 text-xs text-onSurface-muted flex flex-col gap-0.5">
+            {solidTokens.map((t) => <li key={t}><code className="font-mono">{t}</code></li>)}
+          </ul>
         </div>
-      </Section>
+
+        <div className="flex flex-col gap-2">
+          <code className="text-xs font-mono text-onSurface-muted">薄い塗り (Alert / 通知) — 落ち着き</code>
+          <div className={`bg-surface-${role}-muted border border-border-${role}-subtle rounded-md p-3`}>
+            <p className={`m-0 text-sm text-onSurface-${role} font-medium`}>{label}メッセージ</p>
+            <p className="m-0 mt-1 text-xs text-onSurface-muted">補助テキスト・詳細説明など</p>
+          </div>
+          <ul className="m-0 pl-4 text-xs text-onSurface-muted flex flex-col gap-0.5">
+            {softTokens.map((t) => <li key={t}><code className="font-mono">{t}</code></li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const ContainerPairs: Story = {
+  name: 'Container Pairs',
+  parameters: {
+    docs: {
+      description: {
+        story: '機能色 (success / error / warning / info) は 2 つの使い方がある: **強い塗り** (Badge / dot 等で目立たせる、白文字を載せる) と **薄い塗り** (Alert 背景等で落ち着かせる、role 色の濃い文字を載せる)。役割ごとに `surface` / `on` / `border` の token クラスタを 2 パターン併記。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-4">
+      {PAIR_ROLES.map((p) => <PairRow key={p.role} pair={p} />)}
     </div>
   ),
 };

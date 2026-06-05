@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as SemanticColorsStories from './SemanticColors.stories';
 
 <Meta of={SemanticColorsStories} name="Guideline" />
@@ -7,56 +7,57 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 
 ## 概要
 
-**実装では必ずこの semantic 層を使う**。Primitive palette (`primary.700` 等) を「役割名」で参照することで、下流 product が brand 色を override したときに自動連動する設計。
+実装ではこの semantic 層の token (`bg-surface-*` / `text-onSurface-*` / `border-border-*` / `bg-state-*`) を使う。Primitive (`teal.700` 等) を直接書かないことで、下流 product が brand 色を変えても自動連動する。
 
 5 つのカテゴリ:
 
-| カテゴリ | 役割 | 利用 utility |
+| カテゴリ | 用途 | utility 例 |
 |---|---|---|
-| **bg** | ページ最下層の canvas | `bg-background` |
-| **surface** | カード / モーダル / 状態色の塗り (`layer-1/2/3` は depth 階層、`inset` / `overlay` は特殊役割、`primary` / `success` 等は役割色) | `bg-surface-{key}` (DEFAULT = layer-1) |
-| **on** | テキスト色 (surface 上に重ねる) | `text-onSurface[-{key}]` |
-| **border** | ボーダー色 | `border-border[-{key}]` |
-| **state** | hover / active のオーバーレイ (rgba) | `bg-state-{key}` |
-
-各 token は [`tokens/source/semantic-colors.json`](https://github.com/kawachiryuya/design-system/blob/main/tokens/source/semantic-colors.json) で `{ value: "{color.X.Y}", type, description }` の形で定義され、`value` で primitive を参照。
+| **bg** | ページ最下層の背景 | `bg-background` |
+| **surface** | カード / モーダル / 役割色の塗り | `bg-surface` / `bg-surface-success` |
+| **on** | surface 上に載せるテキスト色 | `text-onSurface` / `text-onSurface-muted` |
+| **border** | ボーダー色 | `border-border` / `border-border-subtle` |
+| **state** | hover / active のオーバーレイ | `bg-state-hover` / `bg-state-hover-primary` |
 
 ---
 
-## 設計方針
+## カタログ
 
-- **value は必ず primitive 参照、生 hex は禁止**: 下流 override に連動するため (詳細 [AGENTS.md §3-1](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
-- **state は `color-mix()` で primitive と連動**: 透過オーバーレイも primitive 変更に自動追従 ([§3-2](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
-- **`bg.default` は brand から独立した中性 canvas**: `neutral.50` を参照。下流 product が brand 色を override しても bg は中性のまま ([§3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+token の一覧は各 story で確認できる:
 
----
-
-## Background & Surface
-
-<Story of={SemanticColorsStories.Surface} />
-
----
-
-## Text (on)
-
-<Story of={SemanticColorsStories.Text} />
+- [Background](?path=/story/tokens-color-semantic--background) — ページ最下層の中性 canvas
+- [Surface](?path=/story/tokens-color-semantic--surface) — カード / モーダル / 役割色の塗り (18 token)
+- [Text (on)](?path=/story/tokens-color-semantic--text) — surface 上に載せる文字色 (10 token)
+- [Border](?path=/story/tokens-color-semantic--border) — ボーダー色 (13 token)
+- [State (overlay)](?path=/story/tokens-color-semantic--state) — hover / active のオーバーレイ (6 token)
+- [Container Pairs](?path=/story/tokens-color-semantic--container-pairs) — 機能色 (success / error / warning / info) の組合せパターン
 
 ---
 
-## Border
+## 迷ったらこれ
 
-<Story of={SemanticColorsStories.Border} />
+| やりたいこと | 使う token |
+|---|---|
+| 普通のカードの背景 | `bg-surface` |
+| カードの中に入れ子のセクション | `bg-surface-layer-2` |
+| 入力フィールドの背景 (凹み) | `bg-surface-inset` |
+| Modal の背景マスク | `bg-surface-overlay` |
+| Primary Button | `bg-surface-primary` + `text-onSurface-inverse` |
+| 通常テキスト | `text-onSurface` |
+| 補助テキスト (placeholder / caption) | `text-onSurface-muted` |
+| 区切り線 | `border-border-subtle` |
+| Alert 成功 (落ち着いた領域) | `bg-surface-success-muted` + `text-onSurface-success` + `border-border-success-subtle` |
+| Badge 成功 solid (主張) | `bg-surface-success` + `text-onSurface-inverse` |
+| Badge 成功 outline | `border-border-success-emphasis` + `text-onSurface-success` |
+| 色付き背景上の hover | `bg-state-hover` |
+| 白系背景上の brand hover | `bg-state-hover-primary` |
 
----
-
-## State (overlay)
-
-<Story of={SemanticColorsStories.State} />
+機能色 (success / error / warning / info) の組合わせ方は [Container Pairs](?path=/story/tokens-color-semantic--container-pairs) story を参照。
 
 ---
 
 ## 関連
 
-- [Tokens/Color/Primitive](?path=/docs/tokens-color-primitive--guideline) — palette と逆リンク
+- [Tokens/Color/Primitive](?path=/docs/tokens-color-primitive--guideline) — 元の hue palette
 - [Tokens/Overview](?path=/docs/tokens-overview--docs) — 2 層構造の説明
-- [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — semantic token 定義の規約 (3-1 / 3-2 / 3-3)
+- [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — semantic token 定義の規約 (生 hex 禁止 / color-mix で primitive 連動 / bg.default は中性 canvas)

@@ -155,7 +155,7 @@
       "subtle": {
         "value": "{color.neutral.200}",
         "type": "color",
-        "description": "薄いボーダー (旧 muted)。非活性 / 控えめな区切りも兼ねる (旧 disabled も同値だったため統合)"
+        "description": "薄いボーダー。container 内側の控えめな区切り / 非活性エリア枠など。strong とは強度差で住み分け"
       },
       "default": {
         "value": "{color.neutral.300}",
@@ -175,47 +175,47 @@
       "success-subtle": {
         "value": "{color.green.200}",
         "type": "color",
-        "description": "成功コンテナ枠 (旧 success-muted、Alert 等)"
+        "description": "成功 container 枠 (Alert 背景の縁取り等)。surface.success-muted とのペアで使う"
       },
       "success-emphasis": {
         "value": "{color.green.600}",
         "type": "color",
-        "description": "成功の強い枠 (旧 success、Badge outline 等)"
+        "description": "成功の強い枠 (Badge outline / 強調枠等)"
       },
       "error-subtle": {
         "value": "{color.red.200}",
         "type": "color",
-        "description": "エラーコンテナ枠 (旧 error-muted)"
+        "description": "エラー container 枠 (Alert 背景の縁取り等)。surface.error-muted とのペアで使う"
       },
       "error-emphasis": {
         "value": "{color.red.600}",
         "type": "color",
-        "description": "エラーの強い枠 (旧 error、入力 validation 等)"
+        "description": "エラーの強い枠 (Input validation / Badge outline 等)"
       },
       "warning-subtle": {
         "value": "{color.orange.200}",
         "type": "color",
-        "description": "警告コンテナ枠 (旧 warning-muted)"
+        "description": "警告 container 枠 (Alert 背景の縁取り等)。surface.warning-muted とのペアで使う"
       },
       "warning-emphasis": {
         "value": "{color.orange.600}",
         "type": "color",
-        "description": "警告の強い枠 (旧 warning)"
+        "description": "警告の強い枠 (Badge outline / 強調枠等)"
       },
       "info-subtle": {
         "value": "{color.blue.200}",
         "type": "color",
-        "description": "情報コンテナ枠 (旧 info-muted)"
+        "description": "情報 container 枠 (Alert 背景の縁取り等)。surface.info-muted とのペアで使う"
       },
       "info-emphasis": {
         "value": "{color.blue.600}",
         "type": "color",
-        "description": "情報の強い枠 (旧 info)"
+        "description": "情報の強い枠 (Badge outline / 強調枠等)"
       },
       "focus": {
         "value": "{color.teal.700}",
         "type": "color",
-        "description": "フォーカスリング (interactive、強度軸とは独立)。FilterChip active / Badge outline-primary 等の「branded selected」状態でも兼用 (旧 primary は本 token に統合)"
+        "description": "フォーカスリング (interactive、強度軸とは独立)。FilterChip active / Badge outline-primary 等の「branded selected」状態でも兼用"
       }
     },
     "state": {

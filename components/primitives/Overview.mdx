@@ -1,0 +1,100 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Primitives/Overview" />
+
+# Primitives Overview
+
+**Primitive** は、**単一の HTML 要素を装飾する薄いラッパー** で **状態管理を持たない** 最小単位のコンポーネント群です。Composite (Modal / Tabs / Card 等) はこれらを組み合わせて作られます。
+
+実装の起点として「まず Primitive で表現できないか」を確認し、足りない場合だけ Composite に進む順序で設計します。
+
+---
+
+## Primitive の定義
+
+判定基準を **構造と状態の 2 軸** で厳密化しています ([AGENTS.md §2](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#primitive-vs-composite) 参照):
+
+- **構造**: 単一の HTML 要素 (`<button>` / `<input>` / `<span>` 等) を装飾するラッパーであること
+- **状態**: 内部で開閉・選択・focus trap などの状態管理を持たないこと (uncontrolled / controlled の prop 連携のみ可)
+
+両方を満たすものだけが Primitive。どちらか欠けると Composite に分類されます。
+
+| 例 | 判定 | 理由 |
+|---|---|---|
+| `<Button>` / `<Link>` / `<Icon>` | Primitive | 単一要素、状態なし |
+| `<Input>` / `<Textarea>` / `<Image>` | Primitive | 単一要素、controlled prop のみ |
+| `<Badge>` / `<Typography>` / `<Label>` | Primitive | 単一 `<span>` / heading / `<label>`、状態なし |
+| `<Switch>` / `<Checkbox>` / `<Radio>` | Composite | `<Label>` 内包 + group state |
+| `<Modal>` / `<Toast>` / `<Popover>` | Composite | portal / focus trap / overlay |
+
+---
+
+## 13 コンポーネント一覧
+
+用途別に 5 グループに分けて掲載します。各コンポーネントの詳細は Guideline ページを参照してください。
+
+### Form (入力)
+
+| Component | 役割 |
+|---|---|
+| [Input](?path=/docs/primitives-input--guideline) | 1 行テキスト入力。`label` / `helpText` / `errorMessage` を一体管理 |
+| [Textarea](?path=/docs/primitives-textarea--guideline) | 複数行テキスト入力。文字数カウンター対応 |
+| [Label](?path=/docs/primitives-label--guideline) | フォームコントロール用 `<label>`。`required` の `*` マーク + a11y を内包 |
+
+### Action (操作)
+
+| Component | 役割 |
+|---|---|
+| [Button](?path=/docs/primitives-button--guideline) | 主要・副次・補助・破壊的の 4 variant。icon-only モード対応 |
+| [Link](?path=/docs/primitives-link--guideline) | 遷移用 `<a>` ラッパー。外部リンク時 `rel="noopener noreferrer"` 自動付与 |
+
+### Display (表示)
+
+| Component | 役割 |
+|---|---|
+| [Typography](?path=/docs/primitives-typography--guideline) | 見出し / 本文の意味的階層を `<h1>`〜`<h4>` / `<p>` 等で出し分け |
+| [Icon](?path=/docs/primitives-icon--guideline) | Material Symbols のラッパー。`label` 必須 (装飾は `aria-hidden`) |
+| [Image](?path=/docs/primitives-image--guideline) | `<img>` ラッパー。アスペクト比固定 / object-fit / フォールバック対応 |
+| [Badge](?path=/docs/primitives-badge--guideline) | 補助情報マーカー。6 variant × 3 appearance |
+
+### Feedback (状態表現)
+
+| Component | 役割 |
+|---|---|
+| [Skeleton](?path=/docs/primitives-skeleton--guideline) | コンテンツ読み込み中のプレースホルダー (shape 単位) |
+| [Spinner](?path=/docs/primitives-spinner--guideline) | 短時間のローディング表示 (回転インジケーター) |
+| [Divider](?path=/docs/primitives-divider--guideline) | コンテンツ間の視覚的区切り (horizontal / vertical) |
+
+### Accessibility (補助)
+
+| Component | 役割 |
+|---|---|
+| [VisuallyHidden](?path=/docs/primitives-visuallyhidden--guideline) | スクリーンリーダー専用テキスト。icon-only Button の補助ラベル等 |
+
+---
+
+## 標準ストーリー構造
+
+全 Primitive で **Storybook の節構成と命名を固定** しています。読み手が「次のコンポーネントを見ても並びが同じ」状態を作るためです。
+
+| 順 | 節名 | 役割 |
+|---|---|---|
+| 1 | **Guideline** | テキスト中心の設計指針 + Props 表。`.guideline.mdx` が autodocs の Docs を兼ねる |
+| 2 | **Playground** | `args` 全開放、Controls で props を探索する起点 |
+| 3 | **Variants** | 種類違いを静的に横並び (`primary` / `secondary` 等) |
+| 4 | **Sizes** | サイズ違いを静的に横並び (`small` / `medium` / `large` 等) |
+| 5 | **States** | Default / Hover / Focus / Active / Disabled / Loading を単独で並べる (`storybook-addon-pseudo-states` で強制表示) |
+| 6 | **WithIcon** | `icon` / `leadingIcon` / `iconOnly` 等の icon prop パターン |
+| 7 | **EdgeCases** | `fullWidth` / 長文 / truncate / 空文字など壊れやすいケースの監視 |
+
+該当する prop が無い節は省略可。**順序は変えない**、`Playground` は絶対省略しない、というのが規約です。詳細は [AGENTS.md §5-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-3-storiestsx-の規約--標準ストーリー構造-固定順序) を参照。
+
+参考実装: [Button.stories.tsx](https://github.com/kawachiryuya/design-system/blob/main/components/primitives/Button/Button.stories.tsx)
+
+---
+
+## 参照リソース
+
+- 実装規約の SSoT: [AGENTS.md §5](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-コンポーネント実装規約-新規既存共通)
+- 設計戦略 (なぜこの構造か): [design-system-strategy.md](https://github.com/kawachiryuya/design-system/blob/main/design-system-strategy.md)
+- Tokens (色 / 余白 / 型 / 影 など): [Tokens/Overview](?path=/docs/tokens-overview--docs)

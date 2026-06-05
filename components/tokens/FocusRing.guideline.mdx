@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as FocusRingStories from './FocusRing.stories';
 
 <Meta of={FocusRingStories} name="Guideline" />
@@ -14,6 +14,13 @@ a11y 上重要なフォーカスリングを semantic 化。下流 product で `
 ```html
 focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus
 ```
+
+---
+
+## カタログ
+
+- [Tokens (width / offset)](?path=/story/tokens-focus-ring--tokens) — リング太さと offset の semantic 値の一覧
+- [Samples](?path=/story/tokens-focus-ring--samples) — Button / Input / Link で強制 focus を当てた視覚サンプル
 
 ---
 
@@ -33,18 +40,6 @@ focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-bord
 | **Input / Textarea / Select** | border 色変化 + inset ring (border ベースの form control 専用パターン) |
 
 input 系が outer ring を使わない理由: ブラウザの UA heuristic で click 時にも `:focus-visible` がマッチする問題を回避するため。border 強調で focus を表現。
-
----
-
-## width / offset
-
-<Story of={FocusRingStories.Tokens} />
-
----
-
-## 視覚サンプル
-
-<Story of={FocusRingStories.Samples} />
 
 ---
 

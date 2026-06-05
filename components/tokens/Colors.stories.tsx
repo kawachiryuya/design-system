@@ -25,11 +25,6 @@ const PALETTE_LABELS: Record<string, string> = {
   pink: 'Pink',
 };
 
-/** brand + functional 以外の補助 palette (30° 刻みで hue wheel を埋める、下流 product 用) */
-const EXTRA_PALETTES: Palette[] = ['yellow', 'lime', 'cyan', 'sky', 'violet', 'purple', 'pink']
-  .map((k) => ALL_PALETTES[k])
-  .filter(Boolean);
-
 type Palette = { name: string; label: string; shades: Record<string, string> };
 type ShadeEntry = { value: string; type: string };
 
@@ -52,6 +47,11 @@ const ALL_PALETTES: Record<string, Palette> = Object.fromEntries(
 const FUNCTIONAL_PALETTES: Palette[] = ['success', 'error', 'warning', 'info'].map(
   (k) => ALL_PALETTES[k],
 );
+
+/** brand + functional 以外の補助 palette (30° 刻みで hue wheel を埋める、下流 product 用) */
+const EXTRA_PALETTES: Palette[] = ['yellow', 'lime', 'cyan', 'sky', 'violet', 'purple', 'pink']
+  .map((k) => ALL_PALETTES[k])
+  .filter(Boolean);
 
 type SCEntry = { value: string; type?: string; description?: string };
 const buildReverseIndex = (): Record<string, string[]> => {

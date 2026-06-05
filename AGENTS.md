@@ -269,6 +269,52 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 
 ---
 
+### 3-6. Token Catalog Story / Guideline の規約
+
+[`components/tokens/`](./components/tokens/) 配下の token カタログは component とは別構造で運用する。Props を持たず、token scale を視覚化するのが目的。component 規約 (§5) は適用しない。
+
+**ファイル構成** (2 ファイル):
+
+| ファイル | 担当 |
+|---|---|
+| `TokenCategory.stories.tsx` | flat catalog の Storybook story (1 story = 1 軸) |
+| `TokenCategory.guideline.mdx` | 概要 + カタログ link + (任意) 設計方針 / 迷ったらこれ + 関連 |
+
+**Story (`.stories.tsx`) の規約**:
+
+- **flat catalog**: 各 story は 1 grid で並べる (内部 subsection 禁止、認知負荷の元)
+- **軸が複数あれば story を分ける**:
+  - 例: Typography → `FontSizes` / `FontWeights` / `LineHeights` / `LetterSpacings` / `FontFamilies` の 5 story
+  - 例: SemanticColors → `Background` / `Surface` / `Text` / `Border` / `State` / `ContainerPairs` の 6 story
+- **軸が 1 つは 1 story** (`Catalog` 等の名前で 1 つにする)
+  - 例: Spacing / Radius / ZIndex / Opacity / Breakpoints / Colors (Primitive)
+- **特殊な比較 view** は追加 story として持ってよい (例: SemanticColors の `Container Pairs` は機能色の組合せパターン)
+- 各 story に `parameters.docs.description.story` で 1 文の説明 (`.guideline.mdx` の Story 概要欄にも表示される)
+- **`tags: ['autodocs']` は付けない** (`.guideline.mdx` 側が Docs を兼ねる)
+- 色・余白は semantic Tailwind utility (`bg-surface` / `text-onSurface` 等) で描画
+
+**Guideline (`.guideline.mdx`) の規約** — 標準セクション (上から順):
+
+1. **`# Token Category`** — h1 タイトル
+2. **`## 概要`** — 1〜2 文。「何の token か / どの utility で使うか / Primitive vs Semantic の位置付け」
+3. **`## カタログ`** — story への link list。**`<Story of={...} />` 埋め込みは禁止** (Catalog は story 側で完結させ、Guideline はリンクのみ)。複数 story がある場合は箇条書きで全 story を 1 行説明付きで列挙
+4. **`## 設計方針`** (任意) — why の箇条書き。how (具体値) は story が見せるので冗長にしない
+5. **`## 迷ったらこれ`** (任意) — quick-pick 表。複数候補から迷う場面が多い token (Color / Typography / Spacing 等) で有効
+6. **`## 関連`** (必須) — 他 token / AGENTS.md §3 / principles へのリンク
+
+**書かない**:
+
+- Story を `<Story of={...} />` で guideline 内に埋め込まない
+- Material 3 / Carbon / Primer 等の他 DS 用語を user-facing docs に書かない (設計の "why" は AGENTS.md に集約)
+- 設計移行履歴 (「旧 X」「旧 Y」等) を `description` フィールドに残さない (CHANGELOG が SSoT)
+
+**参考実装**:
+
+- [`components/tokens/Colors.{stories,guideline}`](./components/tokens/) — Primitive 軸 1 (palette catalog 1 つ)
+- [`components/tokens/SemanticColors.{stories,guideline}`](./components/tokens/) — Semantic 軸複数 (6 story、Container Pairs を含む) + 迷ったらこれ
+
+---
+
 ## 4. ビルドコマンド
 
 | コマンド | 用途 |

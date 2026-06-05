@@ -150,12 +150,12 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       'transition-all',
       'duration-150',
       'focus:outline-none',
-      'focus-visible:ring-2',
-      'focus-visible:ring-offset-1',
+      'focus-visible:ring-focus',
+      'focus-visible:ring-offset-focus',
       error
         ? 'border-border-error focus-visible:ring-border-error checked:bg-surface-error checked:border-border-error'
         : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-surface-primary',
-      disabled ? 'opacity-50 cursor-not-allowed' : '',
+      disabled ? 'opacity-disabled cursor-not-allowed' : '',
     ]
       .filter(Boolean)
       .join(' ');

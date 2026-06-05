@@ -114,7 +114,7 @@ const textareaVariants = tv({
     'focus:outline-none',
     // focus-visible: は input/textarea で UA heuristic により click focus でも常に match。
     // pseudo-states addon の focusVisible と整合し、modern a11y best practice にも沿う。
-    'focus-visible:ring-2',
+    'focus-visible:ring-focus',
     'focus-visible:ring-offset-0',
   ],
   variants: {
@@ -133,7 +133,7 @@ const textareaVariants = tv({
       both:       'resize',
     },
     disabled: {
-      true:  'opacity-50 cursor-not-allowed bg-surface-disabled',
+      true:  'opacity-disabled cursor-not-allowed bg-surface-disabled',
       false: '',
     },
   },

@@ -104,9 +104,9 @@ const linkVariants = tv({
     'transition-colors',
     'duration-normal',
     'focus:outline-none',
-    'focus-visible:ring-2',
+    'focus-visible:ring-focus',
     'focus-visible:ring-border-focus',
-    'focus-visible:ring-offset-1',
+    'focus-visible:ring-offset-focus',
   ],
   variants: {
     color: {
@@ -190,7 +190,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       >
         {children}
         {external && !disabled && (
-          <Icon name="open_in_new" size="sm" label="外部リンク" className="flex-shrink-0 opacity-70" />
+          <Icon name="open_in_new" size="sm" label="外部リンク" className="flex-shrink-0 opacity-muted" />
         )}
       </a>
     );

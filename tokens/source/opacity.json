@@ -1,0 +1,20 @@
+{
+  "opacity": {
+    "disabled": {
+      "value": "0.5",
+      "type": "number"
+    },
+    "muted": {
+      "value": "0.7",
+      "type": "number"
+    },
+    "spinner-track": {
+      "value": "0.25",
+      "type": "number"
+    },
+    "spinner-spin": {
+      "value": "0.75",
+      "type": "number"
+    }
+  }
+}

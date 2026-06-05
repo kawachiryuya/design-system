@@ -141,6 +141,14 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 
 `color.primary.25` (#F5F7F5) は brand 色の最薄 tint として bg.default 専用に用意した。Text / Border / 他用途では使わない (description にも明記)。「ページ最下層に brand canvas を敷く」設計のための専用 token。
 
+**3-4. semantic-only スケール (z-index / opacity / focus-ring)**
+
+「具体値より役割名で意図が伝わる」種類のスケールは **primitive 層を持たず semantic 名のみ** で運用する。生数値での参照は禁止。
+
+- `z-index`: `dropdown / sticky / overlay / modal / popover / toast / tooltip` の 7 layer。`z-modal` のように使う (`z-50` 等の Tailwind 既定は並存するが新規利用は避ける)
+- `opacity`: `disabled / muted / spinner-track / spinner-spin` の意味付き 4 値。`opacity-disabled` のように使う
+- `focus-ring`: `ring-focus` (width=2px) / `ring-offset-focus` (offset=2px)。色は `border-focus` (semantic-colors) と組合せる: `focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus`
+
 ---
 
 ### サイズスケール内の `md = default` 規約

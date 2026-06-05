@@ -150,7 +150,7 @@ export const Tabs: React.FC<TabsProps> = ({
 
     return [
       'relative px-4 py-2 text-sm font-medium transition-colors duration-normal',
-      'focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-1',
+      'focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus',
       'whitespace-nowrap',
       tab.disabled
         ? 'text-onSurface-disabled cursor-not-allowed'

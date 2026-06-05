@@ -61,8 +61,13 @@ semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;
 | **Shadows** | [Tokens/Shadows](?path=/story/tokens-shadows--elevations) | (semantic 層なし) | `shadow.none / sm / md / lg` を直接利用 (`md = default`、bare `shadow` ≒ `shadow-md`) |
 | **Animation** | [Tokens/Animation](?path=/story/tokens-animation--durations) | (semantic 層なし) | duration / easing |
 | **Breakpoints** | [Tokens/Breakpoints](?path=/story/tokens-breakpoints--scale) | (semantic 層なし) | mobile-first 前提、`sm:` で tablet+ に widening。本リポ内では `sm:` のみ使用中、`md/lg/xl/2xl:` も Tailwind 標準と同値で利用可能 |
+| **Z-Index** | (primitive 層なし) | [Tokens/Z-Index](?path=/story/tokens-z-index--layers) | 7 layer (`dropdown / sticky / overlay / modal / popover / toast / tooltip`)。Modal は `<dialog>` で OS 管理、Toast / 将来 Popover/Tooltip 用の予約スケール |
+| **Opacity** | (primitive 層なし) | [Tokens/Opacity](?path=/story/tokens-opacity--values) | 意味付け 4 値 (`disabled / muted / spinner-track / spinner-spin`)。Tailwind 既定 `opacity-0/5/.../100` も並存 |
+| **Focus Ring** | (primitive 層なし) | [Tokens/Focus Ring](?path=/story/tokens-focus-ring--tokens) | `ring-focus` (2px) / `ring-offset-focus` (2px)。a11y semantic。色は `border-focus` (semantic-colors) と組合せる |
 
 Radius / Shadows / Animation / Breakpoints は **semantic 層を持たない** = primitive 直参照運用です。将来用途別の意味付けが必要になった時点で追加する想定 (例: `radius-semantic.card → radius.md`)。
+
+Z-Index / Opacity / Focus Ring は逆に **primitive 層を持たず semantic 名のみ** の運用です。これらは「具体値」より「役割名」で意図が伝わる種類のスケール (例: `z-modal` のほうが `z-1300` より読みやすい)。
 
 ### サイズスケールの `md = default` 規約
 

@@ -131,12 +131,12 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'transition-colors',
       'duration-normal',
       'focus:outline-none',
-      'focus-visible:ring-2',
-      'focus-visible:ring-offset-2',
+      'focus-visible:ring-focus',
+      'focus-visible:ring-offset-focus',
       'focus-visible:ring-border-focus',
       trackSize,
       checked ? 'bg-surface-primary' : 'bg-surface-neutral',
-      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+      disabled ? 'opacity-disabled cursor-not-allowed' : 'cursor-pointer',
     ]
       .filter(Boolean)
       .join(' ');

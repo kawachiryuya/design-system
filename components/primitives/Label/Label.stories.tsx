@@ -144,7 +144,7 @@ export const EdgeCases: Story = {
             id="edge-email"
             type="email"
             placeholder="example@email.com"
-            className="block w-full rounded border border-border-default px-3 py-2 text-base focus:outline-none focus:border-border-focus focus:ring-2 focus:ring-border-focus"
+            className="block w-full rounded border border-border-default px-3 py-2 text-base focus:outline-none focus:border-border-focus focus:ring-focus focus:ring-border-focus"
           />
         </div>
       </Caption>

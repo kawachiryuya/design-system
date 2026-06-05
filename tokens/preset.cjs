@@ -83,6 +83,23 @@ module.exports = {
     transitionTimingFunction: t.easing,
 
     extend: {
+      // ── Semantic z-index layers ──
+      // Tailwind の `z-{key}` utility に semantic layer (dropdown/sticky/...) を追加。
+      // Tailwind 既定の `z-0/10/20/30/40/50` も並存 (上書きせず extend)。
+      // 例: `<div className="z-modal">`、`<div className="z-toast">`
+      zIndex: t['z-index'],
+
+      // ── Semantic opacity values ──
+      // disabled / muted / spinner-track / spinner-spin を意味付け。
+      // Tailwind 既定の opacity-0/5/10/.../100 も並存。
+      // 例: `<button className="opacity-disabled">`、SVG `<circle className="opacity-spinner-track" />`
+      opacity: t.opacity,
+
+      // ── Focus ring (a11y semantic) ──
+      // ring-width / ring-offset-width を semantic 化。
+      // 例: `focus-visible:ring-focus focus-visible:ring-offset-focus`
+      ringWidth:       { focus: t['focus-ring'].width  },
+      ringOffsetWidth: { focus: t['focus-ring'].offset },
       // Semantic typography (heading / body / label / caption)
       // 例: <p className="text-heading-xl">…</p>
       // 注: font-weight は意図的に含めない (variant の weight 上書きを font-* で効かせるため)

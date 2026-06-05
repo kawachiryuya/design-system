@@ -181,7 +181,7 @@ export const Toast: React.FC<ToastProps> = ({
   if (!open) return null;
 
   return (
-    <div className={['fixed z-50', positionStyles[position]].join(' ')}>
+    <div className={['fixed z-toast', positionStyles[position]].join(' ')}>
       <ToastBody {...content} onClose={onClose} />
     </div>
   );
@@ -280,7 +280,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       {children}
       <div
         className={[
-          'fixed z-50 flex flex-col gap-2',
+          'fixed z-toast flex flex-col gap-2',
           positionStyles[position],
           position.startsWith('bottom') ? 'flex-col-reverse' : '',
         ].join(' ')}

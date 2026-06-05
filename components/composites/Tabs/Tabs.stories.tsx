@@ -118,7 +118,7 @@ export const ProfileTabs: Story = {
   name: '実践例: プロフィールページ',
   render: () => (
     <div className="w-[480px] border border-border-subtle rounded-lg overflow-hidden">
-      <div className="p-4 bg-surface-raised border-b border-border-subtle">
+      <div className="p-4 bg-surface-layer-2 border-b border-border-subtle">
         <h2 className="font-semibold text-onSurface">田中 太郎</h2>
         <p className="text-sm text-onSurface-muted">UI デザイナー</p>
       </div>

@@ -14,7 +14,7 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 | カテゴリ | 役割 | 利用 utility |
 |---|---|---|
 | **bg** | ページ最下層の canvas | `bg-background` |
-| **surface** | カード / モーダル / 状態色の塗り | `bg-surface-{key}` |
+| **surface** | カード / モーダル / 状態色の塗り (`layer-1/2/3` は depth 階層、`inset` / `overlay` は特殊役割、`primary` / `success` 等は役割色) | `bg-surface-{key}` (DEFAULT = layer-1) |
 | **on** | テキスト色 (surface 上に重ねる) | `text-onSurface[-{key}]` |
 | **border** | ボーダー色 | `border-border[-{key}]` |
 | **state** | hover / active のオーバーレイ (rgba) | `bg-state-{key}` |

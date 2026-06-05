@@ -8,20 +8,30 @@
       }
     },
     "surface": {
-      "default": {
+      "layer-1": {
         "value": "{color.base.white}",
         "type": "color",
-        "description": "カード・モーダル"
+        "description": "Layer 1: ページ最下層 (bg.default) の上に乗るカード・モーダル等の最初のサーフェス。bg-surface (DEFAULT alias) も layer-1 を指す"
       },
-      "raised": {
+      "layer-2": {
         "value": "{color.neutral.50}",
         "type": "color",
-        "description": "入れ子サーフェス"
+        "description": "Layer 2: layer-1 の中に入れ子で配置するサーフェス (Section / Subgroup 等)"
+      },
+      "layer-3": {
+        "value": "{color.neutral.100}",
+        "type": "color",
+        "description": "Layer 3: layer-2 の中にさらに深い入れ子で配置するサーフェス (rare、複雑な UI の最深層)"
+      },
+      "inset": {
+        "value": "{color.neutral.50}",
+        "type": "color",
+        "description": "Sunken control 用 (Input field / Code block 等の凹み)。layer 階層とは別軸の特殊役割。値は layer-2 と同じだが意図が違う"
       },
       "overlay": {
         "value": "rgba(0, 0, 0, 0.5)",
         "type": "color",
-        "description": "モーダルオーバーレイ"
+        "description": "Modal の背景マスク (rgba 50% black)。layer 階層とは別軸の特殊役割"
       },
       "primary": {
         "value": "{color.teal.700}",

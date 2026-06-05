@@ -120,9 +120,16 @@ module.exports = {
       backgroundColor: {
         background: 'var(--color-bg-default)',
         surface: {
-          DEFAULT:  'var(--color-surface-default)',
-          raised:   'var(--color-surface-raised)',
-          overlay:  'var(--color-surface-overlay)',
+          // Layer 階層 (Carbon 流の numeric 命名、ページ→入れ子の深さ):
+          //   DEFAULT (= bg-surface) は layer-1 alias で利用最頻度を簡潔に保つ
+          DEFAULT:   'var(--color-surface-layer-1)',
+          'layer-1': 'var(--color-surface-layer-1)',
+          'layer-2': 'var(--color-surface-layer-2)',
+          'layer-3': 'var(--color-surface-layer-3)',
+          // 特殊役割 (depth 軸とは別)
+          inset:   'var(--color-surface-inset)',
+          overlay: 'var(--color-surface-overlay)',
+          // 役割色 (brand / functional)
           primary:   'var(--color-surface-primary)',
           secondary: 'var(--color-surface-secondary)',
           success:         'var(--color-surface-success)',
@@ -136,7 +143,6 @@ module.exports = {
           disabled:  'var(--color-surface-disabled)',
           skeleton:  'var(--color-surface-skeleton)',
           neutral:   'var(--color-surface-neutral)',
-          inset:     'var(--color-surface-inset)',
         },
         state: {
           // State layer (Material 3 流): 中性 overlay (汎用) + brand/error tinted overlay (白系背景用)

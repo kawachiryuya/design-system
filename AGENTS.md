@@ -161,6 +161,29 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 
 brand 色の薄 tint をページ最下層に敷きたい product は、PJ 側で `bg-{brand}-25` などの brand-coupled token を追加し、`bg.default` の参照先を override する。本リポは default として brand 連動を採用しない (Multi-product hub の独立性を優先)。
 
+**3-4-2. Surface layer 階層 (Carbon 流 numeric)**
+
+Surface は **depth 階層** を numeric (`layer-1/2/3`) で表現し、特殊役割 (`inset` / `overlay`) と役割色 (`primary` / `success` 等) は別軸:
+
+```
+bg.default       (neutral.50)   ページ最下層
+surface.layer-1  (white)        layer 1: ページ上のカード・モーダル
+surface.layer-2  (neutral.50)   layer 2: layer-1 の入れ子 (Section 等)
+surface.layer-3  (neutral.100)  layer 3: さらに深い入れ子 (rare)
+
+surface.inset    (neutral.50)   sunken control (Input field / Code block 等の凹み)
+surface.overlay  (rgba)         Modal の背景マスク
+surface.{role}   (各色)         brand / functional / state
+```
+
+**`bg-surface` (DEFAULT alias)** は **layer-1** を指す (Tailwind の preset で alias 設定)。最頻利用なので簡潔記法を残す。
+
+**dark mode 視点**: 各 layer に dark 値を別途定義する想定。light で深い (深い = darker neutral) のと逆に、dark では深い = brighter neutral になる:
+- light: layer-1 white / layer-2 neutral.50 / layer-3 neutral.100
+- dark (将来): layer-1 neutral.900 / layer-2 neutral.800 / layer-3 neutral.700 (仮)
+
+---
+
 **3-5. Primitive Color は hue 名、role 名は Semantic 層に集約**
 
 Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `green` / `red` / `orange` / `blue` / `neutral` / 他 7 補助 hue) で構成する。`primary` / `success` / `error` / `warning` / `info` のような **role 名は Semantic 層** (`surface.primary` / `on.success` 等) でのみ定義し、Primitive 層には持ち込まない。

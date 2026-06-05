@@ -6,6 +6,20 @@
 
 ## [Unreleased]
 
+### ⚠ BREAKING CHANGES (Surface layer 階層化)
+
+- **Surface depth 階層を Carbon 流 numeric (layer-1/2/3) に再構成** (silent break、軸 1): Multi-product hub + 将来 dark mode 視点で、Surface の depth を numeric 命名に統一:
+  - `surface.default` → `surface.layer-1` (white、ページ上のカード)
+  - `surface.raised` → `surface.layer-2` (neutral.50、入れ子)
+  - **新規追加**: `surface.layer-3` (neutral.100、さらに深い入れ子)
+  - `surface.inset` (sunken control 用) と `surface.overlay` (modal mask) は depth 軸とは別の特殊役割として **維持**
+  - `surface.primary` / `secondary` / `success-muted` 等の役割色は不変
+  - **`bg-surface` (DEFAULT alias) は layer-1 を指す** — Tailwind preset で alias 設定し、最頻利用 (37 callsite) を簡潔記法で残す
+  - 影響: Tailwind utility `bg-surface-raised` → `bg-surface-layer-2` (3 callsite を sed)、CSS 変数 `--color-surface-default` → `--color-surface-layer-1`、`--color-surface-raised` → `--color-surface-layer-2`、新規 `--color-surface-layer-3`
+  - 下流 product 移行: `sed -i '' 's/bg-surface-raised/bg-surface-layer-2/g; s/bg-surface-default/bg-surface-layer-1/g' src/**/*.{tsx,ts}` で機械置換 (`bg-surface` (suffix なし) はそのまま動く)
+  - AGENTS.md §3-4-2 に Surface layer 階層 + dark mode 想定値を明文化
+  - SemanticColors guideline.mdx の surface 説明を更新
+
 ### Changed
 
 - **Style Dictionary `outputReferences: true` 有効化** (ランタイム brand override 対応): `style-dictionary.config.js` の web-css 出力に `outputReferences: true` を追加し、primitive 参照 (`{color.teal.700}` 等) を build 時に hex 解決せず `var(--color-teal-700)` として CSS 出力するように変更。これにより **下流 product は CSS 変数 1 行 override で全 semantic chain にランタイム伝播**:

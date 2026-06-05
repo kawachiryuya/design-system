@@ -19,7 +19,6 @@ const RADII: RadiusEntry[] = Object.entries(radiusToken.radius).map(
 );
 
 export const BorderRadius: Story = {
-  name: '角丸',
   parameters: {
     docs: {
       description: {

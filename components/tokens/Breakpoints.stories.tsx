@@ -29,7 +29,6 @@ const ENTRIES: BpEntry[] = Object.entries(breakpointsToken.screens).map(
 const MAX_PX = 1600;
 
 export const Scale: Story = {
-  name: 'ブレイクポイント',
   parameters: {
     docs: {
       description: {

@@ -41,7 +41,6 @@ export const Tokens: Story = {
 };
 
 export const Samples: Story = {
-  name: '視覚サンプル (forced focus)',
   parameters: {
     docs: {
       description: {

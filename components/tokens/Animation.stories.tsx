@@ -98,7 +98,6 @@ const Row: React.FC<{ entry: AnimEntry; bar: React.ReactNode; trailingValue?: st
 );
 
 export const Durations: Story = {
-  name: 'デュレーション',
   parameters: {
     docs: {
       description: {
@@ -129,7 +128,6 @@ export const Durations: Story = {
 };
 
 export const Easings: Story = {
-  name: 'イージング',
   parameters: {
     docs: {
       description: {

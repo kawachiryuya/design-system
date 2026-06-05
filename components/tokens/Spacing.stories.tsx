@@ -10,15 +10,14 @@ type Story = StoryObj;
 
 type SpacingEntry = { key: string; value: string };
 
-const SPACING_SCALE: SpacingEntry[] = Object.entries(spacingToken.spacing).map(
-  ([key, entry]) => ({
+const SPACING_SCALE: SpacingEntry[] = Object.entries(spacingToken.spacing)
+  .map(([key, entry]) => ({
     key,
     value: (entry as { value: string }).value,
-  }),
-);
+  }))
+  .sort((a, b) => parseFloat(a.key) - parseFloat(b.key));
 
 export const Scale: Story = {
-  name: 'スペーシングスケール',
   parameters: {
     docs: {
       description: {

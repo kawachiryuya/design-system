@@ -20,7 +20,6 @@ const LAYERS: Layer[] = [
 ];
 
 export const Layers: Story = {
-  name: 'レイヤ',
   parameters: {
     docs: {
       description: {

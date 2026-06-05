@@ -19,7 +19,6 @@ const SHADOWS: ShadowEntry[] = Object.entries(shadowsToken.shadow).map(
 );
 
 export const Elevations: Story = {
-  name: 'エレベーション',
   parameters: {
     docs: {
       description: {
@@ -47,7 +46,6 @@ export const Elevations: Story = {
 };
 
 export const TokenValues: Story = {
-  name: 'トークン値',
   parameters: {
     docs: {
       description: {

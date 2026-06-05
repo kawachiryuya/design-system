@@ -45,7 +45,6 @@ const KeyBadge: React.FC<{ k: string }> = ({ k }) => (
 );
 
 export const FontSizes: Story = {
-  name: 'フォントサイズ',
   parameters: {
     docs: {
       description: {
@@ -75,7 +74,6 @@ export const FontSizes: Story = {
 };
 
 export const FontWeights: Story = {
-  name: 'フォントウェイト',
   parameters: {
     docs: {
       description: {
@@ -108,7 +106,6 @@ export const FontWeights: Story = {
 };
 
 export const LineHeights: Story = {
-  name: '行間',
   parameters: {
     docs: {
       description: {
@@ -138,7 +135,6 @@ export const LineHeights: Story = {
 };
 
 export const LetterSpacings: Story = {
-  name: '字間',
   parameters: {
     docs: {
       description: {
@@ -168,7 +164,6 @@ export const LetterSpacings: Story = {
 };
 
 export const FontFamilies: Story = {
-  name: 'フォントファミリー',
   parameters: {
     docs: {
       description: {

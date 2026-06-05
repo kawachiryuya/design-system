@@ -6,6 +6,16 @@
 
 ## [Unreleased]
 
+### Changed (in Unreleased)
+
+- **AGENTS.md §3-4-3 に Container ペアパターン規約を新設** (軸 2、構造変更なし): Material 3 流の Container ペア (role / on-role / role-container / on-role-container) を本リポ命名で実現する規約を明文化。実態は既に揃っており命名 (`-muted` / `secondary`) を本リポ semantic 規約として確定:
+  - Brand: `surface.primary` + `on.inverse` + `surface.secondary` + `on.primary` (ペア揃)
+  - Success/Error/Warning/Info: `surface.X` + `on.inverse` + `surface.X-muted` + `on.X` (ペア揃)
+  - Disabled/Skeleton: container 単独 (intense なし、自然な設計)
+  - Status indicator (surface.neutral): text counterpart 不要 (small status marker)
+- `surface.inset` の **JSON 重複定義を統合** (line 26-30 と line 101-105 が同 key 違 description だった、後者の `凹み・控えめな背景（neutral Alert等）` を削除し前者の Layer 階層 description に統一)
+- `surface.neutral` の description を Status 軸の意図に明確化 (offline / off 等の状態 marker、`surface.inset` との設計目的の違いを明記)
+
 ### ⚠ BREAKING CHANGES (Surface layer 階層化)
 
 - **Surface depth 階層を Carbon 流 numeric (layer-1/2/3) に再構成** (silent break、軸 1): Multi-product hub + 将来 dark mode 視点で、Surface の depth を numeric 命名に統一:

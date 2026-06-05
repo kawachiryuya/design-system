@@ -184,6 +184,35 @@ surface.{role}   (各色)         brand / functional / state
 
 ---
 
+**3-4-3. Container ペアパターン (Material 3 流の精神を本リポ命名で実現)**
+
+Material 3 の Container ペア (`{role}` + `on-{role}` + `{role}-container` + `on-{role}-container`) は、本リポでは **既に実態として揃っている** が命名は独自。下表で対応を明示:
+
+| Role | Intense (solid) | Text on intense | Container (soft) | Text on container |
+|---|---|---|---|---|
+| Brand (Primary) | `surface.primary` (teal.700) | `on.inverse` (white) | `surface.secondary` (teal.50) | `on.primary` (teal.700) |
+| Success | `surface.success` (green.500) | `on.inverse` (white) | `surface.success-muted` (green.50) | `on.success` (green.700) |
+| Error | `surface.error` (red.500) | `on.inverse` (white) | `surface.error-muted` (red.50) | `on.error` (red.700) |
+| Warning | `surface.warning` (orange.400) | `on.inverse` (white) | `surface.warning-muted` (orange.50) | `on.warning` (orange.700) |
+| Info | `surface.info` (blue.500) | `on.inverse` (white) | `surface.info-muted` (blue.50) | `on.info` (blue.700) |
+
+**Container 単独で intense なし** (自然な設計):
+- `surface.disabled` + `on.disabled` (disabled は常に弱いはず、intense 不要)
+- `surface.skeleton` (loader、text なし)
+
+**Status indicator は text counterpart 不要** (小さな塗り、テキストを載せない):
+- `surface.neutral` (offline / off 等、success/error/warning と並列の status)
+
+**実装例** (Alert success が Container ペアパターンに合致):
+```tsx
+'bg-surface-success-muted text-onSurface-success border-border-success-subtle'
+//   ↑ container          ↑ on-container          ↑ border-on-container
+```
+
+**命名選定の経緯**: Material 3 流に `-container` / `primary-container` に rename する案も検討 (軸 2)、構造は不変なので **見送り** とした。実態に合わせて命名を変える利得より、既存 callsite / 学習資産の温存を優先。`-muted` / `secondary` の命名は本リポの semantic 規約として確定。
+
+---
+
 **3-5. Primitive Color は hue 名、role 名は Semantic 層に集約**
 
 Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `green` / `red` / `orange` / `blue` / `neutral` / 他 7 補助 hue) で構成する。`primary` / `success` / `error` / `warning` / `info` のような **role 名は Semantic 層** (`surface.primary` / `on.success` 等) でのみ定義し、Primitive 層には持ち込まない。

@@ -26,7 +26,7 @@
       "inset": {
         "value": "{color.neutral.50}",
         "type": "color",
-        "description": "Sunken control 用 (Input field / Code block 等の凹み)。layer 階層とは別軸の特殊役割。値は layer-2 と同じだが意図が違う"
+        "description": "Sunken control 用 (Input field / Code block 等の凹みコンテナ)。layer 階層とも status 軸 (surface.neutral) とも別の特殊役割。値は layer-2 と同じだが意図が違う"
       },
       "overlay": {
         "value": "rgba(0, 0, 0, 0.5)",
@@ -96,12 +96,7 @@
       "neutral": {
         "value": "{color.neutral.400}",
         "type": "color",
-        "description": "オフライン等のミュートな塗り"
-      },
-      "inset": {
-        "value": "{color.neutral.50}",
-        "type": "color",
-        "description": "凹み・控えめな背景（neutral Alert等）"
+        "description": "Status 軸の中性 (success/error/warning と並列、offline / off などの状態 marker)。中間グレーで visible、inset の薄グレーとは設計目的が違う"
       }
     },
     "on": {

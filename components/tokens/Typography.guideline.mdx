@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as TypographyStories from './Typography.stories';
 
 <Meta of={TypographyStories} name="Guideline" />
@@ -13,6 +13,16 @@ import * as TypographyStories from './Typography.stories';
 
 ---
 
+## カタログ
+
+- [FontSizes](?path=/story/tokens-typography-primitive--font-sizes) — xs〜5xl の 9 段のフォントサイズ
+- [FontWeights](?path=/story/tokens-typography-primitive--font-weights) — regular / medium / semibold / bold の 4 段
+- [LineHeights](?path=/story/tokens-typography-primitive--line-heights) — tight / normal / relaxed の 3 段
+- [LetterSpacings](?path=/story/tokens-typography-primitive--letter-spacings) — tight / normal / wide の 3 段
+- [FontFamilies](?path=/story/tokens-typography-primitive--font-families) — sans / mono の 2 種
+
+---
+
 ## 設計方針
 
 - **font-size**: Tailwind 標準スケール (xs〜5xl) を採用、9 段
@@ -20,36 +30,6 @@ import * as TypographyStories from './Typography.stories';
 - **line-height**: tight (1.25) / normal (1.5) / relaxed (1.75) の 3 段。loose は orphan として削除済
 - **letter-spacing**: tight (-0.02em) / normal / wide の 3 段
 - **font-family**: sans / mono の 2 種。serif は orphan として削除済
-
----
-
-## フォントサイズ
-
-<Story of={TypographyStories.FontSizes} />
-
----
-
-## フォントウェイト
-
-<Story of={TypographyStories.FontWeights} />
-
----
-
-## 行間 (line-height)
-
-<Story of={TypographyStories.LineHeights} />
-
----
-
-## 字間 (letter-spacing)
-
-<Story of={TypographyStories.LetterSpacings} />
-
----
-
-## フォントファミリー
-
-<Story of={TypographyStories.FontFamilies} />
 
 ---
 

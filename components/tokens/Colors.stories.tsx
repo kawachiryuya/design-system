@@ -1,13 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import colorsToken from '../../tokens/colors.json';
+import colorsToken from '../../tokens/source/colors.json';
+import { TokenPageHeader, TokenSectionHeading } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Color/Primitive',
-  parameters: {
-    layout: 'padded',
-  },
+  parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
@@ -20,15 +18,28 @@ const PALETTE_LABELS: Record<string, string> = {
   info: 'Info (Blue)',
 };
 
-type PaletteEntry = { name: string; label: string; colors: Record<string, string> };
+type Palette = { name: string; label: string; shades: Record<string, string> };
+type ShadeEntry = { value: string; type: string };
 
-const ALL_PALETTES: Record<string, PaletteEntry> = Object.fromEntries(
-  Object.entries(colorsToken)
+const extractShades = (palette: Record<string, ShadeEntry>): Record<string, string> =>
+  Object.fromEntries(Object.entries(palette).map(([k, v]) => [k, v.value]));
+
+const ALL_PALETTES: Record<string, Palette> = Object.fromEntries(
+  Object.entries(colorsToken.color)
     .filter(([key]) => key in PALETTE_LABELS)
-    .map(([name, colors]) => [name, { name, label: PALETTE_LABELS[name], colors: colors as Record<string, string> }]),
+    .map(([name, palette]) => [
+      name,
+      {
+        name,
+        label: PALETTE_LABELS[name],
+        shades: extractShades(palette as Record<string, ShadeEntry>),
+      },
+    ]),
 );
 
-const FUNCTIONAL_PALETTES: PaletteEntry[] = ['success', 'error', 'warning', 'info'].map((k) => ALL_PALETTES[k]);
+const FUNCTIONAL_PALETTES: Palette[] = ['success', 'error', 'warning', 'info'].map(
+  (k) => ALL_PALETTES[k],
+);
 
 function isDark(hex: string): boolean {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -46,39 +57,35 @@ function ColorSwatch({
   const dark = isDark(hex);
   return (
     <div
+      className="flex justify-between items-center px-2 py-3"
       style={{
         backgroundColor: hex,
-        padding: '12px 8px',
         borderRadius: isFirst ? '8px 8px 0 0' : isLast ? '0 0 8px 8px' : '0',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        color: dark ? '#FFFFFF' : '#171717',
       }}
     >
-      <span style={{ fontSize: '12px', fontWeight: 600, color: dark ? '#FFFFFF' : '#171717' }}>
-        {shade}
-      </span>
-      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: dark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.5)' }}>
+      <span className="text-xs font-semibold">{shade}</span>
+      <span
+        className="text-[11px] font-mono"
+        style={{ color: dark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.5)' }}
+      >
         {hex}
       </span>
     </div>
   );
 }
 
-function PaletteBlock({ palette }: { palette: PaletteEntry }) {
-  // 各 palette は自身の shade keys (10 段または primary のみ 11 段) を保持
-  const shades = Object.keys(palette.colors);
+function PaletteBlock({ palette }: { palette: Palette }) {
+  const shades = Object.keys(palette.shades);
   return (
-    <div style={{ minWidth: '180px', flex: '1 1 180px' }}>
-      <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600, color: '#404040' }}>
-        {palette.label}
-      </p>
-      <div style={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #E5E5E5' }}>
+    <div className="min-w-[180px] flex-1 basis-[180px]">
+      <p className="text-body-sm font-semibold text-onSurface m-0 mb-2">{palette.label}</p>
+      <div className="rounded-md overflow-hidden border border-border-muted">
         {shades.map((shade, i) => (
           <ColorSwatch
             key={shade}
             shade={shade}
-            hex={palette.colors[shade]}
+            hex={palette.shades[shade]}
             isFirst={i === 0}
             isLast={i === shades.length - 1}
           />
@@ -91,61 +98,39 @@ function PaletteBlock({ palette }: { palette: PaletteEntry }) {
 export const Palettes: Story = {
   name: 'グローバルカラー',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Global Colors
-      </h2>
-      <p style={{ margin: '0 0 32px', fontSize: '14px', color: '#737373' }}>
-        OKLCH ベースで知覚明度を統一したカラーパレット。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>colors</code> に統合済み。
-      </p>
+    <div>
+      <TokenPageHeader
+        title="Global Colors"
+        intro="OKLCH ベースで知覚明度を統一したカラーパレット。Tailwind の colors に統合済み。各 palette の shade は semantic-colors.json から参照されて bg-surface-* / text-onSurface-* / border-border-* 等の utility になる (実装では semantic 経由で参照、primitive 直接利用は禁止)。"
+        utility="bg-{palette}-{shade} / text-{palette}-{shade} (※ 利用は禁止、semantic 経由で)"
+      />
 
-      {/* 1段目: White / Black */}
-      <h3 style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600, color: '#404040' }}>
-        Base
-      </h3>
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '40px' }}>
+      <TokenSectionHeading>Base</TokenSectionHeading>
+      <div className="flex gap-4 mb-2">
         {[
-          { label: 'White', hex: colorsToken.base.white, tw: 'white' },
-          { label: 'Black', hex: colorsToken.base.black, tw: 'black' },
+          { label: 'White', hex: colorsToken.color.base.white.value, tw: 'white' },
+          { label: 'Black', hex: colorsToken.color.base.black.value, tw: 'black' },
         ].map((item) => (
-          <div key={item.label} style={{ textAlign: 'center' }}>
+          <div key={item.label} className="text-center">
             <div
-              style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: item.hex,
-                borderRadius: '8px',
-                border: '1px solid #E5E5E5',
-              }}
+              className="w-20 h-20 rounded-md border border-border-muted"
+              style={{ backgroundColor: item.hex }}
             />
-            <p style={{ margin: '8px 0 2px', fontSize: '13px', fontWeight: 600, color: '#404040' }}>
-              {item.label}
-            </p>
-            <p style={{ margin: 0, fontSize: '11px', fontFamily: 'monospace', color: '#737373' }}>
-              {item.hex}
-            </p>
-            <p style={{ margin: '2px 0 0', fontSize: '11px', fontFamily: 'monospace', color: '#737373' }}>
-              bg-{item.tw}
-            </p>
+            <p className="m-0 mt-2 text-body-sm font-semibold text-onSurface">{item.label}</p>
+            <p className="m-0 text-xs font-mono text-onSurface-muted">{item.hex}</p>
+            <p className="m-0 mt-[2px] text-xs font-mono text-onSurface-muted">bg-{item.tw}</p>
           </div>
         ))}
       </div>
 
-      {/* 2段目: Neutral (Grayscale) */}
-      <div style={{ marginBottom: '40px' }}>
-        <PaletteBlock palette={ALL_PALETTES['neutral']} />
-      </div>
+      <TokenSectionHeading>Neutral (Grayscale)</TokenSectionHeading>
+      <PaletteBlock palette={ALL_PALETTES['neutral']} />
 
-      {/* 3段目: Primary */}
-      <div style={{ marginBottom: '40px' }}>
-        <PaletteBlock palette={ALL_PALETTES['primary']} />
-      </div>
+      <TokenSectionHeading>Primary</TokenSectionHeading>
+      <PaletteBlock palette={ALL_PALETTES['primary']} />
 
-      {/* 4段目: 機能色 (Success / Error / Warning / Info) */}
-      <h3 style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600, color: '#404040' }}>
-        機能色
-      </h3>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
+      <TokenSectionHeading>機能色</TokenSectionHeading>
+      <div className="flex flex-wrap gap-6">
         {FUNCTIONAL_PALETTES.map((palette) => (
           <PaletteBlock key={palette.name} palette={palette} />
         ))}
@@ -153,4 +138,3 @@ export const Palettes: Story = {
     </div>
   ),
 };
-

@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Opacity',
   parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
 type Entry = { key: string; value: number; description: string; usedBy: string };
 
 const ENTRIES: Entry[] = [
-  { key: 'disabled',       value: 0.5,  description: '操作不能 (cursor-not-allowed と組合せ)', usedBy: 'Button / Input / Textarea / Select / Radio / Checkbox / Switch' },
+  { key: 'disabled',       value: 0.5,  description: '操作不能 (cursor-not-allowed と組合せ)', usedBy: 'Button / Input / Textarea / Select / Radio / Checkbox / Switch / Link' },
   { key: 'muted',          value: 0.7,  description: '控えめ表示 (装飾的 icon / 副次情報)',     usedBy: 'Link 外部リンクアイコン' },
   { key: 'spinner-track',  value: 0.25, description: 'spinner の円弧トラック (背景円)',         usedBy: 'Button (loading) / Spinner' },
   { key: 'spinner-spin',   value: 0.75, description: 'spinner の回転アーク',                    usedBy: 'Button (loading) / Spinner' },
@@ -20,48 +20,32 @@ const ENTRIES: Entry[] = [
 export const Values: Story = {
   name: 'Semantic Opacity',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '900px' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>Opacity</h2>
-      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373', lineHeight: 1.6 }}>
-        意味付けされた opacity 値。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>opacity-{'{key}'}</code> utility で使う
-        (<code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>opacity-disabled</code> /
-        <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>opacity-spinner-track</code> 等)。
-        Tailwind 既定の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>opacity-0/5/10/.../100</code>
-        も並存。
-      </p>
+    <div className="max-w-[900px]">
+      <TokenPageHeader
+        title="Opacity"
+        intro="意味付けされた opacity 値。Tailwind 既定の opacity-0/5/10/.../100 も並存。"
+        utility="opacity-{key}"
+      />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="flex flex-col gap-2">
         {ENTRIES.map((e) => (
           <div
             key={e.key}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '180px 60px 80px 1fr',
-              gap: '16px',
-              alignItems: 'center',
-              padding: '12px 16px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-muted bg-surface"
+            style={{ gridTemplateColumns: '180px 60px 80px 1fr' }}
           >
-            <code style={{ fontSize: '13px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '4px 8px', borderRadius: '4px' }}>
+            <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
               opacity-{e.key}
             </code>
-            <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#737373' }}>{e.value}</code>
+            <code className="font-mono text-xs text-onSurface-muted">{e.value}</code>
             <div
-              style={{
-                width: '48px',
-                height: '32px',
-                borderRadius: '4px',
-                backgroundColor: '#006F50',
-                opacity: e.value,
-              }}
+              className="w-12 h-8 rounded-sm bg-surface-primary"
+              style={{ opacity: e.value }}
               aria-label={`opacity ${e.value} のサンプル`}
             />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <span style={{ fontSize: '13px', color: '#171717' }}>{e.description}</span>
-              <span style={{ fontSize: '12px', color: '#A3A3A3' }}>使用: {e.usedBy}</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-onSurface">{e.description}</span>
+              <span className="text-xs text-onSurface-muted">使用: {e.usedBy}</span>
             </div>
           </div>
         ))}

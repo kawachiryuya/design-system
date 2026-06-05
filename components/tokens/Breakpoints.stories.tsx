@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import breakpointsToken from '../../tokens/breakpoints.json';
+import breakpointsToken from '../../tokens/source/breakpoints.json';
+import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Breakpoints',
   parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
@@ -19,74 +19,52 @@ const DESCRIPTIONS: Record<string, string> = {
   '2xl': 'extra wide desktop / 大画面',
 };
 
-const ENTRIES: BpEntry[] = Object.entries(breakpointsToken.screens).map(([key, value]) => ({
-  key,
-  value,
-  description: DESCRIPTIONS[key] ?? '',
-}));
+const ENTRIES: BpEntry[] = Object.entries(breakpointsToken.screens).map(
+  ([key, entry]) => ({
+    key,
+    value: (entry as { value: string }).value,
+    description: DESCRIPTIONS[key] ?? '',
+  }),
+);
 
 const MAX_PX = 1600; // 2xl 1536 が収まるバー幅
 
 export const Scale: Story = {
   name: 'ブレイクポイント',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '900px' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Breakpoints
-      </h2>
-      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373', lineHeight: 1.6 }}>
-        Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>screens</code> に統合済み。
-        本リポは <strong>mobile-first 前提</strong> で、prefix なしの class が最小幅 (mobile) を表す。
-        <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>sm:</code>
-        以上の prefix で viewport 幅がその値以上に達したときのみスタイルを適用する (widening 方向)。
-      </p>
+    <div className="max-w-[900px]">
+      <TokenPageHeader
+        title="Breakpoints"
+        intro="本リポは mobile-first 前提で、prefix なしの class が最小幅 (mobile) を表す。sm: 以上の prefix で viewport 幅がその値以上に達したときのみスタイル適用 (widening)。"
+        utility="sm: / md: / lg: / xl: / 2xl:"
+      >
+        現状本リポ内では <code className="bg-surface-inset text-onSurface px-[6px] py-[1px] rounded-sm font-mono text-xs">sm:</code> の利用のみで md/lg/xl/2xl: は未使用 (mobile / tablet までの軽い適応に留めている)。下流 product が必要時に使えるよう Tailwind 標準と同じ 5 段階を維持。
+      </TokenPageHeader>
 
-      <p style={{ margin: '0 0 24px', fontSize: '13px', color: '#737373', lineHeight: 1.6 }}>
-        現状本リポ内では <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>sm:</code>
-        の利用のみで <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>md/lg/xl/2xl:</code>
-        は未使用 (mobile / tablet までの軽い適応に留めている)。
-        ただし下流 product が必要時に <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>md:</code>
-        以降も使えるよう、Tailwind 標準と同じ 5 段階を維持している。
-      </p>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div className="flex flex-col gap-3">
         {ENTRIES.map((bp) => {
           const px = parseInt(bp.value, 10);
           const widthPct = (px / MAX_PX) * 100;
           return (
             <div
               key={bp.key}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '64px 80px 1fr auto',
-                gap: '16px',
-                alignItems: 'center',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: '1px solid #E5E5E5',
-                backgroundColor: '#FFFFFF',
-              }}
+              className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-muted bg-surface"
+              style={{ gridTemplateColumns: '64px 80px 1fr auto' }}
             >
-              <code style={{ fontSize: '13px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '4px 8px', borderRadius: '4px', textAlign: 'center' }}>
+              <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs text-center">
                 {bp.key}:
               </code>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#737373' }}>
+              <code className="font-mono text-xs text-onSurface-muted">
                 {bp.value}
               </code>
-              <div style={{ position: 'relative', height: '20px', backgroundColor: '#F5F5F5', borderRadius: '4px', overflow: 'hidden' }}>
+              <div className="relative h-5 bg-surface-inset rounded-sm overflow-hidden">
                 <div
-                  style={{
-                    height: '100%',
-                    width: `${widthPct}%`,
-                    backgroundColor: '#006F50',
-                    borderRadius: '4px',
-                  }}
+                  className="h-full bg-surface-primary rounded-sm"
+                  style={{ width: `${widthPct}%` }}
                   aria-label={`viewport width ${bp.value}`}
                 />
               </div>
-              <span style={{ fontSize: '12px', color: '#737373' }}>
-                {bp.description}
-              </span>
+              <span className="text-xs text-onSurface-muted">{bp.description}</span>
             </div>
           );
         })}

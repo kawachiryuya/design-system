@@ -1,50 +1,38 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import animationToken from '../../tokens/animation.json';
+import animationToken from '../../tokens/source/animation.json';
+import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Animation',
-  parameters: {
-    layout: 'padded',
-  },
+  parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
-const DURATIONS = Object.entries(animationToken.duration).map(([key, value]) => ({
-  key,
-  value,
-  tw: `duration-${key}`,
-}));
+type AnimEntry = { key: string; value: string; tw: string };
 
-const EASINGS = Object.entries(animationToken.easing).map(([key, value]) => ({
-  key,
-  value,
-  tw: key === 'ease-in-out' ? 'ease-in-out' : key === 'linear' ? 'ease-linear' : key,
-}));
+const DURATIONS: AnimEntry[] = Object.entries(animationToken.duration).map(
+  ([key, entry]) => ({
+    key,
+    value: (entry as { value: string }).value,
+    tw: `duration-${key}`,
+  }),
+);
+
+const EASINGS: AnimEntry[] = Object.entries(animationToken.easing).map(
+  ([key, entry]) => ({
+    key,
+    value: (entry as { value: string }).value,
+    tw: key === 'ease-in-out' ? 'ease-in-out' : key === 'linear' ? 'ease-linear' : key,
+  }),
+);
 
 function AnimatedBar({ duration, easing }: { duration: string; easing: string }) {
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '8px',
-        backgroundColor: '#F5F5F5',
-        borderRadius: '4px',
-        overflow: 'hidden',
-        position: 'relative',
-      }}
-    >
+    <div className="w-full h-2 bg-surface-inset rounded-sm overflow-hidden relative">
       <div
-        style={{
-          width: '40px',
-          height: '8px',
-          backgroundColor: '#008965',
-          borderRadius: '4px',
-          transition: `transform ${duration} ${easing}`,
-          position: 'absolute',
-          left: 0,
-        }}
+        className="w-10 h-2 bg-surface-primary rounded-sm absolute left-0"
+        style={{ transition: `transform ${duration} ${easing}` }}
         onMouseEnter={(e) => {
           (e.currentTarget as HTMLDivElement).style.transform = 'translateX(200px)';
         }}
@@ -59,39 +47,26 @@ function AnimatedBar({ duration, easing }: { duration: string; easing: string })
 export const Durations: Story = {
   name: 'デュレーション',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Durations
-      </h2>
-      <p style={{ margin: '0 0 32px', fontSize: '14px', color: '#737373' }}>
-        fast（100ms）から slower（500ms）までの 4 段階。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>transitionDuration</code> に統合済み。バーにホバーして速度を比較。
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div>
+      <TokenPageHeader
+        title="Durations"
+        intro="fast (100ms) から slower (500ms) までの 4 段階。バーにホバーして速度を比較。"
+        utility="duration-{key}"
+      />
+      <div className="flex flex-col gap-4">
         {DURATIONS.map((d) => (
           <div
             key={d.key}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              padding: '16px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="flex items-center gap-4 p-4 rounded-md border border-border-muted bg-surface"
           >
-            <div style={{ width: '120px', flexShrink: 0 }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px' }}>
+            <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
+              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block self-start">
                 {d.key}
               </code>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '4px', fontFamily: 'monospace' }}>
-                {d.value}
-              </span>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '2px', fontFamily: 'monospace' }}>
-                {d.tw}
-              </span>
+              <span className="text-xs font-mono text-onSurface-muted">{d.value}</span>
+              <span className="text-xs font-mono text-onSurface-muted">{d.tw}</span>
             </div>
-            <div style={{ flex: 1 }}>
+            <div className="flex-1">
               <AnimatedBar duration={d.value} easing="cubic-bezier(0.4, 0, 0.2, 1)" />
             </div>
           </div>
@@ -104,39 +79,28 @@ export const Durations: Story = {
 export const Easings: Story = {
   name: 'イージング',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Easings
-      </h2>
-      <p style={{ margin: '0 0 32px', fontSize: '14px', color: '#737373' }}>
-        4 種のイージング関数。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>transitionTimingFunction</code> に統合済み。バーにホバーして動きを比較。
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div>
+      <TokenPageHeader
+        title="Easings"
+        intro="イージング関数。バーにホバーして動きを比較。"
+        utility="ease-{key}"
+      />
+      <div className="flex flex-col gap-4">
         {EASINGS.map((e) => (
           <div
             key={e.key}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              padding: '16px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="flex items-center gap-4 p-4 rounded-md border border-border-muted bg-surface"
           >
-            <div style={{ width: '120px', flexShrink: 0 }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px' }}>
+            <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
+              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block self-start">
                 {e.key}
               </code>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '4px', fontFamily: 'monospace' }}>
-                {e.tw}
-              </span>
+              <span className="text-xs font-mono text-onSurface-muted">{e.tw}</span>
             </div>
-            <div style={{ flex: 1 }}>
+            <div className="flex-1">
               <AnimatedBar duration="300ms" easing={e.value} />
             </div>
-            <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#737373', flexShrink: 0, minWidth: '200px', textAlign: 'right' }}>
+            <span className="text-xs font-mono text-onSurface-muted flex-shrink-0 min-w-[200px] text-right">
               {e.value}
             </span>
           </div>

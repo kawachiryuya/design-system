@@ -1,78 +1,69 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import typographyToken from '../../tokens/typography.json';
+import typographyToken from '../../tokens/source/typography.json';
+import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Typography/Primitive',
-  parameters: {
-    layout: 'padded',
-  },
+  parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
+type Entry = { value: string };
+const extractValues = (group: Record<string, Entry | string[] | { value: string[] }>): Array<{ key: string; value: string }> =>
+  Object.entries(group).map(([k, v]) => {
+    if (Array.isArray(v)) return { key: k, value: v.join(', ') };
+    if (typeof v === 'object' && Array.isArray((v as { value?: unknown }).value)) {
+      return { key: k, value: ((v as { value: string[] }).value).join(', ') };
+    }
+    return { key: k, value: (v as Entry).value };
+  });
+
+const T = typographyToken.typography as Record<string, Record<string, Entry | { value: string[] }>>;
+const FONT_SIZES = extractValues(T['font-size']);
+const FONT_WEIGHTS = extractValues(T['font-weight']);
+const LINE_HEIGHTS = extractValues(T['line-height']);
+const LETTER_SPACINGS = extractValues(T['letter-spacing']);
+const FONT_FAMILIES = extractValues(T['font-family']);
+
 const WEIGHT_LABELS: Record<string, string> = {
-  light: 'Light',
   regular: 'Regular',
   medium: 'Medium',
   semibold: 'Semibold',
   bold: 'Bold',
 };
 
-const FONT_SIZES = Object.entries(typographyToken.fontSize).map(([key, px]) => ({ key, px }));
-
-const FONT_WEIGHTS = Object.entries(typographyToken.fontWeight).map(([key, value]) => ({
-  key,
-  value: Number(value),
-  label: WEIGHT_LABELS[key] ?? key,
-}));
-
-const LINE_HEIGHTS = Object.entries(typographyToken.lineHeight).map(([key, value]) => ({ key, value }));
-
-const LETTER_SPACINGS = Object.entries(typographyToken.letterSpacing).map(([key, value]) => ({ key, value }));
-
-const FONT_FAMILIES = Object.entries(typographyToken.fontFamily).map(([key, stack]) => ({
-  key,
-  stack: (stack as string[]).join(', '),
-}));
-
 const SAMPLE = '見出しテキスト · The quick brown fox';
-const BODY_SAMPLE = 'このデザインシステムはReact・TypeScript・Tailwind CSSを使用して構築されています。一貫したUI品質と開発体験を提供します。';
+const BODY_SAMPLE =
+  'このデザインシステムはReact・TypeScript・Tailwind CSSを使用して構築されています。一貫したUI品質と開発体験を提供します。';
+
+const KeyBadge: React.FC<{ k: string }> = ({ k }) => (
+  <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
+    {k}
+  </code>
+);
 
 export const FontSizes: Story = {
   name: 'フォントサイズ',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Font Sizes
-      </h2>
-      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373' }}>
-        xs（12px）から 6xl（60px）までの 10 段階。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>fontSize</code> に統合済み。
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+    <div>
+      <TokenPageHeader
+        title="Font Sizes"
+        intro="xs (12px) から 5xl (48px) までの 9 段階。"
+        utility="text-{key}"
+      />
+      <div className="flex flex-col">
         {FONT_SIZES.map((size, i) => (
           <div
             key={size.key}
-            style={{
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: '16px',
-              padding: '16px 0',
-              borderBottom: i < FONT_SIZES.length - 1 ? '1px solid #F5F5F5' : 'none',
-            }}
+            className={`flex items-baseline gap-4 py-4 ${i < FONT_SIZES.length - 1 ? 'border-b border-border-muted' : ''}`}
           >
-            <div style={{ width: '80px', flexShrink: 0 }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px' }}>
-                {size.key}
-              </code>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '4px', fontFamily: 'monospace' }}>
-                {size.px}
-              </span>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '2px', fontFamily: 'monospace' }}>
-                text-{size.key}
-              </span>
+            <div className="w-20 flex-shrink-0 flex flex-col gap-1">
+              <KeyBadge k={size.key} />
+              <span className="text-xs font-mono text-onSurface-muted">{size.value}</span>
+              <span className="text-xs font-mono text-onSurface-muted">text-{size.key}</span>
             </div>
-            <span style={{ fontSize: size.px, color: '#171717', lineHeight: '1.25' }}>
+            <span className="text-onSurface leading-tight" style={{ fontSize: size.value }}>
               {SAMPLE}
             </span>
           </div>
@@ -85,38 +76,28 @@ export const FontSizes: Story = {
 export const FontWeights: Story = {
   name: 'フォントウェイト',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Font Weights
-      </h2>
-      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373' }}>
-        light（300）から bold（700）までの 5 段階。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>fontWeight</code> に統合済み。
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+    <div>
+      <TokenPageHeader
+        title="Font Weights"
+        intro="regular (400) から bold (700) までの 4 段階。"
+        utility="font-{key}"
+      />
+      <div className="flex flex-col">
         {FONT_WEIGHTS.map((weight, i) => (
           <div
             key={weight.key}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              padding: '20px 0',
-              borderBottom: i < FONT_WEIGHTS.length - 1 ? '1px solid #F5F5F5' : 'none',
-            }}
+            className={`flex items-center gap-4 py-5 ${i < FONT_WEIGHTS.length - 1 ? 'border-b border-border-muted' : ''}`}
           >
-            <div style={{ width: '120px', flexShrink: 0 }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px' }}>
-                {weight.key}
-              </code>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '4px', fontFamily: 'monospace' }}>
-                {weight.value}
-              </span>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '2px', fontFamily: 'monospace' }}>
-                font-{weight.key}
-              </span>
+            <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
+              <KeyBadge k={weight.key} />
+              <span className="text-xs font-mono text-onSurface-muted">{weight.value}</span>
+              <span className="text-xs font-mono text-onSurface-muted">font-{weight.key}</span>
             </div>
-            <span style={{ fontSize: '24px', fontWeight: weight.value, color: '#171717' }}>
-              {weight.label} — {SAMPLE}
+            <span
+              className="text-onSurface"
+              style={{ fontSize: '24px', fontWeight: Number(weight.value) }}
+            >
+              {WEIGHT_LABELS[weight.key] ?? weight.key} — {SAMPLE}
             </span>
           </div>
         ))}
@@ -128,37 +109,24 @@ export const FontWeights: Story = {
 export const LineHeights: Story = {
   name: '行間',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Line Heights
-      </h2>
-      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373' }}>
-        tight（1.25）から loose（2）までの 4 段階。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>lineHeight</code> に統合済み。
-      </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
+    <div>
+      <TokenPageHeader
+        title="Line Heights"
+        intro="tight (1.25) から relaxed (1.75) までの段階。"
+        utility="leading-{key}"
+      />
+      <div className="flex flex-wrap gap-6">
         {LINE_HEIGHTS.map((lh) => (
           <div
             key={lh.key}
-            style={{
-              flex: '1 1 240px',
-              padding: '20px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="flex-1 basis-[240px] p-5 rounded-md border border-border-muted bg-surface"
           >
-            <div style={{ marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px' }}>
-                {lh.key}
-              </code>
-              <span style={{ fontSize: '12px', color: '#A3A3A3', fontFamily: 'monospace' }}>
-                {lh.value}
-              </span>
-              <span style={{ fontSize: '11px', color: '#A3A3A3', fontFamily: 'monospace' }}>
-                leading-{lh.key}
-              </span>
+            <div className="mb-3 flex gap-2 items-center">
+              <KeyBadge k={lh.key} />
+              <span className="text-xs font-mono text-onSurface-muted">{lh.value}</span>
+              <span className="text-xs font-mono text-onSurface-muted">leading-{lh.key}</span>
             </div>
-            <p style={{ margin: 0, fontSize: '14px', color: '#171717', lineHeight: lh.value }}>
+            <p className="m-0 text-sm text-onSurface" style={{ lineHeight: lh.value }}>
               {BODY_SAMPLE}
             </p>
           </div>
@@ -171,37 +139,24 @@ export const LineHeights: Story = {
 export const LetterSpacings: Story = {
   name: '字間',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Letter Spacings
-      </h2>
-      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373' }}>
-        tight（-0.02em）/ normal（0）/ wide（0.02em）の 3 段階。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>letterSpacing</code> に統合済み。
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+    <div>
+      <TokenPageHeader
+        title="Letter Spacings"
+        intro="tight (-0.02em) / normal (0) / wide (0.02em) の 3 段階。"
+        utility="tracking-{key}"
+      />
+      <div className="flex flex-col">
         {LETTER_SPACINGS.map((ls, i) => (
           <div
             key={ls.key}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              padding: '20px 0',
-              borderBottom: i < LETTER_SPACINGS.length - 1 ? '1px solid #F5F5F5' : 'none',
-            }}
+            className={`flex items-center gap-4 py-5 ${i < LETTER_SPACINGS.length - 1 ? 'border-b border-border-muted' : ''}`}
           >
-            <div style={{ width: '120px', flexShrink: 0 }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px' }}>
-                {ls.key}
-              </code>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '4px', fontFamily: 'monospace' }}>
-                {ls.value}
-              </span>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '2px', fontFamily: 'monospace' }}>
-                tracking-{ls.key}
-              </span>
+            <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
+              <KeyBadge k={ls.key} />
+              <span className="text-xs font-mono text-onSurface-muted">{ls.value}</span>
+              <span className="text-xs font-mono text-onSurface-muted">tracking-{ls.key}</span>
             </div>
-            <span style={{ fontSize: '20px', color: '#171717', letterSpacing: ls.value }}>
+            <span className="text-xl text-onSurface" style={{ letterSpacing: ls.value }}>
               {SAMPLE}
             </span>
           </div>
@@ -214,38 +169,23 @@ export const LetterSpacings: Story = {
 export const FontFamilies: Story = {
   name: 'フォントファミリー',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Font Families
-      </h2>
-      <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#737373' }}>
-        sans / serif / mono の 3 スタック。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>fontFamily</code> に統合済み。
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div>
+      <TokenPageHeader
+        title="Font Families"
+        intro="sans / mono の 2 スタック。"
+        utility="font-{key}"
+      />
+      <div className="flex flex-col gap-4">
         {FONT_FAMILIES.map((ff) => (
-          <div
-            key={ff.key}
-            style={{
-              padding: '20px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
-          >
-            <div style={{ marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px' }}>
-                {ff.key}
-              </code>
-              <span style={{ fontSize: '11px', color: '#A3A3A3', fontFamily: 'monospace' }}>
-                font-{ff.key}
-              </span>
+          <div key={ff.key} className="p-5 rounded-md border border-border-muted bg-surface">
+            <div className="mb-3 flex gap-2 items-center">
+              <KeyBadge k={ff.key} />
+              <span className="text-xs font-mono text-onSurface-muted">font-{ff.key}</span>
             </div>
-            <p style={{ margin: '0 0 8px', fontSize: '20px', color: '#171717', fontFamily: ff.stack }}>
+            <p className="m-0 mb-2 text-xl text-onSurface" style={{ fontFamily: ff.value }}>
               {SAMPLE}
             </p>
-            <p style={{ margin: 0, fontSize: '12px', color: '#A3A3A3', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-              {ff.stack}
-            </p>
+            <p className="m-0 text-xs font-mono text-onSurface-muted break-all">{ff.value}</p>
           </div>
         ))}
       </div>

@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Z-Index',
   parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
@@ -23,43 +23,29 @@ const LAYERS: Layer[] = [
 export const Layers: Story = {
   name: 'レイヤ',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '900px' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>Z-Index</h2>
-      <p style={{ margin: '0 0 8px', fontSize: '14px', color: '#737373', lineHeight: 1.6 }}>
-        重なり順を <strong>意味のあるラベル</strong>で表現する semantic スケール。
-        Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>z-{'{key}'}</code> utility で使う
-        (<code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>z-modal</code> /
-        <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>z-toast</code> 等)。
-        Tailwind 既定の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>z-0/10/.../50</code>
-        も並存 (上書きせず extend)。
-      </p>
-      <p style={{ margin: '0 0 24px', fontSize: '13px', color: '#737373', lineHeight: 1.6 }}>
-        Modal は <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>&lt;dialog&gt;</code> を採用しているため、
-        OS の top layer 管理で z-index 指定が実質不要。スケールは将来 Popover/Tooltip/Dropdown 追加時の予約。
-      </p>
+    <div className="max-w-[900px]">
+      <TokenPageHeader
+        title="Z-Index"
+        intro="重なり順を意味のあるラベルで表現する semantic スケール。Tailwind 既定の z-0/10/.../50 も並存。"
+        utility="z-{key}"
+      >
+        Modal は <code className="bg-surface-inset text-onSurface px-[6px] py-[1px] rounded-sm font-mono text-xs">&lt;dialog&gt;</code> を採用しているため OS の top layer 管理で z-index 指定が実質不要。将来 Popover/Tooltip/Dropdown 追加時の予約スケール。
+      </TokenPageHeader>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="flex flex-col gap-2">
         {LAYERS.map((l) => (
           <div
             key={l.key}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '140px 80px 1fr',
-              gap: '16px',
-              alignItems: 'center',
-              padding: '12px 16px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-muted bg-surface"
+            style={{ gridTemplateColumns: '140px 80px 1fr' }}
           >
-            <code style={{ fontSize: '13px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '4px 8px', borderRadius: '4px' }}>
+            <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
               z-{l.key}
             </code>
-            <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#737373' }}>{l.value}</code>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <span style={{ fontSize: '13px', color: '#171717' }}>{l.description}</span>
-              <span style={{ fontSize: '12px', color: '#A3A3A3' }}>例: {l.example}</span>
+            <code className="font-mono text-xs text-onSurface-muted">{l.value}</code>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-onSurface">{l.description}</span>
+              <span className="text-xs text-onSurface-muted">例: {l.example}</span>
             </div>
           </div>
         ))}

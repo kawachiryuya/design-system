@@ -1,89 +1,63 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import shadowsToken from '../../tokens/shadows.json';
+import shadowsToken from '../../tokens/source/shadows.json';
+import { TokenPageHeader, TokenSectionHeading } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Shadows',
-  parameters: {
-    layout: 'padded',
-  },
+  parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
-const SHADOWS = Object.entries(shadowsToken.shadow).map(([key, value]) => ({
-  key,
-  value,
-  tw: key === 'none' ? 'shadow-none' : `shadow-${key}`,
-}));
+type ShadowEntry = { key: string; value: string; tw: string };
+
+const SHADOWS: ShadowEntry[] = Object.entries(shadowsToken.shadow).map(
+  ([key, entry]) => ({
+    key,
+    value: (entry as { value: string }).value,
+    tw: key === 'none' ? 'shadow-none' : `shadow-${key}`,
+  }),
+);
 
 export const Elevations: Story = {
   name: 'エレベーション',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Shadows
-      </h2>
-      <p style={{ margin: '0 0 32px', fontSize: '14px', color: '#737373' }}>
-        none から 2xl までの 7 段階。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>boxShadow</code> に統合済み。
-      </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
+    <div>
+      <TokenPageHeader
+        title="Shadows"
+        intro="中核 sm/md/lg + 境界 none の 4 段。md がデフォルトで、bare 形 shadow ≒ shadow-md。"
+        utility="shadow-{key}"
+      />
+      <div className="flex flex-wrap gap-8 mb-12">
         {SHADOWS.map((s) => (
-          <div
-            key={s.key}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
+          <div key={s.key} className="flex flex-col items-center gap-3">
             <div
-              style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: s.value === 'none' ? 'none' : s.value,
-                border: s.value === 'none' ? '1px solid #E5E5E5' : 'none',
-              }}
+              className={`w-20 h-20 bg-surface rounded-md ${s.tw} ${s.key === 'none' ? 'border border-border-muted' : ''}`}
             />
-            <div style={{ textAlign: 'center' }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px', display: 'inline-block' }}>
+            <div className="text-center flex flex-col gap-1">
+              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
                 {s.key}
               </code>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '4px', fontFamily: 'monospace' }}>
-                {s.tw}
-              </span>
+              <span className="text-xs font-mono text-onSurface-muted">{s.tw}</span>
             </div>
           </div>
         ))}
       </div>
 
-      <h3 style={{ margin: '48px 0 16px', fontSize: '15px', fontWeight: 600, color: '#404040' }}>
-        トークン値
-      </h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <TokenSectionHeading>トークン値</TokenSectionHeading>
+      <div className="flex flex-col gap-2">
         {SHADOWS.map((s) => (
           <div
             key={s.key}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              padding: '10px 16px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="flex items-center gap-4 py-[10px] px-4 rounded-md border border-border-muted bg-surface"
           >
-            <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 8px', borderRadius: '4px', flexShrink: 0, minWidth: '72px' }}>
+            <code className="bg-surface-inset text-onSurface px-2 py-[2px] rounded-sm font-mono text-xs flex-shrink-0 min-w-[72px]">
               {s.key}
             </code>
-            <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#A3A3A3', flexShrink: 0, minWidth: '90px' }}>
+            <span className="font-mono text-xs text-onSurface-muted flex-shrink-0 min-w-[90px]">
               {s.tw}
             </span>
-            <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#737373', wordBreak: 'break-all' }}>
+            <span className="font-mono text-xs text-onSurface-muted break-all">
               {s.value}
             </span>
           </div>

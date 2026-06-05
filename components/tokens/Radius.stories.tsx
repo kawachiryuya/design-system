@@ -1,61 +1,48 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import radiusToken from '../../tokens/radius.json';
+import radiusToken from '../../tokens/source/radius.json';
+import { TokenPageHeader } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Radius',
-  parameters: {
-    layout: 'padded',
-  },
+  parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
 
-const RADII = Object.entries(radiusToken.radius).map(([key, value]) => ({
-  key,
-  value,
-  tw: key === 'none' ? 'rounded-none' : `rounded-${key}`,
-}));
+type RadiusEntry = { key: string; value: string; tw: string };
+
+const RADII: RadiusEntry[] = Object.entries(radiusToken.radius).map(
+  ([key, entry]) => ({
+    key,
+    value: (entry as { value: string }).value,
+    tw: key === 'none' ? 'rounded-none' : `rounded-${key}`,
+  }),
+);
 
 export const BorderRadius: Story = {
   name: '角丸',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>
-        Border Radius
-      </h2>
-      <p style={{ margin: '0 0 32px', fontSize: '14px', color: '#737373' }}>
-        none（0）から full（9999px）までの 6 段階。Tailwind の <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>borderRadius</code> に統合済み。
-      </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
+    <div>
+      <TokenPageHeader
+        title="Border Radius"
+        intro="中核 sm/md/lg + 境界 none/full の 5 段。md がデフォルトで、bare 形 rounded ≒ rounded-md。"
+        utility="rounded-{key}"
+      />
+      <div className="flex flex-wrap gap-8">
         {RADII.map((r) => (
-          <div
-            key={r.key}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
+          <div key={r.key} className="flex flex-col items-center gap-3">
             <div
+              className="w-20 h-20 bg-surface-primary"
               style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: '#008965',
                 borderRadius: r.value === '9999px' ? '9999px' : r.value,
               }}
             />
-            <div style={{ textAlign: 'center' }}>
-              <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '2px 6px', borderRadius: '4px', display: 'inline-block' }}>
+            <div className="text-center flex flex-col gap-1">
+              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
                 {r.key}
               </code>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '4px', fontFamily: 'monospace' }}>
-                {r.value}
-              </span>
-              <span style={{ display: 'block', fontSize: '11px', color: '#A3A3A3', marginTop: '2px', fontFamily: 'monospace' }}>
-                {r.tw}
-              </span>
+              <span className="text-xs font-mono text-onSurface-muted">{r.value}</span>
+              <span className="text-xs font-mono text-onSurface-muted">{r.tw}</span>
             </div>
           </div>
         ))}

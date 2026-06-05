@@ -1,76 +1,65 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { TokenPageHeader, TokenSectionHeading } from '@sb-blocks/TokenPageHeader';
 
 const meta: Meta = {
   title: 'Tokens/Focus Ring',
   parameters: { layout: 'padded' },
 };
-
 export default meta;
 type Story = StoryObj;
+
+const TOKENS = [
+  { key: 'width',  utility: 'ring-focus',        value: '2px', description: 'リング太さ。WCAG 2.4.11 (3:1 視認性) を満たす' },
+  { key: 'offset', utility: 'ring-offset-focus', value: '2px', description: '要素境界とリング間の隙間。要素の角丸感を保つ' },
+];
 
 export const Tokens: Story = {
   name: 'width / offset',
   render: () => (
-    <div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '900px' }}>
-      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#171717' }}>Focus Ring</h2>
-      <p style={{ margin: '0 0 8px', fontSize: '14px', color: '#737373', lineHeight: 1.6 }}>
-        a11y 上重要なフォーカスリングを semantic 化。下流で <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>tailwind.config.js</code>
-        の token override で一括変更可能。<strong>色は <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>border-focus</code></strong>
-        (semantic-colors.json) と <strong>組合せて使う</strong>。
-      </p>
-      <p style={{ margin: '0 0 24px', fontSize: '13px', color: '#737373', lineHeight: 1.6 }}>
-        利用 utility: <code style={{ backgroundColor: '#F5F5F5', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus</code>
-      </p>
+    <div className="max-w-[900px]">
+      <TokenPageHeader
+        title="Focus Ring"
+        intro="a11y 上重要なフォーカスリングを semantic 化。色は border-focus (semantic-colors) と組合せて使う。"
+        utility="focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus"
+      >
+        本リポでは Button / Link / Radio / Checkbox / Switch 等の **border を持たない or 小さな塗り図形** な component で使う。input/textarea/select は border 色変化 + inset ring の別パターン。
+      </TokenPageHeader>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '32px' }}>
-        {[
-          { key: 'width',  value: '2px', description: 'リング太さ。WCAG 2.4.11 (3:1 視認性) を満たす' },
-          { key: 'offset', value: '2px', description: '要素境界とリング間の隙間。要素の角丸感を保つ' },
-        ].map((e) => (
+      <div className="flex flex-col gap-2 mb-8">
+        {TOKENS.map((e) => (
           <div
             key={e.key}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '200px 80px 1fr',
-              gap: '16px',
-              alignItems: 'center',
-              padding: '12px 16px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-muted bg-surface"
+            style={{ gridTemplateColumns: '200px 80px 1fr' }}
           >
-            <code style={{ fontSize: '13px', fontFamily: 'monospace', color: '#525252', backgroundColor: '#F5F5F5', padding: '4px 8px', borderRadius: '4px' }}>
-              ring-{e.key === 'offset' ? 'offset-focus' : 'focus'}
+            <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
+              {e.utility}
             </code>
-            <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#737373' }}>{e.value}</code>
-            <span style={{ fontSize: '13px', color: '#171717' }}>{e.description}</span>
+            <code className="font-mono text-xs text-onSurface-muted">{e.value}</code>
+            <span className="text-sm text-onSurface">{e.description}</span>
           </div>
         ))}
       </div>
 
-      <h3 style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600, color: '#171717' }}>視覚サンプル (forced focus)</h3>
-      <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#737373', lineHeight: 1.6 }}>
-        強制的にリングを出した状態の例。`Tab` キーでフォーカスする実際の挙動は各 component の States story 参照。
+      <TokenSectionHeading>視覚サンプル (forced focus)</TokenSectionHeading>
+      <p className="text-body-sm text-onSurface-muted leading-relaxed mb-4">
+        強制的にリングを出した状態の例。Tab キーでフォーカスする実際の挙動は各 component の States story 参照。
       </p>
-      <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', padding: '24px', backgroundColor: '#FAFAFA', borderRadius: '8px' }}>
+      <div className="flex gap-6 flex-wrap p-6 bg-background rounded-md">
         <button
           type="button"
-          className="ring-focus ring-offset-focus ring-border-focus"
-          style={{ padding: '12px 16px', borderRadius: '8px', backgroundColor: '#006F50', color: '#FFFFFF', fontSize: '14px', fontWeight: 500 }}
+          className="ring-focus ring-offset-focus ring-border-focus px-4 py-3 rounded-md bg-surface-primary text-onSurface-inverse text-sm font-medium"
         >
           Button (primary)
         </button>
         <input
           type="text"
           defaultValue="Input (focused)"
-          className="ring-focus ring-offset-focus ring-border-focus"
-          style={{ padding: '8px 12px', borderRadius: '4px', border: '1px solid #D4D4D4', fontSize: '14px' }}
+          className="ring-focus ring-offset-focus ring-border-focus px-3 py-2 rounded-sm border border-border-default text-sm"
         />
         <a
           href="#sample"
-          className="ring-focus ring-offset-focus ring-border-focus"
-          style={{ padding: '4px 6px', borderRadius: '4px', color: '#006F50', textDecoration: 'underline', fontSize: '14px' }}
+          className="ring-focus ring-offset-focus ring-border-focus px-2 py-1 rounded-sm !text-onSurface-primary !underline text-sm"
         >
           Link (focused)
         </a>

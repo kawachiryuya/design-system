@@ -256,6 +256,90 @@
         "type": "color"
       }
     },
+    "yellow": {
+      "50":  { "value": "#FCF5E3", "type": "color" },
+      "100": { "value": "#F5E7C3", "type": "color" },
+      "200": { "value": "#E9D397", "type": "color" },
+      "300": { "value": "#D8B758", "type": "color" },
+      "400": { "value": "#C09910", "type": "color" },
+      "500": { "value": "#A98000", "type": "color" },
+      "600": { "value": "#916B00", "type": "color" },
+      "700": { "value": "#755600", "type": "color" },
+      "800": { "value": "#5A4100", "type": "color" },
+      "900": { "value": "#402D00", "type": "color" }
+    },
+    "lime": {
+      "50":  { "value": "#F1F8E6", "type": "color" },
+      "100": { "value": "#E0EECA", "type": "color" },
+      "200": { "value": "#C8DEA4", "type": "color" },
+      "300": { "value": "#A9C870", "type": "color" },
+      "400": { "value": "#8BAD42", "type": "color" },
+      "500": { "value": "#729513", "type": "color" },
+      "600": { "value": "#5F7F00", "type": "color" },
+      "700": { "value": "#4C6500", "type": "color" },
+      "800": { "value": "#394D00", "type": "color" },
+      "900": { "value": "#273700", "type": "color" }
+    },
+    "cyan": {
+      "50":  { "value": "#E3FBFC", "type": "color" },
+      "100": { "value": "#C2F3F5", "type": "color" },
+      "200": { "value": "#93E5E9", "type": "color" },
+      "300": { "value": "#3FD1D9", "type": "color" },
+      "400": { "value": "#00B7C1", "type": "color" },
+      "500": { "value": "#009FAA", "type": "color" },
+      "600": { "value": "#008892", "type": "color" },
+      "700": { "value": "#006D75", "type": "color" },
+      "800": { "value": "#00545A", "type": "color" },
+      "900": { "value": "#003B40", "type": "color" }
+    },
+    "sky": {
+      "50":  { "value": "#E5F9FF", "type": "color" },
+      "100": { "value": "#C7EFFF", "type": "color" },
+      "200": { "value": "#9DDFFF", "type": "color" },
+      "300": { "value": "#5CC9F9", "type": "color" },
+      "400": { "value": "#00ADE4", "type": "color" },
+      "500": { "value": "#0094CE", "type": "color" },
+      "600": { "value": "#007EB3", "type": "color" },
+      "700": { "value": "#006590", "type": "color" },
+      "800": { "value": "#004D70", "type": "color" },
+      "900": { "value": "#003650", "type": "color" }
+    },
+    "violet": {
+      "50":  { "value": "#F4F3FF", "type": "color" },
+      "100": { "value": "#E7E3FF", "type": "color" },
+      "200": { "value": "#D3CCFF", "type": "color" },
+      "300": { "value": "#B9ADFF", "type": "color" },
+      "400": { "value": "#9E8EEF", "type": "color" },
+      "500": { "value": "#8673D9", "type": "color" },
+      "600": { "value": "#7260BD", "type": "color" },
+      "700": { "value": "#5B4C99", "type": "color" },
+      "800": { "value": "#453976", "type": "color" },
+      "900": { "value": "#312755", "type": "color" }
+    },
+    "purple": {
+      "50":  { "value": "#FDF0FF", "type": "color" },
+      "100": { "value": "#F7DEFD", "type": "color" },
+      "200": { "value": "#ECC4F5", "type": "color" },
+      "300": { "value": "#DDA1EA", "type": "color" },
+      "400": { "value": "#C480D4", "type": "color" },
+      "500": { "value": "#AD65BE", "type": "color" },
+      "600": { "value": "#9553A4", "type": "color" },
+      "700": { "value": "#784184", "type": "color" },
+      "800": { "value": "#5C3166", "type": "color" },
+      "900": { "value": "#422149", "type": "color" }
+    },
+    "pink": {
+      "50":  { "value": "#FFEFF6", "type": "color" },
+      "100": { "value": "#FFDBE9", "type": "color" },
+      "200": { "value": "#FFBFD7", "type": "color" },
+      "300": { "value": "#F799BE", "type": "color" },
+      "400": { "value": "#E177A3", "type": "color" },
+      "500": { "value": "#C95A8B", "type": "color" },
+      "600": { "value": "#AE4976", "type": "color" },
+      "700": { "value": "#8C395E", "type": "color" },
+      "800": { "value": "#6C2A48", "type": "color" },
+      "900": { "value": "#4E1C32", "type": "color" }
+    },
     "base": {
       "white": {
         "value": "#FFFFFF",

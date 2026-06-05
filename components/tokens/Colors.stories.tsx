@@ -16,7 +16,19 @@ const PALETTE_LABELS: Record<string, string> = {
   error: 'Error (Red)',
   warning: 'Warning (Orange)',
   info: 'Info (Blue)',
+  yellow: 'Yellow',
+  lime: 'Lime',
+  cyan: 'Cyan',
+  sky: 'Sky',
+  violet: 'Violet',
+  purple: 'Purple',
+  pink: 'Pink',
 };
+
+/** brand + functional 以外の補助 palette (30° 刻みで hue wheel を埋める、下流 product 用) */
+const EXTRA_PALETTES: Palette[] = ['yellow', 'lime', 'cyan', 'sky', 'violet', 'purple', 'pink']
+  .map((k) => ALL_PALETTES[k])
+  .filter(Boolean);
 
 type Palette = { name: string; label: string; shades: Record<string, string> };
 type ShadeEntry = { value: string; type: string };
@@ -192,6 +204,24 @@ export const Functional: Story = {
   render: () => (
     <div className="flex flex-wrap gap-6">
       {FUNCTIONAL_PALETTES.map((palette) => (
+        <PaletteBlock key={palette.name} palette={palette} />
+      ))}
+    </div>
+  ),
+};
+
+export const Extra: Story = {
+  name: '補助 palette (Extra)',
+  parameters: {
+    docs: {
+      description: {
+        story: '本リポの semantic 層では参照しない補助 palette (hue 30° 刻みで wheel を埋める)。下流 product がブランドカラーや図表・カテゴリ分類で使うための予備。既存 palette と同じ OKLCH 明度カーブで生成。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-wrap gap-6">
+      {EXTRA_PALETTES.map((palette) => (
         <PaletteBlock key={palette.name} palette={palette} />
       ))}
     </div>

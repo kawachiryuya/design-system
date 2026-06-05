@@ -124,17 +124,21 @@ const inputVariants = tv({
     'bg-surface',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
-    'transition-colors',
+    'transition-all',
     'duration-normal',
     'focus:outline-none',
-    // input/textarea/select の focus 表現は **border 色変化のみ**。
-    // ring (outer focus indicator) は使わない:
-    // - Material Design 3 / Carbon / Polaris 等の主流 DS と同じパターン
-    // - border-width は変えない (固定 1px) ため layout/height シフトなし
-    // - Chrome の UA heuristic で input click が focus-visible マッチする問題を回避
-    // - 色覚多様性配慮: border-border-focus は十分なコントラストを持つ semantic 色
+    // input/textarea/select の focus 表現は **border 色変化 + inset ring** の組合せ。
+    // - border-width は 1px 固定 (focus で変えない) → layout/height シフト一切なし
+    // - focus で内側に 1px の ring (ring-1 + ring-inset) を追加 → 視覚的に 2px の
+    //   太さ感が出て色変化と合わせて視認性向上
+    // - outer ring (offset 付き) は使わない:
+    //   - Material Design 3 / Carbon / Polaris 等の主流 DS と同じパターン
+    //   - Chrome の UA heuristic で input click が focus-visible マッチする問題を回避
+    // - 色覚多様性配慮: border-border-focus は WCAG 1.4.11 (3:1) を満たす semantic 色
     // (Button / Radio / Switch 等の **border を持たない or 小さな塗り図形** な
-    //  component は引き続き ring を使う、要素の構造に応じた使い分け)
+    //  component は引き続き outer ring を使う、要素の構造に応じた使い分け)
+    'focus:ring-1',
+    'focus:ring-inset',
     'disabled:opacity-disabled',
     'disabled:cursor-not-allowed',
     'disabled:bg-surface-disabled',
@@ -146,8 +150,8 @@ const inputVariants = tv({
       lg: 'h-16 text-lg',
     },
     error: {
-      true:  'border-border-error focus:border-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus:border-border-focus',
+      true:  'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus',
     },
     fullWidth: {
       true:  'w-full',

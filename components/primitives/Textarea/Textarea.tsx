@@ -109,15 +109,17 @@ const textareaVariants = tv({
     'py-2',
     'text-base',
     'leading-normal',
-    'transition-colors',
+    'transition-all',
     'duration-normal',
     'focus:outline-none',
-    // focus 表現は border 色変化のみ (詳細は Input.tsx 同セクションのコメント参照)
+    // focus 表現は border 色変化 + inset ring (詳細は Input.tsx 同セクションのコメント参照)
+    'focus:ring-1',
+    'focus:ring-inset',
   ],
   variants: {
     error: {
-      true:  'border-border-error focus:border-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus:border-border-focus bg-surface',
+      true:  'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface',
     },
     fullWidth: {
       true:  'w-full',

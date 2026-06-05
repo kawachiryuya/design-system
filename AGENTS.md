@@ -143,6 +143,29 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 
 ---
 
+### サイズスケール内の `md = default` 規約
+
+サイズスケール (`none/xs/sm/md/lg/...`) を持つカテゴリでは、**`md` をカノニカルなデフォルト値** とする。source token には DEFAULT キーを足さず (size label の純度を保つため)、`tokens/preset.cjs` で `DEFAULT` エイリアスを `md` にマップする:
+
+```js
+// tokens/preset.cjs
+boxShadow:    { ...t.shadow,  DEFAULT: t.shadow.md  },
+borderRadius: { ...t.radius,  DEFAULT: t.radius.md  },
+```
+
+これにより `rounded` ≒ `rounded-md`、`shadow` ≒ `shadow-md` で動く。
+
+**対象カテゴリ**:
+- `radius`: `none/xs/sm/md/lg/full` (6 段)
+- `shadow`: `none/xs/sm/md/lg/xl/2xl` (7 段)
+
+**非対象**:
+- **`font-size`**: Tailwind の慣習で `text-base` が body text のデフォルトとして広く認知されているため、`base` ラベルをそのまま維持 (本リポでも `text-base` は 16px の body 用途)
+- **`spacing`**: 0〜96 の数値スケールで size label でないため対象外
+- **その他 semantic ラベル系** (font-weight, line-height, letter-spacing, animation duration/easing, font-family, breakpoints, color palette): 用途ラベル / 数値スケールであり、`md = default` 規約は適用しない
+
+---
+
 ### 例外
 
 PJ 側 (本リポを依存として使う product 側) で、ブランド固有の見栄え調整のために primitive スケールを extend する場合は OK (ただし semantic を上書きする方を推奨)。

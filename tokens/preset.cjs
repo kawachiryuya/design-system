@@ -73,8 +73,11 @@ module.exports = {
       serif: splitFontFamily(t.typography['font-family'].serif),
       mono: splitFontFamily(t.typography['font-family'].mono),
     },
-    boxShadow: t.shadow,
-    borderRadius: t.radius,
+    // size scale (xs/sm/md/lg/...) を持つカテゴリは `md` を default として宣言。
+    // source token の構造は手を加えず、Tailwind 側で DEFAULT エイリアスを足す形に統一。
+    // 利用側: `shadow` ≒ `shadow-md`、`rounded` ≒ `rounded-md` で動く。
+    boxShadow:    { ...t.shadow, DEFAULT: t.shadow.md },
+    borderRadius: { ...t.radius, DEFAULT: t.radius.md },
     screens: t.screens,
     transitionDuration: t.duration,
     transitionTimingFunction: t.easing,

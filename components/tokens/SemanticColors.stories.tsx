@@ -64,8 +64,8 @@ export const Surface: Story = {
         <h3 className="text-heading-sm m-0 mb-3 text-onSurface">bg (ページ最下層)</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {list(SC.bg).map((e) => (
-            <div key={e.key} className="border border-border-muted rounded-md p-3 bg-surface">
-              <div className="bg-background h-16 rounded-sm border border-border-muted" />
+            <div key={e.key} className="border border-border-subtle rounded-md p-3 bg-surface">
+              <div className="bg-background h-16 rounded-sm border border-border-subtle" />
               <CardHeader name={`bg.${e.key}`} twClass="bg-background" source={e.sourceValue} description={e.description} />
             </div>
           ))}
@@ -75,8 +75,8 @@ export const Surface: Story = {
         <h3 className="text-heading-sm m-0 mb-3 text-onSurface">surface (カード / モーダル / 状態色)</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {list(SC.surface).map((e) => (
-            <div key={e.key} className="border border-border-muted rounded-md p-3 bg-background">
-              <div className={`${tw('bg-surface', e.key)} h-16 rounded-sm border border-border-muted`} />
+            <div key={e.key} className="border border-border-subtle rounded-md p-3 bg-background">
+              <div className={`${tw('bg-surface', e.key)} h-16 rounded-sm border border-border-subtle`} />
               <CardHeader name={`surface.${e.key}`} twClass={tw('bg-surface', e.key)} source={e.sourceValue} description={e.description} />
             </div>
           ))}
@@ -100,8 +100,8 @@ export const Text: Story = {
       {list(SC.on).map((e) => {
         const bgClass = e.key === 'inverse' ? 'bg-surface-primary' : 'bg-surface';
         return (
-          <div key={e.key} className="border border-border-muted rounded-md p-3 bg-background">
-            <div className={`${bgClass} p-4 rounded-sm border border-border-muted`}>
+          <div key={e.key} className="border border-border-subtle rounded-md p-3 bg-background">
+            <div className={`${bgClass} p-4 rounded-sm border border-border-subtle`}>
               <span className={`${tw('text-onSurface', e.key)} text-base font-medium`}>テキストサンプル · The quick brown fox</span>
             </div>
             <CardHeader name={`on.${e.key}`} twClass={tw('text-onSurface', e.key)} source={e.sourceValue} description={e.description} />
@@ -144,13 +144,13 @@ export const State: Story = {
   render: () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {list(SC.state).map((e) => (
-        <div key={e.key} className="bg-surface rounded-md p-3 border border-border-muted">
+        <div key={e.key} className="bg-surface rounded-md p-3 border border-border-subtle">
           <div className="flex gap-2 mb-3">
-            <div className="flex-1 relative bg-background h-16 rounded-sm border border-border-muted overflow-hidden">
+            <div className="flex-1 relative bg-background h-16 rounded-sm border border-border-subtle overflow-hidden">
               <div className={`absolute inset-0 ${tw('bg-state', e.key)}`} />
               <div className="absolute bottom-1 left-2 text-xs font-mono text-onSurface-muted">on bg</div>
             </div>
-            <div className={`flex-1 relative h-16 rounded-sm border border-border-muted overflow-hidden ${
+            <div className={`flex-1 relative h-16 rounded-sm border border-border-subtle overflow-hidden ${
               e.key.includes('error') ? 'bg-surface-error' :
               e.key.includes('primary') ? 'bg-surface-primary' : 'bg-neutral-700'
             }`}>

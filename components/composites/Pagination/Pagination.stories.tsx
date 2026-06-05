@@ -94,7 +94,7 @@ export const ArticleListExample: Story = {
         <p className="text-sm text-onSurface-muted">
           全 {total} 件中 {(page - 1) * perPage + 1}〜{Math.min(page * perPage, total)} 件を表示
         </p>
-        <ul className="divide-y divide-border-muted border border-border-muted rounded-lg">
+        <ul className="divide-y divide-border-muted border border-border-subtle rounded-lg">
           {items.map((title) => (
             <li key={title} className="px-4 py-3 text-sm text-onSurface">{title}</li>
           ))}

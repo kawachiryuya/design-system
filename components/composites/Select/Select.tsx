@@ -135,7 +135,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     // focus 表現は border 色変化 + inset ring (詳細は Input.tsx 同セクションのコメント参照)
     const stateStyles = error
-      ? 'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted'
+      ? 'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted'
       : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
 
     const selectClasses = [

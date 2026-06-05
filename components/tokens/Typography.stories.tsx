@@ -58,7 +58,7 @@ export const FontSizes: Story = {
       {FONT_SIZES.map((size, i) => (
         <div
           key={size.key}
-          className={`flex items-baseline gap-4 py-4 ${i < FONT_SIZES.length - 1 ? 'border-b border-border-muted' : ''}`}
+          className={`flex items-baseline gap-4 py-4 ${i < FONT_SIZES.length - 1 ? 'border-b border-border-subtle' : ''}`}
         >
           <div className="w-20 flex-shrink-0 flex flex-col gap-1">
             <KeyBadge k={size.key} />
@@ -88,7 +88,7 @@ export const FontWeights: Story = {
       {FONT_WEIGHTS.map((weight, i) => (
         <div
           key={weight.key}
-          className={`flex items-center gap-4 py-5 ${i < FONT_WEIGHTS.length - 1 ? 'border-b border-border-muted' : ''}`}
+          className={`flex items-center gap-4 py-5 ${i < FONT_WEIGHTS.length - 1 ? 'border-b border-border-subtle' : ''}`}
         >
           <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
             <KeyBadge k={weight.key} />
@@ -121,7 +121,7 @@ export const LineHeights: Story = {
       {LINE_HEIGHTS.map((lh) => (
         <div
           key={lh.key}
-          className="flex-1 basis-[240px] p-5 rounded-md border border-border-muted bg-surface"
+          className="flex-1 basis-[240px] p-5 rounded-md border border-border-subtle bg-surface"
         >
           <div className="mb-3 flex gap-2 items-center">
             <KeyBadge k={lh.key} />
@@ -151,7 +151,7 @@ export const LetterSpacings: Story = {
       {LETTER_SPACINGS.map((ls, i) => (
         <div
           key={ls.key}
-          className={`flex items-center gap-4 py-5 ${i < LETTER_SPACINGS.length - 1 ? 'border-b border-border-muted' : ''}`}
+          className={`flex items-center gap-4 py-5 ${i < LETTER_SPACINGS.length - 1 ? 'border-b border-border-subtle' : ''}`}
         >
           <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
             <KeyBadge k={ls.key} />
@@ -179,7 +179,7 @@ export const FontFamilies: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       {FONT_FAMILIES.map((ff) => (
-        <div key={ff.key} className="p-5 rounded-md border border-border-muted bg-surface">
+        <div key={ff.key} className="p-5 rounded-md border border-border-subtle bg-surface">
           <div className="mb-3 flex gap-2 items-center">
             <KeyBadge k={ff.key} />
             <span className="text-xs font-mono text-onSurface-muted">font-{ff.key}</span>

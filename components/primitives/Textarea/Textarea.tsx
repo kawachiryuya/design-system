@@ -119,7 +119,7 @@ const textareaVariants = tv({
   ],
   variants: {
     error: {
-      true:  'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted',
+      true:  'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted',
       false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface',
     },
     fullWidth: {

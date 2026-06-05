@@ -43,7 +43,7 @@ const meta: Meta<typeof EmptyState> = {
     description: 'まだアイテムが登録されていません。',
     size: 'md',
   },
-  decorators: [(Story) => <div className="w-96 border border-border-muted rounded-lg"><Story /></div>],
+  decorators: [(Story) => <div className="w-96 border border-border-subtle rounded-lg"><Story /></div>],
 };
 
 export default meta;
@@ -66,7 +66,7 @@ export const WithBothActions: Story = {
 
 export const AllSizes: Story = {
   render: () => (
-    <div className="flex flex-col divide-y divide-border-muted w-96 border border-border-muted rounded-lg">
+    <div className="flex flex-col divide-y divide-border-muted w-96 border border-border-subtle rounded-lg">
       <EmptyState size="sm" title="Small" description="コンパクトな表示" action={{ label: '追加' }} />
       <EmptyState size="md" title="Medium（デフォルト）" description="標準サイズ" action={{ label: '追加' }} />
       <EmptyState size="lg" title="Large" description="フルページ向け" action={{ label: '追加' }} />
@@ -81,7 +81,7 @@ export const NoResults: Story = {
     return (
       <div className="w-96 space-y-3">
         <SearchBar value={query} onChange={setQuery} fullWidth placeholder="検索..." />
-        <div className="border border-border-muted rounded-lg">
+        <div className="border border-border-subtle rounded-lg">
           <EmptyState
             icon={<SearchIcon />}
             title={`「${query}」に一致する結果がありません`}

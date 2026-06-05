@@ -72,35 +72,35 @@ export interface AlertProps {
 
 const variantConfig = {
   success: {
-    container: 'bg-surface-success-muted border border-border-success-muted text-onSurface-success',
+    container: 'bg-surface-success-muted border border-border-success-subtle text-onSurface-success',
     icon: 'text-green-500',
     title: 'text-onSurface-success',
     closeBtn: 'text-green-600 hover:text-green-800 hover:bg-green-100',
     iconName: 'check_circle' as const,
   },
   error: {
-    container: 'bg-surface-error-muted border border-border-error-muted text-onSurface-error',
+    container: 'bg-surface-error-muted border border-border-error-subtle text-onSurface-error',
     icon: 'text-red-500',
     title: 'text-onSurface-error',
     closeBtn: 'text-red-600 hover:text-red-800 hover:bg-red-100',
     iconName: 'error' as const,
   },
   warning: {
-    container: 'bg-surface-warning-muted border border-border-warning-muted text-onSurface-warning',
+    container: 'bg-surface-warning-muted border border-border-warning-subtle text-onSurface-warning',
     icon: 'text-orange-600',
     title: 'text-onSurface-warning',
     closeBtn: 'text-orange-700 hover:text-orange-900 hover:bg-orange-100',
     iconName: 'warning' as const,
   },
   info: {
-    container: 'bg-surface-info-muted border border-border-info-muted text-onSurface-info',
+    container: 'bg-surface-info-muted border border-border-info-subtle text-onSurface-info',
     icon: 'text-blue-500',
     title: 'text-onSurface-info',
     closeBtn: 'text-blue-600 hover:text-blue-800 hover:bg-blue-100',
     iconName: 'info' as const,
   },
   neutral: {
-    container: 'bg-surface-inset border border-border-muted text-onSurface',
+    container: 'bg-surface-inset border border-border-subtle text-onSurface',
     icon: 'text-onSurface-muted',
     title: 'text-onSurface',
     closeBtn: 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-200',

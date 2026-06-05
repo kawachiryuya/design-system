@@ -139,7 +139,7 @@ export const EdgeCases: Story = {
       </Caption>
 
       <Caption text="vertical を flex 親で使う — self-stretch で親の高さに追従">
-        <div className="flex items-stretch gap-4 h-24 border border-dashed border-border-muted p-3 rounded">
+        <div className="flex items-stretch gap-4 h-24 border border-dashed border-border-subtle p-3 rounded">
           <div className="flex-1 flex items-center justify-center bg-surface-raised rounded text-sm text-onSurface-muted">左パネル</div>
           <Divider orientation="vertical" weight="normal" />
           <div className="flex-1 flex items-center justify-center bg-surface-raised rounded text-sm text-onSurface-muted">右パネル</div>

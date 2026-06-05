@@ -66,35 +66,35 @@ const variantConfig: Record<ToastVariant, {
   role: 'status' | 'alert';
 }> = {
   success: {
-    container: 'bg-surface-success-muted border border-border-success-muted text-onSurface-success',
+    container: 'bg-surface-success-muted border border-border-success-subtle text-onSurface-success',
     icon: 'text-green-500',
     iconName: 'check_circle',
     ariaLive: 'polite',
     role: 'status',
   },
   error: {
-    container: 'bg-surface-error-muted border border-border-error-muted text-onSurface-error',
+    container: 'bg-surface-error-muted border border-border-error-subtle text-onSurface-error',
     icon: 'text-red-500',
     iconName: 'error',
     ariaLive: 'assertive',
     role: 'alert',
   },
   warning: {
-    container: 'bg-surface-warning-muted border border-border-warning-muted text-onSurface-warning',
+    container: 'bg-surface-warning-muted border border-border-warning-subtle text-onSurface-warning',
     icon: 'text-orange-600',
     iconName: 'warning',
     ariaLive: 'polite',
     role: 'status',
   },
   info: {
-    container: 'bg-surface-info-muted border border-border-info-muted text-onSurface-info',
+    container: 'bg-surface-info-muted border border-border-info-subtle text-onSurface-info',
     icon: 'text-blue-500',
     iconName: 'info',
     ariaLive: 'polite',
     role: 'status',
   },
   neutral: {
-    container: 'bg-surface-inset border border-border-muted text-onSurface',
+    container: 'bg-surface-inset border border-border-subtle text-onSurface',
     icon: 'text-onSurface-muted',
     iconName: 'info',
     ariaLive: 'polite',

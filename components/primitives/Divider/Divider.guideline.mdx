@@ -89,7 +89,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="フッターのリンク区切り等、親の高さが明確で `flex items-center` がある場所で使う。`self-stretch` で親の高さに追従する。"
   dontExample={
-    <div className="flex flex-col gap-1 border border-dashed border-border-muted p-3 w-full">
+    <div className="flex flex-col gap-1 border border-dashed border-border-subtle p-3 w-full">
       <span className="text-sm">縦並びの中で</span>
       <Divider orientation="vertical" />
       <em className="text-xs text-onSurface-error not-italic">↑ vertical Divider があるはずが、0 高さで不可視</em>
@@ -139,8 +139,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`role="separator"`**: SR が「区切り」として認識し、セクション境界を伝えられる
 - **`aria-orientation="vertical"`**: 垂直方向時に明示。デフォルトは horizontal
 - **`aria-label` (label 指定時)**: 「または」「以上」などの意味的区切りを SR に伝達
-- **線のコントラスト (1.4.11)**: `border-border-muted` (`#e5e5e5`) は AA UI 部品要件 (3:1) ギリギリ。明確な区切りが必要なら weight を normal にして視認性を上げる
-- **装飾だけの目的では使わない**: ARIA `role="separator"` がノイズになる場合は `<div className="border-t border-border-muted" />` のような plain な装飾 div を使う
+- **線のコントラスト (1.4.11)**: `border-border-subtle` (`#e5e5e5`) は AA UI 部品要件 (3:1) ギリギリ。明確な区切りが必要なら weight を normal にして視認性を上げる
+- **装飾だけの目的では使わない**: ARIA `role="separator"` がノイズになる場合は `<div className="border-t border-border-subtle" />` のような plain な装飾 div を使う
 
 関連: [Layout Alignment](?path=/docs/principles-layout-alignment--docs) / [Color Contrast](?path=/docs/principles-foundation-accessibility-color-contrast--docs)
 

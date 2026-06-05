@@ -117,8 +117,8 @@ export const KeyboardNav: Story = {
 export const ProfileTabs: Story = {
   name: '実践例: プロフィールページ',
   render: () => (
-    <div className="w-[480px] border border-border-muted rounded-lg overflow-hidden">
-      <div className="p-4 bg-surface-raised border-b border-border-muted">
+    <div className="w-[480px] border border-border-subtle rounded-lg overflow-hidden">
+      <div className="p-4 bg-surface-raised border-b border-border-subtle">
         <h2 className="font-semibold text-onSurface">田中 太郎</h2>
         <p className="text-sm text-onSurface-muted">UI デザイナー</p>
       </div>
@@ -133,7 +133,7 @@ export const ProfileTabs: Story = {
               content: (
                 <div className="space-y-3">
                   {['Atomic Design 入門', 'Tailwind CSS のすすめ', '色彩理論の基礎'].map((title) => (
-                    <div key={title} className="flex items-center justify-between py-2 border-b border-border-muted last:border-0">
+                    <div key={title} className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0">
                       <span className="text-sm text-onSurface">{title}</span>
                       <Badge variant="neutral" size="sm">公開中</Badge>
                     </div>

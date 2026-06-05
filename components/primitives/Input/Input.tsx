@@ -154,7 +154,7 @@ const inputVariants = tv({
       lg: 'h-16 text-lg',
     },
     error: {
-      true:  'border-border-error focus:border-border-error focus:ring-border-error bg-surface-error-muted',
+      true:  'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted',
       false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus',
     },
     fullWidth: {

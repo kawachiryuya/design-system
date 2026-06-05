@@ -33,7 +33,7 @@ export const Layers: Story = {
       {LAYERS.map((l) => (
         <div
           key={l.key}
-          className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-muted bg-surface"
+          className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-subtle bg-surface"
           style={{ gridTemplateColumns: '140px 80px 1fr' }}
         >
           <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">

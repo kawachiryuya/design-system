@@ -99,7 +99,7 @@ export const EdgeCases: Story = {
       </Caption>
 
       <Caption text="カードレイアウト統合 (画像 + アバター + 本文 + ボタン)">
-        <div className="p-4 border border-border-muted rounded-lg space-y-4">
+        <div className="p-4 border border-border-subtle rounded-lg space-y-4">
           <Skeleton variant="rectangular" height={120} className="rounded-md" />
           <div className="flex items-center gap-3">
             <Skeleton variant="circular" width={36} height={36} />

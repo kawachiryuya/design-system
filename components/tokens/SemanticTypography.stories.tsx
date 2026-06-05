@@ -82,7 +82,7 @@ export const Headings: Story = {
           const spec = SEMANTIC.heading[key];
           const twClass = `text-heading-${key}`;
           return (
-            <div key={key} className="border border-border-muted rounded-md p-4 bg-surface">
+            <div key={key} className="border border-border-subtle rounded-md p-4 bg-surface">
               <div className={`${twClass} text-onSurface`}>{SAMPLE}</div>
               <StyleMeta name={`heading.${key}`} twClass={twClass} spec={spec} />
             </div>
@@ -109,7 +109,7 @@ export const Body: Story = {
           const spec = SEMANTIC.body[key];
           const twClass = `text-body-${key}`;
           return (
-            <div key={key} className="border border-border-muted rounded-md p-4 bg-surface">
+            <div key={key} className="border border-border-subtle rounded-md p-4 bg-surface">
               <p className={`${twClass} text-onSurface`}>{BODY_SAMPLE}</p>
               <StyleMeta name={`body.${key}`} twClass={twClass} spec={spec} />
             </div>
@@ -131,11 +131,11 @@ export const LabelAndCaption: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-6 max-w-prose">
-      <div className="border border-border-muted rounded-md p-4 bg-surface">
+      <div className="border border-border-subtle rounded-md p-4 bg-surface">
         <span className="text-label text-onSurface">フォーム入力ラベル</span>
         <StyleMeta name="label" twClass="text-label" spec={SEMANTIC.label} />
       </div>
-      <div className="border border-border-muted rounded-md p-4 bg-surface">
+      <div className="border border-border-subtle rounded-md p-4 bg-surface">
         <p className="text-caption text-onSurface-muted">© 2026 design-system · 最終更新: 2026-06-04</p>
         <StyleMeta name="caption" twClass="text-caption" spec={SEMANTIC.caption} />
       </div>

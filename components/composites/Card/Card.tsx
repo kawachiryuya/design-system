@@ -140,8 +140,8 @@ const paddingStyles = {
 
 const variantStyles = {
   elevated: 'bg-surface shadow-md rounded-md',
-  outlined: 'bg-surface border border-border-muted rounded-md',
-  filled: 'bg-surface-inset border border-border-muted rounded-md',
+  outlined: 'bg-surface border border-border-subtle rounded-md',
+  filled: 'bg-surface-inset border border-border-subtle rounded-md',
 };
 
 /**
@@ -222,7 +222,7 @@ export const Card: React.FC<CardProps> & {
 const CardHeader: React.FC<CardHeaderProps> = ({ divider = true, className = '', children }) => (
   <div className={[
     'px-4 py-3 font-medium text-onSurface',
-    divider ? 'border-b border-border-muted' : '',
+    divider ? 'border-b border-border-subtle' : '',
     className,
   ].filter(Boolean).join(' ')}>
     {children}
@@ -244,7 +244,7 @@ const justifyStyles = {
 const CardFooter: React.FC<CardFooterProps> = ({ justify = 'end', divider = true, className = '', children }) => (
   <div className={[
     'px-4 py-3 flex items-center gap-2',
-    divider ? 'border-t border-border-muted' : '',
+    divider ? 'border-t border-border-subtle' : '',
     justifyStyles[justify],
     className,
   ].filter(Boolean).join(' ')}>

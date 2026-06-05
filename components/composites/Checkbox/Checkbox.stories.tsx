@@ -108,7 +108,7 @@ export const RegistrationForm: Story = {
 
     return (
       <form
-        className="w-96 space-y-6 p-6 border border-border-muted rounded-lg"
+        className="w-96 space-y-6 p-6 border border-border-subtle rounded-lg"
         onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
       >
         <h2 className="text-lg font-semibold text-onSurface">会員登録</h2>

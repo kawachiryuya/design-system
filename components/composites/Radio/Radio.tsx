@@ -153,7 +153,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       'focus-visible:ring-focus',
       'focus-visible:ring-offset-focus',
       error
-        ? 'border-border-error focus-visible:ring-border-error checked:bg-surface-error checked:border-border-error'
+        ? 'border-border-error-emphasis focus-visible:ring-border-error checked:bg-surface-error checked:border-border-error-emphasis'
         : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-surface-primary',
       disabled ? 'opacity-disabled cursor-not-allowed' : '',
     ]

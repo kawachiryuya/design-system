@@ -20,7 +20,7 @@ OKLCH ベースで知覚明度を統一したカラーパレット。**Primitive
 - **Primitive は hue 名のみ**: `primary` のような role 名は持たない。Semantic 層 (`surface.primary` 等) で初めて役割を当てる
 - **OKLCH ベース**: 知覚明度を palette 間で揃える。同じ shade 番号なら異なる palette でも体感の明度が近い (50: L=0.97 → 900: L=0.31)
 - **shade 数値スケール (50〜900)**: Tailwind / Material 慣習に準拠
-- **`teal.25` は `bg.default` 専用の例外 shade**: ページ最下層に brand canvas を敷くために追加 ([AGENTS.md §3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+- **brand から独立した bg**: `bg.default` は `neutral.50` を参照。下流 product が brand を override しても bg は中性のまま ([AGENTS.md §3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
 - **13 hue + base**: teal / neutral / green / red / orange / blue (semantic で参照される 6 hue) + yellow / lime / cyan / sky / violet / purple / pink (下流用予備 7 hue) + base (white / black / transparent)
 
 ---

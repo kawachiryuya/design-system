@@ -64,7 +64,7 @@ export interface DividerProps {
  *     ここで導出するのは border ユーティリティ class のみで、container DOM は JSX 側で決める。
  */
 const dividerBorderVariants = tv({
-  base: 'border-border-muted',
+  base: 'border-border-subtle',
   variants: {
     orientation: {
       horizontal: '',

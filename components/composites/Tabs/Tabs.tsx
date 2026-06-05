@@ -165,7 +165,7 @@ export const Tabs: React.FC<TabsProps> = ({
   return (
     <div className={['w-full', className].join(' ')}>
       {/* タブリスト */}
-      <div className="border-b border-border-muted overflow-x-auto">
+      <div className="border-b border-border-subtle overflow-x-auto">
         <div
           role="tablist"
           aria-label={ariaLabel}

@@ -8,6 +8,28 @@
 
 ### ⚠ BREAKING CHANGES
 
+- **Semantic border token を強度軸 (subtle/default/strong/emphasis) に再構成** (API + silent break): 軸 4 の方針 (`{role}-{intensity}` 命名で強度語彙を全 role に一律適用) を実装:
+  - `border.muted` → `border.subtle`
+  - `border.disabled` → `border.subtle` (同値だったため統合)
+  - `border.primary` → `border.focus` (FilterChip active / Badge outline-primary など 2 callsite。Branded selected 状態は `focus` に統一)
+  - `border.success` → `border.success-emphasis`
+  - `border.error` → `border.error-emphasis`
+  - `border.warning` → `border.warning-emphasis`
+  - `border.info` → `border.info-emphasis`
+  - `border.success-muted` → `border.success-subtle`
+  - `border.error-muted` → `border.error-subtle`
+  - `border.warning-muted` → `border.warning-subtle`
+  - `border.info-muted` → `border.info-subtle`
+  - **新規追加**: `border.emphasis` (neutral.700) — 最も強い neutral border、注意喚起 / CTA 周辺の輪郭強化用
+  - 影響: Tailwind utility (`border-border-muted` → `border-border-subtle`、`border-border-success` → `border-border-success-emphasis` 等)、CSS 変数 (`--color-border-muted` → `--color-border-subtle` 等)
+  - 下流 product 移行: `sed -i '' -E -e 's/border-border-muted/border-border-subtle/g; s/border-border-disabled/border-border-subtle/g; s/border-border-primary/border-border-focus/g; s/border-border-success-muted/border-border-success-subtle/g; ...' src/**/*.{tsx,ts}` で機械置換可能
+  - 本リポ内は 100+ callsite を自動 sed 済
+- **`bg.default` を brand から独立した中性に変更** (silent break): 軸 6 の方針を実装:
+  - `bg.default` の参照を `{color.teal.25}` → `{color.neutral.50}` に変更
+  - これに伴い `color.teal.25` primitive shade を削除 (orphan token)
+  - 影響: ページ最下層の bg 色が brand 連動から中性 (neutral.50 = #FAFAFA) に変わる。Multi-product hub として brand を切り替えても bg が共通になる設計
+  - 下流 product 移行: brand canvas を引き続き望む product は PJ 側で `bg.default` を `{color.{brand-hue}.50}` 等に override する
+  - AGENTS.md §3-3 を「`teal.25` 専用」から「bg は brand 独立中性」に書き換え
 - **Primitive Color palette key rename** (API + silent break): 2 層アーキテクチャ純度を保つため、Primitive 層から **role 名を排除して hue 名に統一**:
   - `primary` → `teal`
   - `success` → `green`

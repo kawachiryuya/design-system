@@ -27,7 +27,7 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 
 - **value は必ず primitive 参照、生 hex は禁止**: 下流 override に連動するため (詳細 [AGENTS.md §3-1](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
 - **state は `color-mix()` で primitive と連動**: 透過オーバーレイも primitive 変更に自動追従 ([§3-2](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
-- **`primary.25` は `bg.default` 専用**: brand 色の最薄 tint、他用途では使わない ([§3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
+- **`bg.default` は brand から独立した中性 canvas**: `neutral.50` を参照。下流 product が brand 色を override しても bg は中性のまま ([§3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
 
 ---
 

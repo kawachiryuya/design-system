@@ -67,7 +67,7 @@ export interface FilterChipProps extends Omit<React.ButtonHTMLAttributes<HTMLBut
 export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
   ({ active = false, iconLeft, iconRight, children, className = '', disabled, ...props }, ref) => {
     const stateClasses = active
-      ? 'border-border-primary bg-surface-secondary text-onSurface-primary'
+      ? 'border-border-focus bg-surface-secondary text-onSurface-primary'
       : 'border-border-default bg-surface text-onSurface hover:border-border-strong';
 
     const classes = [

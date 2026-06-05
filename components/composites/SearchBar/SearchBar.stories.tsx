@@ -137,7 +137,7 @@ export const HeaderSearch: Story = {
         <SearchBar value={value} onChange={handleChange} isLoading={isLoading}
           fullWidth placeholder="記事を検索..." />
         {results.length > 0 && (
-          <ul className="absolute top-full mt-1 w-full bg-surface border border-border-muted
+          <ul className="absolute top-full mt-1 w-full bg-surface border border-border-subtle
             rounded shadow-sm z-dropdown overflow-hidden">
             {results.map((r) => (
               <li key={r}>
@@ -166,7 +166,7 @@ export const TableFilter: Story = {
       <div className="w-80 space-y-3">
         <SearchBar value={query} onChange={setQuery} size="sm"
           fullWidth placeholder="ユーザーを検索..." />
-        <ul className="divide-y divide-border-muted border border-border-muted rounded">
+        <ul className="divide-y divide-border-muted border border-border-subtle rounded">
           {filtered.length > 0
             ? filtered.map((name) => (
                 <li key={name} className="px-3 py-2 text-sm text-onSurface">{name}</li>

@@ -103,7 +103,7 @@ export const WithStatus: Story = {
 export const UserCard: Story = {
   name: '実践例: ユーザーカード',
   render: () => (
-    <div className="flex items-center gap-3 p-4 rounded-lg border border-border-muted w-64">
+    <div className="flex items-center gap-3 p-4 rounded-lg border border-border-subtle w-64">
       <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="md" status="online" />
       <div className="min-w-0">
         <p className="text-sm font-medium text-onSurface truncate">鈴木 花子</p>

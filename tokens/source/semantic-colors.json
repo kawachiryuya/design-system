@@ -2,9 +2,9 @@
   "color": {
     "bg": {
       "default": {
-        "value": "{color.teal.25}",
+        "value": "{color.neutral.50}",
         "type": "color",
-        "description": "ページ最下層。primary 最薄 tint を引くことで、下流 product が brand 色を override すると bg も連動して追従する設計"
+        "description": "ページ最下層。brand から独立した中性の canvas。brand 色の薄 tint を bg に敷きたい product は bg-teal-25 等の brand-coupled token を個別に override する"
       }
     },
     "surface": {
@@ -142,75 +142,70 @@
       }
     },
     "border": {
+      "subtle": {
+        "value": "{color.neutral.200}",
+        "type": "color",
+        "description": "薄いボーダー (旧 muted)。非活性 / 控えめな区切りも兼ねる (旧 disabled も同値だったため統合)"
+      },
       "default": {
         "value": "{color.neutral.300}",
         "type": "color",
         "description": "標準ボーダー"
-      },
-      "muted": {
-        "value": "{color.neutral.200}",
-        "type": "color",
-        "description": "薄いボーダー"
       },
       "strong": {
         "value": "{color.neutral.400}",
         "type": "color",
         "description": "強調ボーダー"
       },
+      "emphasis": {
+        "value": "{color.neutral.700}",
+        "type": "color",
+        "description": "最も強い neutral ボーダー (注意喚起、CTA 周辺の輪郭強化等)"
+      },
+      "success-subtle": {
+        "value": "{color.green.200}",
+        "type": "color",
+        "description": "成功コンテナ枠 (旧 success-muted、Alert 等)"
+      },
+      "success-emphasis": {
+        "value": "{color.green.600}",
+        "type": "color",
+        "description": "成功の強い枠 (旧 success、Badge outline 等)"
+      },
+      "error-subtle": {
+        "value": "{color.red.200}",
+        "type": "color",
+        "description": "エラーコンテナ枠 (旧 error-muted)"
+      },
+      "error-emphasis": {
+        "value": "{color.red.600}",
+        "type": "color",
+        "description": "エラーの強い枠 (旧 error、入力 validation 等)"
+      },
+      "warning-subtle": {
+        "value": "{color.orange.200}",
+        "type": "color",
+        "description": "警告コンテナ枠 (旧 warning-muted)"
+      },
+      "warning-emphasis": {
+        "value": "{color.orange.600}",
+        "type": "color",
+        "description": "警告の強い枠 (旧 warning)"
+      },
+      "info-subtle": {
+        "value": "{color.blue.200}",
+        "type": "color",
+        "description": "情報コンテナ枠 (旧 info-muted)"
+      },
+      "info-emphasis": {
+        "value": "{color.blue.600}",
+        "type": "color",
+        "description": "情報の強い枠 (旧 info)"
+      },
       "focus": {
         "value": "{color.teal.700}",
         "type": "color",
-        "description": "フォーカスリング (primary と視覚統一)"
-      },
-      "primary": {
-        "value": "{color.teal.700}",
-        "type": "color",
-        "description": "選択・アクティブ枠 (primary と視覚統一)"
-      },
-      "error": {
-        "value": "{color.red.600}",
-        "type": "color",
-        "description": "エラー枠"
-      },
-      "success": {
-        "value": "{color.green.600}",
-        "type": "color",
-        "description": "成功枠"
-      },
-      "warning": {
-        "value": "{color.orange.600}",
-        "type": "color",
-        "description": "警告枠"
-      },
-      "info": {
-        "value": "{color.blue.600}",
-        "type": "color",
-        "description": "情報枠"
-      },
-      "disabled": {
-        "value": "{color.neutral.200}",
-        "type": "color",
-        "description": "非活性ボーダー"
-      },
-      "success-muted": {
-        "value": "{color.green.200}",
-        "type": "color",
-        "description": "成功コンテナ枠（Alert等）"
-      },
-      "error-muted": {
-        "value": "{color.red.200}",
-        "type": "color",
-        "description": "エラーコンテナ枠（Alert等）"
-      },
-      "warning-muted": {
-        "value": "{color.orange.200}",
-        "type": "color",
-        "description": "警告コンテナ枠（Alert等）"
-      },
-      "info-muted": {
-        "value": "{color.blue.200}",
-        "type": "color",
-        "description": "情報コンテナ枠（Alert等）"
+        "description": "フォーカスリング (interactive、強度軸とは独立)。FilterChip active / Badge outline-primary 等の「branded selected」状態でも兼用 (旧 primary は本 token に統合)"
       }
     },
     "state": {

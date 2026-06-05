@@ -73,7 +73,7 @@ export const Library: Story = {
   render: () => (
     <div className="grid grid-cols-4 gap-3 max-w-2xl">
       {getIconNames().map((name) => (
-        <div key={name} className="flex flex-col items-center gap-2 p-3 rounded border border-border-muted">
+        <div key={name} className="flex flex-col items-center gap-2 p-3 rounded border border-border-subtle">
           <Icon name={name} size="md" color="neutral" />
           <code className="text-xs">{name}</code>
         </div>
@@ -153,7 +153,7 @@ export const EdgeCases: Story = {
         </Icon>
       </Caption>
       <Caption text='存在しない name — registry に無い場合は何も描画されない (装飾的にフェイルセーフ)'>
-        <div className="flex items-center gap-2 border border-dashed border-border-muted p-2 rounded">
+        <div className="flex items-center gap-2 border border-dashed border-border-subtle p-2 rounded">
           <Icon name="nonexistent_icon" size="md" />
           <span className="text-xs text-onSurface-muted">↑ SVG タグはあるが path なし</span>
         </div>

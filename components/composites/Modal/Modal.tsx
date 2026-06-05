@@ -165,7 +165,7 @@ const ModalRoot: React.FC<ModalProps> = ({
       {...rest}
     >
       {(title || !hideCloseButton) && (
-        <header className="flex items-start justify-between gap-3 px-5 py-4 border-b border-border-muted">
+        <header className="flex items-start justify-between gap-3 px-5 py-4 border-b border-border-subtle">
           {title ? (
             <h2 id={titleId} className="text-heading-md font-semibold text-onSurface flex-1">
               {title}
@@ -201,7 +201,7 @@ const justifyStyles = {
 
 const ModalFooter: React.FC<ModalFooterProps> = ({ justify = 'end', className = '', children }) => (
   <footer className={[
-    'flex items-center gap-2 px-5 py-3 border-t border-border-muted',
+    'flex items-center gap-2 px-5 py-3 border-t border-border-subtle',
     justifyStyles[justify],
     className,
   ].filter(Boolean).join(' ')}>

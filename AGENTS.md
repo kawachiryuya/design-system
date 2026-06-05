@@ -137,9 +137,11 @@ primitive 色に半透明を載せた overlay (`state.hover-on-primary` 等) は
 
 中性 (黒/白) オーバーレイ (`state.hover` 等) は primitive 依存がないので `rgba(0, 0, 0, 0.08)` 等の生 rgba でよい。
 
-**3-3. `teal.25` は `bg.default` 専用**
+**3-3. `bg.default` は brand から独立した中性 canvas**
 
-`color.teal.25` (#F5F7F5) は brand 色の最薄 tint として bg.default 専用に用意した。Text / Border / 他用途では使わない (description にも明記)。「ページ最下層に brand canvas を敷く」設計のための専用 token。
+`bg.default` は `color.neutral.50` を参照し、brand 色 (teal) からは独立。理由: 下流 product が brand を別 hue に変えても bg は中性のまま保たれ、product 共通の「中立的ページ canvas」を提供できるため。
+
+brand 色の薄 tint をページ最下層に敷きたい product は、PJ 側で `bg-{brand}-25` などの brand-coupled token を追加し、`bg.default` の参照先を override する。本リポは default として brand 連動を採用しない (Multi-product hub の独立性を優先)。
 
 **3-5. Primitive Color は hue 名、role 名は Semantic 層に集約**
 

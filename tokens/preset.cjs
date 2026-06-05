@@ -163,20 +163,22 @@ module.exports = {
       },
       borderColor: {
         border: {
+          // 強度軸 (intensity scale、neutral)
           DEFAULT:  'var(--color-border-default)',
-          muted:    'var(--color-border-muted)',
+          subtle:   'var(--color-border-subtle)',
           strong:   'var(--color-border-strong)',
+          emphasis: 'var(--color-border-emphasis)',
+          // Functional roles × intensity
+          'success-subtle':   'var(--color-border-success-subtle)',
+          'success-emphasis': 'var(--color-border-success-emphasis)',
+          'error-subtle':     'var(--color-border-error-subtle)',
+          'error-emphasis':   'var(--color-border-error-emphasis)',
+          'warning-subtle':   'var(--color-border-warning-subtle)',
+          'warning-emphasis': 'var(--color-border-warning-emphasis)',
+          'info-subtle':      'var(--color-border-info-subtle)',
+          'info-emphasis':    'var(--color-border-info-emphasis)',
+          // Interactive (intensity axis とは独立)
           focus:    'var(--color-border-focus)',
-          primary:  'var(--color-border-primary)',
-          error:    'var(--color-border-error)',
-          success:  'var(--color-border-success)',
-          warning:  'var(--color-border-warning)',
-          info:     'var(--color-border-info)',
-          disabled: 'var(--color-border-disabled)',
-          'success-muted': 'var(--color-border-success-muted)',
-          'error-muted':   'var(--color-border-error-muted)',
-          'warning-muted': 'var(--color-border-warning-muted)',
-          'info-muted':    'var(--color-border-info-muted)',
         },
       },
       ringColor: {

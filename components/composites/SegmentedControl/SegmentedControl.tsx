@@ -102,7 +102,7 @@ export const SegmentedControl = <T extends string | number>({
               'rounded-sm font-medium whitespace-nowrap transition-colors',
               isSelected
                 ? 'bg-surface-primary text-onSurface-inverse'
-                : 'bg-surface border border-border-muted text-onSurface hover:border-border-strong',
+                : 'bg-surface border border-border-subtle text-onSurface hover:border-border-strong',
             ].join(' ')}
             aria-pressed={isSelected}
           >

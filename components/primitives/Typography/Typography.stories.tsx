@@ -82,7 +82,7 @@ export const Variants: Story = {
       <Typography variant="h2">H2 — セクション見出し</Typography>
       <Typography variant="h3">H3 — サブセクション</Typography>
       <Typography variant="h4">H4 — カードタイトル / 小見出し</Typography>
-      <hr className="border-border-muted" />
+      <hr className="border-border-subtle" />
       <Typography variant="body-lg">Body Large — 18px / リード文</Typography>
       <Typography variant="body">Body — 16px / 本文 (デフォルト)</Typography>
       <Typography variant="body-sm">Body Small — 14px / 補足</Typography>
@@ -121,7 +121,7 @@ export const EdgeCases: Story = {
       </Caption>
 
       <Caption text="truncate — 1 行省略 (...) は親の width で機能">
-        <div className="w-64 border border-dashed border-border-muted p-2">
+        <div className="w-64 border border-dashed border-border-subtle p-2">
           <Typography variant="h4" truncate>
             非常に長いカードタイトルが入る場合に truncate で省略される
           </Typography>

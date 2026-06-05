@@ -112,7 +112,7 @@ export const Accordion = ({
         const contentId = `accordion-content-${item.id}`;
         const triggerId = `accordion-trigger-${item.id}`;
         return (
-          <div key={item.id} className="border border-border-muted rounded-md overflow-hidden">
+          <div key={item.id} className="border border-border-subtle rounded-md overflow-hidden">
             <button
               type="button"
               id={triggerId}

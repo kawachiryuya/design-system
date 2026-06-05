@@ -206,9 +206,12 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   ) => {
     const Tag = (as || defaultTag[variant]) as React.ElementType;
     // weight が指定されれば variant の font-* を後勝ちで上書き (tailwind-merge が解決)
+    // data-ds-typography は Storybook docs (.sbdocs h1/h2/.../p) の hardcoded font-size
+    // との競合を回避するためのマーカー (.storybook/tailwind.css 側で :not() 除外)
     return (
       <Tag
         ref={ref}
+        data-ds-typography="true"
         className={typographyVariants({ variant, color, weight, truncate, className })}
         {...props}
       >

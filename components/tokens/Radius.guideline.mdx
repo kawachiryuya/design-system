@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as RadiusStories from './Radius.stories';
 
 <Meta of={RadiusStories} name="Guideline" />
@@ -13,6 +13,14 @@ import * as RadiusStories from './Radius.stories';
 
 ---
 
+## カタログ
+
+→ [Tokens/Radius/BorderRadius](?path=/story/tokens-radius--border-radius) で確認
+
+5 段 (none / sm / md / lg / full) を四角形プレビューで並列表示。
+
+---
+
 ## 設計方針
 
 - **中核 sm/md/lg の 3 段に揃える**: shadow / Button size 等の他カテゴリと統一感を持たせ、選択肢を絞ってデザイン判断を容易に
@@ -21,12 +29,6 @@ import * as RadiusStories from './Radius.stories';
 - **`full` は円形要素 (Avatar / Spinner) 用の特殊値**: 数値スケールではなく semantic 的な役割
 
 詳細: [AGENTS.md §3 サイズスケール内の `md = default` 規約](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#サイズスケール内の-md--default-規約)
-
----
-
-## スケール
-
-<Story of={RadiusStories.BorderRadius} />
 
 ---
 

@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as BreakpointsStories from './Breakpoints.stories';
 
 <Meta of={BreakpointsStories} name="Guideline" />
@@ -15,17 +15,19 @@ Tailwind 標準と同じ 5 段階のレスポンシブ breakpoint。mobile-first
 
 ---
 
+## カタログ
+
+→ [Tokens/Breakpoints/Scale](?path=/story/tokens-breakpoints--scale) で確認
+
+5 段階 (sm / md / lg / xl / 2xl) を px 値とともに並列表示。
+
+---
+
 ## 設計方針
 
 - **mobile-first**: prefix なし = mobile、prefix で広げる方向。逆方向 (mobile only) は `max-{key}:` で
 - **Tailwind 標準値をそのまま採用**: 640 / 768 / 1024 / 1280 / 1536 px。下流 product のエコシステムと互換
 - **現状本リポ内では `sm:` のみ使用**: `md/lg/xl/2xl:` は未使用 (mobile / tablet までの軽い適応に留めている)。ただし下流 product が必要時に使えるよう 5 段階を維持
-
----
-
-## スケール
-
-<Story of={BreakpointsStories.Scale} />
 
 ---
 

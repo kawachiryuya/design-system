@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as OpacityStories from './Opacity.stories';
 
 <Meta of={OpacityStories} name="Guideline" />
@@ -15,6 +15,14 @@ Tailwind 既定の `opacity-0/5/10/.../100` も並存しますが、本リポで
 
 ---
 
+## カタログ
+
+→ [Tokens/Opacity/Values](?path=/story/tokens-opacity--values) で確認
+
+4 値 (disabled / muted / spinner-track / spinner-spin) を視覚プレビューで並列表示。
+
+---
+
 ## 設計方針
 
 - **primitive 層を持たず semantic 名のみ**: 数値そのものに意味はなく、用途名で参照する方が読みやすい。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)
@@ -25,13 +33,7 @@ Tailwind 既定の `opacity-0/5/10/.../100` も並存しますが、本リポで
 
 ## 既知の制約
 
-`opacity` プロパティは **要素全体 (背景 / border / text / 子孫)** に適用されるため、強い背景色を持つ要素 (Button primary 等) では半透明で透けて見える問題があります。将来的に色ベースの disabled (`bg-{disabled-*}` + `text-onSurface-disabled`) へ移行する選択肢あり (現状は scope 外)。詳細は memory: project_disabled_opacity_vs_color。
-
----
-
-## 値一覧
-
-<Story of={OpacityStories.Values} />
+`opacity` プロパティは **要素全体 (背景 / border / text / 子孫)** に適用されるため、強い背景色を持つ要素 (Button primary 等) では半透明で透けて見える問題があります。将来的に色ベースの disabled (`bg-{disabled-*}` + `text-onSurface-disabled`) へ移行する選択肢あり (現状は scope 外)。
 
 ---
 

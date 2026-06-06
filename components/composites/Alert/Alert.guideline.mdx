@@ -1,0 +1,155 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as AlertStories from './Alert.stories';
+import { Alert } from './Alert';
+import { Button } from '../../primitives/Button/Button';
+import { Link } from '../../primitives/Link/Link';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+{/*
+  Meta of={AlertStories} で Alert.stories.tsx の Docs ページ本体としてこの mdx を使用する。
+  Alert.stories.tsx 側で tags: ['autodocs'] を付けないこと (二重生成になる)。
+*/}
+<Meta of={AlertStories} name="Guideline" />
+
+# Alert
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+ページ上に **永続的に表示するインラインの通知メッセージ**。状況 (success / error / warning / info / neutral) を色とアイコンで伝え、必要なら閉じるボタンで dismiss できる。**一時的な通知 (操作直後にスッと出てスッと消える)** には `<Toast>` を使う。
+
+---
+
+## Props
+
+下表は Alert.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={AlertStories.Playground} />
+
+詳細: [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="状況に合った variant を選ぶ (色だけに頼らない)"
+  doExample={
+    <div className="flex flex-col gap-2 w-80">
+      <Alert variant="error" title="保存に失敗しました">通信エラーが発生しました。再度お試しください。</Alert>
+      <Alert variant="success" title="保存しました">変更内容を保存しました。</Alert>
+    </div>
+  }
+  doCaption="状況に対応した variant (success/error) を選び、アイコン + タイトル + 本文で意味を二重に伝える。"
+  dontExample={
+    <div className="flex flex-col gap-2 w-80">
+      <Alert variant="error">保存しました</Alert>
+      <Alert variant="success">保存に失敗しました</Alert>
+    </div>
+  }
+  dontCaption="エラー色 (赤) で「保存しました」、success 色 (緑) で「失敗しました」のように、色とメッセージの意味が逆だと色覚特性のあるユーザーや見出し読み利用者を混乱させる。"
+/>
+
+<DoDontExample
+  label="タイトルは短く要点、本文で詳細"
+  doExample={
+    <Alert variant="warning" title="メールアドレスが未確認" >
+      アカウントのすべての機能を使うにはメールアドレスの確認が必要です。
+    </Alert>
+  }
+  doCaption="タイトルで「何が起きたか」を一目で、本文で「だから何をすればいいか」を説明。"
+  dontExample={
+    <Alert variant="warning" title="あなたのアカウントのメールアドレスが未確認状態であるためすべての機能を使うことができません">
+      確認してください。
+    </Alert>
+  }
+  dontCaption="タイトルに 1 文丸ごと書くと SR が長く読み上げて意味が取りにくく、視覚的にも詰まる。タイトルは 〜15 文字目安。"
+/>
+
+<DoDontExample
+  label="永続的情報は Alert、一時的通知は Toast"
+  doExample={
+    <Alert variant="info" title="プライバシーポリシー更新">
+      2026 年 1 月 1 日から新しい規約が適用されます。<Link href="#" underline="always">詳細</Link>
+    </Alert>
+  }
+  doCaption="ユーザーが読まないと困る恒久的な告知 / 入力エラー / システム状態のように「画面を離れるまで残しておきたい情報」は Alert で。"
+  dontExample={
+    <Alert variant="success">保存しました</Alert>
+  }
+  dontCaption="操作直後の「保存しました」のような一時的フィードバックを Alert にすると、永続表示されて画面のノイズになる。Toast を使うのが正解。"
+/>
+
+<DoDontExample
+  label="閉じるボタンは「閉じても支障がない」ケースだけ"
+  doExample={
+    <Alert variant="info" title="新機能のご案内" onClose={() => {}}>
+      ダッシュボードに新機能が追加されました。
+    </Alert>
+  }
+  doCaption="お知らせ / ヒント / 補足情報のような、ユーザーが消しても業務に支障がない情報は dismissible に。"
+  dontExample={
+    <Alert variant="error" title="フォーム入力エラー" onClose={() => {}}>
+      パスワードが正しくありません。
+    </Alert>
+  }
+  dontCaption="入力エラーのように修正が必要な情報を dismissible にすると、閉じた後にユーザーが何をすべきか分からなくなる。エラーは閉じるボタンなしで表示し、修正されたら自動で消す。"
+/>
+
+<DoDontExample
+  label="本文の長さは情報密度に合わせる、装飾的なアイコンの代わりに hideIcon"
+  doExample={
+    <Alert variant="neutral" hideIcon>
+      過去 30 日間のレポートを生成中です。完了次第メールでお知らせします。
+    </Alert>
+  }
+  doCaption="装飾的なアイコンが情報を伴わない場合は `hideIcon` で外し、テキスト中心の落ち着いた表示に。"
+  dontExample={
+    <Alert variant="info">
+      過去 30 日間のレポートを生成中です。完了次第メールでお知らせします。
+    </Alert>
+  }
+  dontCaption="情報伝達に必要のないアイコンを残すと、視線の引き寄せに反して内容が一段下に押し下がり、密度が落ちる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+「これは Alert じゃないかも?」と迷ったときは下の表で目的に合うコンポーネントを探す:
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **操作直後の一時的フィードバック** (「保存しました」等、数秒で消える) | `<Toast>` | 自動消失・通知スタック対応、画面を占有しない |
+| **モーダルな確認ダイアログ** ("削除します。よろしいですか?") | `<Modal>` | フォーカストラップ + 操作の確定/取消ボタン付き |
+| **ステータスを 1 単語で示す** ("完了" バッジ等) | `<Badge>` | コンパクトなラベル、文章ではない |
+| **空状態のメッセージ** (検索結果ゼロ件等) | `<EmptyState>` | 大きめの説明 + アクションへの誘導に最適化 |
+
+---
+
+## アクセシビリティ
+
+- **`role="alert"`**: コンテナに自動付与され、SR が即座に内容を読み上げる (live region)。`error` variant は特にこの挙動が重要
+- **アイコンの装飾性**: アイコンはテキストの補強であり、SR には読まれないよう `Icon` 内部で `aria-hidden` 相当の処理。テキストで意味を伝えることが前提 (WCAG 1.4.1)
+- **コントラスト**: variant ごとの背景 (`surface.X-muted`) と文字 (`onSurface.X`) の組み合わせで WCAG AA を満たす設計
+- **閉じるボタン**:
+  - `aria-label="閉じる"` を必ず付与 (icon-only の SR 文言)
+  - フォーカスリングは `focus-visible:ring-focus` + `ring-current` で variant 色に追従
+  - `Tab` でフォーカス、`Enter` / `Space` で発火 (button 標準挙動)
+- **キーボード操作**: `Tab` で閉じるボタンと内部 Link / Button にフォーカスが移動。Alert 自体は focusable ではない
+
+関連: [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — variant ごとの先頭アイコン (`check_circle` / `error` / `warning` / `info`) と閉じるボタンの `close` アイコン

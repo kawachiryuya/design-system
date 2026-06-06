@@ -19,6 +19,7 @@
 
 ### ⚠ BREAKING CHANGES (in Unreleased)
 
+- **Composites/Alert の Storybook story id 変更** (silent break、Phase 2 移行第 1 弾): 7 story (`default` / `with-title` / `all-variants` / `dismissible` / `without-icon` / `with-action` / `form-errors`) を標準 4 節 (`playground` / `variants` / `states` / `edge-cases`) に集約。旧 URL は壊れる。`.md` ファイルは `.guideline.mdx` に統合し削除 (§7-6 準拠)。`tags: ['autodocs']` を削除し `<Meta of={...} name="Guideline" />` 経由で Docs を兼ねる構造に。
 - **Tokens/Typography/Semantic の Storybook story id 変更** (silent break): 3 story (`headings` / `body` / `label-and-caption`) を 1 つの `catalog` に統合し、`?path=/story/tokens-typography-semantic--{headings,body,label-and-caption}` の旧 URL は壊れる。新 URL は `?path=/story/tokens-typography-semantic--catalog`。理由: heading / body / label / caption は同じ semantic typography 軸内の役割で、別軸ではないため AGENTS.md §3-6 (軸 1 つ = 1 story) に整合。
 
 ### Changed (in Unreleased)

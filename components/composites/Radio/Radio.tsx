@@ -6,6 +6,16 @@ import { FormMessage } from '../../_internal/FormMessage';
 export type RadioSize = 'sm' | 'md' | 'lg';
 
 /**
+ * RadioGroup → Radio へ error 状態を伝播する Context。
+ * Group の `error` が true のとき、配下の全 Radio が自動で error スタイル / `aria-invalid` を持つ。
+ * 個別 Radio が独自に `error` prop を渡せばそちらが優先される。
+ */
+interface RadioGroupContextValue {
+  error: boolean;
+}
+const RadioGroupContext = React.createContext<RadioGroupContextValue>({ error: false });
+
+/**
  * Radio Props
  *
  * 単独では使わず RadioGroup と組み合わせる。`name` 属性が同じ Radio 同士で 1 つを選択。
@@ -18,7 +28,7 @@ export type RadioSize = 'sm' | 'md' | 'lg';
  *   </RadioGroup>
  *
  * @example
- *   // 説明付き
+ *   // 説明付き（description は SR にも aria-describedby で伝わる）
  *   <Radio
  *     name="plan"
  *     value="pro"
@@ -31,7 +41,7 @@ export type RadioSize = 'sm' | 'md' | 'lg';
  *   <Radio name="size" value="lg" label="L サイズ" size="lg" />
  *
  * @example
- *   // エラー状態（バリデーションエラー時、通常 RadioGroup の error と連動）
+ *   // 個別 error (通常は RadioGroup の error と連動。個別指定すれば優先)
  *   <Radio name="agree" value="yes" label="同意する" error />
  *
  * @see principles/Patterns/forms.mdx
@@ -44,10 +54,11 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   size?: RadioSize;
   /** ラベルテキスト。未指定時はラジオボタンのみ表示。 */
   label?: string;
-  /** ラベルの補足テキスト（より小さく、ミュート色）。プラン詳細等。 */
+  /** ラベルの補足テキスト（caption サイズ、SR には `aria-describedby` で伝わる）。プラン詳細等。 */
   description?: string;
   /**
-   * エラー状態。通常 RadioGroup の error と連動して使う。
+   * エラー状態。通常 RadioGroup の `error` から Context で自動伝播するため明示は不要。
+   * 個別に渡せば Group より優先される。
    * @default false
    */
   error?: boolean;
@@ -58,9 +69,7 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
  *
  * Radio をグルーピングし、`<fieldset>` + `<legend>` でラップ。
  * a11y: グループとして読み上げ、選択肢の意味付けが明確になる。
- *
- * **Note**: フォームでは `error` が動的 boolean になることが多いため緩い型にしている
- * （CheckboxGroup と同じ判断）。
+ * `error` は Context で配下の全 Radio に自動伝播 (個別 Radio で上書き可)。
  *
  * @example
  *   // 基本（縦並び）
@@ -78,7 +87,7 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
  *   </RadioGroup>
  *
  * @example
- *   // 動的エラー
+ *   // 動的エラー (error が全 Radio に伝播)
  *   <RadioGroup
  *     legend="プラン"
  *     required
@@ -95,16 +104,16 @@ export interface RadioGroupProps {
   /** Radio の選択肢（複数の `<Radio>` を入れる、`name` 属性は揃える）。 */
   children: React.ReactNode;
   /**
-   * エラー状態。動的 boolean OK。
+   * エラー状態。動的 boolean OK。`true` で配下の全 Radio に Context 経由で伝播。
    * @default false
    */
   error?: boolean;
-  /** エラーメッセージ。`error: true` 時に表示。 */
+  /** エラーメッセージ。`error: true` 時に表示、`aria-describedby` で fieldset に関連付け。 */
   errorMessage?: string;
-  /** ヘルプテキスト。エラー時は非表示。 */
+  /** ヘルプテキスト。エラー時は非表示。`aria-describedby` で fieldset に関連付け。 */
   helpText?: string;
   /**
-   * 必須グループ。`legend` 末尾に `*` 表示。
+   * 必須グループ。`legend` 末尾に `*` (`aria-label="必須"` 付き) 表示。
    * @default false
    */
   required?: boolean;
@@ -127,15 +136,21 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       size = 'md',
       label,
       description,
-      error = false,
+      error: errorProp,
       disabled,
       id,
       className = '',
+      'aria-describedby': ariaDescribedByProp,
       ...props
     },
     ref
   ) => {
-    const inputId = id || (label ? `radio-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
+    const ctx = React.useContext(RadioGroupContext);
+    const error = errorProp ?? ctx.error;
+
+    const reactId = React.useId();
+    const inputId = id || `radio-${reactId}`;
+    const descId = description ? `${inputId}-desc` : undefined;
 
     const sizePx = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
 
@@ -160,6 +175,11 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       .filter(Boolean)
       .join(' ');
 
+    // aria-describedby に description id と利用者指定 id を結合
+    const ariaDescribedBy = [descId, ariaDescribedByProp]
+      .filter(Boolean)
+      .join(' ') || undefined;
+
     return (
       <div className={`flex items-start gap-2 ${className}`}>
         <input
@@ -168,6 +188,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
           id={inputId}
           disabled={disabled}
           aria-invalid={error || undefined}
+          aria-describedby={ariaDescribedBy}
           className={inputClasses}
           {...props}
         />
@@ -183,7 +204,9 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
               </Label>
             )}
             {description && (
-              <span className="text-xs text-onSurface-muted leading-normal">{description}</span>
+              <span id={descId} className="text-caption text-onSurface-soft">
+                {description}
+              </span>
             )}
           </div>
         )}
@@ -209,27 +232,33 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   inline = false,
   className = '',
 }) => {
-  const errorId = `radiogroup-${legend.replace(/\s+/g, '-').toLowerCase()}-error`;
-  const helpId = `radiogroup-${legend.replace(/\s+/g, '-').toLowerCase()}-help`;
+  const reactId = React.useId();
+  const errorId = `radiogroup-${reactId}-error`;
+  const helpId = `radiogroup-${reactId}-help`;
+
+  const describedBy = [
+    error && errorMessage ? errorId : null,
+    !error && helpText ? helpId : null,
+  ]
+    .filter(Boolean)
+    .join(' ') || undefined;
 
   return (
     <fieldset
       className={`border-0 p-0 m-0 ${className}`}
-      aria-describedby={
-        [error && errorMessage ? errorId : null, !error && helpText ? helpId : null]
-          .filter(Boolean)
-          .join(' ') || undefined
-      }
+      aria-describedby={describedBy}
     >
-      <legend className="text-sm font-medium text-onSurface mb-2">
+      <legend className="text-label text-onSurface mb-2">
         {legend}
         {required && (
           <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
         )}
       </legend>
-      <div className={inline ? 'flex flex-wrap gap-4' : 'flex flex-col gap-2'}>
-        {children}
-      </div>
+      <RadioGroupContext.Provider value={{ error }}>
+        <div className={inline ? 'flex flex-wrap gap-4' : 'flex flex-col gap-3'}>
+          {children}
+        </div>
+      </RadioGroupContext.Provider>
       <div className="mt-1">
         <FormMessage
           helpText={helpText}

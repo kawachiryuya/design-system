@@ -146,7 +146,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controlled (state 同期) / 多数の選択肢 (5+ で縦並びがベター) / 動的エラー (送信後にエラー表示).',
+        story: 'Controlled (state 同期) / 多数の選択肢 / 動的 error 伝播 (Group→子 Radio 自動) / Layout token を使ったフォーム配置例.',
       },
     },
   },
@@ -176,10 +176,70 @@ export const EdgeCases: Story = {
         </RadioGroup>
       );
     }
+    function ErrorPropagationDemo() {
+      const [selected, setSelected] = useState('');
+      const [submitted, setSubmitted] = useState(false);
+      const hasError = submitted && !selected;
+      return (
+        <div className="space-y-3">
+          <RadioGroup
+            legend="プラン"
+            required
+            error={hasError}
+            errorMessage="プランを選択してください"
+          >
+            {['free', 'pro'].map((v) => (
+              <Radio key={v} name="plan-err" value={v}
+                label={v === 'free' ? 'Free' : 'Pro'}
+                checked={selected === v}
+                onChange={(e) => setSelected(e.target.value)} />
+            ))}
+          </RadioGroup>
+          <button type="button" onClick={() => setSubmitted(true)}
+            className="px-4 py-2 bg-surface-primary text-onSurface-inverse rounded-md text-sm">
+            送信
+          </button>
+          <p className="text-xs text-onSurface-muted">
+            ↑ 未選択で送信すると Group の error が Context で全 Radio に伝播し、赤枠 + errorMessage 表示
+          </p>
+        </div>
+      );
+    }
+    function LayoutFormDemo() {
+      const [pay, setPay] = useState('card');
+      const [ship, setShip] = useState('standard');
+      return (
+        <form className="px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+          <div className="space-y-section-sm">
+            <h3 className="text-heading-sm text-onSurface m-0">注文フォーム</h3>
+            <RadioGroup legend="お支払い方法" required>
+              <Radio name="lay-pay" value="card" label="クレジットカード"
+                description="Visa / Mastercard / AMEX"
+                checked={pay === 'card'} onChange={(e) => setPay(e.target.value)} />
+              <Radio name="lay-pay" value="bank" label="銀行振込"
+                description="振込確認後にサービス有効化"
+                checked={pay === 'bank'} onChange={(e) => setPay(e.target.value)} />
+            </RadioGroup>
+            <RadioGroup legend="配送方法" required>
+              <Radio name="lay-ship" value="standard" label="標準配送 (3〜5 日)"
+                checked={ship === 'standard'} onChange={(e) => setShip(e.target.value)} />
+              <Radio name="lay-ship" value="express" label="速達 (翌日)"
+                checked={ship === 'express'} onChange={(e) => setShip(e.target.value)} />
+            </RadioGroup>
+          </div>
+        </form>
+      );
+    }
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         <Caption text="Controlled (外部 state 同期)"><ControlledDemo /></Caption>
         <Caption text="多数の選択肢 (5+ で縦並びがベター、6+ なら Select 検討)"><ManyDemo /></Caption>
+        <Caption text="Error 伝播 (RadioGroup の error が Context で全子 Radio に自動伝播)">
+          <ErrorPropagationDemo />
+        </Caption>
+        <Caption text="Layout token 適用 (px-container / space-y-section-sm でフォーム frame)">
+          <LayoutFormDemo />
+        </Caption>
       </div>
     );
   },

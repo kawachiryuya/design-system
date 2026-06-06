@@ -185,7 +185,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               {label}
             </Label>
             {showCounter && (
-              <span className={`text-xs ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-muted'}`}>
+              <span className={`text-caption ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-muted'}`}>
                 {currentLength ?? 0}/{maxLength}
               </span>
             )}

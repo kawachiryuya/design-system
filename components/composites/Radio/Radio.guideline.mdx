@@ -62,9 +62,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <RadioGroup legend="お支払い方法">
       <Radio name="p-dont" value="card" label="クレジットカード (Visa / Mastercard / AMEX 対応、即時利用可能)" defaultChecked />
+      <Radio name="p-dont" value="bank" label="銀行振込 (振込確認後にサービス有効化、1〜3 営業日かかります)" />
     </RadioGroup>
   }
-  dontCaption="ラベルに全部詰め込むと視覚的に詰まり、SR で長文ラベルが一気読みされて理解しにくい。"
+  dontCaption="ラベルに全部詰め込むと視覚的に詰まり、SR で長文ラベルが一気読みされて理解しにくい。Do と Don't を 2 選択肢で揃えて比較できる。"
 />
 
 <DoDontExample
@@ -90,21 +91,21 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 />
 
 <DoDontExample
-  label="エラー時は RadioGroup の error + errorMessage で明示"
+  label="エラーは RadioGroup の error + errorMessage で (個別 Radio への伝播は自動)"
   doExample={
     <RadioGroup legend="配送方法" required error errorMessage="配送方法を選択してください">
       <Radio name="e-do" value="s" label="標準配送" />
       <Radio name="e-do" value="e" label="速達" />
     </RadioGroup>
   }
-  doCaption="グループ単位でエラー扱い。`errorMessage` が型レベルで必須、`aria-invalid` で SR にも伝わる。"
+  doCaption="グループ単位で `error` + `errorMessage` を渡す。`error` は Context で配下の全 Radio に自動伝播し、赤枠表示も errorMessage 表示も両立する。"
   dontExample={
     <RadioGroup legend="配送方法" required>
       <Radio name="e-dont" value="s" label="標準配送" error />
       <Radio name="e-dont" value="e" label="速達" error />
     </RadioGroup>
   }
-  dontCaption="個別 Radio に error を付けて「グループとして未選択エラー」を表現すると、ユーザーがどの選択肢に問題があるか誤解する。"
+  dontCaption="個別 Radio に毎回 `error` を付けるのは冗長 (Group の error が自動伝播するので不要)。さらに errorMessage が表示されず、ユーザーは「何が間違っているか」を知ることができない。"
 />
 
 ### 別コンポーネントの方が適切な場面

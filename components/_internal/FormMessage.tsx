@@ -28,12 +28,12 @@ export const FormMessage: React.FC<FormMessageProps> = ({
 }) => (
   <>
     {error && errorMessage && (
-      <p id={errorId} className="text-sm text-onSurface-error" role="alert">
+      <p id={errorId} className="text-body-sm text-onSurface-error" role="alert">
         {errorMessage}
       </p>
     )}
     {!error && helpText && (
-      <p id={helpId} className="text-sm text-onSurface-muted">
+      <p id={helpId} className="text-body-sm text-onSurface-muted">
         {helpText}
       </p>
     )}

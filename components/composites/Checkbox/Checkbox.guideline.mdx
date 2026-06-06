@@ -96,7 +96,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       <Checkbox label="利用規約とプライバシーポリシーに同意する" />
     </CheckboxGroup>
   }
-  doCaption="グループ単位でエラー扱い。errorMessage が型レベルで必須、aria-invalid + role='alert' で SR にも伝わる。"
+  doCaption="グループ単位で `error` + `errorMessage` を渡す。`error` は Context で配下の全 Checkbox に自動伝播 (個別指定不要)、aria-invalid + role='alert' で SR にも伝わる。"
   dontExample={
     <Checkbox label="利用規約に同意する" required />
   }

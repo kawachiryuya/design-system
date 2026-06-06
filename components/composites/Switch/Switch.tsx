@@ -170,7 +170,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           </Label>
         )}
         {description && (
-          <span className="text-xs text-onSurface-muted leading-normal">{description}</span>
+          <span className="text-caption text-onSurface-soft">{description}</span>
         )}
       </div>
     );

@@ -122,7 +122,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
 
         {/* 任意マーク。`text-onSurface-muted` で AA 4.5:1 (4.69:1) を確保 */}
         {optional && !required && (
-          <span className="text-onSurface-muted font-normal text-xs">
+          <span className="text-onSurface-muted font-normal text-caption">
             （任意）
           </span>
         )}

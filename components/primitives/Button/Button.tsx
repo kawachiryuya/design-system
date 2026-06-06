@@ -142,7 +142,6 @@ const buttonVariants = tv({
     'focus:outline-none',
     'focus-visible:ring-focus',
     'focus-visible:ring-offset-focus',
-    'disabled:opacity-disabled',
     'disabled:cursor-not-allowed',
     'active:scale-[0.98]',
     'disabled:active:scale-100',
@@ -150,24 +149,30 @@ const buttonVariants = tv({
   variants: {
     variant: {
       // 緑背景 + 白文字 → 中性 (黒) の hover overlay
+      // disabled: 色ベース (旧 opacity-disabled では下が透けて見える問題があった)
       primary: [
         'bg-surface-primary',
         'text-onSurface-inverse',
         'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
+        'disabled:bg-surface-disabled',
+        'disabled:text-onSurface-disabled',
         'disabled:hover:shadow-none',
         'disabled:active:shadow-none',
       ],
       // 白背景 + 緑文字 → primary 色味の hover overlay
+      // border: brand-coupled outline (Badge outline-primary と統一、AGENTS.md §3-1 準拠)
       secondary: [
         'bg-surface',
         'text-onSurface-primary',
         'border',
-        'border-teal-600',
+        'border-border-focus',
         'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-primary)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-primary)]',
+        'disabled:text-onSurface-disabled',
+        'disabled:border-border-default',
         'disabled:hover:shadow-none',
         'disabled:active:shadow-none',
       ],
@@ -178,6 +183,7 @@ const buttonVariants = tv({
         'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-primary)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-primary)]',
+        'disabled:text-onSurface-disabled',
         'disabled:hover:shadow-none',
         'disabled:active:shadow-none',
       ],
@@ -190,6 +196,8 @@ const buttonVariants = tv({
         'focus-visible:ring-border-error',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-error)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-error)]',
+        'disabled:text-onSurface-disabled',
+        'disabled:border-border-default',
         'disabled:hover:shadow-none',
         'disabled:active:shadow-none',
       ],

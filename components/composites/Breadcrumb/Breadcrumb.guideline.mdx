@@ -1,0 +1,117 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as BreadcrumbStories from './Breadcrumb.stories';
+import { Breadcrumb } from './Breadcrumb';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={BreadcrumbStories} name="Guideline" />
+
+# Breadcrumb
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+階層構造の現在位置を示すナビゲーション。最後の項目は **現在ページ** として `aria-current="page"` 自動付与、それ以前は親階層へのリンクとして機能する。サイト構造が深い (3 段以上) ページや、複数経路から辿れるコンテンツで「今ここ」を示すのに使う。2 段の浅い階層では省略可。
+
+---
+
+## Props
+
+<ArgTypes of={BreadcrumbStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="最後の項目は href なし (現在ページ)"
+  doExample={
+    <Breadcrumb items={[
+      { label: 'ホーム', href: '/' },
+      { label: 'ブログ', href: '/blog' },
+      { label: '記事タイトル' },
+    ]} />
+  }
+  doCaption="最後の項目は href を省略し、自動的に `aria-current=\"page\"` + 視覚的に弱め (text-onSurface-muted) になる。「今ここ」を表現する慣習。"
+  dontExample={
+    <Breadcrumb items={[
+      { label: 'ホーム', href: '/' },
+      { label: 'ブログ', href: '/blog' },
+      { label: '記事タイトル', href: '/blog/post' },
+    ]} />
+  }
+  dontCaption="最後の項目に href を付けると「現在ページに遷移する自己リンク」になり、SR で現在地が分かりにくい。"
+/>
+
+<DoDontExample
+  label="separator は文脈に合わせる (3 種)"
+  doExample={
+    <div className="flex flex-col gap-3">
+      <Breadcrumb separator="chevron" items={[{label:'ホーム',href:'/'},{label:'設定'}]} />
+      <Breadcrumb separator="slash" items={[{label:'docs',href:'/'},{label:'api'}]} />
+      <Breadcrumb separator="dot" items={[{label:'Tag',href:'/'},{label:'TS'}]} />
+    </div>
+  }
+  doCaption="chevron は標準 (視認性高) / slash は技術文書・パス風表記 / dot はミニマル UI 向け。プロジェクト全体で 1 種類に統一すると一貫性が出る。"
+  dontExample={
+    <div className="flex flex-col gap-3">
+      <Breadcrumb separator="chevron" items={[{label:'a',href:'/'},{label:'b'}]} />
+      <Breadcrumb separator="slash" items={[{label:'a',href:'/'},{label:'b'}]} />
+      <Breadcrumb separator="dot" items={[{label:'a',href:'/'},{label:'b'}]} />
+    </div>
+  }
+  dontCaption="同一ページ内で separator がばらつくと統一感が崩れる。プロジェクト初期で 1 つに決めて全体で守る。"
+/>
+
+<DoDontExample
+  label="2 段の浅い階層では使わない (省略可)"
+  doExample={
+    <div className="text-sm text-onSurface-muted">
+      (2 段の階層は h1 ページ見出しで十分。Breadcrumb は使わない)
+      <h1 className="text-heading-md text-onSurface mt-1">設定</h1>
+    </div>
+  }
+  doCaption="「ホーム > 設定」程度の浅い階層は、Header にホームリンク + ページ見出し (h1) があれば十分。Breadcrumb は画面ノイズになる。"
+  dontExample={
+    <Breadcrumb items={[
+      { label: 'ホーム', href: '/' },
+      { label: '設定' },
+    ]} />
+  }
+  dontCaption="2 段だけだと冗長で、ユーザーに新しい情報を与えない。3 段以上の深さで初めて意味が出る。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **サイト全体のメイン navigation** | (Header / Sidebar 等の Pattern 層) | Breadcrumb は補助的な「現在位置」表示で、主たる navigation ではない |
+| **タブ切替** (同階層内の表示切替) | `<Tabs>` | パンくずは縦階層、タブは横並び |
+| **戻る/進む** (履歴ベース) | (ブラウザ標準) | 履歴を辿るのは breadcrumb の役割ではない |
+| **多段ドリルダウン** (E コマースカテゴリ折り畳み) | `<Accordion>` / category tree | 動的に開閉が必要なら別 component |
+
+---
+
+## アクセシビリティ
+
+- **`<nav aria-label>`**: 外側 `<nav>` に `aria-label="パンくずリスト"` (デフォルト)。SR でランドマークとして識別される
+- **`<ol>` 構造**: 順序付きリストで階層を表現。SR は「1/4 ホーム、2/4 ブログ…」のように読み上げる
+- **`aria-current="page"`**: 最後の項目 (現在ページ) に自動付与。SR で「現在ページ」と読まれる
+- **separator は装飾**: `aria-hidden="true"` 相当の処理 (Icon / span)。SR には読まれず項目だけが伝わる
+- **link focus ring**: `focus-visible:ring-focus` でキーボード focus を明示
+- **truncate**: `max-w-[200px]` でラベルが長くても折り返さず省略。tooltip 検討余地あり (将来)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — `chevron_right` (chevron separator 用)

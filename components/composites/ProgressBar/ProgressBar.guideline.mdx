@@ -1,0 +1,122 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ProgressBarStories from './ProgressBar.stories';
+import { ProgressBar } from './ProgressBar';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={ProgressBarStories} name="Guideline" />
+
+# ProgressBar
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+進捗を表すインジケーター。`value` (現在値) / `max` (最大値) で割合を表現する **determinate モード** と、`indeterminate` で処理中だけを示す **indeterminate モード** をサポート。`role="progressbar"` + `aria-valuenow/min/max` を自動付与し、SR にも進捗が伝わる。アップロード進捗・ステップ表示・残り容量等に。
+
+---
+
+## Props
+
+<ArgTypes of={ProgressBarStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="進捗が分かるなら determinate、不明なら indeterminate"
+  doExample={
+    <div className="w-80 space-y-3">
+      <ProgressBar value={40} label="ファイル送信中" showValue />
+      <ProgressBar indeterminate label="サーバー応答待ち" />
+    </div>
+  }
+  doCaption="アップロードのように進捗 % が取れるなら determinate、サーバー処理待ちのように不明なら indeterminate。ユーザーは「いつ終わるか分かる/分からない」を明確に理解できる。"
+  dontExample={
+    <div className="w-80 space-y-3">
+      <ProgressBar indeterminate label="ファイル送信中" />
+    </div>
+  }
+  dontCaption="進捗 % が取れる処理を indeterminate にすると、ユーザーが残り時間を見積もれず不安になる。"
+/>
+
+<DoDontExample
+  label="完了したら color を success に切り替える"
+  doExample={
+    <div className="w-80 space-y-3">
+      <ProgressBar value={100} color="success" label="アップロード完了" showValue />
+    </div>
+  }
+  doCaption="100% に到達したら primary → success に切り替えると、完了を視覚的にも色情報でも伝えられる。"
+  dontExample={
+    <div className="w-80 space-y-3">
+      <ProgressBar value={100} color="primary" label="アップロード完了" showValue />
+    </div>
+  }
+  dontCaption="完了しても primary のままだと「100% だが完了したのか?」が一瞬迷いやすい。完了状態は明示する。"
+/>
+
+<DoDontExample
+  label="エラー / 警告は color で明示"
+  doExample={
+    <div className="w-80 space-y-3">
+      <ProgressBar value={75} color="error" label="送信失敗 (75% 完了時にエラー)" showValue />
+      <ProgressBar value={85} color="warning" label="ストレージ容量 (85%)" showValue />
+    </div>
+  }
+  doCaption="error は処理失敗、warning は容量等の閾値超え。色だけでなくラベルでも状態を補強する。"
+  dontExample={
+    <ProgressBar value={75} color="primary" label="送信失敗" showValue />
+  }
+  dontCaption="エラーなのに primary 色だと色覚特性に依存しなくても誤読される。color で意味を出す。"
+/>
+
+<DoDontExample
+  label="size は表示密度に合わせる"
+  doExample={
+    <div className="w-80 space-y-3">
+      <ProgressBar value={60} size="sm" label="dense UI (ステップ進捗バー等)" />
+      <ProgressBar value={60} size="md" label="標準 (ファイルアップロード)" />
+      <ProgressBar value={60} size="lg" label="強調 (空き容量等の主要 KPI)" />
+    </div>
+  }
+  doCaption="sm は dense UI で控えめに、md は標準、lg はダッシュボード等で目立たせたいときに。`md = default` 規約 (bare 形 = md)。"
+  dontExample={
+    <ProgressBar value={60} size="lg" label="フォーム途中の小さな進捗" />
+  }
+  dontCaption="dense UI に lg を使うと存在感が強すぎて他の要素を圧迫する。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **ステータスを 1 つの単語で** ("送信中" 等) | `<Badge>` / `<Spinner>` | 数値の進捗ではなく状態の表示 |
+| **進捗が秒以下で終わる** (ボタン送信中等) | `<Spinner>` / Button loading 状態 | バー表示する前に終わる |
+| **数値そのもの** (¥3,000 / ¥5,000 等の金額) | (テキスト + Typography) | バーは比率を見せる用途、絶対値は数値で |
+
+---
+
+## アクセシビリティ
+
+- **`role="progressbar"`**: 自動付与、SR が「プログレスバー」として認識
+- **`aria-valuenow` / `aria-valuemin` / `aria-valuemax`**: 数値情報を SR に伝達。indeterminate 時は `aria-valuenow` を出さない
+- **`aria-label`**: `label` prop の値、無ければ `${percentage}%` か「処理中」(indeterminate)
+- **`aria-busy="true"`**: indeterminate モードのとき自動付与、SR が「処理中」と読み上げる
+- **色だけに頼らない**: status (error / warning) は label テキストでも明示
+- **不確定の長時間表示は避ける**: SR / 認知特性によっては indeterminate アニメーションが負担。数十秒以上かかる場合は polling で determinate に切り替える検討
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし (ProgressBar は他のコンポーネントを import しない)。

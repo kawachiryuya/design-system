@@ -41,7 +41,7 @@ const badgeVariants = tv({
   },
   compoundVariants: [
     // solid: 塗りつぶし背景 + 反転テキスト
-    { appearance: 'solid', variant: 'neutral', class: 'bg-neutral-700 text-onSurface-inverse' },
+    { appearance: 'solid', variant: 'neutral', class: 'bg-surface-neutral-strong text-onSurface-inverse' },
     { appearance: 'solid', variant: 'primary', class: 'bg-surface-primary text-onSurface-inverse' },
     { appearance: 'solid', variant: 'success', class: 'bg-surface-success text-onSurface-inverse' },
     { appearance: 'solid', variant: 'error',   class: 'bg-surface-error text-onSurface-inverse' },
@@ -76,7 +76,7 @@ const badgeVariants = tv({
  * このマップは soft / outline 用 (variant 色そのまま) のみ。
  */
 const dotColorMap: Record<BadgeVariant, string> = {
-  neutral: 'bg-neutral-500',
+  neutral: 'bg-surface-neutral',
   primary: 'bg-surface-primary',
   success: 'bg-surface-success',
   error: 'bg-surface-error',

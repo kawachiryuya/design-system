@@ -97,6 +97,11 @@
         "value": "{color.neutral.400}",
         "type": "color",
         "description": "Status 軸の中性 (success/error/warning と並列、offline / off などの状態 marker)。中間グレーで visible、inset の薄グレーとは設計目的が違う"
+      },
+      "neutral-strong": {
+        "value": "{color.neutral.700}",
+        "type": "color",
+        "description": "強い中性塗り (Badge solid neutral / Chip 等の主張ある neutral fill)。surface.neutral (status marker 用、薄め) と用途分離"
       }
     },
     "on": {

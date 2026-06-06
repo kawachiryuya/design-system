@@ -8,6 +8,7 @@
 
 ### Added (in Unreleased)
 
+- **新規 semantic token `surface.neutral-strong`** (`{color.neutral.700}`): Badge solid neutral / Chip 等の主張ある neutral fill 用途。`surface.neutral` (status marker 用、薄め) と用途分離。Tailwind utility: `bg-surface-neutral-strong`。
 - **新規 token category `Layout` を追加** (multi-product hub での layout frame 統一管理向け): `tokens/source/layout.json` を新設し、page-level layout frame 専用の semantic token を導入:
   - `layout.container.padding-x/-y.{mobile,tablet,desktop}` — 大外コンテナ padding (breakpoint 内蔵 utility `px-container` / `py-container`)
   - `layout.container.max-width.{narrow,default,wide,full}` — `max-w-container[-narrow|-wide|-full]` の 4 variant
@@ -22,6 +23,7 @@
 
 ### Changed (in Unreleased)
 
+- **Alert / Toast / Badge を semantic 化** (AGENTS.md §3-1 違反の解消): primitive 直参照 (`text-green-500` / `bg-neutral-700` 等) を semantic token (`text-onSurface-success` / `bg-surface-neutral-strong` 等) に置換。下流 product の brand override が効くようになる。視覚的にはアイコン色が若干濃く (e.g. green.500→700)、Alert 閉じるボタンの hover は role tint から neutral overlay (bg-state-hover) に統一。
 - **AGENTS.md §3-6 に Token Catalog Story / Guideline の規約を新設**: `components/tokens/` 配下の token カタログ専用構造を明文化。flat catalog (subsection 禁止) / Catalog を Guideline から分離 (Story 埋め込み禁止 → link list) / 標準セクション (概要 / カタログ / 設計方針 / 迷ったらこれ / 関連) を固定。Animation / Shadows / FocusRing / Typography / Typography-Semantic 等の既存 Guideline を順次適用。
 - **AGENTS.md §3-4-3 に Container ペアパターン規約を新設** (軸 2、構造変更なし): Material 3 流の Container ペア (role / on-role / role-container / on-role-container) を本リポ命名で実現する規約を明文化。実態は既に揃っており命名 (`-muted` / `secondary`) を本リポ semantic 規約として確定:
   - Brand: `surface.primary` + `on.inverse` + `surface.secondary` + `on.primary` (ペア揃)

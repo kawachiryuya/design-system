@@ -143,7 +143,8 @@ module.exports = {
           'info-muted':    'var(--color-surface-info-muted)',
           disabled:  'var(--color-surface-disabled)',
           skeleton:  'var(--color-surface-skeleton)',
-          neutral:   'var(--color-surface-neutral)',
+          neutral:        'var(--color-surface-neutral)',
+          'neutral-strong': 'var(--color-surface-neutral-strong)',
         },
         state: {
           // State layer (Material 3 流): 中性 overlay (汎用) + brand/error tinted overlay (白系背景用)

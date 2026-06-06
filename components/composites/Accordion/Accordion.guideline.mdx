@@ -1,0 +1,133 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as AccordionStories from './Accordion.stories';
+import { Accordion } from './Accordion';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={AccordionStories} name="Guideline" />
+
+# Accordion
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+折りたたみ式のリスト UI。FAQ・補足説明・設定セクション等、**最初は全てを見せず、必要な項目だけ開いて読ませたい** 場面に使う。`type="single"` は 1 つだけ開く (FAQ 等)、`type="multiple"` は複数同時に開ける (設定セクション等)。controlled / uncontrolled の両方をサポートし、URL クエリ等との同期も可能。
+
+---
+
+## Props
+
+<ArgTypes of={AccordionStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="FAQ は `type=\"single\"` で 1 つに集中させる"
+  doExample={
+    <Accordion items={[
+      { id: 'q1', title: '質問 1', content: '回答 1' },
+      { id: 'q2', title: '質問 2', content: '回答 2' },
+    ]} />
+  }
+  doCaption="FAQ では「1 つ開いたら他は閉じる」が読み手の集中を維持しやすい。type のデフォルト single はこの用途。"
+  dontExample={
+    <Accordion type="multiple" defaultOpenIds={['q1','q2']} items={[
+      { id: 'q1', title: '質問 1', content: '回答 1' },
+      { id: 'q2', title: '質問 2', content: '回答 2' },
+    ]} />
+  }
+  dontCaption="FAQ で複数開けると、回答が縦に積み重なってスクロールが必要になり、読み手の文脈が散らかる。"
+/>
+
+<DoDontExample
+  label="設定セクションは `type=\"multiple\"` で全体を見渡せるように"
+  doExample={
+    <Accordion type="multiple" defaultOpenIds={['a','b','c']} items={[
+      { id: 'a', title: 'プロフィール', content: '名前・写真等' },
+      { id: 'b', title: '通知', content: 'メール・プッシュ等' },
+      { id: 'c', title: 'セキュリティ', content: 'パスワード・2FA 等' },
+    ]} />
+  }
+  doCaption="設定画面では「複数を同時に開いて比較・確認する」操作が自然なので multiple が適切。"
+  dontExample={
+    <Accordion items={[
+      { id: 'a', title: 'プロフィール', content: '名前・写真等' },
+      { id: 'b', title: '通知', content: 'メール・プッシュ等' },
+      { id: 'c', title: 'セキュリティ', content: 'パスワード・2FA 等' },
+    ]} />
+  }
+  dontCaption="single にすると 1 つ開くたびに他が閉じてしまい、横並び比較ができない。設定 UI には不向き。"
+/>
+
+<DoDontExample
+  label="2〜3 項目しかないなら Accordion を使わない"
+  doExample={
+    <div className="text-sm">
+      <h3 className="text-heading-sm text-onSurface mb-2">配送について</h3>
+      <p className="text-onSurface-muted leading-relaxed">標準で平日 1〜3 日でお届けします。詳細は配送ページをご覧ください。</p>
+    </div>
+  }
+  doCaption="項目が少ない (1〜3 個) 場合は折りたたみ自体が余計な操作になる。h2/h3 + 段落で素直に並べたほうが読みやすい。"
+  dontExample={
+    <Accordion items={[
+      { id: 'a', title: '配送について', content: '平日 1〜3 日でお届け' },
+      { id: 'b', title: 'お問い合わせ', content: 'support@example.com' },
+    ]} />
+  }
+  dontCaption="2 項目だけだと折りたたむ理由がなく、ユーザーが余計に 2 クリックする手間が増える。"
+/>
+
+<DoDontExample
+  label="disabled は item.disabled で個別指定 (理由を周囲で示す)"
+  doExample={
+    <Accordion items={[
+      { id: 'a', title: '通常項目', content: '開閉可' },
+      { id: 'b', title: 'プレミアム会員限定 (アップグレード必要)', content: '見れない', disabled: true },
+    ]} />
+  }
+  doCaption="disabled にする項目のラベル自体に「なぜ無効か」を入れる (プレミアム限定 / 後日公開等)。"
+  dontExample={
+    <Accordion items={[
+      { id: 'a', title: '通常項目', content: '開閉可' },
+      { id: 'b', title: '項目', content: '見れない', disabled: true },
+    ]} />
+  }
+  dontCaption="ラベルが「項目」だけで disabled だと、なぜクリックできないのかが分からない。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **同階層の切替表示** (タブ的) | `<Tabs>` | 横並び固定の表示切替に最適化 |
+| **複雑な階層構造ナビ** | (Sidebar / Tree pattern) | Accordion は単純な開閉、ネスト前提ではない |
+| **常に全文表示が重要** | (Section 並べ + h2/h3) | 隠す必要がないなら平叙の段落で |
+| **「もっと見る」ボタン** (1 つの長文の続き) | (Read more pattern) | Accordion は複数項目のリスト用 |
+
+---
+
+## アクセシビリティ
+
+- **`<button aria-expanded aria-controls>`**: 各 trigger は button 要素。開閉状態を `aria-expanded` で SR に伝達
+- **`role="region" aria-labelledby`**: 展開されたコンテンツは region として、trigger が見出し相当 (`aria-labelledby` で関連付け)
+- **キーボード操作**: `Tab` で trigger 間移動、`Enter` / `Space` で開閉発火 (button 標準)
+- **`aria-disabled` + `disabled`**: 無効項目は両方付与。クリック不可で SR にも「無効」が伝わる
+- **focus ring**: 現実装は color-based、将来 `ring-focus` 統一予定
+- **タッチターゲット**: trigger は p-4 (16px padding) で十分な大きさ。WCAG 2.5.5 達成
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — `expand_more` / `expand_less` の開閉アイコン

@@ -4,152 +4,228 @@ import { Modal } from './Modal';
 import { Button } from '../../primitives/Button';
 import { Input } from '../../primitives/Input';
 import { Label } from '../../primitives/Label';
+import { Caption } from '@sb-blocks/Caption';
 
+/**
+ * Modal stories — 標準ストーリー構造に準拠
+ *
+ * 順序固定: Playground → Sizes → States → EdgeCases
+ *
+ * Modal は variant / icon prop を持たないため Variants / WithIcon は省略 (§5-3)。
+ * 開閉に state が必要なので render 関数内でローカル state を作る。
+ */
 const meta: Meta<typeof Modal> = {
   title: 'Composites/Modal',
   component: Modal,
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'ネイティブ `<dialog>` 要素ベースの Modal。focus trap / Esc キーでの close / ::backdrop オーバーレイは'
-          + ' ブラウザ標準に委ねる。compound component (`Modal.Body` / `Modal.Footer`) で構成する。',
-      },
-    },
-  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Modal>;
 
-export const Default: Story = {
+// ── 1. Playground ──────────────────────────────────────────────
+
+export const Playground: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '基本構成: title + Modal.Body + Modal.Footer。ボタンで開く → Esc / overlay クリック / × ボタンで閉じる (ネイティブ `<dialog>` の挙動)。',
+      },
+    },
+  },
   render: () => {
-    const [open, setOpen] = React.useState(false);
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>モーダルを開く</Button>
-        <Modal open={open} onClose={() => setOpen(false)} title="変更を保存しますか？">
-          <Modal.Body>未保存の編集内容があります。閉じる前に保存しますか？</Modal.Body>
-          <Modal.Footer>
-            <Button variant="tertiary" onClick={() => setOpen(false)}>破棄</Button>
-            <Button variant="primary" onClick={() => setOpen(false)}>保存</Button>
-          </Modal.Footer>
-        </Modal>
-      </>
-    );
+    function Demo() {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>モーダルを開く</Button>
+          <Modal open={open} onClose={() => setOpen(false)} title="変更を保存しますか？">
+            <Modal.Body>未保存の編集内容があります。閉じる前に保存しますか？</Modal.Body>
+            <Modal.Footer>
+              <Button variant="tertiary" onClick={() => setOpen(false)}>破棄</Button>
+              <Button variant="primary" onClick={() => setOpen(false)}>保存</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
+    return <Demo />;
   },
 };
 
+// ── 2. Sizes ───────────────────────────────────────────────────
+
 export const Sizes: Story = {
-  name: 'サイズ別',
+  parameters: {
+    docs: {
+      description: {
+        story: 'sm (24rem、確認ダイアログ) / md (32rem、標準) / lg (42rem、フォーム) / full (90vw、大コンテンツ) の 4 段階。各ボタンで開いて比較。',
+      },
+    },
+  },
   render: () => {
-    const [size, setSize] = React.useState<null | 'sm' | 'md' | 'lg' | 'full'>(null);
+    function Demo() {
+      const [size, setSize] = React.useState<null | 'sm' | 'md' | 'lg' | 'full'>(null);
+      return (
+        <div className="flex gap-2">
+          <Button onClick={() => setSize('sm')}>sm</Button>
+          <Button onClick={() => setSize('md')}>md</Button>
+          <Button onClick={() => setSize('lg')}>lg</Button>
+          <Button onClick={() => setSize('full')}>full</Button>
+          <Modal open={size !== null} onClose={() => setSize(null)} title={`size = ${size}`} size={size ?? 'md'}>
+            <Modal.Body>
+              <p>Modal の幅は size prop で決まる。</p>
+              <p className="mt-2 text-onSurface-muted">中身が長くなれば本文だけスクロールし、ヘッダ・フッタは固定。</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={() => setSize(null)}>閉じる</Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      );
+    }
+    return <Demo />;
+  },
+};
+
+// ── 3. States ──────────────────────────────────────────────────
+
+export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'ヘッダ非表示 (hideCloseButton + 独自タイトル) / Esc/overlay 閉じ無効化 (誤操作防止) / footer justify=between (左右配置) の構成パターン。',
+      },
+    },
+  },
+  render: () => {
+    function NoHeaderDemo() {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>ヘッダ非表示で開く</Button>
+          <Modal open={open} onClose={() => setOpen(false)} hideCloseButton aria-labelledby="custom-h">
+            <Modal.Body>
+              <h2 id="custom-h" className="text-heading-lg font-bold mb-2">カスタムヘッダ</h2>
+              <p>既定のヘッダを使わず、Body に独自構造を入れる。aria-labelledby で見出しの id を渡す。</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={() => setOpen(false)}>閉じる</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
+    function DisableEscDemo() {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>Esc/overlay 無効で開く</Button>
+          <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            title="明示的な操作のみで閉じる"
+            closeOnEsc={false}
+            closeOnOverlayClick={false}
+          >
+            <Modal.Body>破壊的操作の確認など、誤操作を防ぎたい場面で Esc / overlay を無効化できる。</Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={() => setOpen(false)}>確認</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
+    function JustifyBetweenDemo() {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>footer justify=between で開く</Button>
+          <Modal open={open} onClose={() => setOpen(false)} title="アカウントを削除しますか？">
+            <Modal.Body>このアクションは取り消せません。</Modal.Body>
+            <Modal.Footer justify="between">
+              <Button variant="tertiary" onClick={() => setOpen(false)}>キャンセル</Button>
+              <Button variant="destructive" onClick={() => setOpen(false)}>削除</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
     return (
-      <div className="flex gap-2">
-        <Button onClick={() => setSize('sm')}>sm</Button>
-        <Button onClick={() => setSize('md')}>md</Button>
-        <Button onClick={() => setSize('lg')}>lg</Button>
-        <Button onClick={() => setSize('full')}>full</Button>
-        <Modal open={size !== null} onClose={() => setSize(null)} title={`size = ${size}`} size={size ?? 'md'}>
-          <Modal.Body>
-            <p>Modal の幅は size prop で決まる。</p>
-            <p className="mt-2 text-onSurface-muted">中身が長くなれば本文だけスクロールし、ヘッダ・フッタは固定。</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={() => setSize(null)}>閉じる</Button>
-          </Modal.Footer>
-        </Modal>
+      <div className="flex flex-col gap-4">
+        <Caption text="ヘッダ非表示 (hideCloseButton + 独自タイトル)"><NoHeaderDemo /></Caption>
+        <Caption text="Esc / overlay 閉じ無効化 (破壊的操作の確認)"><DisableEscDemo /></Caption>
+        <Caption text="footer justify=between (キャンセル左 / 確定右)"><JustifyBetweenDemo /></Caption>
       </div>
     );
   },
 };
 
-export const FormInside: Story = {
-  name: '実践例: フォーム',
-  render: () => {
-    const [open, setOpen] = React.useState(false);
-    const [email, setEmail] = React.useState('');
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>招待を送る</Button>
-        <Modal open={open} onClose={() => setOpen(false)} title="メンバーを招待" size="md">
-          <Modal.Body>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="invite-email">メールアドレス</Label>
-              <Input
-                id="invite-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="member@example.com"
-                autoFocus
-              />
-            </div>
-          </Modal.Body>
-          <Modal.Footer justify="between">
-            <Button variant="tertiary" onClick={() => setOpen(false)}>キャンセル</Button>
-            <Button variant="primary" onClick={() => { setOpen(false); setEmail(''); }} disabled={!email}>
-              招待を送信
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </>
-    );
-  },
-};
+// ── 4. EdgeCases ───────────────────────────────────────────────
 
-export const NoTitleNoCloseButton: Story = {
-  name: 'ヘッダ非表示 (完全カスタム本文)',
-  render: () => {
-    const [open, setOpen] = React.useState(false);
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>開く</Button>
-        <Modal
-          open={open}
-          onClose={() => setOpen(false)}
-          hideCloseButton
-          aria-labelledby="custom-h"
-        >
-          <Modal.Body>
-            <h2 id="custom-h" className="text-heading-lg font-bold mb-2">カスタムヘッダ</h2>
-            <p>
-              既定のヘッダを使わず、Body に独自構造を入れることもできる。
-              アクセシビリティのため `aria-labelledby` で見出しの id を渡す。
-            </p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={() => setOpen(false)}>閉じる</Button>
-          </Modal.Footer>
-        </Modal>
-      </>
-    );
+export const EdgeCases: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '実利用例: フォーム (Input 含む、autoFocus) と、長文本文 (Body のみスクロール、header/footer 固定).',
+      },
+    },
   },
-};
-
-export const DisableEscAndOverlay: Story = {
-  name: 'Esc/overlay クリックで閉じない',
   render: () => {
-    const [open, setOpen] = React.useState(false);
+    function FormDemo() {
+      const [open, setOpen] = React.useState(false);
+      const [email, setEmail] = React.useState('');
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>招待を送る</Button>
+          <Modal open={open} onClose={() => setOpen(false)} title="メンバーを招待" size="md">
+            <Modal.Body>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="invite-email">メールアドレス</Label>
+                <Input
+                  id="invite-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="member@example.com"
+                  autoFocus
+                />
+              </div>
+            </Modal.Body>
+            <Modal.Footer justify="between">
+              <Button variant="tertiary" onClick={() => setOpen(false)}>キャンセル</Button>
+              <Button variant="primary" onClick={() => { setOpen(false); setEmail(''); }} disabled={!email}>
+                招待を送信
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
+    function LongDemo() {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>長文 Modal を開く</Button>
+          <Modal open={open} onClose={() => setOpen(false)} title="プライバシーポリシー">
+            <Modal.Body>
+              {Array.from({ length: 12 }).map((_, i) => (
+                <p key={i} className="mb-3 leading-relaxed">
+                  {`第 ${i + 1} 条. 当社では、ユーザーから収集した個人情報を厳重に管理し、サービス品質の向上、本人確認、お問い合わせへの返信、新機能や重要なお知らせの通知のために利用します。第三者への提供は、法令に基づく場合や本人の同意を得た場合に限られます。`}
+                </p>
+              ))}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={() => setOpen(false)}>同意する</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
     return (
-      <>
-        <Button onClick={() => setOpen(true)}>開く</Button>
-        <Modal
-          open={open}
-          onClose={() => setOpen(false)}
-          title="明示的な操作のみで閉じる"
-          closeOnEsc={false}
-          closeOnOverlayClick={false}
-        >
-          <Modal.Body>
-            破壊的操作の確認など、誤操作を防ぎたい場面で Esc / overlay を無効化できる。
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={() => setOpen(false)}>確認</Button>
-          </Modal.Footer>
-        </Modal>
-      </>
+      <div className="flex flex-col gap-4">
+        <Caption text="フォーム (Input + autoFocus + disabled until valid)"><FormDemo /></Caption>
+        <Caption text="長文本文 (Body だけスクロール、header/footer 固定)"><LongDemo /></Caption>
+      </div>
     );
   },
 };

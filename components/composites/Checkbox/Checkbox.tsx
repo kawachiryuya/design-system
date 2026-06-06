@@ -183,7 +183,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 </Label>
               )}
               {description && (
-                <span id={descId} className="text-caption text-onSurface-soft">
+                <span id={descId} className="text-body-sm text-onSurface-soft">
                   {description}
                 </span>
               )}

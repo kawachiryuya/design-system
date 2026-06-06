@@ -204,7 +204,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
               </Label>
             )}
             {description && (
-              <span id={descId} className="text-caption text-onSurface-soft">
+              <span id={descId} className="text-body-sm text-onSurface-soft">
                 {description}
               </span>
             )}

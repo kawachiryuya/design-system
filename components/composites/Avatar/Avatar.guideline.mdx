@@ -1,0 +1,124 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as AvatarStories from './Avatar.stories';
+import { Avatar } from './Avatar';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={AvatarStories} name="Guideline" />
+
+# Avatar
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+ユーザーや組織を表す **小さなアイコン UI**。`src` (画像) → `name` (イニシャル) → プレースホルダーアイコン の **3 段フォールバック** を持つ。`role="img"` + `aria-label` (name + status) を自動付与し、SR にもユーザー情報が伝わる。チャット・コメント・ユーザーカード・グループ表示等で使う。
+
+---
+
+## Props
+
+<ArgTypes of={AvatarStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="name を必ず指定 (画像があっても)"
+  doExample={
+    <Avatar src="https://i.pravatar.cc/150?img=3" name="田中 太郎" />
+  }
+  doCaption="画像読み込み失敗時のフォールバックでイニシャルが出るうえ、SR では `aria-label` に name が反映される。"
+  dontExample={
+    <Avatar src="https://i.pravatar.cc/150?img=3" />
+  }
+  dontCaption="name 無しだと画像エラー時にプレースホルダーアイコン (汎用) しか出ず、誰のアバターか分からなくなる。SR でも「ユーザーアバター」としか読まれない。"
+/>
+
+<DoDontExample
+  label="個人は circle、チーム / 組織は square"
+  doExample={
+    <div className="flex gap-3 items-center">
+      <Avatar shape="circle" name="田中 太郎" size="md" />
+      <Avatar shape="square" name="チーム A" size="md" />
+    </div>
+  }
+  doCaption="circle = 個人 / square = チーム・組織 の慣習。Slack / Notion / GitHub 等の主要プロダクトと整合する。"
+  dontExample={
+    <Avatar shape="square" name="田中 太郎" size="md" />
+  }
+  dontCaption="個人を square にすると「これは個人なのか組織なのか」が一瞬迷う。慣習を尊重する。"
+/>
+
+<DoDontExample
+  label="status は意味的な状況にだけ使う"
+  doExample={
+    <div className="flex gap-4 items-center">
+      <Avatar size="md" name="田中 太郎" status="online" />
+      <span className="text-sm">チャット相手のオンライン状態</span>
+    </div>
+  }
+  doCaption="チャット・通話・コラボツールのように「ユーザーの状態」が意味を持つ context で使う。SR には `aria-label` に「(オンライン)」が追記される。"
+  dontExample={
+    <div className="flex gap-4 items-center">
+      <Avatar size="md" name="田中 太郎" status="online" />
+      <span className="text-sm">記事の執筆者 (ただの情報表示)</span>
+    </div>
+  }
+  dontCaption="ステータスが意味を持たない場面 (記事の著者表示等) で status を付けると、無関係な状態情報がノイズになる。"
+/>
+
+<DoDontExample
+  label="size は配置 context に合わせる"
+  doExample={
+    <div className="flex items-end gap-4">
+      <Avatar size="xs" name="A" />
+      <Avatar size="sm" name="B" />
+      <Avatar size="md" name="C" />
+      <Avatar size="lg" name="D" />
+      <Avatar size="xl" name="E" />
+    </div>
+  }
+  doCaption="xs: コメント横 / sm: リスト行 / md: 標準カード / lg: プロフィール側面 / xl: プロフィールヒーロー、と用途に合わせて選ぶ。"
+  dontExample={
+    <div className="text-sm flex gap-2 items-center">
+      <Avatar size="xl" name="田中" />
+      <span>コメント本文 (xl は大きすぎる)</span>
+    </div>
+  }
+  dontCaption="dense UI に xl を入れると圧迫感が強く、テキストとの視線バランスが崩れる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **状態を 1 単語で表示** ("オンライン" 等のテキスト) | `<Badge>` | Avatar は人/組織の識別、状態テキストは Badge の用途 |
+| **大きな画像 (アイキャッチ等)** | `<Image>` | Avatar は小さなアイコン、大きな画像は Image |
+| **アイコン (人ではない)** | `<Icon>` | Avatar は人/組織を表現、抽象アイコンは Icon |
+
+---
+
+## アクセシビリティ
+
+- **`role="img"` + `aria-label`**: 自動付与、SR に「ユーザー名 (status)」を読み上げる
+- **`<img alt>`**: 画像表示時の alt は `alt` prop または `name` を fallback として使用
+- **status dot は装飾**: `aria-hidden="true"` 自動付与、外側コンテナの `aria-label` に状態名を統合 (二重読み防止)
+- **イニシャルは装飾**: `aria-hidden="true"`、SR には label の name が伝わる
+- **コントラスト**: イニシャル文字 (text-onSurface-inverse) と name ハッシュベース背景色で AA 達成
+- **decorative 用途**: 純粋な装飾 (e.g. UI illustration の人物画像) なら `alt=""` で SR から外す
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — `person` アイコン (src / name 両方なし時のプレースホルダー)

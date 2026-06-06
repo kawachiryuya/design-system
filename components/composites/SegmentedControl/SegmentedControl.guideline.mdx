@@ -1,0 +1,198 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import * as SegmentedControlStories from './SegmentedControl.stories';
+import { SegmentedControl } from './SegmentedControl';
+import { Icon } from '../../primitives/Icon';
+import { useState } from 'react';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={SegmentedControlStories} name="Guideline" />
+
+# SegmentedControl
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+排他的な選択肢を **横並びで常に全て表示** する UI (iOS の Segmented Control 風)。フィルター切替・表示モード切替 (リスト/グリッド)・少数 (2〜5 個) の排他的選択に適する。選択肢が多い場合や、選択肢の意味が長い場合は `<Select>` / `<Radio>` を検討。
+
+---
+
+## Props
+
+SegmentedControl はジェネリック (`<T extends string | number>`) で値型を型レベルで保つ。Playground story で size の挙動を確認できる。
+
+主な props:
+- **items** (`SegmentedControlItem<T>[]`): `{value, label}` の配列。`label` は ReactNode 可 (アイコン併用 OK)
+- **value** (`T`): 現在選択中の値 (controlled)
+- **onChange** (`(value: T) => void`): 値変更コールバック
+- **size** (`'sm' | 'md'`): デフォルト `'sm'` (40px)。`'md'` で 48px
+- **aria-label** (`string`): グループ用途を SR に伝える (推奨)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="2〜5 個の排他選択肢に絞る"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('list');
+        return (
+          <SegmentedControl
+            items={[
+              { value: 'list', label: 'リスト' },
+              { value: 'grid', label: 'グリッド' },
+              { value: 'gallery', label: 'ギャラリー' },
+            ]}
+            value={v}
+            onChange={setV}
+            aria-label="表示モード"
+          />
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="2〜5 個の排他選択肢で常に全てを見せたいときに最適。一目で全候補が見え、選択中も視覚的に明示される。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('a');
+        return (
+          <SegmentedControl
+            items={['a','b','c','d','e','f','g','h','i','j'].map((c) => ({ value: c, label: c.toUpperCase() }))}
+            value={v}
+            onChange={setV}
+            aria-label="文字"
+          />
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="10 個以上の選択肢を並べると横にあふれて全体が見えず、SegmentedControl の利点 (一覧性) が失われる。多数の選択肢は `<Select>` か `<Radio>` を使う。"
+/>
+
+<DoDontExample
+  label="ラベルは短く・対称的に"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('daily');
+        return (
+          <SegmentedControl
+            items={[
+              { value: 'daily', label: '日次' },
+              { value: 'weekly', label: '週次' },
+              { value: 'monthly', label: '月次' },
+            ]}
+            value={v}
+            onChange={setV}
+            aria-label="期間"
+          />
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="各ラベルが同等の重み (文字数・抽象度) で揃っていると、横幅も揃って読みやすい。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('a');
+        return (
+          <SegmentedControl
+            items={[
+              { value: 'a', label: '日次' },
+              { value: 'b', label: '直近 30 日間' },
+              { value: 'c', label: '月' },
+            ]}
+            value={v}
+            onChange={setV}
+            aria-label="期間"
+          />
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="ラベル長と粒度がばらつくと幅が不揃いで読みにくく、選択肢同士の比較もしづらい。"
+/>
+
+<DoDontExample
+  label="aria-label でグループ用途を SR に伝える"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('list');
+        return (
+          <SegmentedControl
+            items={[
+              { value: 'list', label: 'リスト' },
+              { value: 'grid', label: 'グリッド' },
+            ]}
+            value={v}
+            onChange={setV}
+            aria-label="商品の表示モード"
+          />
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="`aria-label` で「これは何の選択か」を SR ユーザーに伝える。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('list');
+        return (
+          <SegmentedControl
+            items={[
+              { value: 'list', label: 'リスト' },
+              { value: 'grid', label: 'グリッド' },
+            ]}
+            value={v}
+            onChange={setV}
+          />
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="`aria-label` 無しだと SR では「group / button (リスト)」のような最小情報しか得られず、何の選択か分からない。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **多数の選択肢から 1 つ** (6 個以上) | `<Select>` / `<Radio>` | 一覧性ではなく省スペース・スクロール対応 |
+| **オン/オフの 2 択** (設定) | `<Switch>` | 「ON/OFF」が明確に伝わる |
+| **複数選択可能** | `<CheckboxGroup>` | 排他制御ではない |
+| **絞り込みフィルタ (Modal 起動含む混在)** | `<FilterChip>` | Toggle / iconOnly / Modal 起動 etc. が混在する用途 |
+
+---
+
+## アクセシビリティ
+
+- **`role="group"` + `aria-label`**: 外側の `<div>` がグループ、各セグメントは `<button>`
+- **`aria-pressed`**: 選択中のセグメントに `aria-pressed="true"`、SR で「選択済み」と読まれる
+- **キーボード操作**: `Tab` で各ボタンに focus、`Enter` / `Space` で発火 (個別 button)。矢印キーでのグループ内移動は現状未実装 (将来検討)
+- **focus ring**: 各 `<button>` に Tailwind の `focus:` 系で focus ring (現実装は border-current ベース、将来 `ring-focus` へ統一予定)
+- **タッチターゲット**: sm (40px) / md (48px)。WCAG 2.5.5 (44×44px) は md 以上で達成。密集 UI で sm を使う場合は周囲余白を確保
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし (SegmentedControl 本体は他のコンポーネントを import しない。アイコン併用時は利用者が `<Icon>` を `label` に含める)。

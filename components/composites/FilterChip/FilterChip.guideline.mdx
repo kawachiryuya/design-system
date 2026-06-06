@@ -1,0 +1,128 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as FilterChipStories from './FilterChip.stories';
+import { FilterChip } from './FilterChip';
+import { Icon } from '../../primitives/Icon';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={FilterChipStories} name="Guideline" />
+
+# FilterChip
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+検索結果やリストの絞り込み・並び替え操作を 1 行に並べるための chip 風ボタン。「Modal 起動」「Toggle」「アイコンのみのアクション」など、**フィルターバー上の複合的な役割を 1 つの component で表現** する。`aria-pressed` で active 状態を伝達し、視覚的にも枠線/背景色で強調される。
+
+---
+
+## Props
+
+<ArgTypes of={FilterChipStories.Playground} />
+
+詳細: [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="Modal 起動には右側に下矢印を置く"
+  doExample={
+    <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>
+      並び順: 出発時刻順
+    </FilterChip>
+  }
+  doCaption="`expand_more` (下矢印) で「タップで詳細選択が開く」ことを示す。ラベルは現在選択中の値で、選択状態が一目で分かる。"
+  dontExample={
+    <FilterChip>並び順: 出発時刻順</FilterChip>
+  }
+  dontCaption="矢印なしだと「タップしても何も起きない」と誤解される。Toggle (押下で状態反転) と Modal 起動の見分けが付かない。"
+/>
+
+<DoDontExample
+  label="Toggle 用途は active 状態で結果を明示"
+  doExample={
+    <div className="flex gap-2">
+      <FilterChip>満席を非表示</FilterChip>
+      <FilterChip active>満席を非表示</FilterChip>
+    </div>
+  }
+  doCaption="Toggle (押下で状態反転) 用途では active 時に枠線・背景色で強調する。SR には `aria-pressed` で伝わる。"
+  dontExample={
+    <FilterChip>満席を非表示 (ON)</FilterChip>
+  }
+  dontCaption="ラベルに状態 (ON/OFF) を書くと冗長で、しかも視覚スタイル変化が無いため一目で状態が分からない。`active` prop で表現する。"
+/>
+
+<DoDontExample
+  label="iconOnly のときは aria-label 必須"
+  doExample={
+    <FilterChip
+      iconLeft={<Icon name="tune" size="sm" color="inherit" />}
+      aria-label="すべての条件で絞り込み"
+    />
+  }
+  doCaption="アイコンだけの chip は SR で読まれる文字列が無いため、`aria-label` で操作の意図を明示する。"
+  dontExample={
+    <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} />
+  }
+  dontCaption="aria-label なしの iconOnly は SR で「button」としか読まれず、何の操作か分からない。"
+/>
+
+<DoDontExample
+  label="フィルターバーは横スクロール許容、wrap させない"
+  doExample={
+    <div className="flex gap-2 overflow-x-auto pb-2">
+      <FilterChip active>並び順: 出発時刻順</FilterChip>
+      <FilterChip>種別: すべて</FilterChip>
+      <FilterChip>満席を非表示</FilterChip>
+      <FilterChip>所要時間順</FilterChip>
+    </div>
+  }
+  doCaption="chip が画面幅を超えるときは横スクロール (`overflow-x-auto`) で。1 行に収まらないと「ここに全フィルタがある」という UI 意図が崩れる。"
+  dontExample={
+    <div className="flex gap-2 flex-wrap">
+      <FilterChip active>並び順: 出発時刻順</FilterChip>
+      <FilterChip>種別: すべて</FilterChip>
+      <FilterChip>満席を非表示</FilterChip>
+      <FilterChip>所要時間順</FilterChip>
+    </div>
+  }
+  dontCaption="`flex-wrap` で 2 行になると「フィルターバー」の認知が崩れ、何が並び順で何が条件なのか分かりにくくなる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **複数選択肢から 1 つ排他選択** (常に表示) | `<SegmentedControl>` / `<Radio>` | 排他制御が標準実装、SR で全選択肢が読める |
+| **オン/オフの切替** (設定項目) | `<Switch>` | 「設定」の文脈で「オン/オフ」が明確 |
+| **押すとアクションが起きる** (フィルタリングではない) | `<Button>` | アクション用途の専用コントロール |
+| **検索文字列入力** | `<SearchBar>` | テキスト入力 + 候補補完 |
+
+---
+
+## アクセシビリティ
+
+- **`aria-pressed`**: `active` prop の値が `aria-pressed` 属性として反映。SR は「並び順: 出発時刻順 押下」のように選択状態を読み上げる
+- **iconOnly + `aria-label`**: テキストなしで使う場合 (Modal 起動 chip 等) は `aria-label` で操作意図を必ず示す
+- **キーボード操作**: `Tab` で focus、`Enter` / `Space` で onClick 発火 (button 標準)
+- **focus ring**: `border-focus` 色 + `ring-focus` (2px) でフォーカス時のキーボード可視化
+- **タッチターゲット**: h-9 (36px)。WCAG 2.5.5 (44×44px) には未到達だが、フィルターバー用途では小型化が一般的。密集レイアウト時は `gap-2` 以上を確保
+- **disabled**: `disabled` 属性 + `opacity-60` でクリック不可を視覚化。理由 (在庫なし等) は周囲のラベルで補強する
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし (FilterChip 本体は他のコンポーネントを import しない。アイコンは利用者が `<Icon>` を `iconLeft` / `iconRight` に渡す)。

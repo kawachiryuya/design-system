@@ -111,7 +111,7 @@ export const States: Story = {
         <ProgressBar value={100} color="success" label="完了" showValue />
       </Caption>
       <Caption text="Indeterminate (進捗不明、アニメーション)">
-        <ProgressBar indeterminate label="サーバー応答待ち" />
+        <ProgressBar value={0} indeterminate label="サーバー応答待ち" />
       </Caption>
       <Caption text="Without label (バーのみ)">
         <ProgressBar value={40} />

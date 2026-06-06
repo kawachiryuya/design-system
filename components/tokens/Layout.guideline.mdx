@@ -1,0 +1,107 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import * as LayoutStories from './Layout.stories';
+
+<Meta of={LayoutStories} name="Guideline" />
+
+# Layout
+
+## 概要
+
+page-level / section-level / 12-col grid の **layout frame 専用 token**。Spacing primitive (`p-4` 等) と違って multi-product で「大外コンテナ何 px」「section 間どれくらい空ける」「grid を何 col に分けるか」を **product 全体で揃えたい / 一括 override したい** ケースを担う。
+
+3 つのグループ:
+
+- **container** — 大外 page wrapper の padding (mobile/tablet/desktop で内蔵切替) + max-width 4 variant
+- **section** — section 間 / section 内の垂直余白 (sm/md/lg density)
+- **grid** — 12-col 表記体系 (mobile 4 / tablet 8 / desktop 12 cols + gutter 内蔵)
+
+---
+
+## カタログ
+
+- [Container](?path=/story/tokens-layout--container) — 大外 page wrapper の padding-x / padding-y / max-width
+- [Section](?path=/story/tokens-layout--section) — section 間の gap / section 自体の padding-y
+- [Grid](?path=/story/tokens-layout--grid) — 12-col grid (responsive columns 内蔵)
+
+---
+
+## 利用例
+
+### B2C / Marketing (大外 + grid)
+```tsx
+<div className="px-container py-container max-w-container mx-auto">
+  <section className="space-y-section-md">
+    <Hero />
+    <div className="grid-base">
+      <article className="col-span-4 md:col-span-4 lg:col-span-8">記事本文</article>
+      <aside className="col-span-4 md:col-span-4 lg:col-span-4">サイドバー</aside>
+    </div>
+  </section>
+</div>
+```
+
+### B2B Dashboard (shell 内 main、max-width-full)
+```tsx
+<main className="px-container py-container max-w-container-full">
+  <div className="space-y-section-sm">
+    <PageHeader />
+    <div className="grid-base">
+      <Card className="col-span-4 md:col-span-4 lg:col-span-4">KPI 1</Card>
+      <Card className="col-span-4 md:col-span-4 lg:col-span-4">KPI 2</Card>
+      <Card className="col-span-4 md:col-span-4 lg:col-span-4">KPI 3</Card>
+    </div>
+  </div>
+</main>
+```
+
+### Settings / Article (narrow)
+```tsx
+<div className="px-container py-container max-w-container-narrow mx-auto">
+  <h1>Settings</h1>
+  <Form />
+</div>
+```
+
+---
+
+## 設計方針
+
+- **layout frame に限定**: `card.padding` / `modal.padding` 等の component 内部余白は別軌道。「page wrapper」「section」「grid frame」だけ semantic 化する
+- **breakpoint 内蔵 utility**: `px-container` / `grid-base` は単一 class で mobile/tablet/desktop の値を自動切替 (Tailwind の `container` plugin と同手法)。callsite で `sm:` / `lg:` prefix を書かなくて済む
+- **CSS 変数経由でランタイム override**: product 側は `:root { --layout-container-padding-x-desktop: 48px; }` のように個別 breakpoint 値を 1 行 override 可能
+- **density は sm / md / lg の 3 段**: section の上下余白を product 全体で compact / default / spacious に統一しやすく
+- **12-col + responsive columns**: mobile 4 / tablet 8 / desktop 12 cols のレシオが自動的。子要素は Tailwind 既定の `col-span-N` (1〜12) + `sm:` / `lg:` prefix で組合せ
+
+---
+
+## Multi-product override
+
+product 側で `:root` に CSS 変数を 1 行書くだけで全体に伝播:
+
+```css
+/* 例: max-width を 1440px に変える */
+:root { --layout-container-max-width-default: 1440px; }
+
+/* 例: section gap を全体的に詰める */
+:root {
+  --layout-section-gap-sm: 16px;
+  --layout-section-gap-md: 32px;
+  --layout-section-gap-lg: 56px;
+}
+
+/* 例: 16-col grid を採用 */
+:root { --layout-grid-columns-desktop: 16; }
+
+/* 例: desktop の大外 padding を狭くする */
+:root { --layout-container-padding-x-desktop: 16px; }
+```
+
+build 不要、CSS variable は cascade で全 callsite に即座反映。
+
+---
+
+## 関連
+
+- [Tokens/Spacing](?path=/docs/tokens-spacing--guideline) — 数値スケール (component 内部余白で使う)。Layout は frame 専用、Spacing は局所余白
+- [Tokens/Breakpoints](?path=/docs/tokens-breakpoints--guideline) — responsive 切替の breakpoint 値
+- [AGENTS.md §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) — token 参照ルール

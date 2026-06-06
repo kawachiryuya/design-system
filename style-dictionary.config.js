@@ -226,7 +226,8 @@ export default {
         { destination: 'shadows.json',         format: 'json/legacy-namespace', options: { namespaces: { shadow: 'shadow' } } },
         { destination: 'radius.json',          format: 'json/legacy-namespace', options: { namespaces: { radius: 'radius' } } },
         { destination: 'breakpoints.json',     format: 'json/legacy-namespace', options: { namespaces: { screens: 'screens' } } },
-        { destination: 'animation.json',       format: 'json/legacy-namespace', options: { namespaces: { duration: 'duration', easing: 'easing' } } }
+        { destination: 'animation.json',       format: 'json/legacy-namespace', options: { namespaces: { duration: 'duration', easing: 'easing' } } },
+        { destination: 'layout.json',          format: 'json/legacy-namespace', options: { namespaces: { layout: 'layout' } } }
       ]
     }
     // Phase 4 で有効化:

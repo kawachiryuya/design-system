@@ -6,6 +6,16 @@
 
 ## [Unreleased]
 
+### Added (in Unreleased)
+
+- **新規 token category `Layout` を追加** (multi-product hub での layout frame 統一管理向け): `tokens/source/layout.json` を新設し、page-level layout frame 専用の semantic token を導入:
+  - `layout.container.padding-x/-y.{mobile,tablet,desktop}` — 大外コンテナ padding (breakpoint 内蔵 utility `px-container` / `py-container`)
+  - `layout.container.max-width.{narrow,default,wide,full}` — `max-w-container[-narrow|-wide|-full]` の 4 variant
+  - `layout.section.gap/padding-y.{sm,md,lg}` — section 間 / section 内の垂直余白 (density 軸)、utility `gap-section-{sm,md,lg}` / `py-section-{sm,md,lg}` / `space-y-section-{sm,md,lg}`
+  - `layout.grid.columns/gutter.{mobile,tablet,desktop}` — 12-col 表記体系 (`grid-base` 単一 class で responsive cols + gutter 内蔵)
+  - Tailwind plugin (preset.cjs) で CSS 変数経由の utility を生成、product 側は `:root` で個別 breakpoint 値を 1 行 override 可能 (例: `--layout-container-max-width-default: 1440px`)
+  - `components/tokens/Layout.{stories.tsx,guideline.mdx}` 新設、AGENTS.md §3-6 準拠 (Container / Section / Grid の 3 story)
+
 ### ⚠ BREAKING CHANGES (in Unreleased)
 
 - **Tokens/Typography/Semantic の Storybook story id 変更** (silent break): 3 story (`headings` / `body` / `label-and-caption`) を 1 つの `catalog` に統合し、`?path=/story/tokens-typography-semantic--{headings,body,label-and-caption}` の旧 URL は壊れる。新 URL は `?path=/story/tokens-typography-semantic--catalog`。理由: heading / body / label / caption は同じ semantic typography 軸内の役割で、別軸ではないため AGENTS.md §3-6 (軸 1 つ = 1 story) に整合。

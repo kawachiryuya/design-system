@@ -1,0 +1,46 @@
+{
+  "layout": {
+    "container": {
+      "padding-x": {
+        "mobile":  { "value": "16px", "type": "dimension", "description": "Mobile (< 768px) の大外コンテナ左右 padding" },
+        "tablet":  { "value": "24px", "type": "dimension", "description": "Tablet (768px〜1023px) の大外コンテナ左右 padding" },
+        "desktop": { "value": "32px", "type": "dimension", "description": "Desktop (>= 1024px) の大外コンテナ左右 padding" }
+      },
+      "padding-y": {
+        "mobile":  { "value": "16px", "type": "dimension", "description": "Mobile (< 768px) の大外コンテナ上下 padding" },
+        "tablet":  { "value": "24px", "type": "dimension", "description": "Tablet (768px〜1023px) の大外コンテナ上下 padding" },
+        "desktop": { "value": "32px", "type": "dimension", "description": "Desktop (>= 1024px) の大外コンテナ上下 padding" }
+      },
+      "max-width": {
+        "narrow":  { "value": "768px",  "type": "dimension", "description": "狭め (Article / Settings 等の読みやすさ重視)" },
+        "default": { "value": "1280px", "type": "dimension", "description": "標準 SaaS app width" },
+        "wide":    { "value": "1536px", "type": "dimension", "description": "広め (Dashboard / wide content)" },
+        "full":    { "value": "100%",   "type": "dimension", "description": "制約なし (Shell layout 内 main 等)" }
+      }
+    },
+    "section": {
+      "gap": {
+        "sm": { "value": "24px", "type": "dimension", "description": "section 間の垂直余白 (狭め)" },
+        "md": { "value": "48px", "type": "dimension", "description": "section 間の垂直余白 (標準)" },
+        "lg": { "value": "80px", "type": "dimension", "description": "section 間の垂直余白 (広め)" }
+      },
+      "padding-y": {
+        "sm": { "value": "32px", "type": "dimension", "description": "section 自体の上下 padding (狭め)" },
+        "md": { "value": "64px", "type": "dimension", "description": "section 自体の上下 padding (標準)" },
+        "lg": { "value": "96px", "type": "dimension", "description": "section 自体の上下 padding (広め)" }
+      }
+    },
+    "grid": {
+      "columns": {
+        "mobile":  { "value": "4",  "type": "number", "description": "Mobile (< 768px) のカラム数" },
+        "tablet":  { "value": "8",  "type": "number", "description": "Tablet (768px〜1023px) のカラム数" },
+        "desktop": { "value": "12", "type": "number", "description": "Desktop (>= 1024px) のカラム数" }
+      },
+      "gutter": {
+        "mobile":  { "value": "16px", "type": "dimension", "description": "Mobile のカラム間 gutter" },
+        "tablet":  { "value": "24px", "type": "dimension", "description": "Tablet のカラム間 gutter" },
+        "desktop": { "value": "32px", "type": "dimension", "description": "Desktop のカラム間 gutter" }
+      }
+    }
+  }
+}

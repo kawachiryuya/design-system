@@ -16,6 +16,7 @@ const preview: Preview = {
             'Breakpoints',
             'Color', ['Primitive', 'Semantic'],
             'Focus Ring',
+            'Layout',
             'Opacity',
             'Radius',
             'Shadows',

@@ -8,6 +8,7 @@
  */
 
 const path = require('path');
+const plugin = require('tailwindcss/plugin');
 
 let t;
 try {
@@ -208,4 +209,83 @@ module.exports = {
       },
     },
   },
+
+  // ── Layout (container / section / grid) ──
+  // page-level layout frame の semantic utility。Tailwind の `container` plugin と
+  // 同じ手法で、単一 utility class 内に breakpoint 別 @media を内蔵する。
+  // CSS 変数経由なので product 側は :root で値を 1 行 override 可能。
+  // 詳細: components/tokens/Layout.guideline.mdx
+  plugins: [
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        // -- container: 大外 page wrapper の左右 / 上下 padding (breakpoint 内蔵) --
+        '.px-container': {
+          paddingLeft:  'var(--layout-container-padding-x-mobile)',
+          paddingRight: 'var(--layout-container-padding-x-mobile)',
+          '@media (min-width: 768px)': {
+            paddingLeft:  'var(--layout-container-padding-x-tablet)',
+            paddingRight: 'var(--layout-container-padding-x-tablet)',
+          },
+          '@media (min-width: 1024px)': {
+            paddingLeft:  'var(--layout-container-padding-x-desktop)',
+            paddingRight: 'var(--layout-container-padding-x-desktop)',
+          },
+        },
+        '.py-container': {
+          paddingTop:    'var(--layout-container-padding-y-mobile)',
+          paddingBottom: 'var(--layout-container-padding-y-mobile)',
+          '@media (min-width: 768px)': {
+            paddingTop:    'var(--layout-container-padding-y-tablet)',
+            paddingBottom: 'var(--layout-container-padding-y-tablet)',
+          },
+          '@media (min-width: 1024px)': {
+            paddingTop:    'var(--layout-container-padding-y-desktop)',
+            paddingBottom: 'var(--layout-container-padding-y-desktop)',
+          },
+        },
+
+        // -- container.max-width: narrow / default / wide / full の 4 variant --
+        '.max-w-container':        { maxWidth: 'var(--layout-container-max-width-default)' },
+        '.max-w-container-narrow': { maxWidth: 'var(--layout-container-max-width-narrow)' },
+        '.max-w-container-wide':   { maxWidth: 'var(--layout-container-max-width-wide)' },
+        '.max-w-container-full':   { maxWidth: 'var(--layout-container-max-width-full)' },
+
+        // -- section: gap / padding-y の sm/md/lg density variant --
+        '.gap-section-sm': { gap: 'var(--layout-section-gap-sm)' },
+        '.gap-section-md': { gap: 'var(--layout-section-gap-md)' },
+        '.gap-section-lg': { gap: 'var(--layout-section-gap-lg)' },
+        '.py-section-sm': {
+          paddingTop: 'var(--layout-section-padding-y-sm)',
+          paddingBottom: 'var(--layout-section-padding-y-sm)',
+        },
+        '.py-section-md': {
+          paddingTop: 'var(--layout-section-padding-y-md)',
+          paddingBottom: 'var(--layout-section-padding-y-md)',
+        },
+        '.py-section-lg': {
+          paddingTop: 'var(--layout-section-padding-y-lg)',
+          paddingBottom: 'var(--layout-section-padding-y-lg)',
+        },
+        '.space-y-section-sm > * + *': { marginTop: 'var(--layout-section-gap-sm)' },
+        '.space-y-section-md > * + *': { marginTop: 'var(--layout-section-gap-md)' },
+        '.space-y-section-lg > * + *': { marginTop: 'var(--layout-section-gap-lg)' },
+
+        // -- grid: 12-col 表記体系 (mobile 4 / tablet 8 / desktop 12 cols + gutter 内蔵) --
+        // 子要素は Tailwind 既定の col-span-N (1〜12) と sm:/lg: prefix で組合せ。
+        '.grid-base': {
+          display: 'grid',
+          gridTemplateColumns: 'repeat(var(--layout-grid-columns-mobile), minmax(0, 1fr))',
+          gap: 'var(--layout-grid-gutter-mobile)',
+          '@media (min-width: 768px)': {
+            gridTemplateColumns: 'repeat(var(--layout-grid-columns-tablet), minmax(0, 1fr))',
+            gap: 'var(--layout-grid-gutter-tablet)',
+          },
+          '@media (min-width: 1024px)': {
+            gridTemplateColumns: 'repeat(var(--layout-grid-columns-desktop), minmax(0, 1fr))',
+            gap: 'var(--layout-grid-gutter-desktop)',
+          },
+        },
+      });
+    }),
+  ],
 };

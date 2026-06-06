@@ -1,0 +1,144 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import * as ToastStories from './Toast.stories';
+import { Toast, ToastProvider, useToast } from './Toast';
+import { Button } from '../../primitives/Button';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={ToastStories} name="Guideline" />
+
+# Toast
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: '利用形態', href: '#利用形態' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+操作直後の **一時的なフィードバック通知**。「保存しました」「エラーが発生しました」のような短いメッセージを画面の端 (top / bottom / right) に表示し、`duration` 秒後に自動消滅する。永続的な画面内通知は `<Alert>`、確認が必要な操作は `<Modal>`、空状態は `<EmptyState>` を使い分ける。
+
+---
+
+## 利用形態
+
+Toast は 2 つの API を持つ:
+
+**1. 単発 controlled** (`<Toast />` 直接利用): 親が `open` / `onClose` を管理。シンプルだが 1 つだけ。
+
+**2. ToastProvider + `useToast()`** (推奨): アプリ全体を `<ToastProvider>` でラップし、内部から `useToast().showToast({...})` で呼出。**複数 Toast のスタック管理 / 自動消滅 / 位置統一が自動**。
+
+```tsx
+// Provider (アプリ root)
+<ToastProvider position="top-right" maxToasts={3}>
+  <App />
+</ToastProvider>
+
+// 呼出 (任意 component 内)
+const { showToast } = useToast();
+<Button onClick={() => showToast({ variant: 'success', description: '保存しました' })}>保存</Button>
+```
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="操作直後の一時的なフィードバックに使う"
+  doExample={
+    <div className="text-sm space-y-2">
+      <Button onClick={() => alert('実際は Toast 表示: 保存しました')}>保存</Button>
+      <p className="text-onSurface-muted">↑ 押下後に「保存しました」が右上に 5 秒表示されて消える想定</p>
+    </div>
+  }
+  doCaption="「保存しました」「コピーしました」のように、ユーザーが行動を起こした直後の確認に最適。視線を奪わず、自動で消えるので画面を埋めない。"
+  dontExample={
+    <div className="border border-border-success-subtle bg-surface-success-muted p-3 rounded-md text-sm">
+      ✓ 保存しました (画面上に永続表示)
+    </div>
+  }
+  dontCaption="永続的に画面に残したい通知 (利用規約変更のお知らせ等) を Toast にすると数秒で消えてしまい、ユーザーが見落とす。永続的な情報は `<Alert>`。"
+/>
+
+<DoDontExample
+  label="error variant で重要度を伝える"
+  doExample={
+    <div className="text-sm space-y-2">
+      <Button onClick={() => alert('実際は error Toast 表示: 通信に失敗しました')}>送信</Button>
+      <p className="text-onSurface-muted">↑ 失敗時に error variant の Toast。SR は role='alert' + aria-live='assertive' で即時読み上げ</p>
+    </div>
+  }
+  doCaption="error variant は role='alert' + aria-live='assertive' で SR が即時通知。他の variant は polite で「次の文末で」読まれる。"
+  dontExample={
+    <div className="text-sm space-y-2">
+      <Button onClick={() => alert('実際は info Toast 表示: エラーが発生しました')}>送信</Button>
+      <p className="text-onSurface-muted">↑ エラーなのに info variant にすると緊急度が落ち、SR の即時通知も得られない</p>
+    </div>
+  }
+  dontCaption="エラーを info variant で表示すると、視覚的にも SR にも重要度が伝わらない。「失敗」は error で。"
+/>
+
+<DoDontExample
+  label="action ボタンで「元に戻す」を提供する"
+  doExample={
+    <div className="text-sm space-y-2">
+      <Button onClick={() => alert('実際は Toast: タスクをアーカイブ [元に戻す]')}>アーカイブ</Button>
+      <p className="text-onSurface-muted">↑ destructive 操作直後に「元に戻す」action 付き Toast、duration=0 で残す</p>
+    </div>
+  }
+  doCaption="削除・アーカイブ等の destructive 操作には action ボタンで「元に戻す」を提供し、duration=0 で手動で閉じるまで残すと安全。"
+  dontExample={
+    <Button onClick={() => alert('「本当に削除しますか?」(Modal) → 削除 → Toast (元に戻すなし)')}>削除</Button>
+  }
+  dontCaption="毎回 Modal で確認すると流れが分断される。元に戻せる操作は Toast + Undo が UX として優れる (Gmail / Twitter 等の慣習)。"
+/>
+
+<DoDontExample
+  label="同時表示数 (maxToasts) を絞る"
+  doExample={
+    <div className="text-xs text-onSurface-muted">
+      &lt;ToastProvider maxToasts={3} /&gt; — 同時表示 3 つまで、古いものから消える
+    </div>
+  }
+  doCaption="多数同時に出すと画面が埋まり、ユーザーが読める前に新しいものが追加される。3〜5 個までに上限を設定。"
+  dontExample={
+    <div className="text-xs text-onSurface-muted">
+      maxToasts={20} — 20 個積み上がって画面の半分を占有
+    </div>
+  }
+  dontCaption="上限なしで連打されると画面が Toast で埋まり、本来の content が見えなくなる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **永続的な画面内通知** | `<Alert>` | Toast は自動消滅、永続表示は Alert |
+| **確認が必要な操作** ("削除しますか?") | `<Modal>` | フォーカストラップ + 確定/取消 |
+| **データなしの代替表示** | `<EmptyState>` | 画面の一部を埋める用途 |
+| **ステータスを 1 単語で** | `<Badge>` | アクション通知ではなく状態表示 |
+
+---
+
+## アクセシビリティ
+
+- **`role="alert"`** (error variant): aria-live="assertive" 自動付与、SR が即時読み上げ
+- **`role="status"`** (それ以外): aria-live="polite" 自動付与、SR が次の文末で読み上げ
+- **close ボタン**: `<VisuallyHidden>` で「閉じる」を SR 用テキストで付与
+- **focus 管理**: 自動消滅 / overlay ではないため focus trap なし。トリガー (button 等) の focus はそのまま
+- **キーボード操作**: close ボタンに Tab で focus 可、Enter / Space で発火
+- **autohide の停止**: pause-on-hover は実装未対応 (将来検討)。長文 / 重要な情報は duration=0 で手動 close へ
+- **動画 / 強い色変化を避ける**: 視覚に敏感なユーザーへの配慮
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — variant ごとの先頭アイコン (`check_circle` / `error` / `warning` / `info`) と close アイコン
+- [`<Button>`](?path=/docs/primitives-button--guideline) — action ボタン / close ボタン
+- [`<VisuallyHidden>`](?path=/docs/primitives-visuallyhidden--guideline) — 「閉じる」の SR 用テキスト

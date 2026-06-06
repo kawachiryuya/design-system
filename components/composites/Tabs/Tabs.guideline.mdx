@@ -1,0 +1,170 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TabsStories from './Tabs.stories';
+import { Tabs } from './Tabs';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={TabsStories} name="Guideline" />
+
+# Tabs
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+**同階層内の表示切替** を行う UI。下線で active を示す Carbon / Material 風のタブ。`role="tablist"` / `role="tab"` / `role="tabpanel"` 自動付与、`← → ↑ ↓ Home End` 全対応のキーボードナビゲーション、controlled / uncontrolled 両対応、バッジ表示、disabled タブのスキップ移動など a11y を完全実装。ページ全体の切替には Routing、深い階層には `<Accordion>` を検討。
+
+---
+
+## Props
+
+<ArgTypes of={TabsStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="同階層の表示切替で 2〜6 個に絞る"
+  doExample={
+    <div className="w-80">
+      <Tabs
+        defaultActiveId="overview"
+        tabs={[
+          { id: 'overview', label: '概要', content: <p className="text-sm">概要</p> },
+          { id: 'history', label: '履歴', content: <p className="text-sm">履歴</p> },
+          { id: 'settings', label: '設定', content: <p className="text-sm">設定</p> },
+        ]}
+      />
+    </div>
+  }
+  doCaption="2〜6 個までなら一目で全タブが見えて適切。同じユーザー対象 / 同じデータの異なる切り口を並べる用途に。"
+  dontExample={
+    <div className="w-80">
+      <Tabs
+        defaultActiveId="t1"
+        tabs={Array.from({ length: 10 }, (_, i) => ({
+          id: `t${i + 1}`,
+          label: `タブ ${i + 1}`,
+          content: null,
+        }))}
+      />
+    </div>
+  }
+  dontCaption="10 個以上は横スクロールが必要で全タブを一覧できず、ユーザーが「今ここ」を見失う。多数の選択肢は Sidebar / Routing で。"
+/>
+
+<DoDontExample
+  label="badge で件数を示す (短い数値・記号)"
+  doExample={
+    <div className="w-80">
+      <Tabs
+        defaultActiveId="unread"
+        tabs={[
+          { id: 'all', label: 'すべて', badge: 128, content: null },
+          { id: 'unread', label: '未読', badge: 12, content: null },
+        ]}
+      />
+    </div>
+  }
+  doCaption="件数・残数を badge で示すと「どこに注目すべきか」が一目で分かる。1.2k のような短縮も可。"
+  dontExample={
+    <div className="w-80">
+      <Tabs
+        defaultActiveId="unread"
+        tabs={[
+          { id: 'all', label: 'すべて (128 件)', content: null },
+          { id: 'unread', label: '未読 (12 件)', content: null },
+        ]}
+      />
+    </div>
+  }
+  dontCaption="ラベルに件数を埋め込むとタブ幅が不揃いになり、視覚的なリズムが崩れる。`badge` prop を使う。"
+/>
+
+<DoDontExample
+  label="disabled は理由が分かる文脈で (ラベル自体で示す)"
+  doExample={
+    <div className="w-80">
+      <Tabs
+        defaultActiveId="a"
+        tabs={[
+          { id: 'a', label: '記事', content: null },
+          { id: 'b', label: 'メディア (プレミアム)', disabled: true, content: null },
+        ]}
+      />
+    </div>
+  }
+  doCaption="disabled タブのラベルに「なぜ無効か」を含める (プレミアム限定・準備中等)。"
+  dontExample={
+    <div className="w-80">
+      <Tabs
+        defaultActiveId="a"
+        tabs={[
+          { id: 'a', label: '記事', content: null },
+          { id: 'b', label: 'メディア', disabled: true, content: null },
+        ]}
+      />
+    </div>
+  }
+  dontCaption="ラベルが「メディア」だけだと、なぜ無効か分からず「バグ?」と誤解される。"
+/>
+
+<DoDontExample
+  label="ページ全体の切替は Routing、タブはページ内"
+  doExample={
+    <div className="text-sm space-y-2">
+      <div className="px-3 py-2 rounded-md bg-surface-inset">/users (一覧ページ — URL ごと)</div>
+      <div className="px-3 py-2 rounded-md bg-surface-inset">/users/123 (詳細ページ — Tabs で「概要 / 履歴 / 設定」)</div>
+    </div>
+  }
+  doCaption="ページ全体の切替は URL / Routing で。タブはあくまで「1 つの画面内の切り替え」に留める。共有 URL や戻る/進む操作にも整合する。"
+  dontExample={
+    <div className="w-80">
+      <Tabs
+        defaultActiveId="users"
+        tabs={[
+          { id: 'users', label: 'ユーザー一覧', content: null },
+          { id: 'settings', label: '管理者設定', content: null },
+          { id: 'billing', label: '請求', content: null },
+        ]}
+      />
+    </div>
+  }
+  dontCaption="ページ全体の navigation を Tabs にすると、ブラウザの戻る/進むが効かない、URL 共有ができない、SEO が効かない等の問題が出る。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **ページ全体の切替** | (Routing) | URL ごとに分けるべき。Tabs はページ内専用 |
+| **多数のセクション折りたたみ** (FAQ 等) | `<Accordion>` | 縦に並べて開閉、Tabs は横並び |
+| **2〜5 択の排他 input** | `<SegmentedControl>` / `<Radio>` | フォーム入力用、Tabs は表示切替 |
+| **多数のタブ + ドリルダウン** (深い階層) | (Sidebar / Tree) | Tabs は浅い切替向け |
+
+---
+
+## アクセシビリティ
+
+- **`role="tablist"` / `role="tab"` / `role="tabpanel"`**: 自動付与、WAI-ARIA 1.2 標準
+- **`aria-selected` / `aria-controls` / `aria-labelledby`**: tab ↔ panel の関連付けを自動配線
+- **`tabIndex` 管理**: active タブのみ `tabIndex=0`、他は `tabIndex=-1` (Roving tabindex)。Tab キーで tabpanel へ抜けられる
+- **キーボード操作**: `← → ↑ ↓` 矢印で隣のタブへ (disabled スキップ)、`Home` / `End` で先頭/末尾、`Enter` / `Space` で選択 (button 標準)
+- **focus ring**: `focus-visible:ring-focus` でキーボード focus 時のみリング表示
+- **`aria-disabled` + `disabled`**: 無効タブは両方付与
+- **タッチターゲット**: タブの padding は px-4 py-2 (16px+8px)。WCAG 2.5.5 (44×44px) は label の長さ次第。極小ラベルでは余白を追加検討
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし (badge は外部の Tailwind class で内部実装)。

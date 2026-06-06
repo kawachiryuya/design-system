@@ -3,7 +3,15 @@ import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
 import { Tabs } from './Tabs';
 import { Badge } from '../../primitives/Badge/Badge';
+import { Caption } from '@sb-blocks/Caption';
 
+/**
+ * Tabs stories — 標準ストーリー構造に準拠
+ *
+ * 順序固定: Playground → States → EdgeCases
+ *
+ * Tabs は variant / size / icon prop を持たないため Variants / Sizes / WithIcon は省略 (§5-3)。
+ */
 const sampleTabs = [
   {
     id: 'overview',
@@ -11,7 +19,7 @@ const sampleTabs = [
     content: (
       <div className="space-y-2">
         <p className="text-sm text-onSurface">プロジェクトの概要ページです。</p>
-        <p className="text-sm text-onSurface-muted">最終更新: 2026年2月21日</p>
+        <p className="text-sm text-onSurface-muted">最終更新: 2026 年 2 月 21 日</p>
       </div>
     ),
   },
@@ -41,11 +49,11 @@ const sampleTabs = [
 ];
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Composites/_Tabs',
+  title: 'Composites/Tabs',
   component: Tabs,
-  tags: ['autodocs'],
   argTypes: {
     defaultActiveId: { control: 'text' },
+    ariaLabel: { control: 'text' },
   },
   args: {
     tabs: sampleTabs,
@@ -57,105 +65,148 @@ const meta: Meta<typeof Tabs> = {
 export default meta;
 type Story = StoryObj<typeof Tabs>;
 
-export const Default: Story = {};
+// ── 1. Playground ──────────────────────────────────────────────
 
-export const WithBadge: Story = {
-  args: {
-    tabs: [
-      { id: 'all', label: 'すべて', badge: 128, content: <p className="text-sm">すべての通知</p> },
-      { id: 'unread', label: '未読', badge: 12, content: <p className="text-sm">未読の通知</p> },
-      { id: 'read', label: '既読', content: <p className="text-sm">既読の通知</p> },
-    ],
-    defaultActiveId: 'all',
+export const Playground: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Controls から defaultActiveId / ariaLabel を切替。キーボード操作 (← → Home End) を play test で検証。',
+      },
+    },
   },
-};
-
-export const Controlled: Story = {
-  name: '制御コンポーネント',
-  render: () => {
-    const [activeId, setActiveId] = useState('overview');
-    return (
-      <div className="space-y-3 w-[480px]">
-        <p className="text-xs text-onSurface-muted">アクティブ: <strong>{activeId}</strong></p>
-        <Tabs
-          tabs={sampleTabs}
-          activeId={activeId}
-          onChange={setActiveId}
-        />
-      </div>
-    );
-  },
-};
-
-export const KeyboardNav: Story = {
-  name: 'キーボード操作（← → Home End）',
-  args: { defaultActiveId: 'overview' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    // 初期状態：「概要」タブが選択されている
     const firstTab = canvas.getByRole('tab', { name: '概要' });
     await expect(firstTab).toHaveAttribute('aria-selected', 'true');
-
-    // タブをクリックしてフォーカス → ArrowRight で次のタブへ
     await userEvent.click(firstTab);
     await userEvent.keyboard('{ArrowRight}');
     const membersTab = canvas.getByRole('tab', { name: 'メンバー' });
     await expect(membersTab).toHaveAttribute('aria-selected', 'true');
-
-    // End キーで最後の有効タブ（設定）へ
     await userEvent.keyboard('{End}');
-    const settingsTab = canvas.getByRole('tab', { name: '設定' });
-    await expect(settingsTab).toHaveAttribute('aria-selected', 'true');
-
-    // Home キーで最初のタブへ戻る
+    await expect(canvas.getByRole('tab', { name: '設定' })).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Home}');
     await expect(firstTab).toHaveAttribute('aria-selected', 'true');
   },
 };
 
-export const ProfileTabs: Story = {
-  name: '実践例: プロフィールページ',
+// ── 2. States ──────────────────────────────────────────────────
+
+export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Active / Inactive / Disabled / With badge / Long label の構成パターン。',
+      },
+    },
+  },
   render: () => (
-    <div className="w-[480px] border border-border-subtle rounded-lg overflow-hidden">
-      <div className="p-4 bg-surface-layer-2 border-b border-border-subtle">
-        <h2 className="font-semibold text-onSurface">田中 太郎</h2>
-        <p className="text-sm text-onSurface-muted">UI デザイナー</p>
-      </div>
-      <div className="px-4">
+    <div className="flex flex-col gap-6 w-[480px]">
+      <Caption text="Default (概要 が active)">
+        <Tabs tabs={sampleTabs} defaultActiveId="overview" />
+      </Caption>
+      <Caption text="With badge (件数表示)">
         <Tabs
-          defaultActiveId="posts"
+          defaultActiveId="all"
           tabs={[
-            {
-              id: 'posts',
-              label: '記事',
-              badge: 48,
-              content: (
-                <div className="space-y-3">
-                  {['Atomic Design 入門', 'Tailwind CSS のすすめ', '色彩理論の基礎'].map((title) => (
-                    <div key={title} className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0">
-                      <span className="text-sm text-onSurface">{title}</span>
-                      <Badge variant="neutral" size="sm">公開中</Badge>
-                    </div>
-                  ))}
-                </div>
-              ),
-            },
-            {
-              id: 'followers',
-              label: 'フォロワー',
-              badge: '1.2k',
-              content: <p className="text-sm text-onSurface-muted">フォロワー一覧</p>,
-            },
-            {
-              id: 'following',
-              label: 'フォロー中',
-              badge: 320,
-              content: <p className="text-sm text-onSurface-muted">フォロー中一覧</p>,
-            },
+            { id: 'all', label: 'すべて', badge: 128, content: <p className="text-sm">すべての通知</p> },
+            { id: 'unread', label: '未読', badge: 12, content: <p className="text-sm">未読の通知</p> },
+            { id: 'read', label: '既読', content: <p className="text-sm">既読の通知</p> },
           ]}
         />
-      </div>
+      </Caption>
+      <Caption text="Disabled タブ含む (キーボード矢印移動でスキップ)">
+        <Tabs
+          defaultActiveId="a"
+          tabs={[
+            { id: 'a', label: '利用可', content: <p className="text-sm">A タブ</p> },
+            { id: 'b', label: '準備中', disabled: true, content: null },
+            { id: 'c', label: '利用可', content: <p className="text-sm">C タブ</p> },
+          ]}
+        />
+      </Caption>
     </div>
   ),
+};
+
+// ── 3. EdgeCases ───────────────────────────────────────────────
+
+export const EdgeCases: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '実利用例: Controlled (外部 state 同期) / プロフィールページ (badge 文字列 + 多タブ) / 多数のタブ (横スクロール).',
+      },
+    },
+  },
+  render: () => {
+    function ControlledDemo() {
+      const [activeId, setActiveId] = useState('overview');
+      return (
+        <div className="space-y-3">
+          <p className="text-xs text-onSurface-muted">アクティブ: <strong>{activeId}</strong></p>
+          <Tabs tabs={sampleTabs} activeId={activeId} onChange={setActiveId} />
+        </div>
+      );
+    }
+    function ProfileDemo() {
+      return (
+        <div className="border border-border-subtle rounded-md overflow-hidden">
+          <div className="p-4 bg-surface-layer-2 border-b border-border-subtle">
+            <h2 className="font-semibold text-onSurface">田中 太郎</h2>
+            <p className="text-sm text-onSurface-muted">UI デザイナー</p>
+          </div>
+          <div className="px-4">
+            <Tabs
+              defaultActiveId="posts"
+              tabs={[
+                {
+                  id: 'posts',
+                  label: '記事',
+                  badge: 48,
+                  content: (
+                    <div className="space-y-3">
+                      {['Atomic Design 入門', 'Tailwind CSS のすすめ', '色彩理論の基礎'].map((title) => (
+                        <div key={title} className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0">
+                          <span className="text-sm text-onSurface">{title}</span>
+                          <Badge variant="neutral" size="sm">公開中</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  ),
+                },
+                { id: 'followers', label: 'フォロワー', badge: '1.2k', content: <p className="text-sm text-onSurface-muted">フォロワー一覧</p> },
+                { id: 'following', label: 'フォロー中', badge: 320, content: <p className="text-sm text-onSurface-muted">フォロー中一覧</p> },
+              ]}
+            />
+          </div>
+        </div>
+      );
+    }
+    function ManyDemo() {
+      return (
+        <Tabs
+          defaultActiveId="t1"
+          tabs={Array.from({ length: 10 }, (_, i) => ({
+            id: `t${i + 1}`,
+            label: `タブ ${i + 1}`,
+            content: <p className="text-sm">タブ {i + 1} の中身</p>,
+          }))}
+        />
+      );
+    }
+    return (
+      <div className="flex flex-col gap-8 w-[480px]">
+        <Caption text="Controlled (URL クエリ等と同期想定)">
+          <ControlledDemo />
+        </Caption>
+        <Caption text="プロフィールページ (badge 文字列 + Layered surface)">
+          <ProfileDemo />
+        </Caption>
+        <Caption text="多数のタブ (横スクロール overflow-x-auto)">
+          <ManyDemo />
+        </Caption>
+      </div>
+    );
+  },
 };

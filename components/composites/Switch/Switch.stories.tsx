@@ -2,11 +2,18 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
 import { Switch } from './Switch';
+import { Caption } from '@sb-blocks/Caption';
 
+/**
+ * Switch stories — 標準ストーリー構造に準拠
+ *
+ * 順序固定: Playground → Sizes → States → EdgeCases
+ *
+ * Switch は variant / icon prop を持たないため Variants / WithIcon は省略 (§5-3)。
+ */
 const meta: Meta<typeof Switch> = {
-  title: 'Composites/_Switch',
+  title: 'Composites/Switch',
   component: Switch,
-  tags: ['autodocs'],
   argTypes: {
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     checked: { control: 'boolean' },
@@ -18,109 +25,144 @@ const meta: Meta<typeof Switch> = {
   args: {
     label: 'ダークモード',
     size: 'md',
+    labelPosition: 'right',
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof Switch>;
 
-export const Default: Story = {
-  render: () => {
-    const [checked, setChecked] = useState(false);
-    return <Switch label="ダークモード" checked={checked} onChange={setChecked} />;
+// ── 1. Playground ──────────────────────────────────────────────
+
+export const Playground: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Controls から label / size / labelPosition / checked / disabled を切替。click で aria-checked が反転することを play test で保証。',
+      },
+    },
+  },
+  render: (args) => {
+    function Demo() {
+      const [c, setC] = useState(args.checked ?? false);
+      return <Switch {...args} checked={c} onChange={setC} />;
+    }
+    return <Demo />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const toggle = canvas.getByRole('switch');
-
-    // 初期状態：OFF
     await expect(toggle).toHaveAttribute('aria-checked', 'false');
-
-    // クリックで ON
     await userEvent.click(toggle);
     await expect(toggle).toHaveAttribute('aria-checked', 'true');
-
-    // 再クリックで OFF
     await userEvent.click(toggle);
     await expect(toggle).toHaveAttribute('aria-checked', 'false');
   },
 };
 
-export const Checked: Story = {
-  args: { checked: true, onChange: () => {} },
-};
+// ── 2. Sizes ───────────────────────────────────────────────────
 
-export const WithDescription: Story = {
-  args: {
-    label: 'メール通知',
-    description: 'キャンペーンやお知らせをメールで受け取ります',
-    checked: true,
-    onChange: () => {},
-    labelPosition: 'left',
+export const Sizes: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'sm (track 32px) / md (44px) / lg (56px) の 3 段。md 以上で WCAG 2.5.5 タッチターゲット (44×44px) を満たす。',
+      },
+    },
   },
-  decorators: [(Story) => <div className="w-80"><Story /></div>],
-  render: (args) => {
-    const [checked, setChecked] = useState(args.checked);
-    return <Switch {...args} checked={checked} onChange={setChecked} className="w-full justify-between" />;
-  },
-};
-
-export const LabelLeft: Story = {
-  args: { labelPosition: 'left', label: '公開設定' },
-};
-
-export const AllSizes: Story = {
   render: () => {
-    const [s1, setS1] = useState(true);
-    const [s2, setS2] = useState(true);
-    const [s3, setS3] = useState(true);
-    return (
-      <div className="flex flex-col gap-4">
-        <Switch size="sm" label="Small" checked={s1} onChange={setS1} />
-        <Switch size="md" label="Medium（デフォルト）" checked={s2} onChange={setS2} />
-        <Switch size="lg" label="Large" checked={s3} onChange={setS3} />
-      </div>
-    );
+    function Demo() {
+      const [s1, setS1] = useState(true);
+      const [s2, setS2] = useState(true);
+      const [s3, setS3] = useState(true);
+      return (
+        <div className="flex flex-col gap-4">
+          <Switch size="sm" label="sm (track 32px)" checked={s1} onChange={setS1} />
+          <Switch size="md" label="md (track 44px) — デフォルト" checked={s2} onChange={setS2} />
+          <Switch size="lg" label="lg (track 56px)" checked={s3} onChange={setS3} />
+        </div>
+      );
+    }
+    return <Demo />;
   },
 };
 
-export const Disabled: Story = {
+// ── 3. States ──────────────────────────────────────────────────
+
+export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Off / On / Disabled(off) / Disabled(on) + label 左右配置 + hover / focus-visible (pseudo-states 強制)。',
+      },
+    },
+    pseudo: {
+      hover: ['#sw-hover button'],
+      focusVisible: ['#sw-focus button'],
+    },
+  },
   render: () => (
-    <div className="flex flex-col gap-3">
-      <Switch label="OFF（無効）" disabled />
-      <Switch label="ON（無効）" disabled defaultChecked />
+    <div className="flex flex-col gap-4">
+      <Caption text="Off (default)"><Switch label="Off" /></Caption>
+      <Caption text="On (checked)"><Switch label="On" defaultChecked /></Caption>
+      <Caption text="Disabled (off)"><Switch label="Disabled (off)" disabled /></Caption>
+      <Caption text="Disabled (on)"><Switch label="Disabled (on)" defaultChecked disabled /></Caption>
+      <Caption text="Label position: left"><Switch label="ラベル左" labelPosition="left" /></Caption>
+      <Caption text="With description (ラベル下に補足)">
+        <Switch label="メール通知" description="キャンペーン・お知らせをメールで受信" defaultChecked />
+      </Caption>
+      <Caption text="Hover (pseudo-states 強制)">
+        <div id="sw-hover"><Switch label="Hover" /></div>
+      </Caption>
+      <Caption text="Focus-visible (pseudo-states 強制)">
+        <div id="sw-focus"><Switch label="Focus" /></div>
+      </Caption>
     </div>
   ),
 };
 
-export const SettingsPanel: Story = {
-  name: '実践例: 設定パネル',
+// ── 4. EdgeCases ───────────────────────────────────────────────
+
+export const EdgeCases: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '実利用例: 設定パネル (左ラベル + 右トグル、justify-between で全幅活用) と、ラベルなし (icon-only switch、aria-label 補強).',
+      },
+    },
+  },
   render: () => {
-    const [settings, setSettings] = useState({
-      email: true,
-      push: false,
-      sms: false,
-      newsletter: true,
-    });
-    const toggle = (key: keyof typeof settings) =>
-      setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
-
-    const items = [
-      { key: 'email' as const, label: 'メール通知', description: 'ログイン・購入などの重要なお知らせ' },
-      { key: 'push' as const, label: 'プッシュ通知', description: 'ブラウザの通知を受け取る' },
-      { key: 'sms' as const, label: 'SMS通知', description: '緊急時のみ' },
-      { key: 'newsletter' as const, label: 'ニュースレター', description: '週1回の最新情報をお届け' },
-    ];
-
+    function SettingsPanel() {
+      const [settings, setSettings] = useState({
+        email: true, push: false, sms: false, newsletter: true,
+      });
+      const toggle = (k: keyof typeof settings) => setSettings((p) => ({ ...p, [k]: !p[k] }));
+      const items = [
+        { key: 'email' as const, label: 'メール通知', description: 'ログイン・購入などの重要なお知らせ' },
+        { key: 'push' as const, label: 'プッシュ通知', description: 'ブラウザの通知を受け取る' },
+        { key: 'sms' as const, label: 'SMS 通知', description: '緊急時のみ' },
+        { key: 'newsletter' as const, label: 'ニュースレター', description: '週 1 回の最新情報' },
+      ];
+      return (
+        <div className="w-80 divide-y divide-border-subtle">
+          {items.map(({ key, label, description }) => (
+            <div key={key} className="py-4 first:pt-0 last:pb-0">
+              <Switch label={label} description={description} labelPosition="left"
+                checked={settings[key]} onChange={() => toggle(key)}
+                className="w-full justify-between" />
+            </div>
+          ))}
+        </div>
+      );
+    }
     return (
-      <div className="w-80 divide-y divide-border-muted">
-        {items.map(({ key, label, description }) => (
-          <div key={key} className="py-4 first:pt-0 last:pb-0">
-            <Switch label={label} description={description} labelPosition="left"
-              checked={settings[key]} onChange={() => toggle(key)}
-              className="w-full justify-between" />
-          </div>
-        ))}
+      <div className="flex flex-col gap-6">
+        <Caption text="設定パネル (left label + justify-between で全幅活用)">
+          <SettingsPanel />
+        </Caption>
+        <Caption text="ラベルなし (icon-only、aria-label で SR 補強)">
+          <Switch aria-label="ダークモードを切替" />
+        </Caption>
       </div>
     );
   },

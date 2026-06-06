@@ -1,0 +1,127 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SwitchStories from './Switch.stories';
+import { Switch } from './Switch';
+import { useState } from 'react';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={SwitchStories} name="Guideline" />
+
+# Switch
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+オン/オフの切り替えを表す **トグルスイッチ**。`role="switch"` + `aria-checked` で SR にも状態が伝わる。**即座に反映される設定** (ダークモード切替・通知 ON/OFF 等) に使う。フォーム送信 (送信ボタンで確定する) の場合は `<Checkbox>` を使う。
+
+---
+
+## Props
+
+<ArgTypes of={SwitchStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="即座反映の設定は Switch、フォーム送信は Checkbox"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState(true);
+        return <Switch label="ダークモード" description="切替後すぐに反映" checked={v} onChange={setV} />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="ダークモード等の即座反映設定は Switch。クリック直後に効果が出るのが UI 規範。"
+  dontExample={
+    <Switch label="利用規約に同意する (フォーム送信用)" />
+  }
+  dontCaption="フォーム送信で確定するチェックボックス的用途を Switch にすると、即時反映の規範と矛盾し誤操作の原因になる。`<Checkbox>` を使う。"
+/>
+
+<DoDontExample
+  label="ラベルを必ず付ける (or aria-label)"
+  doExample={
+    <div className="flex flex-col gap-3">
+      <Switch label="メール通知" />
+      <Switch aria-label="ダークモードを切替" />
+    </div>
+  }
+  doCaption="ラベルがあれば視覚 + SR の両方で意図が伝わる。アイコン横の小さな switch でラベルが書けない場合は `aria-label` で補強。"
+  dontExample={
+    <Switch />
+  }
+  dontCaption="ラベル / aria-label が無いと SR では「switch、off」とだけ読まれ、何のスイッチか分からない。"
+/>
+
+<DoDontExample
+  label="description は補足説明、ラベル本体に詰め込まない"
+  doExample={
+    <Switch label="メール通知" description="キャンペーン・お知らせをメールで受け取る" defaultChecked />
+  }
+  doCaption="ラベルは「何の設定か」、description は「何が起きるか」と役割分担。SR は label のみ読み上げる (description は補助情報)。"
+  dontExample={
+    <Switch label="メール通知 (キャンペーン・お知らせをメールで受け取ります、解除はいつでも可能)" />
+  }
+  dontCaption="長文ラベルは SR が一気に読み上げて意味が取りにくく、視覚的にもクリック領域が大きすぎる。"
+/>
+
+<DoDontExample
+  label="設定パネルでは left label + justify-between で全幅活用"
+  doExample={
+    <div className="w-72 divide-y divide-border-subtle">
+      <div className="py-3">
+        <Switch label="メール通知" labelPosition="left" defaultChecked className="w-full justify-between" />
+      </div>
+      <div className="py-3">
+        <Switch label="プッシュ通知" labelPosition="left" className="w-full justify-between" />
+      </div>
+    </div>
+  }
+  doCaption="設定一覧では label を左 + switch を右に寄せる (`justify-between`) と全幅を使い切り、視線が安定する。"
+  dontExample={
+    <div className="w-72 flex flex-col gap-3">
+      <Switch label="メール通知" defaultChecked />
+      <Switch label="プッシュ通知" />
+    </div>
+  }
+  dontCaption="default の左寄せだと余白が右側に余って情報密度が落ちる。設定パネルでは明示的に全幅活用する。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **フォーム送信で確定する選択** (利用規約同意等) | `<Checkbox>` | フォーム送信モデルでは Checkbox が慣習 |
+| **複数選択肢から 1 つ** | `<Radio>` / `<SegmentedControl>` | Switch は ON/OFF 2 値、選択肢が 3 つ以上には使わない |
+| **アクション実行** (押すと処理発火) | `<Button>` | Switch は状態切替、アクションは Button |
+| **数値の有効/無効** (0/1) | (用途次第で Switch でも Checkbox でも) | bool 値で「即座反映」なら Switch |
+
+---
+
+## アクセシビリティ
+
+- **`role="switch"` + `aria-checked`**: 自動付与、SR は「スイッチ、オン/オフ」と読み上げる
+- **`<Label htmlFor>`**: ラベルクリックでもトグルする (label と switch を関連付け)
+- **キーボード操作**: `Tab` で focus、`Enter` / `Space` で発火 (Enter キー対応は handleKeyDown で実装、`<button>` 標準の Space に加えて)
+- **focus ring**: `focus-visible:ring-focus` でキーボード focus のみリング表示
+- **disabled 時の見せ方**: `opacity-disabled` + `cursor-not-allowed`。「なぜ disabled か」は description で補強
+- **タッチターゲット**: md (44×24px) / lg (56×32px) で track サイズ。トラックそのものは小さいが button 要素全体がクリック領域。WCAG 2.5.5 はラベル含めて 44×44px を達成可
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Label>`](?path=/docs/primitives-label--guideline) — `label` prop の表示 (htmlFor で switch と関連付け)

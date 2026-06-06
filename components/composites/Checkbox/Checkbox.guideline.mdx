@@ -1,0 +1,135 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as CheckboxStories from './Checkbox.stories';
+import { Checkbox, CheckboxGroup } from './Checkbox';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={CheckboxStories} name="Guideline" />
+
+# Checkbox
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+**フォーム入力用の複数選択 / 単独 ON/OFF チェック**。`<input type="checkbox">` ベースで、フォーム送信に乗せたい設定 / 利用規約同意 / 興味カテゴリ等に使う。複数まとめるときは `<CheckboxGroup>` で `<fieldset>` + `<legend>` でラップし、共通 errorMessage / helpText を持てる。即時反映設定 (ダークモード等) には `<Switch>` を、排他選択には `<Radio>` を検討。indeterminate 状態は親「全て選択」で一部のみ選択中を表現する。
+
+---
+
+## Props
+
+<ArgTypes of={CheckboxStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="フォーム送信で確定する選択は Checkbox、即時反映は Switch"
+  doExample={
+    <Checkbox label="利用規約に同意する (登録ボタンで確定)" required />
+  }
+  doCaption="フォーム送信ボタンで確定する選択 (利用規約同意 / 興味カテゴリ等) は Checkbox。慣習的にも「チェックボックス = フォーム入力」が定着。"
+  dontExample={
+    <Checkbox label="ダークモード (即座反映の設定)" />
+  }
+  dontCaption="即時反映設定 (ダークモード切替等) を Checkbox にすると「送信後に反映」と誤解される。`<Switch>` を使う。"
+/>
+
+<DoDontExample
+  label="複数 Checkbox は CheckboxGroup でグループ化"
+  doExample={
+    <CheckboxGroup legend="通知設定" helpText="複数選択できます">
+      <Checkbox label="メール通知" defaultChecked />
+      <Checkbox label="プッシュ通知" />
+      <Checkbox label="SMS 通知" />
+    </CheckboxGroup>
+  }
+  doCaption="`<fieldset>` + `<legend>` で SR にもグループ用途が伝わる。helpText / errorMessage はグループ単位。"
+  dontExample={
+    <div className="flex flex-col gap-1">
+      <p className="text-sm font-semibold">通知設定</p>
+      <Checkbox label="メール通知" defaultChecked />
+      <Checkbox label="プッシュ通知" />
+      <Checkbox label="SMS 通知" />
+    </div>
+  }
+  dontCaption="単なる p + Checkbox 並べだと SR がグループとして認識できず、文脈が伝わらない。"
+/>
+
+<DoDontExample
+  label="親「全て選択」には indeterminate を使う"
+  doExample={
+    <div className="flex flex-col gap-2">
+      <Checkbox label="全て選択" indeterminate />
+      <div className="pl-6 flex flex-col gap-1">
+        <Checkbox label="項目 A" defaultChecked />
+        <Checkbox label="項目 B" />
+        <Checkbox label="項目 C" defaultChecked />
+      </div>
+    </div>
+  }
+  doCaption="親 Checkbox で「子の一部のみ選択中」を表す indeterminate 状態。全選択 / 全解除 / 一部選択の 3 状態を視覚化。"
+  dontExample={
+    <div className="flex flex-col gap-2">
+      <Checkbox label="全て選択" defaultChecked />
+      <div className="pl-6 flex flex-col gap-1">
+        <Checkbox label="項目 A" defaultChecked />
+        <Checkbox label="項目 B" />
+        <Checkbox label="項目 C" defaultChecked />
+      </div>
+    </div>
+  }
+  dontCaption="一部のみ選択中なのに親を checked にすると、ユーザーが「全部選択中」と誤読する。indeterminate で「中間状態」を明示。"
+/>
+
+<DoDontExample
+  label="エラーは CheckboxGroup の error + errorMessage で"
+  doExample={
+    <CheckboxGroup legend="利用規約" required error errorMessage="続けるには同意が必要です">
+      <Checkbox label="利用規約とプライバシーポリシーに同意する" />
+    </CheckboxGroup>
+  }
+  doCaption="グループ単位でエラー扱い。errorMessage が型レベルで必須、aria-invalid + role='alert' で SR にも伝わる。"
+  dontExample={
+    <Checkbox label="利用規約に同意する" required />
+  }
+  dontCaption="送信時の未チェックエラーを視覚にも SR にも伝えないと、ユーザーが「なぜ送信できないか」を知る手段が無い。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **即時反映の ON/OFF** (設定) | `<Switch>` | 切替後すぐ反映、フォーム送信不要 |
+| **複数選択肢から 1 つ排他** | `<Radio>` | 排他制御、Checkbox は複数選択用 |
+| **多数の選択肢から 1 つ** (6 個以上) | `<Select>` | 一覧性ではなく省スペース |
+| **トグルボタン的な選択** (テキスト + active 状態) | `<ToggleButton>` / `<FilterChip>` | 視覚的なボタン UI |
+
+---
+
+## アクセシビリティ
+
+- **`<input type="checkbox">`**: ネイティブの role / aria 挙動を継承
+- **`<fieldset>` + `<legend>` (CheckboxGroup)**: グループとして SR に伝達
+- **`aria-invalid` + `aria-describedby`**: error / helpText / errorMessage と関連付け自動
+- **`aria-checked="mixed"`** (indeterminate 時): browser が自動付与
+- **キーボード操作**: `Tab` で focus、`Space` でトグル (browser 標準)
+- **focus ring**: `focus-visible:ring-focus` で keyboard focus 時のみリング
+- **タッチターゲット**: sm / md / lg。md 以上で WCAG 2.5.5 達成
+- **ラベルクリック**: `<Label htmlFor>` でラベルクリックでもトグル
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Label>`](?path=/docs/primitives-label--guideline) — 各 Checkbox の `label` 表示 (htmlFor で input と関連付け)
+- `<FormMessage>` (internal) — helpText / errorMessage の表示

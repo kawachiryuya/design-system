@@ -34,7 +34,10 @@ const meta: Meta<typeof SearchBar> = {
     }
     return <Demo />;
   },
-  decorators: [(Story) => <div className="w-80"><Story /></div>],
+  // 全 story を w-80 でラップする (parameters.noWrap=true で個別に解除可能)
+  decorators: [(Story, ctx) =>
+    ctx.parameters.noWrap ? <Story /> : <div className="w-80"><Story /></div>,
+  ],
 };
 
 export default meta;
@@ -145,9 +148,12 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '実利用例: onSearch (Enter で実行) / ヘッダー検索 (候補表示) / テーブルフィルタ (sm、リアルタイム絞り込み).',
+        story: '実利用例: onSearch (Enter で実行) / ヘッダー検索 (候補表示) / テーブルフィルタ (sm、リアルタイム絞り込み) / Layout token 適用 (アプリヘッダー frame).',
       },
     },
+    // meta 側の w-80 decorator を解除 (AppShellDemo は max-w-container で表示するため幅 320px 制約を外す。
+    // 3 つの SearchBar 例は render 内で `<div className="w-80">` で内部的に幅を絞り直す)
+    noWrap: true,
   },
   render: () => {
     function SearchCallbackDemo() {
@@ -209,11 +215,41 @@ export const EdgeCases: Story = {
         </div>
       );
     }
+    function AppShellDemo() {
+      const [query, setQuery] = useState('');
+      return (
+        <header className="w-full px-container py-container max-w-container mx-auto bg-surface border border-border-subtle rounded-md">
+          <div className="flex items-center gap-6">
+            <h2 className="text-heading-sm text-onSurface m-0 flex-shrink-0">プロダクト名</h2>
+            {/* SearchBar を flex-1 でラップして中央スペースを伸縮させる
+                (SearchBar の fullWidth は w-full、flex 子要素では grow しないため) */}
+            <div className="flex-1 min-w-0">
+              <SearchBar
+                value={query}
+                onChange={setQuery}
+                size="md"
+                fullWidth
+                placeholder="記事・タグ・著者で検索..."
+              />
+            </div>
+            <button type="button"
+              className="flex-shrink-0 px-4 py-2 rounded-md bg-surface-primary text-onSurface-inverse text-sm">
+              ログイン
+            </button>
+          </div>
+        </header>
+      );
+    }
     return (
-      <div className="flex flex-col gap-6 w-80">
-        <Caption text="onSearch (Enter で検索実行)"><SearchCallbackDemo /></Caption>
-        <Caption text="ヘッダー検索 (候補表示、isLoading 連動)"><HeaderSearchDemo /></Caption>
-        <Caption text="テーブルフィルタ (sm、リアルタイム絞り込み)"><TableFilterDemo /></Caption>
+      <div className="flex flex-col gap-6">
+        <div className="w-80 flex flex-col gap-6">
+          <Caption text="onSearch (Enter で検索実行)"><SearchCallbackDemo /></Caption>
+          <Caption text="ヘッダー検索 (候補表示、isLoading 連動)"><HeaderSearchDemo /></Caption>
+          <Caption text="テーブルフィルタ (sm、リアルタイム絞り込み)"><TableFilterDemo /></Caption>
+        </div>
+        <Caption text="Layout token 適用 (アプリヘッダー、px-container + max-w-container + 中央 SearchBar)">
+          <AppShellDemo />
+        </Caption>
       </div>
     );
   },

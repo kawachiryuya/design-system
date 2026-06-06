@@ -255,7 +255,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             type="button"
             aria-label="検索をクリア"
             onClick={handleClear}
-            className="flex items-center justify-center text-onSurface-muted hover:text-onSurface-muted transition-colors
+            className="flex items-center justify-center text-onSurface-muted hover:text-onSurface transition-colors
               focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus rounded-sm"
           >
             <Icon name="close" size={s.iconSize} />

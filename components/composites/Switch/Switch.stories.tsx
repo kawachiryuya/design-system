@@ -162,7 +162,7 @@ export const EdgeCases: Story = {
       });
       const toggle = (k: keyof typeof settings) => setSettings((p) => ({ ...p, [k]: !p[k] }));
       return (
-        <form className="px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+        <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
           <div className="space-y-section-sm">
             <h3 className="text-heading-sm text-onSurface m-0">アプリ設定</h3>
             <div className="divide-y divide-border-subtle">

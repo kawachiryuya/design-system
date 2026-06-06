@@ -120,9 +120,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       ...rest
     } = props as _InternalSelectProps;
 
-    const selectId = id || (label ? `select-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
-    const errorId = selectId ? `${selectId}-error` : undefined;
-    const helpId = selectId ? `${selectId}-help` : undefined;
+    const reactId = React.useId();
+    const selectId = id || `select-${reactId}`;
+    const errorId = `${selectId}-error`;
+    const helpId = `${selectId}-help`;
 
     // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
     const sizeConfig = {

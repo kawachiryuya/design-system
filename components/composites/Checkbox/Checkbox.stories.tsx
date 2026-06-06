@@ -153,7 +153,7 @@ export const EdgeCases: Story = {
       const [submitted, setSubmitted] = useState(false);
       return (
         <form
-          className="px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md"
+          className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md"
           onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
         >
           <div className="space-y-section-sm">

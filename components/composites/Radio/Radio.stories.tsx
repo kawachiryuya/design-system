@@ -209,7 +209,7 @@ export const EdgeCases: Story = {
       const [pay, setPay] = useState('card');
       const [ship, setShip] = useState('standard');
       return (
-        <form className="px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+        <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
           <div className="space-y-section-sm">
             <h3 className="text-heading-sm text-onSurface m-0">注文フォーム</h3>
             <RadioGroup legend="お支払い方法" required>

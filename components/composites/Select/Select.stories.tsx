@@ -153,17 +153,22 @@ export const EdgeCases: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-6">
-      <Caption text="住所フォーム (複数 Select を fullWidth で縦並び)">
-        <div className="flex flex-col gap-4 w-80">
-          <Select label="都道府県" required placeholder="都道府県を選択" fullWidth>
-            {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-          </Select>
-          <Select label="配送希望時間" placeholder="指定なし" fullWidth>
-            {['午前中', '14〜16 時', '16〜18 時', '18〜20 時', '20〜21 時'].map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </Select>
-        </div>
+      <Caption text="住所フォーム (Layout token: px-container / max-w-container / space-y-section-sm + fullWidth)">
+        <form className="w-full px-container py-container max-w-container mx-auto bg-surface border border-border-subtle rounded-md">
+          <div className="space-y-section-sm">
+            <h3 className="text-heading-sm text-onSurface m-0">配送情報</h3>
+            <div className="flex flex-col gap-4">
+              <Select label="都道府県" required placeholder="都道府県を選択" fullWidth>
+                {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+              </Select>
+              <Select label="配送希望時間" placeholder="指定なし" fullWidth>
+                {['午前中', '14〜16 時', '16〜18 時', '18〜20 時', '20〜21 時'].map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </Select>
+            </div>
+          </div>
+        </form>
       </Caption>
       <Caption text="optgroup を使った階層 (都道府県 → 地方カテゴリ)">
         <Select label="都道府県" placeholder="選択..." fullWidth>

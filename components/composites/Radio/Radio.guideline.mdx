@@ -1,0 +1,138 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as RadioStories from './Radio.stories';
+import { Radio, RadioGroup } from './Radio';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={RadioStories} name="Guideline" />
+
+# Radio
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+**複数の選択肢から 1 つを排他選択** するラジオボタン。常に `<RadioGroup>` でラップして使い、`<fieldset>` + `<legend>` で SR にもグループ用途が伝わる。`name` 属性が同じ Radio 同士で排他制御。3〜5 個の選択肢で「常に全候補を見せたい」場面に最適。6 個以上は `<Select>`、2〜5 個の表示切替は `<SegmentedControl>`、即座反映設定は `<Switch>` を検討。
+
+---
+
+## Props
+
+<ArgTypes of={RadioStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="3〜5 個の排他選択肢で使う"
+  doExample={
+    <RadioGroup legend="配送方法">
+      <Radio name="d-do" value="standard" label="標準配送 (3〜5 日)" defaultChecked />
+      <Radio name="d-do" value="express" label="速達 (翌日)" />
+      <Radio name="d-do" value="pickup" label="店頭受取" />
+    </RadioGroup>
+  }
+  doCaption="3〜5 個の排他選択肢で「常に全候補を見せたい」フォーム入力に最適。SR では legend + 各 option がグループとして読まれる。"
+  dontExample={
+    <RadioGroup legend="都道府県">
+      {['北海道','青森','岩手','宮城','秋田','山形','福島','茨城','栃木','群馬','埼玉','千葉','東京'].map((p, i) => (
+        <Radio key={i} name="d-dont" value={p} label={p} />
+      ))}
+    </RadioGroup>
+  }
+  dontCaption="10 個以上を縦に並べると一覧性が落ち、スクロールも必要。多数の選択肢は `<Select>` か検索付き UI に。"
+/>
+
+<DoDontExample
+  label="description で各選択肢の意味を補強"
+  doExample={
+    <RadioGroup legend="お支払い方法">
+      <Radio name="p-do" value="card" label="クレジットカード" description="Visa / Mastercard / AMEX 対応" defaultChecked />
+      <Radio name="p-do" value="bank" label="銀行振込" description="振込確認後にサービス有効化 (1〜3 営業日)" />
+    </RadioGroup>
+  }
+  doCaption="選択肢に説明が必要な場合は `description` を使う。視覚的に補助情報として落ち着き、SR でも適切に読まれる。"
+  dontExample={
+    <RadioGroup legend="お支払い方法">
+      <Radio name="p-dont" value="card" label="クレジットカード (Visa / Mastercard / AMEX 対応、即時利用可能)" defaultChecked />
+    </RadioGroup>
+  }
+  dontCaption="ラベルに全部詰め込むと視覚的に詰まり、SR で長文ラベルが一気読みされて理解しにくい。"
+/>
+
+<DoDontExample
+  label="少数 (2〜3 個) は inline で横並び可"
+  doExample={
+    <RadioGroup legend="性別 (任意)" inline>
+      <Radio name="g-do" value="m" label="男性" defaultChecked />
+      <Radio name="g-do" value="f" label="女性" />
+      <Radio name="g-do" value="o" label="その他" />
+    </RadioGroup>
+  }
+  doCaption="2〜3 個の短いラベルは inline で横並びにすると省スペース。dense なフォームで有効。"
+  dontExample={
+    <RadioGroup legend="配送方法 (5 個)" inline>
+      <Radio name="d-dont-inline" value="s" label="標準配送 (3〜5 日)" />
+      <Radio name="d-dont-inline" value="e" label="速達 (翌日)" />
+      <Radio name="d-dont-inline" value="p" label="店頭受取" />
+      <Radio name="d-dont-inline" value="o" label="海外配送" />
+      <Radio name="d-dont-inline" value="x" label="その他" />
+    </RadioGroup>
+  }
+  dontCaption="5 個以上を inline にすると横にはみ出すか縮んで読めなくなる。長文ラベルや 4 個以上は縦並び。"
+/>
+
+<DoDontExample
+  label="エラー時は RadioGroup の error + errorMessage で明示"
+  doExample={
+    <RadioGroup legend="配送方法" required error errorMessage="配送方法を選択してください">
+      <Radio name="e-do" value="s" label="標準配送" />
+      <Radio name="e-do" value="e" label="速達" />
+    </RadioGroup>
+  }
+  doCaption="グループ単位でエラー扱い。`errorMessage` が型レベルで必須、`aria-invalid` で SR にも伝わる。"
+  dontExample={
+    <RadioGroup legend="配送方法" required>
+      <Radio name="e-dont" value="s" label="標準配送" error />
+      <Radio name="e-dont" value="e" label="速達" error />
+    </RadioGroup>
+  }
+  dontCaption="個別 Radio に error を付けて「グループとして未選択エラー」を表現すると、ユーザーがどの選択肢に問題があるか誤解する。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **多数の選択肢** (6 個以上) | `<Select>` | 一覧性ではなく省スペース・スクロール対応 |
+| **少数の表示切替** (リスト/グリッド等) | `<SegmentedControl>` | フォーム入力ではなく表示切替 |
+| **即座反映の ON/OFF** | `<Switch>` | フォーム送信ではなく即時反映 |
+| **複数選択可能** | `<CheckboxGroup>` | 排他制御ではない |
+
+---
+
+## アクセシビリティ
+
+- **`<fieldset>` + `<legend>`**: RadioGroup が自動生成、SR はグループ + legend を読み上げ
+- **`name` 属性**: 同じ name の Radio で排他制御。`role="radiogroup"` 相当の挙動を browser が標準実装
+- **`aria-invalid` + `aria-describedby`**: error / helpText / errorMessage と関連付け自動
+- **キーボード操作**: `Tab` でグループにフォーカス、`↑` `↓` `←` `→` で選択肢間移動 (browser 標準)。`Space` / `Enter` で選択
+- **disabled 時**: グループ全体 or 個別 Radio で。SR にも「無効」が伝わる
+- **focus ring**: 各 Radio に focus 時のリング表示
+- **タッチターゲット**: sm / md / lg。md 以上で WCAG 2.5.5 (44×44px) 達成
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Label>`](?path=/docs/primitives-label--guideline) — 各 Radio の `label` 表示 (htmlFor で input と関連付け)
+- `<FormMessage>` (internal) — helpText / errorMessage の表示

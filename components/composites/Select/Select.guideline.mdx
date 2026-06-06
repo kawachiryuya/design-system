@@ -1,0 +1,153 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SelectStories from './Select.stories';
+import { Select } from './Select';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={SelectStories} name="Guideline" />
+
+# Select
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+ネイティブの `<select>` をラップしたドロップダウン選択。**多数の選択肢から 1 つ排他選択** する用途で、ブラウザ標準のドロップダウン挙動 / OS ネイティブ UI / SR 完全対応 / モバイルでのネイティブ picker 起動など、自前実装の dropdown では得難い恩恵を享受できる。Discriminated union 型で error 状態時は `errorMessage` が型レベルで必須。2〜5 個の選択肢には `<SegmentedControl>` / `<Radio>` を検討。
+
+---
+
+## Props
+
+<ArgTypes of={SelectStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="多数 (6 個以上) の選択肢で使う"
+  doExample={
+    <Select label="都道府県" placeholder="選択..." fullWidth>
+      <option value="t">東京都</option>
+      <option value="o">大阪府</option>
+      <option value="a">愛知県</option>
+      <option value="f">福岡県</option>
+      <option value="h">北海道</option>
+      <option value="s">沖縄県</option>
+    </Select>
+  }
+  doCaption="6 個以上の排他選択肢で省スペース・スクロール対応・ネイティブ UI の恩恵を取りたいときに最適。"
+  dontExample={
+    <Select label="表示モード" placeholder="選択..." fullWidth>
+      <option value="list">リスト</option>
+      <option value="grid">グリッド</option>
+    </Select>
+  }
+  dontCaption="2 択を Select にすると 1 クリック余分にかかる (開く → 選ぶ)。`<SegmentedControl>` を使うと 1 クリックで切り替えできる。"
+/>
+
+<DoDontExample
+  label="placeholder で「未選択」を強制 (任意の場合)"
+  doExample={
+    <Select label="配送希望時間" placeholder="指定なし" fullWidth>
+      <option value="a">午前中</option>
+      <option value="b">午後</option>
+    </Select>
+  }
+  doCaption="任意項目では placeholder で「未選択も valid な選択」を示す。`<option value='' disabled>` で初期値は disabled に。"
+  dontExample={
+    <Select label="配送希望時間" fullWidth>
+      <option value="a">午前中</option>
+      <option value="b">午後</option>
+    </Select>
+  }
+  dontCaption="placeholder なしだと最初の選択肢 (午前中) が自動選択され、ユーザーが意識して選んだかどうか区別できない。"
+/>
+
+<DoDontExample
+  label="エラー時は errorMessage で原因を明示"
+  doExample={
+    <Select
+      label="支払い方法"
+      error
+      errorMessage="支払い方法を選択してください"
+      required
+      placeholder="選択..."
+      fullWidth
+    >
+      <option value="card">クレジットカード</option>
+      <option value="bank">銀行振込</option>
+    </Select>
+  }
+  doCaption="error=true 時は errorMessage が型レベルで必須。aria-invalid + aria-describedby で SR にも原因が伝わる。"
+  dontExample={
+    <Select label="支払い方法" required placeholder="選択..." fullWidth>
+      <option value="card">クレジットカード</option>
+    </Select>
+  }
+  dontCaption="エラー状態を視覚にも SR にも伝えないと、ユーザーは「何が間違っているか」を知る手段が無い。"
+/>
+
+<DoDontExample
+  label="optgroup で多数の選択肢を階層化"
+  doExample={
+    <Select label="都道府県" placeholder="選択..." fullWidth>
+      <optgroup label="関東">
+        <option value="t">東京都</option>
+        <option value="k">神奈川県</option>
+      </optgroup>
+      <optgroup label="関西">
+        <option value="o">大阪府</option>
+        <option value="ky">京都府</option>
+      </optgroup>
+    </Select>
+  }
+  doCaption="10 個以上の選択肢では `<optgroup>` で論理グループ化するとスクロールが楽。"
+  dontExample={
+    <Select label="都道府県 (フラット 47 件)" placeholder="選択..." fullWidth>
+      <option>北海道</option>
+      <option>青森県</option>
+      <option>... (中略)</option>
+      <option>沖縄県</option>
+    </Select>
+  }
+  dontCaption="40+ 個をフラットに並べるとユーザーが目的の項目を探しにくい。地方ごとに optgroup 化を検討。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **2〜5 個の排他選択** | `<SegmentedControl>` / `<Radio>` | 一覧性が高く 1 クリックで切替 |
+| **複数選択** | `<CheckboxGroup>` / Custom multi-select | Select は単一選択用 |
+| **テキスト自由入力 + 候補** | `<SearchBar>` (将来 Autocomplete) | ネイティブ Select では検索不可 |
+| **Modal 経由でフィルタ複数選択** | `<FilterChip>` + Modal | フィルター UI の文脈 |
+
+---
+
+## アクセシビリティ
+
+- **ネイティブ `<select>`**: OS / ブラウザの標準 dropdown 挙動・キーボード操作・SR 対応をそのまま継承
+- **`<Label htmlFor>`**: 自動配線、ラベルクリックで focus
+- **`aria-invalid="true"`**: error=true 時に自動付与
+- **`aria-describedby`**: error 時は errorMessage の id、通常時は helpText の id と関連付け
+- **`aria-required="true"`**: required=true 時に自動付与
+- **focus 表現**: border 色変化 + inset ring (input/textarea と同パターン、UA heuristic 問題回避)
+- **タッチターゲット**: sm (40px) / md (48px) / lg (64px)。md 以上で WCAG 2.5.5 達成
+- **キーボード操作**: ネイティブ標準。`Tab` で focus、`Space` / `↑` / `↓` で開閉、選択肢への文字打鍵で検索 (browser 標準)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — カスタム下矢印 (`expand_more`)
+- [`<Label>`](?path=/docs/primitives-label--guideline) — `label` prop の表示 (htmlFor で select と関連付け)
+- `<FormMessage>` (internal) — helpText / errorMessage の表示

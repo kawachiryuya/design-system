@@ -1,0 +1,120 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ToggleButtonStories from './ToggleButton.stories';
+import { ToggleButton } from './ToggleButton';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={ToggleButtonStories} name="Guideline" />
+
+# ToggleButton
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+単一トグル可能ボタン。`aria-pressed` で **オン/オフの選択状態を SR に伝達** し、視覚スタイルも切り替わる。座席選択 / カレンダー日付 / グリッド内の単一項目トグルなど、**「同じ場所が押される度に状態が反転する」UI** に使う。複数選択肢から 1 つ選ぶ場合は `<Radio>` / `<SegmentedControl>` を、項目の有効/無効切替は `<Switch>` / `<Checkbox>` を検討。
+
+---
+
+## Props
+
+<ArgTypes of={ToggleButtonStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="`selected` 状態は controlled で親が保持"
+  doExample={
+    <div className="flex gap-2">
+      <ToggleButton selected>1</ToggleButton>
+      <ToggleButton>2</ToggleButton>
+      <ToggleButton>3</ToggleButton>
+    </div>
+  }
+  doCaption="親 component が `selected` state を持ち、`onClick` で更新する。複数 ToggleButton 間の排他選択もこのパターンで実現する。"
+  dontExample={
+    <div className="flex gap-2">
+      <ToggleButton selected>1</ToggleButton>
+      <ToggleButton selected>2</ToggleButton>
+      <ToggleButton selected>3</ToggleButton>
+    </div>
+  }
+  dontCaption="全部 selected にすると視覚的に意味を成さない。「1 つだけ選択」を表現したい場合は親が排他制御し、必要に応じて Radio に置換える。"
+/>
+
+<DoDontExample
+  label="disabled は理由が分かる文脈で使う"
+  doExample={
+    <div className="flex gap-2 items-end">
+      <div className="flex flex-col items-center gap-1">
+        <ToggleButton>1A</ToggleButton>
+        <span className="text-xs text-onSurface-muted">空席</span>
+      </div>
+      <div className="flex flex-col items-center gap-1">
+        <ToggleButton disabled aria-label="座席 1B 予約済み">1B</ToggleButton>
+        <span className="text-xs text-onSurface-muted">予約済</span>
+      </div>
+    </div>
+  }
+  doCaption="周囲のラベルや凡例で disabled の理由 (予約済み等) が伝わるようにし、`aria-label` でも SR に状態を補足する。"
+  dontExample={
+    <div className="flex gap-2">
+      <ToggleButton disabled>1</ToggleButton>
+      <ToggleButton disabled>2</ToggleButton>
+      <ToggleButton disabled>3</ToggleButton>
+    </div>
+  }
+  dontCaption="理由のない disabled だけが並ぶと「読み込み中」「権限が無い」のどちらか判別できず、ユーザーが戻れない状態になる。"
+/>
+
+<DoDontExample
+  label="ラベルは短く (1〜3 文字目安)"
+  doExample={
+    <div className="flex gap-2">
+      <ToggleButton>1</ToggleButton>
+      <ToggleButton selected>2</ToggleButton>
+      <ToggleButton>10</ToggleButton>
+    </div>
+  }
+  doCaption="ToggleButton はサイズが固定 (w-10 h-10) なので、数字や 1〜3 文字の記号が適切。"
+  dontExample={
+    <ToggleButton>長文ラベル</ToggleButton>
+  }
+  dontCaption="長文を入れるとはみ出すか縮んで読めない。テキストが主なら `<Button>` か `<Checkbox>` を使う。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **複数選択肢から 1 つ排他選択** (ラジオ的) | `<Radio>` / `<SegmentedControl>` | グループ内排他制御 + キーボード矢印移動が標準実装 |
+| **項目の有効/無効切替** (オン/オフ) | `<Switch>` | 視覚的に「オン/オフ」が伝わる、`role="switch"` |
+| **チェックボックス的な複数選択** | `<Checkbox>` / `<CheckboxGroup>` | ラベル付き、フォーム送信に乗る `<input type="checkbox">` |
+| **押すとアクションが起きる** (トグルではない) | `<Button>` | キーボード操作 / focus / role="button" を備えた専用コントロール |
+
+---
+
+## アクセシビリティ
+
+- **`aria-pressed`**: `selected` prop の値が `aria-pressed` 属性として反映。SR は「2 を押下」のように選択状態を読み上げる
+- **`type="button"`**: form 内でも submit を発火しない (デフォルト挙動)
+- **キーボード操作**: `Tab` で focus、`Enter` / `Space` で onClick 発火 (button 標準)
+- **focus ring**: `focus-visible:ring-focus` で keyboard focus のみリング表示 (click 後は出さない)
+- **disabled 時の aria-label 補足**: 「なぜ disabled か」を `aria-label="座席 1B 予約済み"` のように補強する
+- **タッチターゲット**: w-10 h-10 = 40px。WCAG 2.5.5 (44×44px) には未到達のため、密集レイアウト時は周囲に余白を確保するか、外側を wrap してタップ範囲を広げる
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし (ToggleButton は他のコンポーネントを import しない)。

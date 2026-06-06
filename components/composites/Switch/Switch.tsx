@@ -18,7 +18,7 @@ export type SwitchLabelPosition = 'left' | 'right';
  *   <Switch label="メール通知" checked={enabled} onChange={setEnabled} />
  *
  * @example
- *   // 説明付き（設定画面）
+ *   // 説明付き（description は SR にも aria-describedby で伝わる）
  *   <Switch
  *     label="ダークモード"
  *     description="OS の設定に従う場合は無効化"
@@ -60,7 +60,7 @@ export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   size?: SwitchSize;
   /** ラベルテキスト。クリックでもトグルする。 */
   label?: string;
-  /** ラベルの補足テキスト（より小さく、ミュート色）。 */
+  /** ラベルの補足テキスト (body-sm サイズ、SR には `aria-describedby` で伝わる)。 */
   description?: string;
   /**
    * ラベルの位置。
@@ -91,11 +91,14 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       disabled = false,
       id,
       className = '',
+      'aria-describedby': ariaDescribedByProp,
       ...props
     },
     ref
   ) => {
-    const switchId = id || (label ? `switch-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
+    const reactId = React.useId();
+    const switchId = id || `switch-${reactId}`;
+    const descId = description ? `${switchId}-desc` : undefined;
 
     const handleClick = () => {
       if (!disabled && onChange) {
@@ -170,10 +173,17 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           </Label>
         )}
         {description && (
-          <span className="text-caption text-onSurface-soft">{description}</span>
+          <span id={descId} className="text-body-sm text-onSurface-soft">
+            {description}
+          </span>
         )}
       </div>
     );
+
+    // aria-describedby に description id と利用者指定 id を結合
+    const ariaDescribedBy = [descId, ariaDescribedByProp]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
     return (
       <div className={`inline-flex ${description ? 'items-start' : 'items-center'} gap-3 ${className}`}>
@@ -184,6 +194,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           type="button"
           role="switch"
           aria-checked={checked}
+          aria-describedby={ariaDescribedBy}
           disabled={disabled}
           onClick={handleClick}
           onKeyDown={handleKeyDown}

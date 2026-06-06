@@ -155,6 +155,38 @@ export const EdgeCases: Story = {
         </div>
       );
     }
+
+    function LayoutSettings() {
+      const [settings, setSettings] = useState({
+        dark: false, autoUpdate: true, telemetry: false,
+      });
+      const toggle = (k: keyof typeof settings) => setSettings((p) => ({ ...p, [k]: !p[k] }));
+      return (
+        <form className="px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+          <div className="space-y-section-sm">
+            <h3 className="text-heading-sm text-onSurface m-0">アプリ設定</h3>
+            <div className="divide-y divide-border-subtle">
+              <div className="py-3">
+                <Switch label="ダークモード" description="OS の設定に従う場合は無効化" labelPosition="left"
+                  checked={settings.dark} onChange={() => toggle('dark')}
+                  className="w-full justify-between" />
+              </div>
+              <div className="py-3">
+                <Switch label="自動更新" description="新しいバージョンを自動でインストール" labelPosition="left"
+                  checked={settings.autoUpdate} onChange={() => toggle('autoUpdate')}
+                  className="w-full justify-between" />
+              </div>
+              <div className="py-3">
+                <Switch label="使用状況の送信" description="匿名の使用データを開発元に送信" labelPosition="left"
+                  checked={settings.telemetry} onChange={() => toggle('telemetry')}
+                  className="w-full justify-between" />
+              </div>
+            </div>
+          </div>
+        </form>
+      );
+    }
+
     return (
       <div className="flex flex-col gap-6">
         <Caption text="設定パネル (left label + justify-between で全幅活用)">
@@ -162,6 +194,9 @@ export const EdgeCases: Story = {
         </Caption>
         <Caption text="ラベルなし (icon-only、aria-label で SR 補強)">
           <Switch aria-label="ダークモードを切替" />
+        </Caption>
+        <Caption text="Layout token 適用 (px-container / space-y-section-sm でアプリ設定 frame)">
+          <LayoutSettings />
         </Caption>
       </div>
     );

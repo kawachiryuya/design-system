@@ -1,0 +1,157 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SearchBarStories from './SearchBar.stories';
+import { SearchBar } from './SearchBar';
+import { useState } from 'react';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={SearchBarStories} name="Guideline" />
+
+# SearchBar
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+検索専用入力。アイコン + `<input type="search">` + クリアボタン + ローディングスピナーを組合せた Molecule。`Enter` キーで `onSearch` 発火、`Escape` でクリア + blur、value がある時にクリアボタンが自動表示される。検索 / フィルタリング / 候補絞り込みに使う。テキスト入力一般は `<Input>`、選択肢から選ぶ場面は `<Select>` / `<Radio>` を検討。
+
+---
+
+## Props
+
+<ArgTypes of={SearchBarStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="`<input type='search'>` ベース (browser 標準の検索挙動)"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('test');
+        return <SearchBar value={v} onChange={setV} placeholder="検索..." />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="role=searchbox / Esc で内容クリア / 履歴サジェスト等、browser 標準の検索挙動が自動で得られる。"
+  dontExample={
+    <div className="px-3 h-10 inline-flex items-center border border-border rounded-sm bg-surface">
+      <span className="text-onSurface-muted text-sm">検索... (普通の Input ベース)</span>
+    </div>
+  }
+  dontCaption="普通の text input ベースで自前実装すると、role=searchbox や履歴等の標準機能が失われる。"
+/>
+
+<DoDontExample
+  label="onSearch で Enter 実行、onChange は逐次"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('');
+        return <SearchBar value={v} onChange={setV} onSearch={(q) => alert('search: ' + q)} placeholder="Enter で実行..." />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="`onChange` で逐次サジェスト・絞り込み、`onSearch` で確定実行を分ける。ユーザーが Enter を押した「明示的な検索」と区別できる。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('');
+        return <SearchBar value={v} onChange={(q) => { setV(q); /* call API every keystroke */ }} placeholder="毎打鍵で API" />;
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="毎打鍵で重い API を呼ぶと無駄なリクエストと UI のチラつきが発生。逐次は debounce + サジェスト、確定は onSearch で分離する。"
+/>
+
+<DoDontExample
+  label="ローディング中は isLoading で spinner 表示"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('検索中...');
+        return <SearchBar value={v} onChange={setV} isLoading placeholder="検索..." />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="非同期検索中は isLoading=true でクリアボタンの位置に Spinner 表示。ユーザーに「処理中」が伝わる。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('検索中...');
+        return <SearchBar value={v} onChange={setV} placeholder="検索..." />;
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="ローディング表示なしだと「フリーズしたのか?」とユーザーが感じる。長めの非同期では必ず spinner を出す。"
+/>
+
+<DoDontExample
+  label="aria-label で「何を検索するか」を明示"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('');
+        return <SearchBar value={v} onChange={setV} placeholder="記事を検索..." ariaLabel="記事を検索" />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="ラベル要素がない設計のため、`ariaLabel` で SR に「何の検索か」を明示する。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState('');
+        return <SearchBar value={v} onChange={setV} placeholder="検索..." />;
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="aria-label 無しだと SR で「searchbox」とだけ読まれ、何を検索するか分からない。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **一般的なテキスト入力** | `<Input>` | 検索特有の UI (クリアボタン / spinner / 検索アイコン) が不要 |
+| **限定的な選択肢から選ぶ** | `<Select>` | テキスト入力ではなく排他選択 |
+| **多数の候補から filter** (チェックリスト) | `<CheckboxGroup>` / Custom filter UI | 排他検索より複数 filter 向き |
+| **フォーム送信に乗せる検索** | `<Input type='search'>` 直接 + form | SearchBar は自前 state 前提 |
+
+---
+
+## アクセシビリティ
+
+- **`role="searchbox"`**: `<input type='search'>` で自動付与
+- **`aria-label`** (推奨): 視覚的ラベルを持たないため、ariaLabel prop で「何の検索か」を SR に伝える
+- **`aria-busy`** (loading 時): isLoading=true で自動付与
+- **キーボード操作**:
+  - `Enter`: `onSearch` 発火 (省略時は何もしない)
+  - `Escape`: 内容クリア + blur
+  - browser 標準の編集操作
+- **クリアボタンの aria-label**: 「検索をクリア」固定
+- **focus 表現**: border 色変化 + inset ring (input ベースの form control 共通パターン)
+- **タッチターゲット**: sm (32px) / md (40px) / lg (48px)。lg で WCAG 2.5.5 (44×44px) 達成
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — `search` (左) / `close` (クリアボタン)
+- [`<Spinner>`](?path=/docs/primitives-spinner--guideline) — isLoading=true 時の処理中インジケーター

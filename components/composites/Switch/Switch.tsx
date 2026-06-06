@@ -1,5 +1,6 @@
 import React from 'react';
 import { Label } from '../../primitives/Label/Label';
+import { FormDescription } from '../../_internal/FormDescription';
 
 /** Switch のサイズ */
 export type SwitchSize = 'sm' | 'md' | 'lg';
@@ -173,9 +174,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           </Label>
         )}
         {description && (
-          <span id={descId} className="text-body-sm text-onSurface-soft">
-            {description}
-          </span>
+          <FormDescription id={descId}>{description}</FormDescription>
         )}
       </div>
     );

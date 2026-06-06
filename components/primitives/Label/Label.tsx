@@ -69,10 +69,15 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
 const labelVariants = tv({
   base: ['inline-flex', 'items-center', 'gap-1', 'font-normal', 'leading-tight', 'select-none'],
   variants: {
+    // size は semantic typography token に対応:
+    // - sm: text-caption (12px regular)
+    // - md: text-body-sm (14px regular)
+    // - lg: text-body-md (16px regular)
+    // Label.base の font-normal を維持するため text-label (medium) は使わず body-sm 経由で regular に
     size: {
-      sm: 'text-xs',
-      md: 'text-sm',
-      lg: 'text-base',
+      sm: 'text-caption',
+      md: 'text-body-sm',
+      lg: 'text-body-md',
     },
     disabled: {
       true:  'text-onSurface-disabled cursor-not-allowed',

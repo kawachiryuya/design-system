@@ -1,6 +1,5 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
-import { Typography } from '../../primitives/Typography/Typography';
 
 /** NumberInput のサイズ */
 export type NumberInputSize = 'sm' | 'md';
@@ -10,6 +9,11 @@ export type NumberInputSize = 'sm' | 'md';
  *
  * 数値専用入力。`+`/`-` ボタンで値を増減する controlled component。
  * 利用シーン: チケット枚数、人数、数量等の入力。
+ *
+ * a11y:
+ * - label と +/- buttons を `role="group"` + `aria-labelledby` で関連付け
+ * - value 表示に `aria-live="polite"` で値変更を SR に通知
+ * - +/- buttons は `aria-label` で操作意図を明示 (decrementLabel / incrementLabel)
  *
  * @example
  *   // 基本（0〜9 の範囲）
@@ -57,7 +61,7 @@ export interface NumberInputProps {
    * @default Infinity
    */
   max?: number;
-  /** ラベルテキスト。指定すると Typography で上部に表示。 */
+  /** ラベルテキスト。指定すると上部に表示され、+/- buttons の group label として SR に伝わる。 */
   label?: string;
   /**
    * サイズ。
@@ -99,6 +103,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   decrementLabel = '減らす',
   incrementLabel = '増やす',
 }) => {
+  const reactId = React.useId();
+  const labelId = label ? `numberinput-${reactId}-label` : undefined;
+
   const atMin = value <= min;
   const atMax = value >= max;
 
@@ -107,27 +114,42 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     md: { container: 'h-12', button: 'w-12', display: 'w-10 text-base' },
   }[size];
 
+  // disabled state は色ベース (Button と同じ精神、bg 強い場合の半透明問題を回避)
+  const buttonClasses = `${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:text-onSurface-disabled disabled:cursor-not-allowed transition-colors`;
+
   return (
     <div className="flex flex-col gap-1">
-      {label && <Typography variant="label">{label}</Typography>}
-      <div className={`flex items-center border border-border rounded-sm ${sizeStyles.container}`}>
+      {label && (
+        <span id={labelId} className="text-label text-onSurface">
+          {label}
+        </span>
+      )}
+      <div
+        role="group"
+        aria-labelledby={labelId}
+        className={`flex items-center border border-border rounded-sm ${sizeStyles.container}`}
+      >
         <button
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={disabled || atMin}
-          className={`${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:opacity-disabled transition-colors`}
+          className={buttonClasses}
           aria-label={decrementLabel}
         >
           <Icon name="remove" size="sm" color="inherit" />
         </button>
-        <span className={`${sizeStyles.display} text-center font-medium text-onSurface`}>
+        <span
+          className={`${sizeStyles.display} text-center font-medium text-onSurface`}
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {value}
         </span>
         <button
           type="button"
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={disabled || atMax}
-          className={`${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:opacity-disabled transition-colors`}
+          className={buttonClasses}
           aria-label={incrementLabel}
         >
           <Icon name="add" size="sm" color="inherit" />

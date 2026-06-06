@@ -173,6 +173,32 @@ export const EdgeCases: Story = {
       const [v, setV] = useState(99);
       return <NumberInput value={v} onChange={setV} min={1} max={999} label="3 桁" />;
     }
+    function BookingForm() {
+      const [adults, setAdults] = useState(2);
+      const [children, setChildren] = useState(0);
+      const [rooms, setRooms] = useState(1);
+      return (
+        <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+          <div className="space-y-section-sm">
+            <h3 className="text-heading-sm text-onSurface m-0">予約内容</h3>
+            <div className="flex flex-wrap gap-6">
+              <NumberInput value={adults} onChange={setAdults} min={1} max={9}
+                label="大人"
+                decrementLabel="大人の人数を減らす"
+                incrementLabel="大人の人数を増やす" />
+              <NumberInput value={children} onChange={setChildren} min={0} max={9}
+                label="小人"
+                decrementLabel="小人の人数を減らす"
+                incrementLabel="小人の人数を増やす" />
+              <NumberInput value={rooms} onChange={setRooms} min={1} max={5}
+                label="部屋数"
+                decrementLabel="部屋数を減らす"
+                incrementLabel="部屋数を増やす" />
+            </div>
+          </div>
+        </form>
+      );
+    }
     return (
       <div className="flex flex-col gap-6">
         <Caption text="カスタム aria-label (大人/小人で SR が文脈を読める)">
@@ -180,6 +206,9 @@ export const EdgeCases: Story = {
         </Caption>
         <Caption text="3 桁の値 (display 領域は w-10 で固定、桁が増えてもレイアウト崩れない)">
           <LargeValue />
+        </Caption>
+        <Caption text="Layout token 適用 (予約フォーム frame、複数 NumberInput を並べる)">
+          <BookingForm />
         </Caption>
       </div>
     );

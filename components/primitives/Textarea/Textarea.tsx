@@ -163,9 +163,10 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       ...rest
     } = props as _InternalTextareaProps;
 
-    const textareaId = id || (label ? `textarea-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
-    const errorId = textareaId ? `${textareaId}-error` : undefined;
-    const helpId  = textareaId ? `${textareaId}-help`  : undefined;
+    const reactId = React.useId();
+    const textareaId = id || `textarea-${reactId}`;
+    const errorId = `${textareaId}-error`;
+    const helpId  = `${textareaId}-help`;
 
     const describedBy = [
       error && errorId ? errorId : null,

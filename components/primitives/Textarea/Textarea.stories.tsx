@@ -172,6 +172,33 @@ export const EdgeCases: Story = {
         <Caption text="お問い合わせフォーム統合 — fullWidth + counter + helpText の組合せ">
           <ContactFormDemo />
         </Caption>
+
+        <Caption text="Layout token 適用 (px-container / py-container / max-w-container-narrow / space-y-section-sm)">
+          <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+            <div className="space-y-section-sm">
+              <h3 className="text-heading-sm text-onSurface m-0">お問い合わせ</h3>
+              <div className="flex flex-col gap-4">
+                <Textarea
+                  label="件名"
+                  required
+                  fullWidth
+                  rows={2}
+                  placeholder="お問い合わせの概要"
+                />
+                <Textarea
+                  label="本文"
+                  required
+                  fullWidth
+                  rows={6}
+                  maxLength={500}
+                  currentLength={0}
+                  helpText="500 文字以内で具体的にご記入ください"
+                  placeholder="お問い合わせ内容を詳しくご記入ください"
+                />
+              </div>
+            </div>
+          </form>
+        </Caption>
       </div>
     );
   },

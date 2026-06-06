@@ -200,6 +200,19 @@ export const EdgeCases: Story = {
           />
         </div>
       </Caption>
+
+      <Caption text="Layout token 適用 (px-container / py-container / max-w-container-narrow / space-y-section-sm)">
+        <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+          <div className="space-y-section-sm">
+            <h3 className="text-heading-sm text-onSurface m-0">アカウント情報</h3>
+            <div className="flex flex-col gap-4">
+              <Input label="氏名" required fullWidth placeholder="山田 太郎" />
+              <Input label="メールアドレス" type="email" required fullWidth placeholder="example@email.com" />
+              <Input label="電話番号" type="tel" fullWidth placeholder="090-1234-5678" helpText="ハイフンありで入力" />
+            </div>
+          </div>
+        </form>
+      </Caption>
     </div>
   ),
 };

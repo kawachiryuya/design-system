@@ -213,9 +213,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       ...rest
     } = props as _InternalInputProps;
 
-    const inputId = id || (label ? `input-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
-    const errorId = inputId ? `${inputId}-error` : undefined;
-    const helpId  = inputId ? `${inputId}-help`  : undefined;
+    const reactId = React.useId();
+    const inputId = id || `input-${reactId}`;
+    const errorId = `${inputId}-error`;
+    const helpId  = `${inputId}-help`;
 
     const describedBy = [
       error && errorId ? errorId : null,

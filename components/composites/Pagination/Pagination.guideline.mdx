@@ -1,0 +1,155 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as PaginationStories from './Pagination.stories';
+import { Pagination } from './Pagination';
+import { useState } from 'react';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={PaginationStories} name="Guideline" />
+
+# Pagination
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+長いリストを **ページ分割して移動するための番号ナビゲーション**。前/次ボタン + 番号 button + ellipsis (`…`) で省略表示。`showEdges` で « » (最初/最後ジャンプ) を追加可能。`totalPages <= 1` のときは描画されない (1 ページしかなければ pagination 不要)。無限スクロール / ロード追加で十分なフィード型 UI には使わず、明示的にページ単位で見せたいデータ (検索結果・テーブル等) に。
+
+---
+
+## Props
+
+<ArgTypes of={PaginationStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="多数ページは ellipsis + showEdges を活用"
+  doExample={
+    (() => {
+      function Demo() {
+        const [p, setP] = useState(50);
+        return <Pagination currentPage={p} totalPages={100} onPageChange={setP} showEdges />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="100 ページのような大量データでは ellipsis で中略 + showEdges (« ») で最初/最後にジャンプできるようにする。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [p, setP] = useState(50);
+        return <Pagination currentPage={p} totalPages={100} onPageChange={setP} maxVisible={100} />;
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="maxVisible を大きくして 100 個のボタンを並べると横にあふれ、操作も困難。中略 + ジャンプを使う。"
+/>
+
+<DoDontExample
+  label="件数表示と組合せる (「N 件中 X-Y 件」)"
+  doExample={
+    (() => {
+      function Demo() {
+        const [p, setP] = useState(3);
+        const perPage = 10;
+        const total = 47;
+        return (
+          <div className="space-y-2">
+            <p className="text-sm text-onSurface-muted">
+              全 {total} 件中 {(p - 1) * perPage + 1}〜{Math.min(p * perPage, total)} 件
+            </p>
+            <Pagination currentPage={p} totalPages={Math.ceil(total / perPage)} onPageChange={setP} />
+          </div>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="件数表示と Pagination を併置すると「何件中の何件目を見ている」が明確で、ユーザーが全体感を掴める。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [p, setP] = useState(3);
+        return <Pagination currentPage={p} totalPages={5} onPageChange={setP} />;
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="Pagination だけだと全何件か分からず、ユーザーが「データの量」を把握できない。"
+/>
+
+<DoDontExample
+  label="size は表示密度に合わせる"
+  doExample={
+    (() => {
+      function Demo() {
+        const [p1, setP1] = useState(3);
+        const [p2, setP2] = useState(3);
+        return (
+          <div className="space-y-3">
+            <div className="text-xs text-onSurface-muted mb-1">テーブルフッター: sm</div>
+            <Pagination size="sm" currentPage={p1} totalPages={10} onPageChange={setP1} />
+            <div className="text-xs text-onSurface-muted mt-3 mb-1">モバイル一覧: lg</div>
+            <Pagination size="lg" currentPage={p2} totalPages={10} onPageChange={setP2} />
+          </div>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="dense UI (テーブルフッター等) は sm、モバイルや主要 CTA は lg。WCAG 2.5.5 (44×44px) は md / lg で達成。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [p, setP] = useState(3);
+        return (
+          <div>
+            <div className="text-xs text-onSurface-muted mb-1">モバイル一覧 (lg の方が望ましい場面)</div>
+            <Pagination size="sm" currentPage={p} totalPages={10} onPageChange={setP} />
+          </div>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="モバイルで sm を使うとタッチターゲットが小さく誤タップしやすい。サイズは配置 context に合わせる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **無限スクロール** (フィード型) | (Intersection Observer 実装) | Pagination はページ単位、フィードは連続表示 |
+| **「もっと見る」ボタン** | (Button + state) | 段階的にロードする UI は Pagination より単純 |
+| **「次へ」だけのウィザード** (順番に進む) | (Stepper 実装) | Pagination は飛び番ジャンプ前提 |
+| **動的にロードする検索結果** (cursor ベース) | (Custom cursor pagination) | 番号ではなく cursor で API 設計するパターン |
+
+---
+
+## アクセシビリティ
+
+- **`<nav aria-label="ページネーション">`**: 外側 nav にランドマーク + ラベル
+- **`aria-current="page"`**: 現在ページの button に付与。SR は「現在のページ、5 ページ目」と読む
+- **`aria-label` 個別化**: 各 button に「5 ページ目」「次のページ」「前のページ」「最初のページ」「最後のページ」と明示的に
+- **disabled**: 最初 / 最後で前 / 次ボタンが disabled になり、SR にも伝わる
+- **focus ring**: `focus-visible:ring-focus` でキーボード focus を明示
+- **キーボード操作**: `Tab` で button 移動、`Enter` / `Space` で発火 (button 標準)。矢印キーでの page 内移動は未実装 (将来検討)
+- **タッチターゲット**: sm (28px) / md (32px) / lg (40px)。WCAG 2.5.5 (44×44px) は lg で達成。dense UI で sm を使う場合は隣接 button の余白に注意
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — `chevron_left` / `chevron_right` (前 / 次)、`first_page` / `last_page` (showEdges 時)

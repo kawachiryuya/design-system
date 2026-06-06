@@ -20,7 +20,10 @@ const meta: Meta<typeof Card> = {
     clickable: { control: 'boolean' },
   },
   args: { variant: 'outlined' },
-  decorators: [(Story) => <div className="w-80"><Story /></div>],
+  // 全 story を w-80 でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
+  decorators: [(Story, ctx) =>
+    ctx.parameters.noWrap ? <Story /> : <div className="w-80"><Story /></div>,
+  ],
 };
 
 export default meta;
@@ -142,12 +145,15 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '実利用例: お知らせカード (header に Badge) / アクション付きカード / 統計カード (grid) / 長文 (折返し).',
+        story: '実利用例: お知らせカード (header に Badge) / 統計カード (grid) / 長文 (折返し) / Layout token grid-base 適用 (Dashboard KPI 6 card レスポンシブ).',
       },
     },
+    // meta 側の w-80 decorator を解除 (Layout token grid-base 例で全幅レスポンシブを示す)
+    noWrap: true,
   },
   render: () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
+      <div className="w-80 flex flex-col gap-4">
       <Caption text="お知らせカード (header に Badge、href でリンク化)">
         <Card href="#">
           <Card.Header divider={false}>
@@ -190,6 +196,33 @@ export const EdgeCases: Story = {
             </p>
           </Card.Body>
         </Card>
+      </Caption>
+      </div>
+
+      <Caption text="Layout token 適用 (grid-base + col-span でレスポンシブ card grid、Dashboard KPI 典型例)">
+        <div className="w-full">
+          <div className="grid-base">
+            {[
+              { label: '総ユーザー数', value: '12,480', change: '+8.2%', up: true },
+              { label: '月間収益', value: '¥2.4M', change: '+12.5%', up: true },
+              { label: '解約率', value: '2.1%', change: '-0.3%', up: false },
+              { label: '平均セッション', value: '8m 32s', change: '+1m 12s', up: true },
+              { label: 'NPS', value: '+42', change: '+5pt', up: true },
+              { label: 'サポートチケット', value: '18', change: '-3', up: true },
+            ].map(({ label, value, change, up }) => (
+              <Card key={label} padding="md" className="col-span-4 md:col-span-4 lg:col-span-4">
+                <p className="text-caption text-onSurface-muted">{label}</p>
+                <p className="text-heading-md font-bold text-onSurface mt-1">{value}</p>
+                <p className={`text-caption mt-1 ${up ? 'text-onSurface-success' : 'text-onSurface-error'}`}>{change}</p>
+              </Card>
+            ))}
+          </div>
+          <p className="text-caption text-onSurface-muted mt-3">
+            mobile (&lt; 768px) では 4 col grid なので col-span-4 = 1 column / 行<br />
+            tablet (768〜1023px) では 8 col grid なので col-span-4 = 2 columns / 行<br />
+            desktop (≥ 1024px) では 12 col grid なので col-span-4 = 3 columns / 行
+          </p>
+        </div>
       </Caption>
     </div>
   ),

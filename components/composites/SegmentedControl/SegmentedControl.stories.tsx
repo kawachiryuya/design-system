@@ -12,12 +12,17 @@ import { Caption } from '@sb-blocks/Caption';
  *
  * SegmentedControl は variant prop を持たないため Variants は省略 (§5-3)。
  */
-const meta: Meta = {
+type PlaygroundArgs = {
+  size: 'sm' | 'md';
+  onChange: (v: string) => void;
+};
+
+const meta: Meta<PlaygroundArgs> = {
   title: 'Composites/SegmentedControl',
 };
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<PlaygroundArgs>;
 
 // ── 1. Playground ──────────────────────────────────────────────
 

@@ -5,6 +5,16 @@ import { FormMessage } from '../../_internal/FormMessage';
 /** Checkbox のサイズ */
 export type CheckboxSize = 'sm' | 'md' | 'lg';
 
+/**
+ * CheckboxGroup → Checkbox へ error 状態を伝播する Context。
+ * Group の `error` が true のとき、配下の全 Checkbox が自動で error スタイル / `aria-invalid` を持つ。
+ * 個別 Checkbox が独自に `error` prop を渡せばそちらが優先される。
+ */
+interface CheckboxGroupContextValue {
+  error: boolean;
+}
+const CheckboxGroupContext = React.createContext<CheckboxGroupContextValue>({ error: false });
+
 interface CheckboxBaseProps {
   /**
    * チェックボックスのサイズ。
@@ -13,7 +23,7 @@ interface CheckboxBaseProps {
   size?: CheckboxSize;
   /** ラベルテキスト。未指定時はチェックボックスのみ表示。 */
   label?: string;
-  /** ラベルの補足テキスト（より小さく、ミュート色で 1〜2 行）。 */
+  /** ラベルの補足テキスト (caption サイズ、SR には `aria-describedby` で伝わる)。 */
   description?: string;
   /**
    * 不確定状態（一部選択）。`indeterminate` 視覚スタイルが適用される。
@@ -27,7 +37,7 @@ interface CheckboxBaseProps {
 interface CheckboxErrorProps extends CheckboxBaseProps {
   /** エラー状態。`true` で枠線赤・`aria-invalid="true"` 自動付与。 */
   error: true;
-  /** エラーメッセージ（必須）。 */
+  /** エラーメッセージ（必須）、`aria-describedby` で input に関連付け。 */
   errorMessage: string;
 }
 
@@ -42,22 +52,22 @@ interface CheckboxNormalProps extends CheckboxBaseProps {
  * Checkbox Props — discriminated union
  *
  * @example
- *   // 単体（必須）
+ *   // 単体 (利用規約同意等)
  *   <Checkbox label="利用規約に同意する" required />
  *
  * @example
- *   // 説明付き
+ *   // 説明付き (description は SR にも aria-describedby で伝わる)
  *   <Checkbox
  *     label="メール通知"
  *     description="週 1 回の更新メールを受け取る"
  *   />
  *
  * @example
- *   // 不確定状態（親チェックで一部選択中）
+ *   // 不確定状態 (親「全て選択」で一部選択中)
  *   <Checkbox label="全て選択" indeterminate checked={someSelected} />
  *
  * @example
- *   // エラー状態（errorMessage 必須）
+ *   // エラー状態 (errorMessage 必須)
  *   <Checkbox
  *     label="プライバシーポリシーに同意"
  *     error
@@ -87,14 +97,18 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       size = 'md',
       label,
       description,
-      error = false,
+      error: errorProp,
       errorMessage,
       indeterminate = false,
       disabled,
       id,
       className = '',
+      'aria-describedby': ariaDescribedByProp,
       ...rest
     } = props as _InternalCheckboxProps;
+
+    const ctx = React.useContext(CheckboxGroupContext);
+    const error = errorProp ?? ctx.error;
 
     const inputRef = React.useRef<HTMLInputElement>(null);
     const resolvedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
@@ -105,8 +119,10 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       }
     }, [indeterminate, resolvedRef]);
 
-    const inputId = id || (label ? `checkbox-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined);
-    const errorId = inputId ? `${inputId}-error` : undefined;
+    const reactId = React.useId();
+    const inputId = id || `checkbox-${reactId}`;
+    const descId = description ? `${inputId}-desc` : undefined;
+    const errorId = errorMessage ? `${inputId}-error` : undefined;
 
     const sizePx = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
 
@@ -133,6 +149,15 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       .filter(Boolean)
       .join(' ');
 
+    // aria-describedby に description / errorMessage id と利用者指定 id を結合
+    const ariaDescribedBy = [
+      descId,
+      error && errorId ? errorId : null,
+      ariaDescribedByProp,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
+
     return (
       <div className={`flex flex-col gap-1 ${className}`}>
         <div className="flex items-start gap-2">
@@ -142,7 +167,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             id={inputId}
             disabled={disabled}
             aria-invalid={error || undefined}
-            aria-describedby={error && errorId ? errorId : undefined}
+            aria-describedby={ariaDescribedBy}
             className={inputClasses}
             {...rest}
           />
@@ -158,14 +183,18 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 </Label>
               )}
               {description && (
-                <span className="text-xs text-onSurface-muted leading-normal">{description}</span>
+                <span id={descId} className="text-caption text-onSurface-soft">
+                  {description}
+                </span>
               )}
             </div>
           )}
         </div>
-        <div className="ml-7">
-          <FormMessage error={error} errorMessage={errorMessage} errorId={errorId} />
-        </div>
+        {error && errorMessage && (
+          <div className="ml-7">
+            <FormMessage error={error} errorMessage={errorMessage} errorId={errorId} />
+          </div>
+        )}
       </div>
     );
   }
@@ -178,6 +207,7 @@ Checkbox.displayName = 'Checkbox';
  *
  * Checkbox をグルーピングし、`<fieldset>` + `<legend>` でラップ。
  * エラー時は legend と children の下にエラーメッセージ表示。
+ * `error` は Context で配下の全 Checkbox に自動伝播 (個別 Checkbox で上書き可)。
  *
  * **Note**: フォームでは `error` が動的 boolean になることが多いため、Checkbox 単体と異なり
  * discriminated union ではなく緩い型にしている。`errorMessage` は `error: true` 時のみ表示。
@@ -197,7 +227,7 @@ Checkbox.displayName = 'Checkbox';
  *   </CheckboxGroup>
  *
  * @example
- *   // 動的エラー（フォームバリデーション）
+ *   // 動的エラー (error が Context で全 Checkbox に伝播)
  *   <CheckboxGroup
  *     legend="興味のあるトピック"
  *     required
@@ -214,7 +244,7 @@ export interface CheckboxGroupProps {
   /** Checkbox の選択肢（複数の `<Checkbox>` を入れる）。 */
   children: React.ReactNode;
   /**
-   * エラー状態。動的 boolean OK。`true` 時のみ `errorMessage` が表示される。
+   * エラー状態。動的 boolean OK。`true` で配下の全 Checkbox に Context 経由で伝播。
    * @default false
    */
   error?: boolean;
@@ -250,28 +280,33 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
   inline = false,
   className = '',
 }) => {
+  const reactId = React.useId();
+  const errorId = `checkboxgroup-${reactId}-error`;
+  const helpId = `checkboxgroup-${reactId}-help`;
 
-  const errorId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-error`;
-  const helpId = `checkboxgroup-${legend.replace(/\s+/g, '-').toLowerCase()}-help`;
+  const describedBy = [
+    error && errorMessage ? errorId : null,
+    !error && helpText ? helpId : null,
+  ]
+    .filter(Boolean)
+    .join(' ') || undefined;
 
   return (
     <fieldset
       className={`border-0 p-0 m-0 ${className}`}
-      aria-describedby={
-        [error && errorMessage ? errorId : null, !error && helpText ? helpId : null]
-          .filter(Boolean)
-          .join(' ') || undefined
-      }
+      aria-describedby={describedBy}
     >
-      <legend className="text-sm font-medium text-onSurface mb-2">
+      <legend className="text-label text-onSurface mb-2">
         {legend}
         {required && (
           <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>
         )}
       </legend>
-      <div className={inline ? 'flex flex-wrap gap-4' : 'flex flex-col gap-2'}>
-        {children}
-      </div>
+      <CheckboxGroupContext.Provider value={{ error }}>
+        <div className={inline ? 'flex flex-wrap gap-4' : 'flex flex-col gap-3'}>
+          {children}
+        </div>
+      </CheckboxGroupContext.Provider>
       <div className="mt-1">
         <FormMessage
           helpText={helpText}

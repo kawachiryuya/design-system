@@ -127,7 +127,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'CheckboxGroup (複数選択 + 共通 helpText / errorMessage) / 実利用例: 会員登録フォーム (RadioGroup + CheckboxGroup + 同意チェック + 送信 validation).',
+        story: 'CheckboxGroup (複数選択 + 共通 helpText / errorMessage、error は Context で全子に伝播) / 実利用例: 会員登録フォーム (RadioGroup + CheckboxGroup + 同意チェック + Layout token).',
       },
     },
   },
@@ -153,41 +153,77 @@ export const EdgeCases: Story = {
       const [submitted, setSubmitted] = useState(false);
       return (
         <form
-          className="w-96 space-y-6 p-6 border border-border-subtle rounded-md"
+          className="px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md"
           onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
         >
-          <h2 className="text-lg font-semibold text-onSurface">会員登録</h2>
-          <RadioGroup legend="性別" inline>
-            <Radio name="reg-gender" value="male" label="男性" defaultChecked />
-            <Radio name="reg-gender" value="female" label="女性" />
-            <Radio name="reg-gender" value="other" label="その他" />
-          </RadioGroup>
-          <CheckboxGroup legend="興味のあるカテゴリ" helpText="複数選択できます">
-            {['テクノロジー', 'デザイン', 'ビジネス', 'ライフスタイル'].map((cat) => (
-              <Checkbox key={cat} label={cat} />
+          <div className="space-y-section-sm">
+            <h2 className="text-heading-sm text-onSurface m-0">会員登録</h2>
+            <RadioGroup legend="性別" inline>
+              <Radio name="reg-gender" value="male" label="男性" defaultChecked />
+              <Radio name="reg-gender" value="female" label="女性" />
+              <Radio name="reg-gender" value="other" label="その他" />
+            </RadioGroup>
+            <CheckboxGroup legend="興味のあるカテゴリ" helpText="複数選択できます">
+              {['テクノロジー', 'デザイン', 'ビジネス', 'ライフスタイル'].map((cat) => (
+                <Checkbox key={cat} label={cat} />
+              ))}
+            </CheckboxGroup>
+            <CheckboxGroup
+              legend="利用規約への同意"
+              required
+              error={submitted && !agreed}
+              errorMessage="続けるには利用規約への同意が必要です"
+            >
+              <Checkbox
+                label="利用規約とプライバシーポリシーに同意する"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+              />
+            </CheckboxGroup>
+            <Button type="submit" fullWidth>登録する</Button>
+          </div>
+        </form>
+      );
+    }
+    function ErrorPropagationDemo() {
+      const [selected, setSelected] = useState<string[]>([]);
+      const [submitted, setSubmitted] = useState(false);
+      const hasError = submitted && selected.length === 0;
+      const toggle = (v: string) => setSelected((prev) => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]);
+      return (
+        <div className="space-y-3">
+          <CheckboxGroup
+            legend="興味のあるカテゴリ"
+            required
+            error={hasError}
+            errorMessage="1 つ以上選択してください"
+          >
+            {['技術', 'ビジネス', 'デザイン'].map((cat) => (
+              <Checkbox key={cat} label={cat}
+                checked={selected.includes(cat)}
+                onChange={() => toggle(cat)} />
             ))}
           </CheckboxGroup>
-          <CheckboxGroup
-            legend="利用規約への同意"
-            required
-            error={submitted && !agreed}
-            errorMessage="続けるには利用規約への同意が必要です"
-          >
-            <Checkbox
-              label="利用規約とプライバシーポリシーに同意する"
-              checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
-            />
-          </CheckboxGroup>
-          <Button type="submit" fullWidth>登録する</Button>
-        </form>
+          <button type="button" onClick={() => setSubmitted(true)}
+            className="px-4 py-2 bg-surface-primary text-onSurface-inverse rounded-md text-sm">
+            送信
+          </button>
+          <p className="text-xs text-onSurface-muted">
+            ↑ 未選択で送信すると Group の error が Context で全 Checkbox に伝播 (赤枠 + errorMessage)
+          </p>
+        </div>
       );
     }
     return (
       <div className="flex flex-col gap-6">
         <Caption text="CheckboxGroup (複数選択 + 共通 helpText)"><GroupDemo /></Caption>
-        <Caption text="CheckboxGroup (Error + errorMessage)"><GroupErrorDemo /></Caption>
-        <Caption text="会員登録フォーム (RadioGroup + CheckboxGroup + 動的 validation)"><RegistrationForm /></Caption>
+        <Caption text="CheckboxGroup (Error + errorMessage、固定エラー)"><GroupErrorDemo /></Caption>
+        <Caption text="Error 伝播 (Group の error が Context で全子 Checkbox に自動伝播)">
+          <ErrorPropagationDemo />
+        </Caption>
+        <Caption text="会員登録フォーム (Layout token: px-container / space-y-section-sm + 動的 validation)">
+          <RegistrationForm />
+        </Caption>
       </div>
     );
   },

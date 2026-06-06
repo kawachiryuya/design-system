@@ -62,7 +62,13 @@ const DoDontPane: React.FC<{
   return (
     <div className="flex flex-col">
       <div className={`h-1 rounded-t ${barColor}`} />
-      <div className="border border-t-0 border-border-muted rounded-b p-6 flex flex-wrap items-center justify-center gap-3 min-h-[110px] bg-surface">
+      {/*
+        sb-unstyled: Storybook docs theme の内部クラス (.css-xxxx)が
+        全 span に font-size 等を上書きするのを escape するための公式 hatch。
+        これがないと example 内の <span> に当てた Tailwind class が
+        emotion 生成 CSS に specificity で負ける。
+      */}
+      <div className="sb-unstyled border border-t-0 border-border-muted rounded-b p-6 flex flex-wrap items-center justify-center gap-3 min-h-[110px] bg-surface">
         {example}
       </div>
       {/*

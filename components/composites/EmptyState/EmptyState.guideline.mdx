@@ -1,0 +1,148 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as EmptyStateStories from './EmptyState.stories';
+import { EmptyState } from './EmptyState';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={EmptyStateStories} name="Guideline" />
+
+# EmptyState
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+データなし・検索結果ゼロ・初回利用時等の **「何もない状態」を埋めるプレースホルダー UI**。アイコン + タイトル + 説明 + 行動を促す Button (action / secondaryAction) で構成され、ユーザーに「次に何をすればいいか」を示す。ローディング中の表示には使わない (それは `<Spinner>` / `<Skeleton>`)。
+
+---
+
+## Props
+
+<ArgTypes of={EmptyStateStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="アクションで「次の行動」を提案する"
+  doExample={
+    <div className="w-80 border border-border-subtle rounded-md">
+      <EmptyState
+        title="データがありません"
+        description="まだアイテムが登録されていません。"
+        action={{ label: '新規作成' }}
+      />
+    </div>
+  }
+  doCaption="空状態をただ伝えるだけでなく、Primary Button で「次の行動」を提案する。ユーザーが画面で迷子にならない。"
+  dontExample={
+    <div className="w-80 border border-border-subtle rounded-md">
+      <EmptyState title="データがありません" />
+    </div>
+  }
+  dontCaption="アイコン + タイトルだけだと「ここから何をすれば?」が分からず、ユーザーは戻るしかなくなる。"
+/>
+
+<DoDontExample
+  label="状況に合わせた icon でコンテキストを補強"
+  doExample={
+    <div className="w-80 border border-border-subtle rounded-md">
+      <EmptyState
+        icon={
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5"
+            strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-onSurface-disabled" aria-hidden="true">
+            <circle cx="28" cy="28" r="18"/><path d="m50 50-12-12"/>
+          </svg>
+        }
+        title="検索結果なし"
+        description="別のキーワードでお試しください"
+      />
+    </div>
+  }
+  doCaption="検索結果なしには「検索の絵」、フォルダ空には「フォルダの絵」等、状況固有の icon を渡してコンテキストを補強する。"
+  dontExample={
+    <div className="w-80 border border-border-subtle rounded-md">
+      <EmptyState title="検索結果なし" description="別のキーワードでお試しください" />
+    </div>
+  }
+  dontCaption="デフォルトの汎用アイコン (チェックマーク) は「検索なし」「データなし」「エラー」等を区別できない。状況に合わせた icon を渡す。"
+/>
+
+<DoDontExample
+  label="size は配置場所に合わせる (sm / md / lg)"
+  doExample={
+    <div className="space-y-3">
+      <div className="w-64 border border-border-subtle rounded-md">
+        <EmptyState size="sm" title="通知なし" />
+      </div>
+      <div className="w-80 border border-border-subtle rounded-md">
+        <EmptyState size="md" title="データなし" description="まだ登録されていません" action={{ label: '追加' }} />
+      </div>
+    </div>
+  }
+  doCaption="sm はサイドバー / カード内、md は標準ページ内、lg はオンボーディング等のフルページに。空間に合うサイズを選ぶ。"
+  dontExample={
+    <div className="w-64 border border-border-subtle rounded-md">
+      <EmptyState size="lg" title="通知なし" description="新しい通知はありません" action={{ label: '更新' }} />
+    </div>
+  }
+  dontCaption="小さなカード内に size=lg を入れると要素が窮屈に折り返したり、過剰に空間を取って情報密度が落ちる。"
+/>
+
+<DoDontExample
+  label="action は 1〜2 個まで、優先順位を明示"
+  doExample={
+    <div className="w-80 border border-border-subtle rounded-md">
+      <EmptyState
+        title="プロジェクトがありません"
+        description="最初のプロジェクトを作成しましょう。"
+        action={{ label: '新規作成' }}
+        secondaryAction={{ label: 'テンプレートから', variant: 'tertiary' }}
+      />
+    </div>
+  }
+  doCaption="主要 (action = Primary) と補助 (secondaryAction = Tertiary) の 2 段階で優先順位を視覚化。"
+  dontExample={
+    <div className="w-80 border border-border-subtle rounded-md">
+      <EmptyState
+        title="プロジェクトがありません"
+        action={{ label: '新規作成' }}
+        secondaryAction={{ label: 'テンプレートから', variant: 'primary' }}
+      />
+    </div>
+  }
+  dontCaption="action と secondaryAction が両方 primary だと「どちらを押すべきか」が読めない。Primary は 1 つに絞る。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **データ取得中** (Loading) | `<Spinner>` / `<Skeleton>` | EmptyState は「何もない確定状態」、Loading は「まだ確定していない」 |
+| **エラーで一時的に表示** (再試行可能) | EmptyState (icon=ErrorIcon) | 実は EmptyState のユースケースに含まれる。永続的エラーは Alert + EmptyState の併用も可 |
+| **一行のメッセージ** ("選択中: 0 件" 等) | (テキスト + Typography) | 大きな空間が要らない情報 |
+| **モーダルな確認 / 通知** | `<Modal>` / `<Toast>` | EmptyState は画面の一部 (リストや section) を埋める用途 |
+
+---
+
+## アクセシビリティ
+
+- **icon は装飾**: `aria-hidden="true"` 自動付与、SR には読まれない。意味はテキストで伝える
+- **タイトル + 説明文の階層**: タイトルは `font-semibold`、説明は `text-onSurface-muted` で視覚的階層 (見出しタグは使わない、用途上適切でないため)
+- **アクションの focus**: 内部 `<Button>` が標準の `ring-focus` を持つため、`Tab` で focus 可
+- **色だけに頼らない**: エラー状態の icon は色 + 形 (×印など) で意味を伝える
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Button>`](?path=/docs/primitives-button--guideline) — `action` / `secondaryAction` の Button (variant: primary / tertiary)

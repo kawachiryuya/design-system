@@ -2,7 +2,16 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EmptyState } from './EmptyState';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { useState } from 'react';
+import { Caption } from '@sb-blocks/Caption';
 
+/**
+ * EmptyState stories — 標準ストーリー構造に準拠
+ *
+ * 順序固定: Playground → Sizes → States → EdgeCases
+ *
+ * EmptyState は variant prop を持たないため Variants は省略 (§5-3)。
+ * Icon (custom SVG) は WithIcon ではなく Variants 的な意味で EdgeCases に統合。
+ */
 const SearchIcon = () => (
   <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5"
     strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-onSurface-disabled" aria-hidden="true">
@@ -30,9 +39,8 @@ const FolderIcon = () => (
 );
 
 const meta: Meta<typeof EmptyState> = {
-  title: 'Composites/_EmptyState',
+  title: 'Composites/EmptyState',
   component: EmptyState,
-  tags: ['autodocs'],
   argTypes: {
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     title: { control: 'text' },
@@ -43,78 +51,145 @@ const meta: Meta<typeof EmptyState> = {
     description: 'まだアイテムが登録されていません。',
     size: 'md',
   },
-  decorators: [(Story) => <div className="w-96 border border-border-subtle rounded-lg"><Story /></div>],
+  decorators: [(Story) => <div className="w-96 border border-border-subtle rounded-md"><Story /></div>],
 };
 
 export default meta;
 type Story = StoryObj<typeof EmptyState>;
 
-export const Default: Story = {};
+// ── 1. Playground ──────────────────────────────────────────────
 
-export const WithAction: Story = {
+export const Playground: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Controls から size / title / description を切替。action / secondaryAction はオブジェクトなので JSX で別途指定。',
+      },
+    },
+  },
   args: {
     action: { label: '新規作成', onClick: () => alert('新規作成') },
   },
 };
 
-export const WithBothActions: Story = {
-  args: {
-    action: { label: '新規作成' },
-    secondaryAction: { label: 'テンプレートから作成' },
-  },
-};
+// ── 2. Sizes ───────────────────────────────────────────────────
 
-export const AllSizes: Story = {
+export const Sizes: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'sm (サイドバー / カード内) / md (標準) / lg (ヒーロー / オンボーディング) の 3 段。icon / title / description / Button が比例的に大きくなる。',
+      },
+    },
+  },
   render: () => (
-    <div className="flex flex-col divide-y divide-border-muted w-96 border border-border-subtle rounded-lg">
+    <div className="flex flex-col divide-y divide-border-subtle w-96 border border-border-subtle rounded-md">
       <EmptyState size="sm" title="Small" description="コンパクトな表示" action={{ label: '追加' }} />
-      <EmptyState size="md" title="Medium（デフォルト）" description="標準サイズ" action={{ label: '追加' }} />
+      <EmptyState size="md" title="Medium (デフォルト)" description="標準サイズ" action={{ label: '追加' }} />
       <EmptyState size="lg" title="Large" description="フルページ向け" action={{ label: '追加' }} />
     </div>
   ),
 };
 
-export const NoResults: Story = {
-  name: '実践例: 検索結果なし',
-  render: () => {
-    const [query, setQuery] = useState('xxxxxx');
-    return (
-      <div className="w-96 space-y-3">
-        <SearchBar value={query} onChange={setQuery} fullWidth placeholder="検索..." />
-        <div className="border border-border-subtle rounded-lg">
+// ── 3. States ──────────────────────────────────────────────────
+
+export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Description なし / Action なし / Primary action のみ / Primary + Secondary action の構成パターン。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <Caption text="Title のみ (description / action なし)">
+        <div className="w-96 border border-border-subtle rounded-md">
+          <EmptyState title="通知なし" />
+        </div>
+      </Caption>
+      <Caption text="Title + description (action なし、純粋な情報表示)">
+        <div className="w-96 border border-border-subtle rounded-md">
+          <EmptyState title="データがありません" description="まだアイテムが登録されていません。" />
+        </div>
+      </Caption>
+      <Caption text="Primary action のみ">
+        <div className="w-96 border border-border-subtle rounded-md">
           <EmptyState
-            icon={<SearchIcon />}
-            title={`「${query}」に一致する結果がありません`}
-            description="別のキーワードで試してみてください"
-            action={{ label: 'クリア', onClick: () => setQuery(''), variant: 'tertiary' }}
+            title="データがありません"
+            description="まだアイテムが登録されていません。"
+            action={{ label: '新規作成' }}
           />
         </div>
+      </Caption>
+      <Caption text="Primary + Secondary action (補助選択肢併記)">
+        <div className="w-96 border border-border-subtle rounded-md">
+          <EmptyState
+            title="プロジェクトがまだありません"
+            description="最初のプロジェクトを作成しましょう。"
+            action={{ label: '新規作成' }}
+            secondaryAction={{ label: 'テンプレートから作成' }}
+          />
+        </div>
+      </Caption>
+    </div>
+  ),
+};
+
+// ── 4. EdgeCases ───────────────────────────────────────────────
+
+export const EdgeCases: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '実利用例: 検索結果なし (SearchBar 連動) / エラー状態 / 空のフォルダ。カスタム icon (custom SVG) を渡す例も含む。',
+      },
+    },
+  },
+  render: () => {
+    function NoResults() {
+      const [query, setQuery] = useState('xxxxxx');
+      return (
+        <div className="w-96 space-y-3">
+          <SearchBar value={query} onChange={setQuery} fullWidth placeholder="検索..." />
+          <div className="border border-border-subtle rounded-md">
+            <EmptyState
+              icon={<SearchIcon />}
+              title={`「${query}」に一致する結果がありません`}
+              description="別のキーワードで試してみてください"
+              action={{ label: 'クリア', onClick: () => setQuery(''), variant: 'tertiary' }}
+            />
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="flex flex-col gap-6">
+        <Caption text="検索結果なし (SearchBar 連動、クリアで戻る)">
+          <NoResults />
+        </Caption>
+        <Caption text="エラー状態 (再試行 + 戻る)">
+          <div className="w-96 border border-border-subtle rounded-md">
+            <EmptyState
+              icon={<ErrorIcon />}
+              title="読み込みに失敗しました"
+              description="ネットワーク接続を確認してもう一度お試しください。"
+              action={{ label: '再試行' }}
+              secondaryAction={{ label: 'ホームへ戻る', variant: 'tertiary' }}
+            />
+          </div>
+        </Caption>
+        <Caption text="空のフォルダ (ファイルアップロード CTA)">
+          <div className="w-96 border border-border-subtle rounded-md">
+            <EmptyState
+              icon={<FolderIcon />}
+              title="フォルダは空です"
+              description="ファイルをドラッグ＆ドロップするか、アップロードボタンから追加できます。"
+              action={{ label: 'ファイルをアップロード' }}
+            />
+          </div>
+        </Caption>
       </div>
     );
   },
-};
-
-export const ErrorState: Story = {
-  name: '実践例: エラー状態',
-  render: () => (
-    <EmptyState
-      icon={<ErrorIcon />}
-      title="読み込みに失敗しました"
-      description="ネットワーク接続を確認してもう一度お試しください。"
-      action={{ label: '再試行' }}
-      secondaryAction={{ label: 'ホームへ戻る', variant: 'tertiary' }}
-    />
-  ),
-};
-
-export const EmptyFolder: Story = {
-  name: '実践例: フォルダが空',
-  render: () => (
-    <EmptyState
-      icon={<FolderIcon />}
-      title="フォルダは空です"
-      description="ファイルをドラッグ＆ドロップするか、アップロードボタンから追加できます。"
-      action={{ label: 'ファイルをアップロード' }}
-    />
-  ),
 };

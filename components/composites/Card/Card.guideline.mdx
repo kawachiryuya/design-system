@@ -1,0 +1,152 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as CardStories from './Card.stories';
+import { Card } from './Card';
+import { Button } from '../../primitives/Button/Button';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={CardStories} name="Guideline" />
+
+# Card
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+見出し / コンテンツ / フッターを持つ **汎用コンテナ**。compound component (`Card.Header` / `Card.Body` / `Card.Footer`) で構造的に組み立てる。3 つの variant (`elevated` / `outlined` / `filled`) で強調レベルを切替、`href` 指定で link、`clickable` + `onClick` で button として動作 (キーボード操作 + role 自動付与)。リスト項目 / 統計表示 / 設定セクション等の枠組みに広く使う。
+
+---
+
+## Props
+
+<ArgTypes of={CardStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="variant は強調レベルで使い分け"
+  doExample={
+    <div className="flex flex-col gap-2">
+      <Card variant="elevated"><Card.Body><p className="text-sm">elevated: 強調 / 浮き上がる印象 (モーダル風)</p></Card.Body></Card>
+      <Card variant="outlined"><Card.Body><p className="text-sm">outlined: 標準 (リスト / 設定セクション)</p></Card.Body></Card>
+      <Card variant="filled"><Card.Body><p className="text-sm">filled: 控えめな区切り (背景塗りで章わけ)</p></Card.Body></Card>
+    </div>
+  }
+  doCaption="elevated は 1 画面に 1〜2 枚の主要要素、outlined は標準のリスト要素、filled は控えめな区切りに。"
+  dontExample={
+    <div className="flex flex-col gap-2">
+      <Card variant="elevated"><Card.Body><p className="text-sm">elevated</p></Card.Body></Card>
+      <Card variant="elevated"><Card.Body><p className="text-sm">elevated</p></Card.Body></Card>
+      <Card variant="elevated"><Card.Body><p className="text-sm">elevated</p></Card.Body></Card>
+    </div>
+  }
+  dontCaption="全てを elevated にすると影が重なり「どれが主要要素か」が読めなくなる。強調はピンポイントに使う。"
+/>
+
+<DoDontExample
+  label="クリック可能カードは clickable / href を必ず付ける"
+  doExample={
+    <Card clickable onClick={() => {}}>
+      <Card.Body>
+        <p className="text-sm font-medium">記事タイトル</p>
+        <p className="text-xs text-onSurface-muted mt-1">概要…</p>
+      </Card.Body>
+    </Card>
+  }
+  doCaption="クリック可能にするときは `clickable` または `href`、`onClick` を指定。role=button / a タグ + キーボード操作 + focus ring が自動付与され a11y 完備。"
+  dontExample={
+    <Card onClick={() => {}}>
+      <Card.Body>
+        <p className="text-sm">div に onClick だけ付けた状態 (clickable なし)</p>
+      </Card.Body>
+    </Card>
+  }
+  dontCaption="`onClick` のみで `clickable` 指定なしだと、視覚的にもアクセシビリティ的にもクリック可能なことが伝わらない。"
+/>
+
+<DoDontExample
+  label="compound パターンで意味的に分ける"
+  doExample={
+    <Card>
+      <Card.Header>プロジェクト設定</Card.Header>
+      <Card.Body><p className="text-sm text-onSurface-muted">プロジェクトの表示名や説明を変更できます。</p></Card.Body>
+      <Card.Footer><Button size="sm" variant="tertiary">キャンセル</Button><Button size="sm">保存</Button></Card.Footer>
+    </Card>
+  }
+  doCaption="Header / Body / Footer の役割を明示的に分けると、ボーダーと padding が自動で揃って読みやすい。"
+  dontExample={
+    <Card padding="md">
+      <p className="text-sm font-semibold">プロジェクト設定</p>
+      <p className="text-sm text-onSurface-muted my-3">プロジェクトの表示名や説明を変更できます。</p>
+      <div className="flex gap-2 justify-end">
+        <Button size="sm" variant="tertiary">キャンセル</Button>
+        <Button size="sm">保存</Button>
+      </div>
+    </Card>
+  }
+  dontCaption="全部を Body に詰め込むと境界線が消え、視覚的なリズムが失われる。compound パターンを優先。"
+/>
+
+<DoDontExample
+  label="ヘッダー内に Badge 等の補助情報を入れる場合は divider=false で柔軟性を上げる"
+  doExample={
+    <Card href="#">
+      <Card.Header divider={false}>
+        <div className="flex items-center justify-between">
+          <span>お知らせ</span>
+          <span className="text-xs text-onSurface-warning font-semibold">重要</span>
+        </div>
+      </Card.Header>
+      <Card.Body><p className="text-sm text-onSurface-muted">メンテナンスを実施します</p></Card.Body>
+    </Card>
+  }
+  doCaption="header に複数要素 (タイトル + Badge / icon) を入れる場合は `divider=false` で境界線を消すと窮屈にならない。"
+  dontExample={
+    <Card href="#">
+      <Card.Header>
+        <div className="flex items-center justify-between">
+          <span>お知らせ</span>
+          <span className="text-xs text-onSurface-warning font-semibold">重要</span>
+        </div>
+      </Card.Header>
+      <Card.Body><p className="text-sm text-onSurface-muted">メンテナンスを実施します</p></Card.Body>
+    </Card>
+  }
+  dontCaption="複数要素を含むヘッダで divider があると窮屈に見える。シンプルな単一タイトル時は divider あり、リッチなヘッダ時は false。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **モーダルダイアログ** | `<Modal>` | 画面全体を遮断、focus trap、Esc キー閉じ |
+| **画面内のお知らせ** | `<Alert>` | 状態色 + アイコン、SR に `role="alert"` |
+| **データなしの代替表示** | `<EmptyState>` | icon + 説明 + アクションへの誘導に最適化 |
+| **タブの中身** | `<Tabs>` の panel として | Tabs の compound として組み込み |
+
+---
+
+## アクセシビリティ
+
+- **clickable / onClick**: `role="button"` 自動付与、`tabindex=0`、Enter / Space で発火
+- **href**: `<a>` タグでレンダリング、ブラウザ標準の link 挙動
+- **focus ring**: clickable / href 時に `focus-visible:ring-focus`
+- **Header / Body / Footer の意味付け**: 各 div は role を持たない (article 等で wrap するのは利用側の責任)
+- **重要: card 内に link / button がある場合**: card 自身を clickable にしない (nested interactive 違反)。card 内の link / button のみ interactive にする
+- **hover 表現**: bg-state-hover の neutral overlay、AA contrast 保持
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし (Card 自身は他コンポーネントを import しない。Header / Body / Footer は内部 compound)。

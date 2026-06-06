@@ -1,0 +1,143 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as NumberInputStories from './NumberInput.stories';
+import { NumberInput } from './NumberInput';
+import { useState } from 'react';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={NumberInputStories} name="Guideline" />
+
+# NumberInput
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+数値専用の controlled 入力。`+` / `−` ボタンで値を増減する **stepper 型 UI**。チケット枚数 / 人数 / 数量入力など、**範囲が決まっていて少数 (〜数十) の整数を選ばせる用途** に向く。任意の数値テキスト入力には `<Input type="number">` を使う。
+
+---
+
+## Props
+
+<ArgTypes of={NumberInputStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="min / max を必ず設定する"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState(2);
+        return <NumberInput value={v} onChange={setV} min={1} max={9} label="人数" />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="範囲 (min / max) を明示すると境界で `+` / `−` が disabled になり、ユーザーが越えた値を入れる事故を防げる。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState(2);
+        return <NumberInput value={v} onChange={setV} label="人数" />;
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="範囲なしだと負数や巨大値まで増減でき、後段バリデーションエラーで弾かれる。ユーザーが「いくつまで OK か」をデザイン側で示せていない。"
+/>
+
+<DoDontExample
+  label="ラベルか aria-label で「何の数値か」を必ず示す"
+  doExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState(2);
+        return <NumberInput value={v} onChange={setV} min={1} max={9} label="大人の人数" />;
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="`label` で視覚的に、`+`/`−` の `aria-label` (デフォルトは「増やす」「減らす」) で SR に「何の操作か」が伝わる。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [v, setV] = useState(2);
+        return <NumberInput value={v} onChange={setV} min={1} max={9} />;
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="ラベルなしだと「2」だけが表示され、何の数値か全く分からない。SR でも「2、減らす、増やす」と読まれ意味不明。"
+/>
+
+<DoDontExample
+  label="複数 NumberInput が並ぶときは aria-label を個別化"
+  doExample={
+    (() => {
+      function Demo() {
+        const [a, setA] = useState(2);
+        const [c, setC] = useState(0);
+        return (
+          <div className="flex gap-4">
+            <NumberInput value={a} onChange={setA} min={1} max={9} label="大人" decrementLabel="大人を減らす" incrementLabel="大人を増やす" />
+            <NumberInput value={c} onChange={setC} min={0} max={9} label="小人" decrementLabel="小人を減らす" incrementLabel="小人を増やす" />
+          </div>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="`decrementLabel` / `incrementLabel` を個別化することで、SR で「大人を増やす / 小人を増やす」のように区別できる。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [a, setA] = useState(2);
+        const [c, setC] = useState(0);
+        return (
+          <div className="flex gap-4">
+            <NumberInput value={a} onChange={setA} min={1} max={9} label="大人" />
+            <NumberInput value={c} onChange={setC} min={0} max={9} label="小人" />
+          </div>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="デフォルト aria-label のまま並べると SR で「増やす、増やす、増やす…」と同じラベルが連続し、どれが何の操作か分からない。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **任意の数値テキスト入力** (年齢・金額等) | `<Input type="number">` | キーボードで直接打鍵、桁数が多い数値 |
+| **小数や単位付き** (¥ / kg 等) | `<Input>` (textbox) | stepper では小数や単位を扱いづらい |
+| **2 択** (オン/オフ) | `<Switch>` | 数値ではなく状態 |
+| **多数の選択肢** (15 個以上) | `<Select>` | stepper だと連打が必要、大きな数の入力に向かない |
+
+---
+
+## アクセシビリティ
+
+- **`+` / `−` の aria-label**: デフォルトは「増やす」「減らす」。複数 NumberInput が並ぶ場合は文脈を入れた個別ラベルに (`decrementLabel` / `incrementLabel`)
+- **境界で自動 disabled**: `value <= min` で `−` ボタン disabled、`value >= max` で `+` ボタン disabled。SR は「ボタン、無効」と読み上げる
+- **キーボード操作**: `Tab` で `−` → `+` の順に focus、`Enter` / `Space` で発火 (button 標準)。フォーカス時は `focus:` 系で可視化 (現実装は color-only、将来 ring-focus へ統一予定)
+- **タッチターゲット**: sm (40px) / md (48px)。md 以上で WCAG 2.5.5 達成。連打して値を増減することが多いため、密集 UI でも md 推奨
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — `add` / `remove` の `+` / `−` アイコン
+- [`<Typography>`](?path=/docs/primitives-typography--guideline) — `label` 表示 (variant="label")

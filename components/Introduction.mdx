@@ -70,14 +70,83 @@ Composites    Primitives のみ import 可
 すべてのコンポーネントは `tokens/` ディレクトリの JSON ファイルを参照しています。
 Tailwind CSS の設定にも統合済みです。
 
-- **Colors** — プライマリ・ニュートラル・セマンティックカラー
-- **Typography** — フォントサイズ・ウェイト・行間・フォントファミリー
-- **Spacing** — 8px ベースのスペーシングスケール
-- **Shadows** — none〜2xl のエレベーション（box-shadow）
-- **Radius** — none〜full の角丸（border-radius）
-- **Animation** — デュレーション・イージング関数
+- **Color** — Primitive (hue palette × 10 shades) + Semantic (surface / on / border / state)
+- **Typography** — Primitive (font-size / weight / line-height / family) + Semantic (heading / body / label / caption)
+- **Spacing** — 8px ベースの数値スケール (component 内部余白で使う)
+- **Layout** — page-level frame token (container / section / grid) — multi-product で大外レイアウトを統一管理
+- **Shadows** — `none / sm / md / lg` のエレベーション
+- **Radius** — `none / sm / md / lg / full` の角丸
+- **Animation** — duration (動きの長さ) + easing (速度カーブ)
+- **Breakpoints** — `sm / md / lg / xl / 2xl` の 5 段 (Tailwind 標準)
+- **Z-Index** — `dropdown / sticky / overlay / modal / popover / toast / tooltip` の 7 layer (semantic-only)
+- **Opacity** — `disabled / muted / spinner-track / spinner-spin` (semantic-only)
+- **Focus Ring** — `ring-focus` (width / offset) (semantic-only、色は別 token)
 
-→ サイドバーの **Tokens** カテゴリで視覚的に確認できます。
+→ サイドバーの **Tokens** カテゴリで視覚的に確認できます。詳細は [Tokens/Overview](?path=/docs/tokens-overview--docs) 参照。
+
+---
+
+## Product 側で使う際の setup
+
+別 product (gunmaas / rail-demo / 他) で本パッケージを依存として使うときの手順。
+
+**1. Tailwind preset を継承** (`tailwind.config.js`)
+
+```js
+module.exports = {
+  presets: [require('@kawachiryuya/design-system/tokens/preset')],
+  content: ['./src/**/*.{tsx,ts}'],
+  // product 固有の上書きは theme.extend にここで
+};
+```
+
+**2. CSS 変数ファイルを import** (`src/globals.css` 等)
+
+```css
+@import '@kawachiryuya/design-system/tokens/build/variables.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+`variables.css` に `--color-surface-primary` / `--layout-container-padding-x-mobile` 等の全 token CSS 変数が入っているので、これを忘れると semantic utility が壊れる。
+
+**3. class を書いて使う**
+
+```tsx
+// 大外コンテナ + section + grid (Layout token)
+<div className="px-container py-container max-w-container mx-auto">
+  <section className="space-y-section-md">
+    <div className="grid-base">
+      <Card className="col-span-4 lg:col-span-8">Main</Card>
+      <Card className="col-span-4 lg:col-span-4">Side</Card>
+    </div>
+  </section>
+</div>
+
+// Semantic color / typography (Color / Typography token)
+<button className="bg-surface-primary text-onSurface-inverse">Primary</button>
+<p className="text-body-md text-onSurface-muted">補助テキスト</p>
+```
+
+### Token 値を product 全体で override
+
+`src/globals.css` の `:root` で CSS 変数を上書き。**build 不要、cascade で全 callsite に即時反映**。
+
+```css
+:root {
+  /* brand を violet に切り替え (color chain 全体が連動) */
+  --color-teal-700: #5B4C99;
+
+  /* 大外 max-width を 1440px に */
+  --layout-container-max-width-default: 1440px;
+
+  /* section の density を全体的に詰める */
+  --layout-section-gap-md: 32px;
+}
+```
+
+詳細は各 token の Guideline ([Tokens/Color/Semantic](?path=/docs/tokens-color-semantic--guideline) / [Tokens/Layout](?path=/docs/tokens-layout--guideline) 等) 参照。
 
 ---
 

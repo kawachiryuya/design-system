@@ -54,16 +54,19 @@ semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;
 
 | カテゴリ | Primitive | Semantic | 備考 |
 |---|---|---|---|
-| **Color** | [Tokens/Color/Primitive](?path=/story/tokens-color-primitive--palettes) | [Tokens/Color/Semantic](?path=/story/tokens-color-semantic--surface) | bg / surface / on / border / state の 5 軸 |
-| **Typography** | [Tokens/Typography/Primitive](?path=/story/tokens-typography-primitive--font-sizes) | [Tokens/Typography/Semantic](?path=/story/tokens-typography-semantic--headings) | heading / body / label / caption |
-| **Spacing** | [Tokens/Spacing](?path=/story/tokens-spacing--scale) | (semantic 層なし) | 直接 `p-4` `gap-2` 等で primitive を引く運用 (v0.x で spacing-semantic は未使用のため削除済) |
+| **Color** | [Tokens/Color/Primitive](?path=/story/tokens-color-primitive--catalog) | [Tokens/Color/Semantic](?path=/docs/tokens-color-semantic--guideline) | bg / surface / on / border / state の 5 軸 + Container Pairs |
+| **Typography** | [Tokens/Typography/Primitive](?path=/story/tokens-typography-primitive--font-sizes) | [Tokens/Typography/Semantic](?path=/story/tokens-typography-semantic--catalog) | heading / body / label / caption |
+| **Spacing** | [Tokens/Spacing](?path=/story/tokens-spacing--scale) | (semantic 層なし) | 数値スケールで `p-4` `gap-2` 等を直接引く運用。component 内部余白で使う |
+| **Layout** | (primitive 層なし) | [Tokens/Layout](?path=/docs/tokens-layout--guideline) | page-level layout frame token (container / section / grid)。multi-product で大外レイアウトを統一管理 |
 | **Radius** | [Tokens/Radius](?path=/story/tokens-radius--border-radius) | (semantic 層なし) | `radius.none / sm / md / lg / full` を直接利用 (`md = default`、bare `rounded` ≒ `rounded-md`) |
 | **Shadows** | [Tokens/Shadows](?path=/story/tokens-shadows--elevations) | (semantic 層なし) | `shadow.none / sm / md / lg` を直接利用 (`md = default`、bare `shadow` ≒ `shadow-md`) |
-| **Animation** | [Tokens/Animation](?path=/story/tokens-animation--durations) | (semantic 層なし) | duration / easing |
-| **Breakpoints** | [Tokens/Breakpoints](?path=/story/tokens-breakpoints--scale) | (semantic 層なし) | mobile-first 前提、`sm:` で tablet+ に widening。本リポ内では `sm:` のみ使用中、`md/lg/xl/2xl:` も Tailwind 標準と同値で利用可能 |
-| **Z-Index** | (primitive 層なし) | [Tokens/Z-Index](?path=/story/tokens-z-index--layers) | 7 layer (`dropdown / sticky / overlay / modal / popover / toast / tooltip`)。Modal は `<dialog>` で OS 管理、Toast / 将来 Popover/Tooltip 用の予約スケール |
-| **Opacity** | (primitive 層なし) | [Tokens/Opacity](?path=/story/tokens-opacity--values) | 意味付け 4 値 (`disabled / muted / spinner-track / spinner-spin`)。Tailwind 既定 `opacity-0/5/.../100` も並存 |
-| **Focus Ring** | (primitive 層なし) | [Tokens/Focus Ring](?path=/story/tokens-focus-ring--tokens) | `ring-focus` (2px) / `ring-offset-focus` (2px)。a11y semantic。色は `border-focus` (semantic-colors) と組合せる |
+| **Animation** | [Tokens/Animation](?path=/story/tokens-animation--durations) | (semantic 層なし) | duration (動きの長さ) + easing (速度カーブ) の 2 軸 |
+| **Breakpoints** | [Tokens/Breakpoints](?path=/story/tokens-breakpoints--scale) | (semantic 層なし) | mobile-first 前提、`sm:` で tablet+ に widening。Tailwind 標準と同値 |
+| **Z-Index** | (primitive 層なし) | [Tokens/Z-Index](?path=/story/tokens-z-index--layers) | 7 layer (`dropdown / sticky / overlay / modal / popover / toast / tooltip`) |
+| **Opacity** | (primitive 層なし) | [Tokens/Opacity](?path=/story/tokens-opacity--values) | 意味付け 4 値 (`disabled / muted / spinner-track / spinner-spin`) |
+| **Focus Ring** | (primitive 層なし) | [Tokens/Focus Ring](?path=/story/tokens-focus-ring--tokens) | `ring-focus` (2px) / `ring-offset-focus` (2px)。a11y semantic。色は `border-focus` と組合せる |
+
+Spacing は component 内部余白のための数値スケールで、page-level の layout frame (大外 padding / section 間隔 / 12-col grid) は **Layout token** が担当します ([Tokens/Layout](?path=/docs/tokens-layout--guideline) 参照)。
 
 Radius / Shadows / Animation / Breakpoints は **semantic 層を持たない** = primitive 直参照運用です。将来用途別の意味付けが必要になった時点で追加する想定 (例: `radius-semantic.card → radius.md`)。
 

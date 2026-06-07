@@ -134,10 +134,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       {(label || showValue) && (
         <div className="flex justify-between items-center mb-1">
           {label && (
-            <span className="text-sm text-onSurface">{label}</span>
+            <span className="text-body-sm text-onSurface">{label}</span>
           )}
           {showValue && !indeterminate && (
-            <span className="text-sm text-onSurface-muted ml-auto">
+            <span className="text-body-sm text-onSurface-muted ml-auto">
               {percentage}%
             </span>
           )}

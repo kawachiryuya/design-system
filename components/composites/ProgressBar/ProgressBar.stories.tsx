@@ -32,7 +32,10 @@ const meta: Meta<typeof ProgressBar> = {
     label: 'アップロード中',
     showValue: true,
   },
-  decorators: [(Story) => <div className="w-80"><Story /></div>],
+  // 全 story を w-80 でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
+  decorators: [(Story, ctx) =>
+    ctx.parameters.noWrap ? <Story /> : <div className="w-80"><Story /></div>,
+  ],
 };
 
 export default meta;
@@ -126,9 +129,11 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '実利用例: アニメーション付きアップロード、ステップ進捗バー。`max` をバイト数に設定した動的ラベル。',
+        story: '実利用例: アニメーション付きアップロード / ステップ進捗バー / `max` バイト数 / Layout token 適用 (オンボーディング wizard、max-w-container-narrow).',
       },
     },
+    // 最後の Layout token 例を全幅表示するため meta の w-80 decorator を解除
+    noWrap: true,
   },
   render: () => {
     function AnimatedDemo() {
@@ -159,14 +164,14 @@ export const EdgeCases: Story = {
       const progress = ((current - 1) / (steps.length - 1)) * 100;
       return (
         <div className="space-y-4">
-          <p className="text-sm text-onSurface-muted">
+          <p className="text-body-sm text-onSurface-muted">
             ステップ {current}/{steps.length}: <strong>{steps[current - 1]}</strong>
           </p>
           <ProgressBar value={progress} size="sm" color="primary" />
           <div className="flex justify-between">
             {steps.map((step, i) => (
               <button key={step} type="button" onClick={() => setCurrent(i + 1)}
-                className={`text-xs font-medium ${i + 1 <= current ? 'text-onSurface-primary' : 'text-onSurface-muted'}`}>
+                className={`text-caption font-medium ${i + 1 <= current ? 'text-onSurface-primary' : 'text-onSurface-muted'}`}>
                 {step}
               </button>
             ))}
@@ -178,8 +183,32 @@ export const EdgeCases: Story = {
         </div>
       );
     }
+    function WizardDemo() {
+      const steps = ['アカウント作成', '基本情報', 'プラン選択', '完了'];
+      const [current, setCurrent] = useState(2);
+      const progress = (current / steps.length) * 100;
+      return (
+        <div className="w-full px-container py-container max-w-container-narrow mx-auto">
+          <div className="space-y-section-sm">
+            <div>
+              <p className="text-caption text-onSurface-muted">ステップ {current}/{steps.length}</p>
+              <h2 className="text-heading-md text-onSurface mt-1">{steps[current - 1]}</h2>
+            </div>
+            <ProgressBar value={progress} size="sm" color="primary" label={`進捗 ${Math.round(progress)}%`} />
+            <div className="p-6 border border-border-subtle rounded-md bg-surface-layer-2">
+              <p className="text-body-md text-onSurface-muted">ここに「{steps[current - 1]}」のフォームが入ります。</p>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="tertiary" disabled={current === 1} onClick={() => setCurrent((c) => c - 1)}>戻る</Button>
+              <Button disabled={current === steps.length} onClick={() => setCurrent((c) => c + 1)}>次へ</Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="space-y-8">
+        <div className="w-80 space-y-8">
         <Caption text="アップロード進捗 (アニメーション + 完了で色変化)">
           <AnimatedDemo />
         </Caption>
@@ -188,6 +217,10 @@ export const EdgeCases: Story = {
         </Caption>
         <Caption text="バイト数ベース (max を動的に)">
           <ProgressBar value={2_457_600} max={5_242_880} label="2.3 MB / 5.0 MB" />
+        </Caption>
+        </div>
+        <Caption text="Layout token 適用 (オンボーディング wizard、max-w-container-narrow + space-y-section-sm)">
+          <WizardDemo />
         </Caption>
       </div>
     );

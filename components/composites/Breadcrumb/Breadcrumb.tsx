@@ -126,8 +126,8 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               ) : (
                 <a
                   href={item.href}
-                  className="text-body-sm text-onSurface hover:text-onSurface-primary transition-colors
-                    focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus rounded-sm
+                  className="text-body-sm text-onSurface hover:text-onSurface-primary hover:underline transition-colors
+                    focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus rounded-sm
                     truncate max-w-[200px]"
                 >
                   {item.label}

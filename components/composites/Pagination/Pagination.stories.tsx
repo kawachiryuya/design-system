@@ -150,16 +150,43 @@ export const EdgeCases: Story = {
       }).filter(Boolean) as string[];
       return (
         <div className="w-96 space-y-4">
-          <p className="text-sm text-onSurface-muted">
+          <p className="text-body-sm text-onSurface-muted">
             全 {total} 件中 {(page - 1) * perPage + 1}〜{Math.min(page * perPage, total)} 件を表示
           </p>
           <ul className="divide-y divide-border-subtle border border-border-subtle rounded-md">
             {items.map((title) => (
-              <li key={title} className="px-4 py-3 text-sm text-onSurface">{title}</li>
+              <li key={title} className="px-4 py-3 text-body-sm text-onSurface">{title}</li>
             ))}
           </ul>
           <div className="flex justify-center">
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} showEdges />
+          </div>
+        </div>
+      );
+    }
+    function PageDemo() {
+      const [page, setPage] = useState(1);
+      const perPage = 8;
+      const total = 95;
+      const totalPages = Math.ceil(total / perPage);
+      return (
+        <div className="w-full px-container py-container max-w-container-narrow mx-auto">
+          <div className="space-y-section-sm">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-heading-md text-onSurface">記事一覧</h2>
+              <p className="text-body-sm text-onSurface-muted">
+                全 {total} 件中 {(page - 1) * perPage + 1}〜{Math.min(page * perPage, total)} 件
+              </p>
+            </div>
+            <ul className="divide-y divide-border-subtle border border-border-subtle rounded-md">
+              {Array.from({ length: Math.min(perPage, total - (page - 1) * perPage) }).map((_, i) => {
+                const num = (page - 1) * perPage + i + 1;
+                return <li key={num} className="px-4 py-3 text-body-sm text-onSurface">記事タイトル #{num}</li>;
+              })}
+            </ul>
+            <div className="flex justify-center">
+              <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} showEdges />
+            </div>
           </div>
         </div>
       );
@@ -171,7 +198,10 @@ export const EdgeCases: Story = {
         </Caption>
         <Caption text="totalPages = 1 (描画されない、null 返す)">
           <Pagination currentPage={1} totalPages={1} onPageChange={() => {}} />
-          <p className="text-xs text-onSurface-muted mt-2">↑ 何も描画されない (1 ページしかないときに pagination は不要)</p>
+          <p className="text-caption text-onSurface-muted mt-2">↑ 何も描画されない (1 ページしかないときに pagination は不要)</p>
+        </Caption>
+        <Caption text="Layout token 適用 (記事一覧 page、max-w-container-narrow + space-y-section-sm)">
+          <PageDemo />
         </Caption>
       </div>
     );

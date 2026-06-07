@@ -22,7 +22,7 @@ interface ButtonBaseProps {
    * サイズ。WCAG 2.5.5 AAA（44px）を満たす。Radius は size に連動 (`sm→rounded-sm` / `md→rounded-md` / `lg→rounded-lg`)。
    * - `sm`: 40px、密集 UI 用
    * - `md`: 48px、標準
-   * - `lg`: 64px、モバイル CTA / メインアクション
+   * - `lg`: 56px、モバイル CTA / メインアクション (Material 3 max と同等)
    * @default 'md'
    */
   size?: ButtonSize;
@@ -221,7 +221,7 @@ const buttonVariants = tv({
     // icon-only モード: 正方形 (h × w 固定)
     { iconOnly: true, size: 'sm', class: 'h-10 w-10' },
     { iconOnly: true, size: 'md', class: 'h-12 w-12' },
-    { iconOnly: true, size: 'lg', class: 'h-16 w-16' },
+    { iconOnly: true, size: 'lg', class: 'h-14 w-14' },
     // 通常モード: min-h でタッチターゲット確保、py で長文時の上下余白
     // Radius は size と連動 (sm→rounded-sm / md→rounded-md / lg→rounded-lg)
     {
@@ -237,7 +237,7 @@ const buttonVariants = tv({
     {
       iconOnly: false,
       size: 'lg',
-      class: 'min-h-16 py-4 px-6 min-w-24 rounded-lg',
+      class: 'min-h-14 py-4 px-6 min-w-24 rounded-lg',
     },
   ],
   defaultVariants: {

@@ -91,7 +91,7 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'small (40px) / medium (48px) / large (64px) の見比べ。medium 以上で WCAG 2.5.5のタッチターゲット要件を満たす。',
+        story: 'small (40px) / medium (48px) / large (56px) の見比べ。全 step +8 等差で grid 整合 (Material 3 max と同等)。medium 以上で WCAG 2.5.5 のタッチターゲット要件を満たす。',
       },
     },
   },

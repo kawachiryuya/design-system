@@ -18,7 +18,7 @@ const meta: Meta<typeof ProgressBar> = {
   argTypes: {
     value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
     max: { control: 'number' },
-    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
+    size: { control: 'radio', options: ['sm', 'md'] },
     color: { control: 'radio', options: ['primary', 'success', 'error', 'warning'] },
     showValue: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
@@ -79,7 +79,7 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'sm (4px) / md (8px) / lg (12px) の 3 段階。md がデフォルト、sm は dense UI、lg は強調表示用。',
+        story: 'sm (4px) / md (8px) の 2 段階。md がデフォルト、sm は dense UI (timeline、video player 等) 用。12px が必要なケースは className で個別 override。',
       },
     },
   },
@@ -87,7 +87,6 @@ export const Sizes: Story = {
     <div className="w-80 space-y-4">
       <ProgressBar value={60} size="sm" label="sm (4px)" />
       <ProgressBar value={60} size="md" label="md (8px) — デフォルト" />
-      <ProgressBar value={60} size="lg" label="lg (12px)" />
     </div>
   ),
 };

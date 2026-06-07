@@ -82,16 +82,15 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="size は表示密度に合わせる"
   doExample={
     <div className="w-80 space-y-3">
-      <ProgressBar value={60} size="sm" label="dense UI (ステップ進捗バー等)" />
-      <ProgressBar value={60} size="md" label="標準 (ファイルアップロード)" />
-      <ProgressBar value={60} size="lg" label="強調 (空き容量等の主要 KPI)" />
+      <ProgressBar value={60} size="sm" label="dense UI (timeline / video player 等)" />
+      <ProgressBar value={60} size="md" label="標準 (ファイルアップロード、ステップ進捗)" />
     </div>
   }
-  doCaption="sm は dense UI で控えめに、md は標準、lg はダッシュボード等で目立たせたいときに。`md = default` 規約 (bare 形 = md)。"
+  doCaption="sm は dense UI で控えめに、md は標準。`md = default` 規約 (bare 形 = md)。12px 以上の太いバーは存在感が強すぎるため避け、必要な場合は className で個別 override。"
   dontExample={
-    <ProgressBar value={60} size="lg" label="フォーム途中の小さな進捗" />
+    <ProgressBar value={60} size="md" className="h-4" label="フォーム途中の小さな進捗" />
   }
-  dontCaption="dense UI に lg を使うと存在感が強すぎて他の要素を圧迫する。"
+  dontCaption="標準フォーム中に厚いバーを置くと存在感が強すぎて他の要素を圧迫する。"
 />
 
 ### 別コンポーネントの方が適切な場面

@@ -1,7 +1,7 @@
 import React from 'react';
 
 /** ProgressBar の太さ */
-export type ProgressBarSize = 'sm' | 'md' | 'lg';
+export type ProgressBarSize = 'sm' | 'md';
 
 /** ProgressBar のカラーバリアント */
 export type ProgressBarColor = 'primary' | 'success' | 'error' | 'warning';
@@ -99,7 +99,6 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   const sizeStyles = {
     sm: 'h-1',
     md: 'h-2',
-    lg: 'h-3',
   };
 
   const colorStyles = {
@@ -113,7 +112,9 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     'w-full',
     'overflow-hidden',
     'rounded-full',
-    'bg-surface-skeleton',
+    // track bg: 旧 surface-skeleton (semantic はスケルトン loading 用) → surface-disabled
+    // (同色 neutral.200 で視覚変化なし、用途的に「非アクティブな track」が適切)
+    'bg-surface-disabled',
     sizeStyles[size],
     className,
   ].join(' ');

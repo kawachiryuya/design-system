@@ -4,9 +4,10 @@
       "value": "0px",
       "type": "dimension"
     },
-    "0.5": {
+    "0_5": {
       "value": "2px",
-      "type": "dimension"
+      "type": "dimension",
+      "description": "ソースキーはアンダースコア表記 (Style Dictionary が dot を path separator として解釈する仕様の回避)。Tailwind utility 名は preset.cjs で `.` に戻され `gap-0.5` 等として利用可能。"
     },
     "1": {
       "value": "4px",

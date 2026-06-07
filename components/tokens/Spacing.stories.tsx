@@ -10,9 +10,12 @@ type Story = StoryObj;
 
 type SpacingEntry = { key: string; value: string };
 
+// ソースキーは `0_5` のアンダースコア表記 (Style Dictionary の dot-path 干渉回避、
+// tokens/source/spacing.json 参照)。表示と Tailwind utility 名は `0.5` の標準形に
+// 戻して扱う。
 const SPACING_SCALE: SpacingEntry[] = Object.entries(spacingToken.spacing)
   .map(([key, entry]) => ({
-    key,
+    key: key.replace(/_/g, '.'),
     value: (entry as { value: string }).value,
   }))
   .sort((a, b) => parseFloat(a.key) - parseFloat(b.key));

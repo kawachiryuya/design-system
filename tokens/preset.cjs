@@ -49,11 +49,22 @@ const semanticTypo = t['typography-semantic']
   ? flattenSemanticTypo(t['typography-semantic'])
   : {};
 
+/**
+ * Spacing 名を Tailwind utility 名に変換する。
+ *
+ * ソースキー `0_5` (Style Dictionary の dot-path 干渉を避けるためアンダースコア表記、
+ * tokens/source/spacing.json 参照) を Tailwind 標準の `0.5` 表記に戻す。
+ * 結果として utility 名は `gap-0.5` / `w-0.5` 等の Tailwind 標準準拠形になる。
+ */
+const tailwindSpacing = Object.fromEntries(
+  Object.entries(t.spacing).map(([k, v]) => [k.replace(/_/g, '.'), v])
+);
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   theme: {
     // ── Core (overrides Tailwind defaults) ──
-    spacing: t.spacing,
+    spacing: tailwindSpacing,
     colors: {
       // Primitive palette は **hue 名** で表現 (2 層アーキテクチャの純度を保つため)。
       // brand / 機能色の役割名は semantic-colors.json (surface.primary / on.success 等)
@@ -197,15 +208,24 @@ module.exports = {
       ringColor: {
         border: {
           focus:   'var(--color-border-focus)',
-          primary: 'var(--color-border-primary)',
-          error:   'var(--color-border-error)',
+          // border.primary は border 強度軸 refactor (subtle/default/strong/emphasis) で廃止。
+          // teal.700 (= border-focus) と同色のため alias 継続、consumer 側の `ring-border-primary` は引き続き有効。
+          primary: 'var(--color-border-focus)',
+          // border.error は border-error-emphasis (red.600) のエイリアス。consumer 側で
+          // `ring-border-error` が複数 component (Button / Input / Select / Checkbox / Radio / Textarea)
+          // から参照されているため alias 継続。
+          error:   'var(--color-border-error-emphasis)',
         },
-        surface: 'var(--color-surface-default)',
+        // surface.default は廃止済 (Carbon 流の layer-1/2/3 numeric 体系に移行、CHANGELOG `Surface layer 階層化` 参照)。
+        // 旧 `ring-surface` は layer-1 (= white) を指していたため、現行命名で同等の参照に更新。
+        surface: 'var(--color-surface-layer-1)',
       },
       divideColor: {
         border: {
           DEFAULT: 'var(--color-border-default)',
-          muted:   'var(--color-border-muted)',
+          // border.muted は border-subtle (neutral.200) のエイリアス。consumer 側で
+          // `divide-border-muted` が継続利用されているため alias 継続。
+          muted:   'var(--color-border-subtle)',
         },
       },
     },

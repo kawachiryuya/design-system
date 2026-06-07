@@ -121,14 +121,14 @@ export const Accordion = ({
               aria-disabled={item.disabled}
               disabled={item.disabled}
               onClick={() => !item.disabled && toggle(item.id)}
-              className="w-full flex items-center gap-3 p-4 text-left hover:bg-state-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex items-center gap-3 p-4 text-left hover:bg-state-hover transition-colors disabled:opacity-disabled disabled:cursor-not-allowed focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus focus-visible:ring-inset"
             >
               <Icon
                 name={isOpen ? 'expand_less' : 'expand_more'}
                 size="sm"
                 color="inherit"
               />
-              <span className="flex-1 font-semibold text-onSurface">{item.title}</span>
+              <span className="flex-1 text-body-md font-semibold text-onSurface">{item.title}</span>
             </button>
             {isOpen && (
               <div

@@ -122,7 +122,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controlled (URL クエリ同期想定) / 長文コンテンツ / 1 項目だけ / 多数の項目。',
+        story: 'Controlled (URL クエリ同期想定) / 長文コンテンツ / 1 項目だけ / Layout token 適用 (FAQ page、max-w-container-narrow).',
       },
     },
   },
@@ -131,7 +131,7 @@ export const EdgeCases: Story = {
       const [openIds, setOpenIds] = useState<string[]>(['q2']);
       return (
         <div>
-          <p className="text-sm text-onSurface-muted mb-3">
+          <p className="text-body-sm text-onSurface-muted mb-3">
             現在開いている: {openIds.length > 0 ? openIds.join(', ') : 'なし'}
           </p>
           <Accordion items={sampleFaq} openIds={openIds} onChange={setOpenIds} />
@@ -152,7 +152,7 @@ export const EdgeCases: Story = {
                 id: 'long',
                 title: 'プライバシーポリシーについて教えてください',
                 content: (
-                  <p className="text-sm leading-relaxed">
+                  <p className="text-body-sm leading-relaxed">
                     当社では、ユーザーから収集した個人情報を厳重に管理し、サービス品質の向上、本人確認、お問い合わせへの返信、新機能や重要なお知らせの通知のために利用します。第三者への提供は、法令に基づく場合や本人の同意を得た場合に限られます。
                   </p>
                 ),
@@ -162,6 +162,25 @@ export const EdgeCases: Story = {
         </Caption>
         <Caption text="1 項目だけ (1 個でもうまく見える)">
           <Accordion items={[{ id: 'only', title: '唯一の項目', content: '中身' }]} />
+        </Caption>
+        <Caption text="Layout token 適用 (FAQ page、max-w-container-narrow + space-y-section-sm)">
+          <div className="w-full px-container py-container max-w-container-narrow mx-auto">
+            <div className="space-y-section-sm">
+              <div>
+                <h1 className="text-heading-lg text-onSurface">よくあるご質問</h1>
+                <p className="text-body-md text-onSurface-muted mt-1">サービス利用について多く寄せられるご質問にお答えします。</p>
+              </div>
+              <Accordion
+                type="multiple"
+                items={[
+                  { id: 'p1', title: '予約のキャンセルはいつまで可能ですか？', content: <p className="text-body-sm">出発時刻の 1 時間前までキャンセル可能です。それ以降はキャンセル料が発生します。</p> },
+                  { id: 'p2', title: '会員登録は無料ですか？', content: <p className="text-body-sm">はい、完全に無料でご利用いただけます。クレジットカード登録も不要です。</p> },
+                  { id: 'p3', title: '予約確認メールが届きません', content: <p className="text-body-sm">迷惑メールフォルダをご確認ください。それでも見つからない場合はサポートまでご連絡ください。</p> },
+                  { id: 'p4', title: '支払い方法は何が使えますか？', content: <p className="text-body-sm">主要クレジットカード、デビットカード、QR コード決済、コンビニ決済に対応しています。</p> },
+                ]}
+              />
+            </div>
+          </div>
         </Caption>
       </div>
     );

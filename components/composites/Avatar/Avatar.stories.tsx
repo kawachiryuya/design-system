@@ -71,7 +71,7 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'xs (24px、サイドバー / コメント) → xl (80px、プロフィールヒーロー) の 5 段階。',
+        story: 'xs (24px、サイドバー / コメント) → xl (64px、プロフィールヒーロー) の 5 段階。container は全 step +8 等差 (24/32/40/48/64) で Material 3 / Carbon と整合。',
       },
     },
   },

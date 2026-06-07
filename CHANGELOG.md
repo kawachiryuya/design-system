@@ -37,6 +37,7 @@
 
 ### Changed (in Unreleased)
 
+- **Composites/ToggleButton の視覚調整**: (1) font を `text-caption` (12px) → `text-body-sm` (14px) に。calendar / seat picker 等の主用途で 40×40 container に対し 30%→35% と読みやすさ改善、日本語文字 (週セレクター等) も無理なく。(2) disabled bg を `surface-inset` (Input 凹みコンテナ用、semantic 違反) → `surface-disabled` に修正。(3) hover/active に Button と同じ state-layer overlay pattern を追加 — default (白 bg) は `state-hover-primary` (8% teal) で branded な薄ティール tint、selected (teal bg) は `state-hover` (8% black) で明確な darken。今まで border 濃化のみで feedback が弱かったのを Button 派に揃えた。
 - **Alert / Toast / Badge を semantic 化** (AGENTS.md §3-1 違反の解消): primitive 直参照 (`text-green-500` / `bg-neutral-700` 等) を semantic token (`text-onSurface-success` / `bg-surface-neutral-strong` 等) に置換。下流 product の brand override が効くようになる。視覚的にはアイコン色が若干濃く (e.g. green.500→700)、Alert 閉じるボタンの hover は role tint から neutral overlay (bg-state-hover) に統一。
 - **AGENTS.md §3-6 に Token Catalog Story / Guideline の規約を新設**: `components/tokens/` 配下の token カタログ専用構造を明文化。flat catalog (subsection 禁止) / Catalog を Guideline から分離 (Story 埋め込み禁止 → link list) / 標準セクション (概要 / カタログ / 設計方針 / 迷ったらこれ / 関連) を固定。Animation / Shadows / FocusRing / Typography / Typography-Semantic 等の既存 Guideline を順次適用。
 - **AGENTS.md §3-4-3 に Container ペアパターン規約を新設** (軸 2、構造変更なし): Material 3 流の Container ペア (role / on-role / role-container / on-role-container) を本リポ命名で実現する規約を明文化。実態は既に揃っており命名 (`-muted` / `secondary`) を本リポ semantic 規約として確定:

@@ -43,15 +43,27 @@ export interface ToggleButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLB
  */
 export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProps>(
   ({ selected = false, disabled = false, children, className = '', ...props }, ref) => {
+    // hover / active は Button と同じく inset shadow で state-layer overlay を重ねる。
+    // bg の色に応じて overlay の色味を選ぶ (Button primary / secondary の pattern と整合):
+    // - default (白 bg): state-hover-primary (8% teal) で branded な薄ティール tint
+    // - selected (teal bg): state-hover (8% black) で明確な darken
     const stateStyles = disabled
-      ? 'bg-surface-inset text-onSurface-disabled cursor-not-allowed'
+      ? 'bg-surface-disabled text-onSurface-disabled cursor-not-allowed'
       : selected
-        ? 'bg-surface-primary text-onSurface-inverse'
-        : 'bg-surface border border-border-default text-onSurface hover:border-border-strong';
+        ? [
+            'bg-surface-primary text-onSurface-inverse',
+            'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
+            'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
+          ].join(' ')
+        : [
+            'bg-surface border border-border-default text-onSurface hover:border-border-strong',
+            'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-primary)]',
+            'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-primary)]',
+          ].join(' ');
 
     const classes = [
       'inline-flex items-center justify-center',
-      'w-10 h-10 rounded text-caption font-medium transition-colors',
+      'w-10 h-10 rounded text-body-sm font-medium transition-colors',
       'focus:outline-none focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus',
       stateStyles,
       className,

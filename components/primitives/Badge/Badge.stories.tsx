@@ -6,9 +6,10 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Badge stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → Sizes → EdgeCases
+ * 順序: Playground → Variants → EdgeCases
  * (States は Badge が非 interactive な `<span>` で hover/focus/active 等の状態を
  *  持たないため省略 — Skeleton / Spinner / Divider と同じ扱い。
+ *  Sizes は size prop を廃止し h-6 (24px) 1 サイズに統一したため省略。
  *  WithIcon は icon prop が無いため省略。dot は EdgeCases で扱う)
  *
  * Docs (Guideline) は Badge.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
@@ -22,7 +23,6 @@ const meta: Meta<typeof Badge> = {
       options: ['neutral', 'primary', 'success', 'error', 'warning', 'info'],
     },
     appearance: { control: 'radio', options: ['solid', 'soft', 'outline'] },
-    size: { control: 'radio', options: ['sm', 'md'] },
     dot: { control: 'boolean' },
     children: { control: 'text' },
   },
@@ -30,7 +30,6 @@ const meta: Meta<typeof Badge> = {
     children: 'ラベル',
     variant: 'neutral',
     appearance: 'soft',
-    size: 'md',
     dot: false,
   },
 };
@@ -46,7 +45,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controls から variant / appearance / size / dot を切り替えて見え方を確認する起点。Badge は非 interactive な `<span>` で、ARIA role は付かない (テキストそのものが意味を伝える前提)。',
+        story: 'Controls から variant / appearance / dot を切り替えて見え方を確認する起点。Badge は非 interactive な `<span>` で、ARIA role は付かない (テキストそのものが意味を伝える前提)。',
       },
     },
   },
@@ -100,29 +99,7 @@ export const Variants: Story = {
   ),
 };
 
-// ── 3. Sizes ───────────────────────────────────────────────────
-
-export const Sizes: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'small (px-2 py-[2px]) / medium (px-[10px] py-1) の見比べ。small は高密度 UI / テーブル / 数値カウント、medium は標準的なステータス表示。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex gap-4 items-center">
-      <Caption text="small">
-        <Badge size="sm" variant="success">Small</Badge>
-      </Caption>
-      <Caption text="medium (default)">
-        <Badge size="md" variant="success">Medium</Badge>
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
+// ── 3. EdgeCases ───────────────────────────────────────────────
 // dot 付き / 長文 / 数値カウント / 実践例ステータスリスト など、
 // 実際の組み合わせで起こる視覚バランスや崩れ方の確認用。
 
@@ -152,12 +129,12 @@ export const EdgeCases: Story = {
         </div>
       </Caption>
 
-      <Caption text="数値カウント — small + solid で通知バッジ風 (1〜3 桁を想定)">
+      <Caption text="数値カウント — solid で通知バッジ風 (1〜3 桁を想定)">
         <div className="flex gap-2 items-center">
-          <Badge size="sm" variant="error" appearance="solid">1</Badge>
-          <Badge size="sm" variant="error" appearance="solid">12</Badge>
-          <Badge size="sm" variant="error" appearance="solid">99+</Badge>
-          <Badge size="sm" variant="primary" appearance="solid">NEW</Badge>
+          <Badge variant="error" appearance="solid">1</Badge>
+          <Badge variant="error" appearance="solid">12</Badge>
+          <Badge variant="error" appearance="solid">99+</Badge>
+          <Badge variant="primary" appearance="solid">NEW</Badge>
         </div>
       </Caption>
 

@@ -159,7 +159,7 @@ export const EdgeCases: Story = {
           <Card.Header divider={false}>
             <div className="flex items-center justify-between">
               <span>メンテナンスのお知らせ</span>
-              <Badge variant="warning" appearance="soft" size="sm">重要</Badge>
+              <Badge variant="warning" appearance="soft">重要</Badge>
             </div>
           </Card.Header>
           <Card.Body>

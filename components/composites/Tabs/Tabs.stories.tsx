@@ -170,7 +170,7 @@ export const EdgeCases: Story = {
                       {['Atomic Design 入門', 'Tailwind CSS のすすめ', '色彩理論の基礎'].map((title) => (
                         <div key={title} className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0">
                           <span className="text-sm text-onSurface">{title}</span>
-                          <Badge variant="neutral" size="sm">公開中</Badge>
+                          <Badge variant="neutral">公開中</Badge>
                         </div>
                       ))}
                     </div>

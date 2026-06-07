@@ -7,17 +7,14 @@ export type BadgeVariant = 'neutral' | 'primary' | 'success' | 'error' | 'warnin
 /** Badge のスタイル */
 export type BadgeAppearance = 'solid' | 'soft' | 'outline';
 
-/** Badge のサイズ */
-export type BadgeSize = 'sm' | 'md';
-
 /**
- * Badge のスタイル定義 — `tailwind-variants` で variant × appearance × size を宣言的に保持。
+ * Badge のスタイル定義 — `tailwind-variants` で variant × appearance を宣言的に保持。
  *
- * - base: 全 variant 共通 (inline-flex / 余白 / 角丸 / leading-none / whitespace-nowrap)
- * - variants.size: 余白 + 文字サイズ
+ * - base: 全 variant 共通 (inline-flex / 高さ 24px 固定 / 余白 / 角丸 / 12px text)
  * - variants.appearance / variants.variant: 単独では空。色の決定は compoundVariants で
  * - compoundVariants: 6 variant × 3 appearance の 18 組合せで bg/text/border を決める
  *
+ * 高さは `h-6` (24px) 1 段に統一 (業界標準寄り、用途差別化が薄い 2 サイズ運用を回避)。
  * 色は semantic token (`bg-surface-*` / `text-onSurface-*` / `border-border-*`) を参照し、
  * primitive 色 (`bg-blue-500` 等) は使わない (AGENTS.md §3)。
  */
@@ -25,17 +22,16 @@ const badgeVariants = tv({
   base: [
     'inline-flex',
     'items-center',
+    'justify-center',
+    'h-6',
+    'px-2',
     'gap-[6px]',
+    'text-xs',
     'font-medium',
     'rounded-sm',
-    'leading-none',
     'whitespace-nowrap',
   ],
   variants: {
-    size: {
-      sm: 'px-2 py-[2px] text-xs',
-      md: 'px-[10px] py-1 text-xs',
-    },
     appearance: { solid: '', soft: '', outline: '' },
     variant: { neutral: '', primary: '', success: '', error: '', warning: '', info: '' },
   },
@@ -65,7 +61,6 @@ const badgeVariants = tv({
   defaultVariants: {
     variant: 'neutral',
     appearance: 'soft',
-    size: 'md',
   },
 });
 
@@ -103,13 +98,13 @@ const dotColorMap: Record<BadgeVariant, string> = {
  *
  * @example
  *   // 枠線のみ（控えめなカテゴリラベル）
- *   <Badge variant="primary" appearance="outline" size="sm">
+ *   <Badge variant="primary" appearance="outline">
  *     ベータ
  *   </Badge>
  *
  * @example
  *   // 数値カウント
- *   <Badge variant="error" appearance="solid" size="sm">12</Badge>
+ *   <Badge variant="error" appearance="solid">12</Badge>
  *
  * @see principles/Color/semantic-colors.mdx
  */
@@ -131,13 +126,6 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
    */
   appearance?: BadgeAppearance;
   /**
-   * サイズ。
-   * - `sm` 高密度 UI / 数値カウント
-   * - `md` 標準
-   * @default 'md'
-   */
-  size?: BadgeSize;
-  /**
    * 先頭にドットを表示。リアルタイム性（処理中・新着等）を示唆する用途。
    * @default false
    */
@@ -156,7 +144,6 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     {
       variant = 'neutral',
       appearance = 'soft',
-      size = 'md',
       dot = false,
       children,
       className,
@@ -167,7 +154,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     return (
       <span
         ref={ref}
-        className={badgeVariants({ variant, appearance, size, className })}
+        className={badgeVariants({ variant, appearance, className })}
         {...props}
       >
         {dot && (

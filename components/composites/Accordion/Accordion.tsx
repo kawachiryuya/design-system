@@ -121,7 +121,7 @@ export const Accordion = ({
               aria-disabled={item.disabled}
               disabled={item.disabled}
               onClick={() => !item.disabled && toggle(item.id)}
-              className="w-full flex items-center gap-3 p-4 text-left hover:bg-state-hover transition-colors disabled:opacity-disabled disabled:cursor-not-allowed focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus focus-visible:ring-inset"
+              className="w-full flex items-center gap-3 p-4 text-left hover:bg-state-hover-primary transition-colors disabled:opacity-disabled disabled:cursor-not-allowed focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus focus-visible:ring-inset"
             >
               <Icon
                 name={isOpen ? 'expand_less' : 'expand_more'}
@@ -135,7 +135,8 @@ export const Accordion = ({
                 id={contentId}
                 role="region"
                 aria-labelledby={triggerId}
-                className="px-4 pb-4 pl-11"
+                // pl-12 (48px) で title text と左端揃え (trigger は p-4 左 16 + icon sm 20 + gap-3 12 = 48)
+                className="px-4 pb-4 pl-12"
               >
                 {item.content}
               </div>

@@ -114,8 +114,25 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     md: { container: 'h-12', button: 'w-12', display: 'w-10 text-base' },
   }[size];
 
-  // disabled state は色ベース (Button と同じ精神、bg 強い場合の半透明問題を回避)
-  const buttonClasses = `${sizeStyles.button} h-full flex items-center justify-center text-onSurface-muted hover:text-onSurface disabled:text-onSurface-disabled disabled:cursor-not-allowed transition-colors`;
+  // disabled state は色ベース (Button と同じ精神、bg 強い場合の半透明問題を回避)。
+  // hover overlay は state-hover-primary (8% teal) で branded、白 bg 上で薄ティール tint。
+  // focus-visible ring は ring-inset で container border 内側に表示。
+  const buttonClasses = [
+    sizeStyles.button,
+    'h-full flex items-center justify-center transition-colors',
+    'text-onSurface-muted hover:text-onSurface hover:bg-state-hover-primary',
+    'disabled:text-onSurface-disabled disabled:cursor-not-allowed disabled:hover:bg-transparent',
+    'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
+  ].join(' ');
+
+  // container は Input / Select と整合する bg-surface。disabled でないときは hover で border 濃化
+  const containerClasses = [
+    'flex items-center rounded-sm border border-border bg-surface',
+    sizeStyles.container,
+    disabled ? '' : 'hover:border-border-strong',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className="flex flex-col gap-1">
@@ -127,7 +144,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       <div
         role="group"
         aria-labelledby={labelId}
-        className={`flex items-center border border-border rounded-sm ${sizeStyles.container}`}
+        className={containerClasses}
       >
         <button
           type="button"
@@ -139,7 +156,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           <Icon name="remove" size="sm" color="inherit" />
         </button>
         <span
-          className={`${sizeStyles.display} text-center font-medium text-onSurface`}
+          className={`${sizeStyles.display} text-center font-medium ${disabled ? 'text-onSurface-disabled' : 'text-onSurface'}`}
           aria-live="polite"
           aria-atomic="true"
         >

@@ -98,14 +98,12 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       }
     };
 
-    // Track 44×24, thumb 20×20, 片側 gap 2px (off→on: 22px 移動)。
-    // w-[44px] は bracket リテラル — このリポは tokens/source/spacing.json で
-    // spacing を override しており 11 (44px) を含まないため w-11 は使えない
+    // Track 48×24, thumb 20×20, 片側 gap 2px (off→on: 26px 移動)
     const trackClasses = [
       'relative',
       'inline-flex',
       'flex-shrink-0',
-      'w-[44px]',
+      'w-12',
       'h-6',
       'rounded-full',
       'transition-colors',
@@ -132,7 +130,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'transition-transform',
       'duration-normal',
       'self-center',
-      checked ? 'translate-x-[22px]' : 'translate-x-[2px]',
+      checked ? 'translate-x-[26px]' : 'translate-x-0.5',
     ]
       .filter(Boolean)
       .join(' ');

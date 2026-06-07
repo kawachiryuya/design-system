@@ -83,7 +83,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '実利用に近い「座席グリッド」例 (occupied = 予約済み = disabled、selected トグル可能) と、長めラベル / 2 文字以上の表示確認。',
+        story: '実利用に近い「座席グリッド」例 (occupied = 予約済み = disabled、selected トグル可能) / 長めラベル / Layout token 適用 (曜日セレクター in page context).',
       },
     },
   },
@@ -122,7 +122,7 @@ export const EdgeCases: Story = {
             </div>
           ))}
           {selected.length > 0 && (
-            <p className="text-sm text-onSurface-muted mt-2">
+            <p className="text-body-sm text-onSurface-muted mt-2">
               選択中: {selected.join(', ')}
             </p>
           )}
@@ -142,7 +142,34 @@ export const EdgeCases: Story = {
             <ToggleButton>99</ToggleButton>
           </div>
         </Caption>
+        <Caption text="Layout token 適用 (max-w-container-narrow + 曜日セレクター、設定画面の典型構成)">
+          <WeekdaySelectorDemo />
+        </Caption>
       </div>
     );
   },
 };
+
+function WeekdaySelectorDemo() {
+  const [selected, setSelected] = useState<string[]>(['月', '水', '金']);
+  const days = ['月', '火', '水', '木', '金', '土', '日'];
+  const toggle = (d: string) =>
+    setSelected((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
+  return (
+    <div className="w-full px-container py-container max-w-container-narrow mx-auto">
+      <div className="space-y-section-sm">
+        <div>
+          <p className="text-label text-onSurface mb-2">通知を受け取る曜日</p>
+          <div className="flex gap-2 flex-wrap">
+            {days.map((d) => (
+              <ToggleButton key={d} selected={selected.includes(d)} onClick={() => toggle(d)} aria-label={`${d}曜日`}>
+                {d}
+              </ToggleButton>
+            ))}
+          </div>
+        </div>
+        <p className="text-body-sm text-onSurface-muted">選択中: {selected.length}日間</p>
+      </div>
+    </div>
+  );
+}

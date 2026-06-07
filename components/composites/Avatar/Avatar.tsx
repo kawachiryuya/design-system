@@ -85,15 +85,13 @@ export interface AvatarProps {
 
 // container は全 step +8 等差 (24/32/40/48/64) で grid 整合。
 // initials は container の 38-40% を狙う (xs は 24px で詰まるため text-xs 維持)。
-// statusDot は container の 25% で統一。w-[6px] / w-[10px] は bracket リテラル
-// (このリポは spacing scale から .5 step (1.5/2.5/3.5) を除外している、
-// memory: custom-spacing-scale)。
+// statusDot は container の 25% で統一。
 const sizeMap = {
-  xs: { container: 'w-6 h-6',   text: 'text-xs',  statusDot: 'w-[6px] h-[6px]' },
-  sm: { container: 'w-8 h-8',   text: 'text-xs',  statusDot: 'w-2 h-2' },
-  md: { container: 'w-10 h-10', text: 'text-base', statusDot: 'w-[10px] h-[10px]' },
-  lg: { container: 'w-12 h-12', text: 'text-lg',  statusDot: 'w-3 h-3' },
-  xl: { container: 'w-16 h-16', text: 'text-2xl', statusDot: 'w-4 h-4' },
+  xs: { container: 'w-6 h-6',   text: 'text-xs',   statusDot: 'w-1.5 h-1.5' },
+  sm: { container: 'w-8 h-8',   text: 'text-xs',   statusDot: 'w-2 h-2' },
+  md: { container: 'w-10 h-10', text: 'text-base', statusDot: 'w-2.5 h-2.5' },
+  lg: { container: 'w-12 h-12', text: 'text-lg',   statusDot: 'w-3 h-3' },
+  xl: { container: 'w-16 h-16', text: 'text-2xl',  statusDot: 'w-4 h-4' },
 };
 
 const statusColorMap = {

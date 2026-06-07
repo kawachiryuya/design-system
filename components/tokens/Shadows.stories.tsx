@@ -34,7 +34,7 @@ export const Elevations: Story = {
             className={`w-20 h-20 bg-surface rounded-md ${s.tw} ${s.key === 'none' ? 'border border-border-subtle' : ''}`}
           />
           <div className="text-center flex flex-col gap-1">
-            <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
+            <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
               {s.key}
             </code>
             <span className="text-xs font-mono text-onSurface-muted">{s.tw}</span>
@@ -58,9 +58,9 @@ export const TokenValues: Story = {
       {SHADOWS.map((s) => (
         <div
           key={s.key}
-          className="flex items-center gap-4 py-[10px] px-4 rounded-md border border-border-subtle bg-surface"
+          className="flex items-center gap-4 py-2.5 px-4 rounded-md border border-border-subtle bg-surface"
         >
-          <code className="bg-surface-inset text-onSurface px-2 py-[2px] rounded-sm font-mono text-xs flex-shrink-0 min-w-[72px]">
+          <code className="bg-surface-inset text-onSurface px-2 py-0.5 rounded-sm font-mono text-xs flex-shrink-0 min-w-[72px]">
             {s.key}
           </code>
           <span className="font-mono text-xs text-onSurface-muted flex-shrink-0 min-w-[90px]">

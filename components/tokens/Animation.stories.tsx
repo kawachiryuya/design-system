@@ -82,7 +82,7 @@ const Row: React.FC<{ entry: AnimEntry; bar: React.ReactNode; trailingValue?: st
 }) => (
   <div className="flex items-center gap-4 p-4 rounded-md border border-border-subtle bg-surface">
     <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
-      <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block self-start">
+      <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block self-start">
         {entry.key}
       </code>
       <span className="text-xs font-mono text-onSurface-muted">{entry.value}</span>

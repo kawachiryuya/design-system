@@ -35,7 +35,7 @@ export const Scale: Story = {
         return (
           <div key={s.key} className="flex items-center gap-4">
             <div className="w-12 flex-shrink-0 text-right">
-              <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
+              <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
                 {s.key}
               </code>
             </div>

@@ -13,9 +13,19 @@
       "value": "4px",
       "type": "dimension"
     },
+    "1_5": {
+      "value": "6px",
+      "type": "dimension",
+      "description": "高頻度の中間値 (Avatar status dot xs / Badge dot / Pagination active dot 等)。アンダースコア表記の理由は 0.5 と同じ。"
+    },
     "2": {
       "value": "8px",
       "type": "dimension"
+    },
+    "2_5": {
+      "value": "10px",
+      "type": "dimension",
+      "description": "Avatar md status dot 用 (container 40 × 25% ratio で uniform)。アンダースコア表記の理由は 0.5 と同じ。"
     },
     "3": {
       "value": "12px",
@@ -44,6 +54,11 @@
     "12": {
       "value": "48px",
       "type": "dimension"
+    },
+    "14": {
+      "value": "56px",
+      "type": "dimension",
+      "description": "Input / Select lg 等の Material 3 max と整合する値。"
     },
     "16": {
       "value": "64px",

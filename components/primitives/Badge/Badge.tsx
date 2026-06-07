@@ -25,7 +25,7 @@ const badgeVariants = tv({
     'justify-center',
     'h-6',
     'px-2',
-    'gap-[6px]',
+    'gap-1.5',
     'text-xs',
     'font-medium',
     'rounded-sm',
@@ -159,7 +159,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       >
         {dot && (
           <span
-            className={`inline-block w-[6px] h-[6px] rounded-full flex-shrink-0 ${
+            className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${
               appearance === 'solid' ? 'bg-white/70' : dotColorMap[variant]
             }`}
             aria-hidden="true"

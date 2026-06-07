@@ -28,7 +28,7 @@ const L = layoutToken.layout as {
 };
 
 const KeyBadge: React.FC<{ k: string }> = ({ k }) => (
-  <code className="bg-surface-inset text-onSurface px-[6px] py-[2px] rounded-sm font-mono text-xs inline-block">
+  <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
     {k}
   </code>
 );

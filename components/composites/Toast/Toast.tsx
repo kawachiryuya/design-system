@@ -1,7 +1,6 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
 import { Button } from '../../primitives/Button';
-import { VisuallyHidden } from '../../primitives/VisuallyHidden';
 
 /** Toast のセマンティックカラーバリアント */
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral';
@@ -61,6 +60,7 @@ export interface ToastProps extends ToastContent {
 const variantConfig: Record<ToastVariant, {
   container: string;
   icon: string;
+  closeBtn: string;
   iconName: 'check_circle' | 'error' | 'warning' | 'info';
   ariaLive: 'polite' | 'assertive';
   role: 'status' | 'alert';
@@ -68,6 +68,7 @@ const variantConfig: Record<ToastVariant, {
   success: {
     container: 'bg-surface-success-muted border border-border-success-subtle text-onSurface-success',
     icon: 'text-onSurface-success',
+    closeBtn: 'text-onSurface-success hover:bg-state-hover',
     iconName: 'check_circle',
     ariaLive: 'polite',
     role: 'status',
@@ -75,6 +76,7 @@ const variantConfig: Record<ToastVariant, {
   error: {
     container: 'bg-surface-error-muted border border-border-error-subtle text-onSurface-error',
     icon: 'text-onSurface-error',
+    closeBtn: 'text-onSurface-error hover:bg-state-hover',
     iconName: 'error',
     ariaLive: 'assertive',
     role: 'alert',
@@ -82,6 +84,7 @@ const variantConfig: Record<ToastVariant, {
   warning: {
     container: 'bg-surface-warning-muted border border-border-warning-subtle text-onSurface-warning',
     icon: 'text-onSurface-warning',
+    closeBtn: 'text-onSurface-warning hover:bg-state-hover',
     iconName: 'warning',
     ariaLive: 'polite',
     role: 'status',
@@ -89,13 +92,15 @@ const variantConfig: Record<ToastVariant, {
   info: {
     container: 'bg-surface-info-muted border border-border-info-subtle text-onSurface-info',
     icon: 'text-onSurface-info',
+    closeBtn: 'text-onSurface-info hover:bg-state-hover',
     iconName: 'info',
     ariaLive: 'polite',
     role: 'status',
   },
   neutral: {
-    container: 'bg-surface-inset border border-border-subtle text-onSurface',
+    container: 'bg-surface-layer-2 border border-border-subtle text-onSurface',
     icon: 'text-onSurface-muted',
+    closeBtn: 'text-onSurface-muted hover:bg-state-hover',
     iconName: 'info',
     ariaLive: 'polite',
     role: 'status',
@@ -126,7 +131,8 @@ const ToastBody: React.FC<ToastContent & { onClose?: () => void }> = ({
       aria-live={config.ariaLive}
       aria-atomic="true"
       className={[
-        'flex gap-3 rounded-md p-4 shadow-md min-w-[20rem] max-w-[28rem]',
+        'relative flex gap-3 rounded-md p-4 shadow-md min-w-[20rem] max-w-[28rem]',
+        onClose ? 'pr-12' : '',
         config.container,
       ].join(' ')}
     >
@@ -148,11 +154,24 @@ const ToastBody: React.FC<ToastContent & { onClose?: () => void }> = ({
         )}
       </div>
 
+      {/* 閉じるボタンは absolute 配置 (Alert と同じ pattern)。
+          Toast は description のみ (text-body-sm leading-relaxed) と title 付き両方で使われる。
+          top-4 + mt-px (= 17px) で左 icon span (同じ y=17 offset) と左右対称にし、
+          icon center y=27 を description (leading-relaxed glyph center y≈27) /
+          title (leading-snug glyph center y≈25.6) いずれにも近づける。 */}
       {onClose && (
-        <Button variant="tertiary" size="sm" onClick={onClose}>
+        <button
+          type="button"
+          aria-label="閉じる"
+          onClick={onClose}
+          className={[
+            'absolute top-4 right-4 mt-px inline-flex items-center justify-center h-5 w-5 rounded',
+            'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-current focus-visible:ring-offset-focus',
+            config.closeBtn,
+          ].join(' ')}
+        >
           <Icon name="close" size="sm" />
-          <VisuallyHidden>閉じる</VisuallyHidden>
-        </Button>
+        </button>
       )}
     </div>
   );

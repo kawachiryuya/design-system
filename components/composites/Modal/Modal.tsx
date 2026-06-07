@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';
-import { VisuallyHidden } from '../../primitives/VisuallyHidden';
 
 /** Modal のサイズ */
 export type ModalSize = 'sm' | 'md' | 'lg' | 'full';
@@ -165,17 +164,21 @@ const ModalRoot: React.FC<ModalProps> = ({
       {...rest}
     >
       {(title || !hideCloseButton) && (
-        <header className="flex items-start justify-between gap-3 px-5 py-4 border-b border-border-subtle">
+        <header className="flex items-start justify-between gap-3 p-5">
           {title ? (
             <h2 id={titleId} className="text-heading-md text-onSurface flex-1">
               {title}
             </h2>
           ) : <span aria-hidden className="flex-1" />}
           {!hideCloseButton && (
-            <Button variant="tertiary" size="sm" onClick={onClose}>
-              <Icon name="close" />
-              <VisuallyHidden>閉じる</VisuallyHidden>
-            </Button>
+            <Button
+              variant="tertiary"
+              size="sm"
+              iconOnly
+              icon={<Icon name="close" />}
+              aria-label="閉じる"
+              onClick={onClose}
+            />
           )}
         </header>
       )}
@@ -187,7 +190,7 @@ const ModalRoot: React.FC<ModalProps> = ({
 ModalRoot.displayName = 'Modal';
 
 const ModalBody: React.FC<ModalBodyProps> = ({ className = '', children }) => (
-  <div className={['px-5 py-4 overflow-y-auto text-body-md text-onSurface', className].filter(Boolean).join(' ')}>
+  <div className={['p-5 overflow-y-auto text-body-md text-onSurface', className].filter(Boolean).join(' ')}>
     {children}
   </div>
 );
@@ -201,7 +204,7 @@ const justifyStyles = {
 
 const ModalFooter: React.FC<ModalFooterProps> = ({ justify = 'end', className = '', children }) => (
   <footer className={[
-    'flex items-center gap-2 px-5 py-3 border-t border-border-subtle',
+    'flex items-center gap-2 p-5',
     justifyStyles[justify],
     className,
   ].filter(Boolean).join(' ')}>

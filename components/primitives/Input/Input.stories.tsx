@@ -35,7 +35,10 @@ const meta: Meta<typeof Input> = {
     type: 'email',
     size: 'md',
   },
-  decorators: [(Story) => <div className="w-80"><Story /></div>],
+  // 全 story を w-80 でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
+  decorators: [(Story, ctx) =>
+    ctx.parameters.noWrap ? <Story /> : <div className="w-80"><Story /></div>,
+  ],
 };
 
 export default meta;
@@ -160,12 +163,15 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'fullWidth + 長文 placeholder / required + helpText の組合せ / 多言語 (絵文字含む input value) / フォーム統合 (複数 Input + error + 必須) など、Input の境界条件を一覧。',
+        story: 'fullWidth + 長文 placeholder / required + helpText の組合せ / 多言語 (絵文字含む input value) / フォーム統合 (複数 Input + error + 必須) / Layout token 適用 (大外コンテナ全幅) など、Input の境界条件を一覧。',
       },
     },
+    // 最後の Layout token 例を全幅表示するため meta の w-80 decorator を解除
+    noWrap: true,
   },
   render: () => (
-    <div className="flex flex-col gap-6 w-96">
+    <div className="flex flex-col gap-6">
+      <div className="w-96 flex flex-col gap-6">
       <Caption text="fullWidth + 長文 placeholder — placeholder は overflow:hidden + ellipsis">
         <Input
           label="長い placeholder"
@@ -200,6 +206,7 @@ export const EdgeCases: Story = {
           />
         </div>
       </Caption>
+      </div>
 
       <Caption text="Layout token 適用 (px-container / py-container / max-w-container-narrow / space-y-section-sm)">
         <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">

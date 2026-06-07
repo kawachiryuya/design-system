@@ -34,7 +34,10 @@ const meta: Meta<typeof Textarea> = {
     placeholder: 'ご質問・ご要望をご記入ください',
     rows: 4,
   },
-  decorators: [(Story) => <div className="w-96"><Story /></div>],
+  // 全 story を w-96 でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
+  decorators: [(Story, ctx) =>
+    ctx.parameters.noWrap ? <Story /> : <div className="w-96"><Story /></div>,
+  ],
 };
 
 export default meta;
@@ -112,9 +115,11 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '文字数カウンターの近接/超過挙動 / resize の 4 パターン (none / vertical / horizontal / both) / お問い合わせフォーム統合 (fullWidth + counter + helpText) など、Textarea の境界条件を一覧。',
+        story: '文字数カウンターの近接/超過挙動 / resize の 4 パターン (none / vertical / horizontal / both) / お問い合わせフォーム統合 (fullWidth + counter + helpText) / Layout token 適用 (大外コンテナ全幅) など、Textarea の境界条件を一覧。',
       },
     },
+    // 最後の Layout token 例を全幅表示するため meta の w-96 decorator を解除
+    noWrap: true,
   },
   render: () => {
     const NearLimitText = 'A'.repeat(185);
@@ -139,6 +144,7 @@ export const EdgeCases: Story = {
 
     return (
       <div className="flex flex-col gap-8">
+        <div className="w-96 flex flex-col gap-8">
         <Caption text="文字数カウンター — maxLength 近接 (185/200) はカウンターのみ、上限到達でカウンターが赤+太字">
           <div className="flex flex-col gap-4">
             <Textarea
@@ -172,6 +178,7 @@ export const EdgeCases: Story = {
         <Caption text="お問い合わせフォーム統合 — fullWidth + counter + helpText の組合せ">
           <ContactFormDemo />
         </Caption>
+        </div>
 
         <Caption text="Layout token 適用 (px-container / py-container / max-w-container-narrow / space-y-section-sm)">
           <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">

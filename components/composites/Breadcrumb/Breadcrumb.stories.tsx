@@ -111,7 +111,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '長文ラベル (max-w-[200px] で truncate) / 全項目に href がある (link 以外も全て active) / 実利用例の EC カテゴリナビ。',
+        story: '長文ラベル (max-w-[200px] で truncate) / 全項目に href がある / EC カテゴリナビ / Layout token 適用 (page header に Breadcrumb + ページタイトル).',
       },
     },
   },
@@ -144,6 +144,20 @@ export const EdgeCases: Story = {
             { label: 'デジタル', href: '/digital' },
             { label: 'スマートフォン' },
           ]} />
+        </div>
+      </Caption>
+      <Caption text="Layout token 適用 (page header に Breadcrumb + ページタイトル、max-w-container + space-y-2)">
+        <div className="w-full px-container py-container max-w-container mx-auto">
+          <div className="space-y-2">
+            <Breadcrumb items={[
+              { label: 'ホーム', href: '/' },
+              { label: '製品', href: '/products' },
+              { label: 'デザインシステム', href: '/products/design-system' },
+              { label: 'コンポーネント一覧' },
+            ]} />
+            <h1 className="text-heading-lg text-onSurface">コンポーネント一覧</h1>
+            <p className="text-body-md text-onSurface-muted">デザインシステムで提供する全コンポーネントの一覧です。</p>
+          </div>
         </div>
       </Caption>
     </div>

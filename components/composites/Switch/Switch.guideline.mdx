@@ -116,7 +116,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **キーボード操作**: `Tab` で focus、`Enter` / `Space` で発火 (Enter キー対応は handleKeyDown で実装、`<button>` 標準の Space に加えて)
 - **focus ring**: `focus-visible:ring-focus` でキーボード focus のみリング表示
 - **disabled 時の見せ方**: `opacity-disabled` + `cursor-not-allowed`。「なぜ disabled か」は description で補強
-- **タッチターゲット**: md (44×24px) / lg (56×32px) で track サイズ。トラックそのものは小さいが button 要素全体がクリック領域。WCAG 2.5.5 はラベル含めて 44×44px を達成可
+- **タッチターゲット**: track 44×24px (thumb 20px、片側 gap 2px)。トラックそのものは 44×24 だが button 要素全体がクリック領域、`<Label htmlFor>` でラベルも反応するため WCAG 2.5.5 の 44×44px はラベル含めて達成可
 
 ---
 

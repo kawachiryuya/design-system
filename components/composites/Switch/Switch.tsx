@@ -2,9 +2,6 @@ import React from 'react';
 import { Label } from '../../primitives/Label/Label';
 import { FormDescription } from '../../_internal/FormDescription';
 
-/** Switch のサイズ */
-export type SwitchSize = 'sm' | 'md' | 'lg';
-
 /** ラベル位置 */
 export type SwitchLabelPosition = 'left' | 'right';
 
@@ -36,10 +33,6 @@ export type SwitchLabelPosition = 'left' | 'right';
  *     onChange={setAutoUpdate}
  *   />
  *
- * @example
- *   // 小サイズ + 高密度 UI
- *   <Switch label="WiFi" size="sm" checked={wifi} onChange={setWifi} />
- *
  * @see principles/Patterns/forms.mdx
  * @see principles/Interaction/state/overview.mdx
  */
@@ -51,14 +44,6 @@ export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   checked?: boolean;
   /** 状態変更コールバック。次の状態（反転後）が引数に渡される。 */
   onChange?: (checked: boolean) => void;
-  /**
-   * サイズ。
-   * - `small` トラック 32px（密集 UI）
-   * - `medium` トラック 44px（標準）
-   * - `large` トラック 56px（モバイル設定画面）
-   * @default 'md'
-   */
-  size?: SwitchSize;
   /** ラベルテキスト。クリックでもトグルする。 */
   label?: string;
   /** ラベルの補足テキスト (body-sm サイズ、SR には `aria-describedby` で伝わる)。 */
@@ -85,7 +70,6 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     {
       checked = false,
       onChange,
-      size = 'md',
       label,
       description,
       labelPosition = 'right',
@@ -114,23 +98,15 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       }
     };
 
-    // Track sizes
-    const trackSize = {
-      sm: 'w-8 h-4',
-      md: 'w-[44px] h-6',
-      lg: 'w-[56px] h-8',
-    }[size];
-
-    // Thumb sizes and positions
-    const thumbSize = { sm: 'w-3 h-3', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
-    const thumbOff = { sm: 'translate-x-[2px]', md: 'translate-x-[2px]', lg: 'translate-x-1' }[size];
-    const thumbOn = { sm: 'translate-x-[18px]', md: 'translate-x-[22px]', lg: 'translate-x-[28px]' }[size];
-
-
+    // Track 44×24, thumb 20×20, 片側 gap 2px (off→on: 22px 移動)。
+    // w-[44px] は bracket リテラル — このリポは tokens/source/spacing.json で
+    // spacing を override しており 11 (44px) を含まないため w-11 は使えない
     const trackClasses = [
       'relative',
       'inline-flex',
       'flex-shrink-0',
+      'w-[44px]',
+      'h-6',
       'rounded-full',
       'transition-colors',
       'duration-normal',
@@ -138,7 +114,6 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'focus-visible:ring-focus',
       'focus-visible:ring-offset-focus',
       'focus-visible:ring-border-focus',
-      trackSize,
       checked ? 'bg-surface-primary' : 'bg-surface-neutral',
       disabled ? 'opacity-disabled cursor-not-allowed' : 'cursor-pointer',
     ]
@@ -148,6 +123,8 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     const thumbClasses = [
       'pointer-events-none',
       'inline-block',
+      'w-5',
+      'h-5',
       'rounded-full',
       'bg-surface',
       'shadow',
@@ -155,8 +132,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       'transition-transform',
       'duration-normal',
       'self-center',
-      thumbSize,
-      checked ? thumbOn : thumbOff,
+      checked ? 'translate-x-[22px]' : 'translate-x-[2px]',
     ]
       .filter(Boolean)
       .join(' ');
@@ -166,7 +142,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         {label && (
           <Label
             htmlFor={switchId}
-            size={size === 'lg' ? 'lg' : 'md'}
+            size="md"
             disabled={disabled}
             onClick={!disabled ? handleClick : undefined}
           >

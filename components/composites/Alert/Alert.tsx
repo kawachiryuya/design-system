@@ -100,7 +100,7 @@ const variantConfig = {
     iconName: 'info' as const,
   },
   neutral: {
-    container: 'bg-surface-inset border border-border-subtle text-onSurface',
+    container: 'bg-surface-layer-2 border border-border-subtle text-onSurface',
     icon: 'text-onSurface-muted',
     title: 'text-onSurface',
     closeBtn: 'text-onSurface-muted hover:bg-state-hover',
@@ -131,7 +131,8 @@ export const Alert: React.FC<AlertProps> = ({
     <div
       role="alert"
       className={[
-        'flex gap-3 rounded-md p-4',
+        'relative flex gap-3 rounded-md p-4',
+        onClose ? 'pr-12' : '',
         config.container,
         className,
       ].join(' ')}
@@ -144,22 +145,26 @@ export const Alert: React.FC<AlertProps> = ({
 
       <div className="flex-1 min-w-0">
         {title && (
-          <p className={['text-sm font-semibold leading-snug mb-1', config.title].join(' ')}>
+          <p className={['text-body-sm font-semibold leading-snug mb-1', config.title].join(' ')}>
             {title}
           </p>
         )}
-        <div className="text-sm leading-relaxed">
+        <div className="text-body-sm leading-relaxed">
           {children}
         </div>
       </div>
 
+      {/* 閉じるボタンは absolute 配置で右上に固定 (shadcn / Material 3 pattern)。
+          h-5 w-5 (= icon sm 20×20) を明示してフォーカスリングが line-height で
+          縦長にならないようにする。top-3 right-3 (12px) で icon center が
+          title の視覚中央 (cap height center、y≈21) と揃う。 */}
       {onClose && (
         <button
           type="button"
           aria-label="閉じる"
           onClick={onClose}
           className={[
-            'flex-shrink-0 self-start -mt-0.5 -mr-0.5 p-1 rounded',
+            'absolute top-3 right-3 inline-flex items-center justify-center h-5 w-5 rounded',
             'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-current focus-visible:ring-offset-focus',
             config.closeBtn,
           ].join(' ')}

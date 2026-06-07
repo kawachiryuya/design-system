@@ -179,6 +179,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     className,
   ].join(' ');
 
+  // Input / Select と統一: border 色変化 + inset ring (1px) で focus 表現、hover で border 濃化
   const inputClass = [
     'w-full',
     'rounded-sm',
@@ -187,15 +188,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     'bg-surface',
     'text-onSurface',
     'placeholder:text-onSurface-muted',
-    'transition-all',
+    'transition-colors',
     'duration-normal',
+    'hover:border-border-strong',
     'focus:outline-none',
     'focus:border-border-focus',
-    'focus:ring-focus',
+    'focus:ring-1',
+    'focus:ring-inset',
     'focus:ring-border-focus',
     'disabled:bg-surface-disabled',
     'disabled:text-onSurface-disabled',
     'disabled:cursor-not-allowed',
+    'disabled:hover:border-border',
     '[&::-webkit-search-cancel-button]:appearance-none',
     '[&::-webkit-search-decoration]:appearance-none',
     s.container,
@@ -246,7 +250,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         className={inputClass}
       />
 
-      {/* トレイリング: ローディング or クリアボタン */}
+      {/* トレイリング: ローディング or クリアボタン。
+          クリアボタンは Alert / Toast の close ボタンと同じ pattern (inline-flex + h-5 w-5)、
+          hover overlay は NumberInput と同じ branded teal tint (state-hover-primary)。 */}
       <span className={trailingClass}>
         {isLoading ? (
           <LoadingSpinner size={s.spinnerPx} />
@@ -255,8 +261,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             type="button"
             aria-label="検索をクリア"
             onClick={handleClear}
-            className="flex items-center justify-center text-onSurface-muted hover:text-onSurface transition-colors
-              focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus rounded-sm"
+            className={[
+              'inline-flex items-center justify-center h-5 w-5 rounded-sm',
+              'text-onSurface-muted hover:text-onSurface hover:bg-state-hover-primary',
+              'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
+            ].join(' ')}
           >
             <Icon name="close" size={s.iconSize} />
           </button>

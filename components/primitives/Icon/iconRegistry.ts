@@ -323,6 +323,20 @@ export const iconRegistry: Record<string, IconDefinition> = {
       'M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14zm-4.22-5.55-1.57-1.57a.5.5 0 0 0-.71 0l-.01.01a.5.5 0 0 0 0 .71l1.93 1.93a.5.5 0 0 0 .71 0l3.17-3.18a.5.5 0 0 0 0-.71l-.01-.01a.5.5 0 0 0-.71 0l-2.8 2.82z',
     ],
   },
+  list: {
+    label: 'リスト表示',
+    mode: 'fill',
+    paths: [
+      'M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z',
+    ],
+  },
+  grid_view: {
+    label: 'グリッド表示',
+    mode: 'fill',
+    paths: [
+      'M3 3v8h8V3H3zm6 6H5V5h4v4zm-6 4v8h8v-8H3zm6 6H5v-4h4v4zm4-16v8h8V3h-8zm6 6h-4V5h4v4zm-6 4v8h8v-8h-8zm6 6h-4v-4h4v4z',
+    ],
+  },
 };
 
 /** レジストリからアイコン定義を取得 */

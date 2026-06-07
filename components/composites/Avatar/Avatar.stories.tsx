@@ -80,7 +80,7 @@ export const Sizes: Story = {
       {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
         <div key={size} className="flex flex-col items-center gap-2">
           <Avatar size={size} name="田中 太郎" src="https://i.pravatar.cc/150?img=5" />
-          <span className="text-xs text-onSurface-muted font-mono">{size}</span>
+          <span className="text-caption text-onSurface-muted font-mono">{size}</span>
         </div>
       ))}
     </div>
@@ -122,7 +122,7 @@ export const States: Story = {
           {(['online', 'offline', 'busy', 'away'] as const).map((status) => (
             <div key={status} className="flex flex-col items-center gap-1">
               <Avatar size="lg" name="田中 太郎" status={status} src="https://i.pravatar.cc/150?img=8" />
-              <span className="text-xs text-onSurface-muted font-mono">{status}</span>
+              <span className="text-caption text-onSurface-muted font-mono">{status}</span>
             </div>
           ))}
         </div>
@@ -147,8 +147,8 @@ export const EdgeCases: Story = {
         <div className="flex items-center gap-3 p-4 rounded-md border border-border-subtle w-64">
           <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="md" status="online" />
           <div className="min-w-0">
-            <p className="text-sm font-medium text-onSurface truncate">鈴木 花子</p>
-            <p className="text-xs text-onSurface-muted truncate">suzuki@example.com</p>
+            <p className="text-label text-onSurface truncate">鈴木 花子</p>
+            <p className="text-caption text-onSurface-muted truncate">suzuki@example.com</p>
           </div>
         </div>
       </Caption>
@@ -162,10 +162,32 @@ export const EdgeCases: Story = {
           ].map(({ src, name }) => (
             <Avatar key={name} src={src} name={name} size="sm" className="ring-2 ring-surface" />
           ))}
-          <span className="w-8 h-8 rounded-full bg-surface-skeleton ring-2 ring-surface
-            flex items-center justify-center text-xs text-onSurface-muted font-medium flex-shrink-0">
+          <span className="w-8 h-8 rounded-full bg-surface-disabled ring-2 ring-surface
+            flex items-center justify-center text-caption text-onSurface-muted font-medium flex-shrink-0">
             +5
           </span>
+        </div>
+      </Caption>
+      <Caption text="Layout token 適用 (grid-base + col-span でレスポンシブメンバーリスト、Team page 典型例)">
+        <div className="w-full">
+          <div className="grid-base">
+            {[
+              { name: '田中 太郎', role: 'デザイナー', img: 1 },
+              { name: '鈴木 花子', role: 'エンジニア', img: 2 },
+              { name: '佐藤 一郎', role: 'PM', img: 3 },
+              { name: '山田 次郎', role: 'エンジニア', img: 4 },
+              { name: '木村 三郎', role: 'デザイナー', img: 5 },
+              { name: '高橋 美咲', role: 'エンジニア', img: 6 },
+            ].map(({ name, role, img }) => (
+              <div key={name} className="col-span-4 md:col-span-4 lg:col-span-4 flex items-center gap-3 p-3 rounded-md border border-border-subtle">
+                <Avatar src={`https://i.pravatar.cc/150?img=${img}`} name={name} size="md" status="online" />
+                <div className="min-w-0">
+                  <p className="text-label text-onSurface truncate">{name}</p>
+                  <p className="text-caption text-onSurface-muted truncate">{role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </Caption>
     </div>

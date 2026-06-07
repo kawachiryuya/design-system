@@ -1,8 +1,5 @@
 import React from 'react';
 
-/** SegmentedControl のサイズ */
-export type SegmentedControlSize = 'sm' | 'md';
-
 /** SegmentedControl の選択肢アイテム */
 export interface SegmentedControlItem<T extends string | number> {
   /** 値（一意）。 */
@@ -60,13 +57,6 @@ export interface SegmentedControlProps<T extends string | number> {
   value: T;
   /** 値変更コールバック。新しい値が引数に渡される。 */
   onChange: (value: T) => void;
-  /**
-   * サイズ。
-   * - `small` 40px、コンパクト UI（フィルターバー等）
-   * - `medium` 48px、標準
-   * @default 'sm'
-   */
-  size?: SegmentedControlSize;
   /** aria-label（グループとしての用途を説明、a11y で推奨）。 */
   'aria-label'?: string;
 }
@@ -80,13 +70,10 @@ export const SegmentedControl = <T extends string | number>({
   items,
   value,
   onChange,
-  size = 'sm',
   'aria-label': ariaLabel,
 }: SegmentedControlProps<T>) => {
-  const sizeStyles = {
-    sm: 'h-10 px-3 text-sm',
-    md: 'h-12 px-4 text-base',
-  }[size];
+  // h-10 (40px) = Material 3 segmented button 標準値。filter bar / view mode switcher 用途
+  const segmentSizeStyle = 'h-10 px-3 text-sm';
 
   return (
     <div className="flex gap-1 overflow-x-auto" role="group" aria-label={ariaLabel}>
@@ -97,13 +84,17 @@ export const SegmentedControl = <T extends string | number>({
             key={String(item.value)}
             type="button"
             onClick={() => onChange(item.value)}
+            // inline-flex items-center justify-center で label 内コンテンツ (icon + text 等) を縦中央配置。
+            // selected 時も border を残す (border-transparent) ことで高さを揃え layout shift 防止。
+            // 非 selected hover に bg-state-hover-primary (8% teal) で branded feedback。
+            // focus ring の色は selected 時は白 (teal bg との contrast 確保)、非 selected は teal。
             className={[
-              sizeStyles,
-              'rounded-sm font-medium whitespace-nowrap transition-colors',
-              'focus:outline-none focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus',
+              segmentSizeStyle,
+              'inline-flex items-center justify-center border rounded-sm font-medium whitespace-nowrap transition-colors',
+              'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset',
               isSelected
-                ? 'bg-surface-primary text-onSurface-inverse'
-                : 'bg-surface border border-border-subtle text-onSurface hover:border-border-strong',
+                ? 'bg-surface-primary border-transparent text-onSurface-inverse focus-visible:ring-surface'
+                : 'bg-surface border-border-subtle text-onSurface hover:border-border-strong hover:bg-state-hover-primary focus-visible:ring-border-focus',
             ].join(' ')}
             aria-pressed={isSelected}
           >

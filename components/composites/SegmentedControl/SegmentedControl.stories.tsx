@@ -8,12 +8,12 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * SegmentedControl stories — 標準ストーリー構造に準拠
  *
- * 順序固定: Playground → Sizes → States → WithIcon → EdgeCases
+ * 順序固定: Playground → States → WithIcon → EdgeCases
  *
- * SegmentedControl は variant prop を持たないため Variants は省略 (§5-3)。
+ * variant prop なしのため Variants 省略 (§5-3)。size prop は 40px (h-10) 1 サイズ統一で
+ * 廃止済 (Pagination と同じ pattern)、Sizes story も削除。
  */
 type PlaygroundArgs = {
-  size: 'sm' | 'md';
   onChange: (v: string) => void;
 };
 
@@ -30,18 +30,14 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controls から size を切替。click でセグメントが切り替わり onChange が呼ばれることを play test で保証。',
+        story: 'click でセグメントが切り替わり onChange が呼ばれることを play test で保証。',
       },
     },
   },
   args: {
-    size: 'sm',
     onChange: fn(),
   },
-  argTypes: {
-    size: { control: 'radio', options: ['sm', 'md'] },
-  },
-  render: ({ size, onChange }) => {
+  render: ({ onChange }) => {
     function Demo() {
       const [value, setValue] = useState('all');
       return (
@@ -53,7 +49,6 @@ export const Playground: Story = {
           ]}
           value={value}
           onChange={(v) => { setValue(v); onChange(v); }}
-          size={size}
           aria-label="フィルター"
         />
       );
@@ -68,42 +63,7 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
-
-export const Sizes: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'sm (40px) / md (48px) の 2 段階。md 以上で WCAG 2.5.5 タッチターゲット要件 (44×44px) を満たす。',
-      },
-    },
-  },
-  render: () => {
-    function SizeDemo({ size }: { size: 'sm' | 'md' }) {
-      const [v, setV] = useState('list');
-      return (
-        <SegmentedControl
-          items={[
-            { value: 'list', label: 'リスト' },
-            { value: 'grid', label: 'グリッド' },
-          ]}
-          value={v}
-          onChange={setV}
-          size={size}
-          aria-label={`表示切替 ${size}`}
-        />
-      );
-    }
-    return (
-      <div className="flex flex-col gap-4 items-start">
-        <Caption text="sm (40px)"><SizeDemo size="sm" /></Caption>
-        <Caption text="md (48px)"><SizeDemo size="md" /></Caption>
-      </div>
-    );
-  },
-};
-
-// ── 3. States ──────────────────────────────────────────────────
+// ── 2. States ──────────────────────────────────────────────────
 
 export const States: Story = {
   parameters: {
@@ -112,9 +72,11 @@ export const States: Story = {
         story: 'Selected / Unselected の状態と、各状態の Hover / Focus-visible (pseudo-states で強制表示)。',
       },
     },
+    // pseudo-states は button 要素自体に :hover / :focus-visible を強制する必要がある
+    // (div に強制しても Tailwind の hover:/focus-visible: は反応しない)
     pseudo: {
-      hover: ['#sc-hover'],
-      focusVisible: ['#sc-focus'],
+      hover: ['#sc-hover button'],
+      focusVisible: ['#sc-focus button'],
     },
   },
   render: () => {
@@ -144,7 +106,7 @@ export const States: Story = {
   },
 };
 
-// ── 4. WithIcon ────────────────────────────────────────────────
+// ── 3. WithIcon ────────────────────────────────────────────────
 
 export const WithIcon: Story = {
   parameters: {
@@ -173,7 +135,7 @@ export const WithIcon: Story = {
   },
 };
 
-// ── 5. EdgeCases ───────────────────────────────────────────────
+// ── 4. EdgeCases ───────────────────────────────────────────────
 
 export const EdgeCases: Story = {
   parameters: {

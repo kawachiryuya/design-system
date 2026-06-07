@@ -26,13 +26,12 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## Props
 
-SegmentedControl はジェネリック (`<T extends string | number>`) で値型を型レベルで保つ。Playground story で size の挙動を確認できる。
+SegmentedControl はジェネリック (`<T extends string | number>`) で値型を型レベルで保つ。
 
 主な props:
 - **items** (`SegmentedControlItem<T>[]`): `{value, label}` の配列。`label` は ReactNode 可 (アイコン併用 OK)
 - **value** (`T`): 現在選択中の値 (controlled)
 - **onChange** (`(value: T) => void`): 値変更コールバック
-- **size** (`'sm' | 'md'`): デフォルト `'sm'` (40px)。`'md'` で 48px
 - **aria-label** (`string`): グループ用途を SR に伝える (推奨)
 
 ---
@@ -186,8 +185,8 @@ SegmentedControl はジェネリック (`<T extends string | number>`) で値型
 - **`role="group"` + `aria-label`**: 外側の `<div>` がグループ、各セグメントは `<button>`
 - **`aria-pressed`**: 選択中のセグメントに `aria-pressed="true"`、SR で「選択済み」と読まれる
 - **キーボード操作**: `Tab` で各ボタンに focus、`Enter` / `Space` で発火 (個別 button)。矢印キーでのグループ内移動は現状未実装 (将来検討)
-- **focus ring**: 各 `<button>` に Tailwind の `focus:` 系で focus ring (現実装は border-current ベース、将来 `ring-focus` へ統一予定)
-- **タッチターゲット**: sm (40px) / md (48px)。WCAG 2.5.5 (44×44px) は md 以上で達成。密集 UI で sm を使う場合は周囲余白を確保
+- **focus ring**: 各 `<button>` に `focus-visible:ring-focus ring-inset` で 2px の inset focus ring。selected 時は ring 色を `surface` (白) に切替えて teal bg との contrast を確保
+- **タッチターゲット**: 40px (h-10) 固定。WCAG 2.5.5 (44×44px) には僅か 4px 不足するが filter / view mode 用途の compact UI として標準値。WCAG 厳守が必要な context では親 container 側で touch area 拡張 (`p-1` 等) を推奨
 
 ---
 

@@ -170,7 +170,7 @@ export const EdgeCases: Story = {
               {pos}
             </Button>
           ))}
-          <p className="text-xs text-onSurface-muted w-full mt-2">
+          <p className="text-caption text-onSurface-muted w-full mt-2">
             ※ Provider 全体の position は固定 (top-right)。各 toast の position は Provider 設定が優先。
           </p>
         </div>

@@ -18,10 +18,9 @@ const meta: Meta<typeof Pagination> = {
     currentPage: { control: { type: 'number', min: 1 } },
     totalPages: { control: { type: 'number', min: 1 } },
     maxVisible: { control: { type: 'number', min: 3, max: 11 } },
-    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     showEdges: { control: 'boolean' },
   },
-  args: { currentPage: 5, totalPages: 20, size: 'md', maxVisible: 7 },
+  args: { currentPage: 5, totalPages: 20, maxVisible: 7 },
   render: (args) => {
     function Demo() {
       const [page, setPage] = useState(args.currentPage);
@@ -40,7 +39,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controls から currentPage / totalPages / maxVisible / size / showEdges を切替。前/次ボタン click で aria-current が移動することを play test で保証。',
+        story: 'Controls から currentPage / totalPages / maxVisible / showEdges を切替。前/次ボタン click で aria-current が移動することを play test で保証。',
       },
     },
   },
@@ -54,40 +53,7 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
-
-export const Sizes: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'sm (28px、フッター / サイドバー) / md (32px、標準) / lg (40px、モバイル CTA) の 3 段階。',
-      },
-    },
-  },
-  render: () => {
-    function Demo() {
-      const [p1, setP1] = useState(3);
-      const [p2, setP2] = useState(3);
-      const [p3, setP3] = useState(3);
-      return (
-        <div className="flex flex-col gap-4">
-          <Caption text="sm (28px)">
-            <Pagination size="sm" currentPage={p1} totalPages={10} onPageChange={setP1} />
-          </Caption>
-          <Caption text="md (32px) — デフォルト">
-            <Pagination size="md" currentPage={p2} totalPages={10} onPageChange={setP2} />
-          </Caption>
-          <Caption text="lg (40px)">
-            <Pagination size="lg" currentPage={p3} totalPages={10} onPageChange={setP3} />
-          </Caption>
-        </div>
-      );
-    }
-    return <Demo />;
-  },
-};
-
-// ── 3. States ──────────────────────────────────────────────────
+// ── 2. States ──────────────────────────────────────────────────
 
 export const States: Story = {
   parameters: {
@@ -128,7 +94,7 @@ export const States: Story = {
   },
 };
 
-// ── 4. EdgeCases ───────────────────────────────────────────────
+// ── 3. EdgeCases ───────────────────────────────────────────────
 
 export const EdgeCases: Story = {
   parameters: {

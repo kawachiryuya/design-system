@@ -1,9 +1,6 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
 
-/** Pagination のサイズ */
-export type PaginationSize = 'sm' | 'md' | 'lg';
-
 /**
  * Pagination Props
  *
@@ -27,22 +24,12 @@ export type PaginationSize = 'sm' | 'md' | 'lg';
  *   />
  *
  * @example
- *   // モバイル向け（表示数を減らして compact に）
+ *   // 表示するページボタン数を減らす (モバイル向け compact)
  *   <Pagination
  *     currentPage={page}
  *     totalPages={20}
  *     onPageChange={setPage}
  *     maxVisible={5}
- *     size="sm"
- *   />
- *
- * @example
- *   // 大サイズ（メインの一覧）
- *   <Pagination
- *     currentPage={page}
- *     totalPages={10}
- *     onPageChange={setPage}
- *     size="lg"
  *   />
  *
  * @see principles/README.mdx
@@ -64,14 +51,6 @@ export interface PaginationProps {
    * @default false
    */
   showEdges?: boolean;
-  /**
-   * サイズ。
-   * - `sm` 28px、密集 UI（フッター・サイドバー）
-   * - `md` 32px、標準
-   * - `lg` 40px、メインの一覧（モバイル CTA）
-   * @default 'md'
-   */
-  size?: PaginationSize;
   /** 追加 CSS クラス。 */
   className?: string;
 }
@@ -98,11 +77,9 @@ function buildPages(current: number, total: number, maxVisible: number): (number
   return pages;
 }
 
-const sizeStyles = {
-  sm: 'h-7 min-w-[1.75rem] text-xs',
-  md: 'h-8 min-w-[2rem] text-sm',
-  lg: 'h-10 min-w-[2.5rem] text-base',
-};
+// 40×40 固定 (shadcn / Material 3 と同等)。サイズバリエーションは廃止し
+// touch target を WCAG 2.5.5 (44px) に近い 40px に統一。
+const buttonSizeStyle = 'h-10 min-w-10 text-sm';
 
 /**
  * Pagination Component
@@ -122,20 +99,18 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
   maxVisible = 7,
   showEdges = false,
-  size = 'md',
   className = '',
 }) => {
   if (totalPages <= 1) return null;
 
   const pages = buildPages(currentPage, totalPages, maxVisible);
-  const s = sizeStyles[size];
 
   const btnBase = [
     'inline-flex items-center justify-center rounded-sm font-medium',
     'transition-colors duration-150',
     'focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus',
     'px-1',
-    s,
+    buttonSizeStyle,
   ].join(' ');
 
   const pageBtn = (page: number) => {
@@ -144,7 +119,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       btnBase,
       isActive
         ? 'bg-surface-primary text-onSurface-inverse pointer-events-none'
-        : 'text-onSurface hover:bg-state-hover',
+        : 'text-onSurface hover:bg-state-hover-primary',
     ].join(' ');
   };
 
@@ -152,11 +127,11 @@ export const Pagination: React.FC<PaginationProps> = ({
     btnBase,
     disabled
       ? 'text-onSurface-disabled cursor-not-allowed'
-      : 'text-onSurface-muted hover:bg-state-hover',
+      : 'text-onSurface-muted hover:bg-state-hover-primary',
   ].join(' ');
 
   return (
-    <nav aria-label="ページネーション" className={['flex items-center gap-1', className].join(' ')}>
+    <nav aria-label="ページネーション" className={['flex flex-wrap items-center gap-1', className].join(' ')}>
       {showEdges && (
         <button
           type="button"
@@ -181,7 +156,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {pages.map((page, i) =>
         page === null ? (
-          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-muted', s].join(' ')}>
+          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-muted', buttonSizeStyle].join(' ')}>
             …
           </span>
         ) : (

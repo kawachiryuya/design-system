@@ -103,7 +103,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '横スクロール可能なフィルターバーの実利用例 (Modal 起動 / Toggle / iconOnly の組合せ) と、長文ラベル・複数 active のケース。',
+        story: '横スクロール可能なフィルターバーの実利用例 (Modal 起動 / Toggle / iconOnly の組合せ) / 長文ラベル / 複数 active / Layout token 適用 (検索結果ページの典型構成、max-w-container + filter bar + 結果).',
       },
     },
   },
@@ -158,6 +158,28 @@ export const EdgeCases: Story = {
             <FilterChip active>並び順: 出発時刻順</FilterChip>
             <FilterChip active>種別: のぞみ</FilterChip>
             <FilterChip active>満席を非表示</FilterChip>
+          </div>
+        </Caption>
+        <Caption text="Layout token 適用 (検索結果ページ、max-w-container + filter bar + 結果カード)">
+          <div className="w-full px-container py-container max-w-container mx-auto">
+            <div className="space-y-section-sm">
+              <div className="flex flex-wrap gap-2">
+                <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} aria-label="すべての条件で絞り込み" />
+                <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />} active>並び順: 新着順</FilterChip>
+                <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>カテゴリ</FilterChip>
+                <FilterChip>送料無料</FilterChip>
+                <FilterChip>在庫あり</FilterChip>
+              </div>
+              <div className="grid-base">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="col-span-4 md:col-span-4 lg:col-span-4 p-4 border border-border-subtle rounded-md">
+                    <div className="aspect-video bg-surface-disabled rounded mb-3" />
+                    <p className="text-label text-onSurface">商品 {i + 1}</p>
+                    <p className="text-caption text-onSurface-muted mt-1">¥{(1000 * (i + 1)).toLocaleString()}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </Caption>
       </div>

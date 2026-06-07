@@ -71,8 +71,8 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
       : 'border-border-default bg-surface text-onSurface hover:border-border-strong';
 
     const classes = [
-      'inline-flex items-center gap-1 px-3 h-9 rounded-full border text-sm font-medium transition-colors whitespace-nowrap',
-      'disabled:opacity-60 disabled:cursor-not-allowed',
+      'inline-flex items-center gap-1 px-3 h-9 rounded-full border text-label transition-colors whitespace-nowrap',
+      'disabled:opacity-disabled disabled:cursor-not-allowed',
       stateClasses,
       className,
     ]

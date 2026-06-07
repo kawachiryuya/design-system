@@ -70,7 +70,7 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'small (40px) / medium (48px、デフォルト) / large (64px) の見比べ。medium 以上で WCAG 2.5.5 (44x44px) のタッチターゲット要件を満たす。',
+        story: 'small (40px) / medium (48px、デフォルト) / large (56px) の見比べ。全 step +8 等差で grid 整合 (Material 3 max と同等)。medium 以上で WCAG 2.5.5 (44x44px) のタッチターゲット要件を満たす。',
       },
     },
   },
@@ -78,7 +78,7 @@ export const Sizes: Story = {
     <div className="flex flex-col gap-4">
       <Input label="Small (40px)" size="sm" placeholder="密集 UI 用" />
       <Input label="Medium (48px) — デフォルト" size="md" placeholder="標準フォーム" />
-      <Input label="Large (64px)" size="lg" placeholder="モバイル CTA" />
+      <Input label="Large (56px)" size="lg" placeholder="モバイル CTA" />
     </div>
   ),
 };

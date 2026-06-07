@@ -21,7 +21,7 @@ interface InputBaseProps {
    * サイズ。
    * - `sm` 40px、密集 UI 用 (WCAG 2.5.5 未満なので限定使用)
    * - `md` 48px、標準
-   * - `lg` 64px、モバイル CTA フォーム
+   * - `lg` 56px、モバイル CTA / ヒーローフォーム (Material 3 max と同等)
    * @default 'md'
    */
   size?: InputSize;
@@ -151,7 +151,7 @@ const inputVariants = tv({
     size: {
       sm: 'h-10 text-sm',
       md: 'h-12 text-base',
-      lg: 'h-16 text-lg',
+      lg: 'h-14 text-lg',
     },
     error: {
       true:  'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted',

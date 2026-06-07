@@ -11,7 +11,7 @@ interface SelectBaseProps {
    * サイズ。
    * - `small` 40px、密集 UI 用
    * - `medium` 48px、標準
-   * - `large` 64px、モバイル CTA フォーム
+   * - `large` 56px、モバイル CTA / ヒーローフォーム (Material 3 max と同等)
    * @default 'md'
    */
   size?: SelectSize;
@@ -129,7 +129,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const sizeConfig = {
       sm: { style: 'h-10 pl-3 pr-10 text-sm', iconSize: 'sm' as const, iconRight: 'right-3' },
       md: { style: 'h-12 pl-3 pr-12 text-base', iconSize: 'sm' as const, iconRight: 'right-3' },
-      lg: { style: 'h-16 pl-4 pr-12 text-lg', iconSize: 'md' as const, iconRight: 'right-4' },
+      lg: { style: 'h-14 pl-4 pr-12 text-lg', iconSize: 'md' as const, iconRight: 'right-4' },
     }[size];
 
     const sizeStyles = sizeConfig.style;

@@ -70,7 +70,7 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'sm (40px) / md (48px) / lg (64px) の 3 段階。WCAG 2.5.5 タッチターゲット (44×44px) は md 以上で達成 (sm は dense UI 用)。',
+        story: 'sm (40px) / md (48px) / lg (56px) の 3 段階。全 step +8 等差で grid 整合 (Material 3 max と同等)。WCAG 2.5.5 タッチターゲット (44×44px) は md 以上で達成 (sm は dense UI 用)。',
       },
     },
   },
@@ -82,7 +82,7 @@ export const Sizes: Story = {
       <Select size="md" label="md (48px) — デフォルト" placeholder="選択...">
         {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
       </Select>
-      <Select size="lg" label="lg (64px)" placeholder="選択...">
+      <Select size="lg" label="lg (56px)" placeholder="選択...">
         {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
       </Select>
     </div>

@@ -68,10 +68,14 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
   ({ active = false, iconLeft, iconRight, children, className = '', disabled, ...props }, ref) => {
     const stateClasses = active
       ? 'border-border-focus bg-surface-secondary text-onSurface-primary'
-      : 'border-border-default bg-surface text-onSurface hover:border-border-strong';
+      : 'border-border-default bg-surface text-onSurface hover:border-border-strong hover:bg-state-hover-primary';
 
+    // h-8 (32px) = Material 3 filter chip 標準値、rounded-md = Polaris 流 (Material 3 の
+    // pill より控えめ、Badge / Button と integrate しやすい)。focus は Input family と
+    // 揃え inset 1px ring (border 色変化 + inset ring で「フォーカス時の厚み」表現)。
     const classes = [
-      'inline-flex items-center gap-1 px-3 h-9 rounded-full border text-label transition-colors whitespace-nowrap',
+      'inline-flex items-center gap-1 px-3 h-8 rounded-md border text-label transition-colors whitespace-nowrap',
+      'focus:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-border-focus',
       'disabled:opacity-disabled disabled:cursor-not-allowed',
       stateClasses,
       className,

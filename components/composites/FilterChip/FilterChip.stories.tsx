@@ -91,7 +91,7 @@ export const WithIcon: Story = {
     <div className="flex flex-wrap gap-3 items-center">
       <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />}>左アイコン</FilterChip>
       <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>右に矢印 (Modal 起動)</FilterChip>
-      <FilterChip iconLeft={<Icon name="filter_list" size="sm" color="inherit" />} iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>両端アイコン</FilterChip>
+      <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>両端アイコン</FilterChip>
       <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} aria-label="すべての条件で絞り込み" />
     </div>
   ),

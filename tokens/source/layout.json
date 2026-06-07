@@ -37,9 +37,9 @@
         "desktop": { "value": "12", "type": "number", "description": "Desktop (>= 1024px) のカラム数" }
       },
       "gutter": {
-        "mobile":  { "value": "16px", "type": "dimension", "description": "Mobile のカラム間 gutter" },
-        "tablet":  { "value": "24px", "type": "dimension", "description": "Tablet のカラム間 gutter" },
-        "desktop": { "value": "32px", "type": "dimension", "description": "Desktop のカラム間 gutter" }
+        "mobile":  { "value": "16px", "type": "dimension", "description": "Mobile のカラム間 gutter。tablet と同値 (col 数倍増による gutter 合計幅の column 圧迫を避ける)" },
+        "tablet":  { "value": "16px", "type": "dimension", "description": "Tablet のカラム間 gutter。mobile と同値 (4→8 col に倍増する分 gutter 合計幅も増えるため据え置き)" },
+        "desktop": { "value": "24px", "type": "dimension", "description": "Desktop のカラム間 gutter。広い viewport に合わせて拡張" }
       }
     }
   }

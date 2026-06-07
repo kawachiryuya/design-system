@@ -23,6 +23,11 @@
 - **Composites の Storybook story id 変更** (silent break、Phase 2 移行): 各 Composite を標準ストーリー構造 (Playground / Variants / Sizes / States / WithIcon / EdgeCases) に集約しているため、旧 story id (`default`、`all-variants` 等) の URL は壊れる。各 commit で対象 Composite を明記。`.md` ファイルは `.guideline.mdx` に統合し削除 (§7-6 準拠)。
 - **Composites/Alert の Storybook story id 変更** (silent break、Phase 2 移行第 1 弾): 7 story (`default` / `with-title` / `all-variants` / `dismissible` / `without-icon` / `with-action` / `form-errors`) を標準 4 節 (`playground` / `variants` / `states` / `edge-cases`) に集約。旧 URL は壊れる。`.md` ファイルは `.guideline.mdx` に統合し削除 (§7-6 準拠)。`tags: ['autodocs']` を削除し `<Meta of={...} name="Guideline" />` 経由で Docs を兼ねる構造に。
 - **Tokens/Typography/Semantic の Storybook story id 変更** (silent break): 3 story (`headings` / `body` / `label-and-caption`) を 1 つの `catalog` に統合し、`?path=/story/tokens-typography-semantic--{headings,body,label-and-caption}` の旧 URL は壊れる。新 URL は `?path=/story/tokens-typography-semantic--catalog`。理由: heading / body / label / caption は同じ semantic typography 軸内の役割で、別軸ではないため AGENTS.md §3-6 (軸 1 つ = 1 story) に整合。
+- **Layout grid gutter 値の改訂** (視覚的 silent break): `layout.grid.gutter.{tablet,desktop}` を見直し:
+  - tablet: `24px` → `16px` (mobile と同値。4→8 col に倍増する分 gutter 合計幅も増えるため column 圧迫を避けて据え置き)
+  - desktop: `32px` → `24px` (広い viewport に合わせて拡張するが控えめに)
+  - mobile (`16px`) は変更なし
+  - `grid-base` 利用箇所で tablet/desktop の card 間 gap が縮む。product 側で旧値が必要なら `:root` で `--layout-grid-gutter-tablet` / `--layout-grid-gutter-desktop` を override 可能
 
 ### Changed (in Unreleased)
 

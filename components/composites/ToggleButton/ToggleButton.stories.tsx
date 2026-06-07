@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { expect, userEvent, within, fn } from 'storybook/test';
 import { ToggleButton } from './ToggleButton';
 import { Caption } from '@sb-blocks/Caption';
@@ -36,9 +36,27 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controls から selected / disabled / children を切り替えて挙動を確認。click で onClick が呼ばれることを play test で保証。',
+        story: 'Controls から selected / disabled / children を切り替えて挙動を確認。クリックでも selected が toggle される (stateful wrapper、Controls 値を初期値として読み込む)。',
       },
     },
+  },
+  render: (args) => {
+    function Demo() {
+      const [s, setS] = useState(args.selected ?? false);
+      // Controls から selected を変えた時にも反映
+      useEffect(() => { setS(args.selected ?? false); }, [args.selected]);
+      return (
+        <ToggleButton
+          {...args}
+          selected={s}
+          onClick={(e) => {
+            setS((prev) => !prev);
+            args.onClick?.(e);
+          }}
+        />
+      );
+    }
+    return <Demo />;
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);

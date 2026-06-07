@@ -105,7 +105,7 @@ export const States: Story = {
           <Button onClick={() => setOpen(true)}>ヘッダ非表示で開く</Button>
           <Modal open={open} onClose={() => setOpen(false)} hideCloseButton aria-labelledby="custom-h">
             <Modal.Body>
-              <h2 id="custom-h" className="text-heading-lg font-bold mb-2">カスタムヘッダ</h2>
+              <h2 id="custom-h" className="text-heading-lg mb-2">カスタムヘッダ</h2>
               <p>既定のヘッダを使わず、Body に独自構造を入れる。aria-labelledby で見出しの id を渡す。</p>
             </Modal.Body>
             <Modal.Footer>
@@ -166,7 +166,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '実利用例: フォーム (Input 含む、autoFocus) と、長文本文 (Body のみスクロール、header/footer 固定).',
+        story: '実利用例: シンプルフォーム / 長文本文 / Layout token 適用 (size=full + 内部 grid-base でレスポンシブ多項目フォーム).',
       },
     },
   },
@@ -221,10 +221,54 @@ export const EdgeCases: Story = {
         </>
       );
     }
+    function ProfileFormDemo() {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>プロフィール編集 (size=full + grid-base)</Button>
+          <Modal open={open} onClose={() => setOpen(false)} title="プロフィール編集" size="full">
+            <Modal.Body>
+              <div className="grid-base">
+                <div className="col-span-4 md:col-span-4 lg:col-span-6 flex flex-col gap-2">
+                  <Label htmlFor="profile-first">姓</Label>
+                  <Input id="profile-first" placeholder="山田" />
+                </div>
+                <div className="col-span-4 md:col-span-4 lg:col-span-6 flex flex-col gap-2">
+                  <Label htmlFor="profile-last">名</Label>
+                  <Input id="profile-last" placeholder="太郎" />
+                </div>
+                <div className="col-span-4 md:col-span-8 lg:col-span-12 flex flex-col gap-2">
+                  <Label htmlFor="profile-email">メールアドレス</Label>
+                  <Input id="profile-email" type="email" placeholder="taro@example.com" />
+                </div>
+                <div className="col-span-4 md:col-span-4 lg:col-span-4 flex flex-col gap-2">
+                  <Label htmlFor="profile-zip">郵便番号</Label>
+                  <Input id="profile-zip" placeholder="100-0001" />
+                </div>
+                <div className="col-span-4 md:col-span-4 lg:col-span-8 flex flex-col gap-2">
+                  <Label htmlFor="profile-addr">住所</Label>
+                  <Input id="profile-addr" placeholder="東京都千代田区..." />
+                </div>
+              </div>
+              <p className="text-caption text-onSurface-muted mt-4">
+                mobile: 4 col grid (全項目 1 行 1 項目)<br />
+                tablet (≥ 768px): 8 col grid (姓/名 2 列、メール 1 列、郵便番号/住所 1:2)<br />
+                desktop (≥ 1024px): 12 col grid (姓/名 1:1、メール 1 列、郵便番号/住所 1:2)
+              </p>
+            </Modal.Body>
+            <Modal.Footer justify="between">
+              <Button variant="tertiary" onClick={() => setOpen(false)}>キャンセル</Button>
+              <Button variant="primary" onClick={() => setOpen(false)}>保存</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
     return (
       <div className="flex flex-col gap-4">
         <Caption text="フォーム (Input + autoFocus + disabled until valid)"><FormDemo /></Caption>
         <Caption text="長文本文 (Body だけスクロール、header/footer 固定)"><LongDemo /></Caption>
+        <Caption text="Layout token 適用 (size=full + 内部 grid-base でレスポンシブ多項目フォーム)"><ProfileFormDemo /></Caption>
       </div>
     );
   },

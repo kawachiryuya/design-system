@@ -167,7 +167,7 @@ const ModalRoot: React.FC<ModalProps> = ({
       {(title || !hideCloseButton) && (
         <header className="flex items-start justify-between gap-3 px-5 py-4 border-b border-border-subtle">
           {title ? (
-            <h2 id={titleId} className="text-heading-md font-semibold text-onSurface flex-1">
+            <h2 id={titleId} className="text-heading-md text-onSurface flex-1">
               {title}
             </h2>
           ) : <span aria-hidden className="flex-1" />}

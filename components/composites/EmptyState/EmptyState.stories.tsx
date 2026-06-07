@@ -51,7 +51,10 @@ const meta: Meta<typeof EmptyState> = {
     description: 'まだアイテムが登録されていません。',
     size: 'md',
   },
-  decorators: [(Story) => <div className="w-96 border border-border-subtle rounded-md"><Story /></div>],
+  // 全 story を w-96 + border でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
+  decorators: [(Story, ctx) =>
+    ctx.parameters.noWrap ? <Story /> : <div className="w-96 border border-border-subtle rounded-md"><Story /></div>,
+  ],
 };
 
 export default meta;
@@ -142,9 +145,11 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '実利用例: 検索結果なし (SearchBar 連動) / エラー状態 / 空のフォルダ。カスタム icon (custom SVG) を渡す例も含む。',
+        story: '実利用例: 検索結果なし (SearchBar 連動) / エラー状態 / 空のフォルダ / Layout token 適用 (page 全体 max-w-container でフルページ EmptyState)。カスタム icon (custom SVG) を渡す例も含む。',
       },
     },
+    // 最後の Layout token 例を全幅表示するため meta の w-96 decorator を解除
+    noWrap: true,
   },
   render: () => {
     function NoResults() {
@@ -186,6 +191,18 @@ export const EdgeCases: Story = {
               title="フォルダは空です"
               description="ファイルをドラッグ＆ドロップするか、アップロードボタンから追加できます。"
               action={{ label: 'ファイルをアップロード' }}
+            />
+          </div>
+        </Caption>
+        <Caption text="Layout token 適用 (page 全体 max-w-container + size=lg、フルページ EmptyState 典型例)">
+          <div className="w-full px-container py-container max-w-container mx-auto">
+            <EmptyState
+              icon={<FolderIcon />}
+              size="lg"
+              title="ようこそ！"
+              description="最初のプロジェクトを作成して始めましょう。"
+              action={{ label: 'プロジェクトを作成' }}
+              secondaryAction={{ label: 'チュートリアルを見る' }}
             />
           </div>
         </Caption>

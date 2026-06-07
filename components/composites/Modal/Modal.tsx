@@ -31,7 +31,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'full';
  *   // タイトルなし、Body に独自構造を入れる
  *   <Modal open={open} onClose={close} size="lg" aria-labelledby="custom-title">
  *     <Modal.Body>
- *       <h2 id="custom-title" className="text-heading-md font-semibold mb-2">
+ *       <h2 id="custom-title" className="text-heading-md mb-2">
  *         カスタム見出し
  *       </h2>
  *       <p>本文…</p>

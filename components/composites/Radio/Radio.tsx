@@ -3,9 +3,6 @@ import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 import { FormDescription } from '../../_internal/FormDescription';
 
-/** Radio のサイズ */
-export type RadioSize = 'sm' | 'md' | 'lg';
-
 /**
  * RadioGroup → Radio へ error 状態を伝播する Context。
  * Group の `error` が true のとき、配下の全 Radio が自動で error スタイル / `aria-invalid` を持つ。
@@ -38,21 +35,12 @@ const RadioGroupContext = React.createContext<RadioGroupContextValue>({ error: f
  *   />
  *
  * @example
- *   // 大サイズ（モバイル CTA）
- *   <Radio name="size" value="lg" label="L サイズ" size="lg" />
- *
- * @example
  *   // 個別 error (通常は RadioGroup の error と連動。個別指定すれば優先)
  *   <Radio name="agree" value="yes" label="同意する" error />
  *
  * @see principles/Patterns/forms.mdx
  */
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
-  /**
-   * ラジオボタンのサイズ。
-   * @default 'md'
-   */
-  size?: RadioSize;
   /** ラベルテキスト。未指定時はラジオボタンのみ表示。 */
   label?: string;
   /** ラベルの補足テキスト（caption サイズ、SR には `aria-describedby` で伝わる）。プラン詳細等。 */
@@ -134,7 +122,6 @@ export interface RadioGroupProps {
 export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
   (
     {
-      size = 'md',
       label,
       description,
       error: errorProp,
@@ -153,10 +140,9 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
     const inputId = id || `radio-${reactId}`;
     const descId = description ? `${inputId}-desc` : undefined;
 
-    const sizePx = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
-
     const inputClasses = [
-      sizePx,
+      'w-5',
+      'h-5',
       'appearance-none',
       'ds-radio',
       'rounded-full',
@@ -198,7 +184,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             {label && (
               <Label
                 htmlFor={inputId}
-                size={size === 'lg' ? 'lg' : 'md'}
+                size="md"
                 disabled={disabled}
               >
                 {label}

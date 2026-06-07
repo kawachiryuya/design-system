@@ -98,8 +98,10 @@ export interface CardProps {
 /** Card.Header Props */
 export interface CardHeaderProps {
   /**
-   * 下部ボーダー表示（Body との区切り）。
-   * @default true
+   * 下部ボーダー表示（Body との区切り）。default は false (typography と padding で
+   * 階層を示す、Material 3 / shadcn と同じ default なし方針)。明示的な区切りが
+   * 欲しい場合のみ true。
+   * @default false
    */
   divider?: boolean;
   className?: string;
@@ -123,8 +125,10 @@ export interface CardFooterProps {
    */
   justify?: CardFooterJustify;
   /**
-   * 上部ボーダー表示（Body との区切り）。
-   * @default true
+   * 上部ボーダー表示（Body との区切り）。default は false (typography と padding で
+   * 階層を示す、Material 3 / shadcn と同じ default なし方針)。action button と
+   * body の明示的区切りが欲しい場合のみ true。
+   * @default false
    */
   divider?: boolean;
   className?: string;
@@ -138,10 +142,14 @@ const paddingStyles = {
   lg: 'p-6',
 };
 
+// Card variant 設計:
+// - elevated: layer-1 + shadow で浮き上がり感
+// - outlined: layer-1 + 薄い border で控えめな枠
+// - filled: layer-2 (= 1 段下) + border で塗りつぶし感、layer-1 より沈める意図
 const variantStyles = {
   elevated: 'bg-surface shadow-md rounded-md',
   outlined: 'bg-surface border border-border-subtle rounded-md',
-  filled: 'bg-surface-inset border border-border-subtle rounded-md',
+  filled: 'bg-surface-layer-2 border border-border-subtle rounded-md',
 };
 
 /**
@@ -180,8 +188,10 @@ export const Card: React.FC<CardProps> & {
     'overflow-hidden',
     variantStyles[variant],
     paddingStyles[padding],
+    // hover は shadow-md に弱める (outlined / filled で「影なし → shadow-lg」が大きすぎたため)。
+    // focus に ring-offset-focus を追加し Button family と整合。
     isInteractive
-      ? 'cursor-pointer transition-shadow duration-normal hover:shadow-lg focus-visible:outline-none focus-visible:ring-focus focus-visible:ring-border-focus'
+      ? 'cursor-pointer transition-shadow duration-normal hover:shadow-md focus-visible:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus'
       : '',
     isLink ? 'block no-underline text-inherit' : '',
     className,
@@ -219,9 +229,10 @@ export const Card: React.FC<CardProps> & {
   );
 };
 
-const CardHeader: React.FC<CardHeaderProps> = ({ divider = true, className = '', children }) => (
+const CardHeader: React.FC<CardHeaderProps> = ({ divider = false, className = '', children }) => (
   <div className={[
-    'px-4 py-3 font-medium text-onSurface',
+    // semantic typography 明示 (旧 font-medium のみだと font-size 継承で曖昧)
+    'px-4 py-3 text-body-md font-semibold text-onSurface',
     divider ? 'border-b border-border-subtle' : '',
     className,
   ].filter(Boolean).join(' ')}>
@@ -230,7 +241,7 @@ const CardHeader: React.FC<CardHeaderProps> = ({ divider = true, className = '',
 );
 
 const CardBody: React.FC<CardBodyProps> = ({ className = '', children }) => (
-  <div className={['p-4', className].join(' ')}>
+  <div className={['px-4 py-3', className].join(' ')}>
     {children}
   </div>
 );
@@ -241,7 +252,7 @@ const justifyStyles = {
   between: 'justify-between',
 };
 
-const CardFooter: React.FC<CardFooterProps> = ({ justify = 'end', divider = true, className = '', children }) => (
+const CardFooter: React.FC<CardFooterProps> = ({ justify = 'end', divider = false, className = '', children }) => (
   <div className={[
     'px-4 py-3 flex items-center gap-2',
     divider ? 'border-t border-border-subtle' : '',

@@ -111,10 +111,13 @@ const DefaultIcon = () => (
   </svg>
 );
 
+// title は font-size を primitive (text-base/lg/xl) のまま、weight は font-semibold で
+// 統一 (semantic typography は text-heading-X が 20px+ で base/lg と一致しないため不採用)。
+// desc は semantic body-X に揃える。
 const sizeConfig = {
-  sm: { icon: 'w-12 h-12', title: 'text-base', desc: 'text-sm', gap: 'gap-2', py: 'py-6' },
-  md: { icon: 'w-16 h-16', title: 'text-lg', desc: 'text-sm', gap: 'gap-3', py: 'py-10' },
-  lg: { icon: 'w-24 h-24', title: 'text-xl', desc: 'text-base', gap: 'gap-4', py: 'py-16' },
+  sm: { icon: 'w-12 h-12', title: 'text-base', desc: 'text-body-sm', gap: 'gap-2', py: 'py-6' },
+  md: { icon: 'w-16 h-16', title: 'text-lg',   desc: 'text-body-sm', gap: 'gap-3', py: 'py-10' },
+  lg: { icon: 'w-24 h-24', title: 'text-xl',   desc: 'text-body-md', gap: 'gap-4', py: 'py-16' },
 };
 
 /**
@@ -170,7 +173,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           {secondaryAction && (
             <Button
               variant={secondaryAction.variant ?? 'tertiary'}
-              size={size === 'sm' ? 'sm' : 'md'}
+              size={size}
               onClick={secondaryAction.onClick}
             >
               {secondaryAction.label}
@@ -179,7 +182,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           {action && (
             <Button
               variant={action.variant ?? 'primary'}
-              size={size === 'sm' ? 'sm' : 'md'}
+              size={size}
               onClick={action.onClick}
             >
               {action.label}

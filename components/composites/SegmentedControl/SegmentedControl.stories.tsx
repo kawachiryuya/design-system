@@ -179,7 +179,7 @@ export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '数値 value (号車選択等) / 多数のセグメント (横スクロール) / 2 択切替の最小ケース。',
+        story: '数値 value (号車選択等) / 多数のセグメント (横スクロール) / 2 択切替の最小ケース / Layout token 適用 (ダッシュボード期間切替で max-w-container + space-y-section-sm).',
       },
     },
   },
@@ -222,11 +222,46 @@ export const EdgeCases: Story = {
         />
       );
     }
+    function DashboardDemo() {
+      const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('30d');
+      return (
+        <div className="w-full px-container py-container max-w-container mx-auto">
+          <div className="space-y-section-sm">
+            <div className="flex items-center justify-between">
+              <h2 className="text-heading-md text-onSurface">アクティビティ</h2>
+              <SegmentedControl
+                items={[
+                  { value: '7d', label: '7 日' },
+                  { value: '30d', label: '30 日' },
+                  { value: '90d', label: '90 日' },
+                ]}
+                value={period}
+                onChange={setPeriod}
+                aria-label="期間"
+              />
+            </div>
+            <div className="grid-base">
+              {[
+                { label: '訪問者数', value: '12,480' },
+                { label: 'CV 率', value: '3.2%' },
+                { label: '直帰率', value: '38%' },
+              ].map(({ label, value }) => (
+                <div key={label} className="col-span-4 md:col-span-4 lg:col-span-4 p-4 border border-border-subtle rounded-md">
+                  <p className="text-caption text-onSurface-muted">{label} (直近 {period})</p>
+                  <p className="text-heading-md text-onSurface mt-1">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="flex flex-col gap-6 items-start">
         <Caption text="数値 value (号車選択)"><NumberDemo /></Caption>
         <Caption text="多数のセグメント (横スクロール、width 制約あり)"><ManyDemo /></Caption>
         <Caption text="2 択切替 (最小ケース)"><TwoDemo /></Caption>
+        <Caption text="Layout token 適用 (ダッシュボード期間切替、max-w-container + space-y-section-sm + grid-base KPI)"><DashboardDemo /></Caption>
       </div>
     );
   },

@@ -100,6 +100,7 @@ export const SegmentedControl = <T extends string | number>({
             className={[
               sizeStyles,
               'rounded-sm font-medium whitespace-nowrap transition-colors',
+              'focus:outline-none focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus',
               isSelected
                 ? 'bg-surface-primary text-onSurface-inverse'
                 : 'bg-surface border border-border-subtle text-onSurface hover:border-border-strong',

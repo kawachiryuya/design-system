@@ -9,15 +9,15 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Checkbox stories — 標準ストーリー構造に準拠
  *
- * 順序固定: Playground → Sizes → States → EdgeCases
+ * 順序固定: Playground → States → EdgeCases
  *
  * Checkbox は variant / icon prop を持たないため Variants / WithIcon は省略 (§5-3)。
+ * Sizes は size prop を廃止し 20×20 (md) 1 サイズに統一したため省略。
  */
 const meta: Meta<typeof Checkbox> = {
   title: 'Composites/Checkbox',
   component: Checkbox,
   argTypes: {
-    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     checked: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
     disabled: { control: 'boolean' },
@@ -29,7 +29,6 @@ const meta: Meta<typeof Checkbox> = {
   },
   args: {
     label: '利用規約に同意する',
-    size: 'md',
   },
 };
 
@@ -42,7 +41,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controls から size / checked / indeterminate / disabled / error / required を切替。click でトグルすることを play test で保証。',
+        story: 'Controls から checked / indeterminate / disabled / error / required を切替。click でトグルすることを play test で保証。',
       },
     },
   },
@@ -57,26 +56,7 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
-
-export const Sizes: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'sm / md / lg の 3 段。md がデフォルト。WCAG 2.5.5 タッチターゲット (44×44px) は md 以上で達成。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Checkbox size="sm" label="sm" defaultChecked />
-      <Checkbox size="md" label="md (デフォルト)" defaultChecked />
-      <Checkbox size="lg" label="lg" defaultChecked />
-    </div>
-  ),
-};
-
-// ── 3. States ──────────────────────────────────────────────────
+// ── 2. States ──────────────────────────────────────────────────
 
 export const States: Story = {
   parameters: {
@@ -121,7 +101,7 @@ export const States: Story = {
   ),
 };
 
-// ── 4. EdgeCases ───────────────────────────────────────────────
+// ── 3. EdgeCases ───────────────────────────────────────────────
 
 export const EdgeCases: Story = {
   parameters: {

@@ -3,9 +3,6 @@ import { Label } from '../../primitives/Label/Label';
 import { FormMessage } from '../../_internal/FormMessage';
 import { FormDescription } from '../../_internal/FormDescription';
 
-/** Checkbox のサイズ */
-export type CheckboxSize = 'sm' | 'md' | 'lg';
-
 /**
  * CheckboxGroup → Checkbox へ error 状態を伝播する Context。
  * Group の `error` が true のとき、配下の全 Checkbox が自動で error スタイル / `aria-invalid` を持つ。
@@ -17,11 +14,6 @@ interface CheckboxGroupContextValue {
 const CheckboxGroupContext = React.createContext<CheckboxGroupContextValue>({ error: false });
 
 interface CheckboxBaseProps {
-  /**
-   * チェックボックスのサイズ。
-   * @default 'md'
-   */
-  size?: CheckboxSize;
   /** ラベルテキスト。未指定時はチェックボックスのみ表示。 */
   label?: string;
   /** ラベルの補足テキスト (caption サイズ、SR には `aria-describedby` で伝わる)。 */
@@ -95,7 +87,6 @@ type _InternalCheckboxProps = CheckboxBaseProps & {
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   (props, ref) => {
     const {
-      size = 'md',
       label,
       description,
       error: errorProp,
@@ -125,10 +116,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     const descId = description ? `${inputId}-desc` : undefined;
     const errorId = errorMessage ? `${inputId}-error` : undefined;
 
-    const sizePx = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' }[size];
-
     const inputClasses = [
-      sizePx,
+      'w-5',
+      'h-5',
       'appearance-none',
       'ds-checkbox',
       'rounded-sm',
@@ -144,7 +134,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       'focus-visible:ring-offset-focus',
       error
         ? 'border-border-error-emphasis focus-visible:ring-border-error checked:bg-surface-error checked:border-border-error-emphasis'
-        : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-surface-primary',
+        : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-border-focus',
       disabled ? 'opacity-disabled cursor-not-allowed' : '',
     ]
       .filter(Boolean)
@@ -177,7 +167,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
               {label && (
                 <Label
                   htmlFor={inputId}
-                  size={size === 'lg' ? 'lg' : 'md'}
+                  size="md"
                   disabled={disabled}
                 >
                   {label}

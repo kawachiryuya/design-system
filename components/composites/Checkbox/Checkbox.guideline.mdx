@@ -122,7 +122,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`aria-checked="mixed"`** (indeterminate 時): browser が自動付与
 - **キーボード操作**: `Tab` で focus、`Space` でトグル (browser 標準)
 - **focus ring**: `focus-visible:ring-focus` で keyboard focus 時のみリング
-- **タッチターゲット**: sm / md / lg。md 以上で WCAG 2.5.5 達成
+- **タッチターゲット**: 20×20px (1 サイズ運用)。input 自体は 20px だが `<Label htmlFor>` でラベルもクリック領域、ラベル含めて WCAG 2.5.5 (44×44px) を達成
 - **ラベルクリック**: `<Label htmlFor>` でラベルクリックでもトグル
 
 ---

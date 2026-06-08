@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **`peerDependencies` に `tailwind-variants` / `tailwind-merge` を追加** (packaging bug fix): shipped dist (`dist/components/_internal/tv.js` 等) が両者を bare import しているにもかかわらず `devDependencies` にしか宣言されていなかったため、consumer 側で `Failed to resolve import "tailwind-variants"` で build が失敗していた。consumer は `npm install` 時に両者を自動 install する (npm 7+ の auto-install-peers)、または明示的に install することで build が通るようになる。本リポ dogfood (rail-demo) で発覚。
+
 ## [0.5.0] - 2026-06-08
 
 Token / Tailwind preset の silent bug 多数解消 + 全 Composite および主要 Primitive を「1 サイズ運用」「uniform step」「Input family focus pattern 統一」など visual polish round で整理。`size` prop 廃止が Badge / Switch / Checkbox / Radio / Pagination / SegmentedControl / ProgressBar に渡って入っており、breaking 多数。同時に spacing scale の `0.5` dot-path silent bug、preset の dead CSS variable 4 件、Avatar status dot / SegmentedControl selected focus / Checkbox-Radio checked border 等の silent no-op を網羅的に修復。

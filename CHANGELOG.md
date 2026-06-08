@@ -6,7 +6,11 @@
 
 ## [Unreleased]
 
-### Added (in Unreleased)
+## [0.5.0] - 2026-06-08
+
+Token / Tailwind preset の silent bug 多数解消 + 全 Composite および主要 Primitive を「1 サイズ運用」「uniform step」「Input family focus pattern 統一」など visual polish round で整理。`size` prop 廃止が Badge / Switch / Checkbox / Radio / Pagination / SegmentedControl / ProgressBar に渡って入っており、breaking 多数。同時に spacing scale の `0.5` dot-path silent bug、preset の dead CSS variable 4 件、Avatar status dot / SegmentedControl selected focus / Checkbox-Radio checked border 等の silent no-op を網羅的に修復。
+
+### Added (in 0.5.0)
 
 - **新規 semantic token `surface.neutral-strong`** (`{color.neutral.700}`): Badge solid neutral / Chip 等の主張ある neutral fill 用途。`surface.neutral` (status marker 用、薄め) と用途分離。Tailwind utility: `bg-surface-neutral-strong`。
 - **新規 token category `Layout` を追加** (multi-product hub での layout frame 統一管理向け): `tokens/source/layout.json` を新設し、page-level layout frame 専用の semantic token を導入:
@@ -17,7 +21,7 @@
   - Tailwind plugin (preset.cjs) で CSS 変数経由の utility を生成、product 側は `:root` で個別 breakpoint 値を 1 行 override 可能 (例: `--layout-container-max-width-default: 1440px`)
   - `components/tokens/Layout.{stories.tsx,guideline.mdx}` 新設、AGENTS.md §3-6 準拠 (Container / Section / Grid の 3 story)
 
-### ⚠ BREAKING CHANGES (in Unreleased)
+### ⚠ BREAKING CHANGES (in 0.5.0)
 
 - **Composites/Breadcrumb の Storybook title 変更**: `Composites/_Breadcrumb` → `Composites/Breadcrumb`。`_` prefix を除去し他の Composite と命名を揃えた。`?path=/story/composites-_breadcrumb--*` の旧 URL は壊れる、新 URL は `?path=/story/composites-breadcrumb--*`。
 - **Composites の Storybook story id 変更** (silent break、Phase 2 移行): 各 Composite を標準ストーリー構造 (Playground / Variants / Sizes / States / WithIcon / EdgeCases) に集約しているため、旧 story id (`default`、`all-variants` 等) の URL は壊れる。各 commit で対象 Composite を明記。`.md` ファイルは `.guideline.mdx` に統合し削除 (§7-6 準拠)。
@@ -35,8 +39,9 @@
   - mobile (`16px`) は変更なし
   - `grid-base` 利用箇所で tablet/desktop の card 間 gap が縮む。product 側で旧値が必要なら `:root` で `--layout-grid-gutter-tablet` / `--layout-grid-gutter-desktop` を override 可能
 
-### Changed (in Unreleased)
+### Changed (in 0.5.0)
 
+- **docs: `principles/` ディレクトリを凍結し、SSoT を AGENTS.md + `components/**/*.guideline.mdx` に集約** (実装規約への影響なし): 全 59 ファイルを「(a) 既出につき削除候補 / (b) コンポーネント `.guideline.mdx` 統合候補 / (c) `design-system-strategy.md` 吸収候補」の 3 分類で棚卸しした結果、principles/ 固有情報は実質ゼロで、AGENTS.md / strategy / `.guideline.mdx` との二重管理状態だったため凍結 (以降書き換えない) と判断。各ファイルの代替参照先は [`principles/_ARCHIVE_NOTE.md`](./principles/_ARCHIVE_NOTE.md) を参照。物理削除は (b)(c) の統合完了後に別 PR で実施予定。AGENTS.md 冒頭にも凍結通知を追記。
 - **Composites/ProgressBar の lg size 廃止 + track bg semantic 修正** (型 narrowing、視覚変化なし): (1) `ProgressBarSize` を `'sm' | 'md' | 'lg'` → `'sm' | 'md'` に narrowing。lg=12px は太すぎ、Material 3 / Carbon は 4-8px 中心。`<ProgressBar size="lg">` は consumer 実装で利用なし (stories / guideline のみ)、必要な場合は className で `h-3` などを override。(2) track bg を `bg-surface-skeleton` (token description は skeleton loading 用、semantic 違反) → `bg-surface-disabled` (同色 neutral.200、用途的に「非アクティブな track」が適切) に修正。
 - **Composites/SegmentedControl!: size prop 廃止 + 視覚整形 + silent bug 修正** (型 breaking、視覚変化): (1) `size = 'sm' | 'md'` を廃止し `h-10` (40px = Material 3 segmented button 標準) 1 サイズに統一 (Pagination と同じ pattern)。`SegmentedControlSize` 型 export 削除。(2) **silent bug fix**: selected 時に border が消えていたため 1px layout shift していたのを `border-transparent` で高さ揃え。(3) 非 selected hover に `bg-state-hover-primary` (8% teal) 追加で branded feedback。(4) **a11y critical**: selected 状態 (teal bg) に teal ring が乗ると同色で focus 不可視 → selected 時 ring 色を `ring-surface` (白) に切替、非 selected 時は `ring-border-focus` (teal) のまま contrast 確保。(5) button に `inline-flex items-center justify-center` を追加し icon + text の縦中央配置を保証。(6) focus を Input family ではなく button family pattern (2px inset) に揃える。Stories Sizes 削除、pseudo-states selectors を button 直接指定に修正。
 - **Composites/FilterChip の silent bug 修正 + 視覚整形**: (1) **silent bug fix**: `h-9` は spacing scale に `9` が無いため CSS 未生成 → chip 高さが content + border の ~24px に潰れていた。`h-8` (32px = Material 3 filter chip 標準) に修正。(2) **a11y critical**: `focus-visible` ring が完全に欠落していた。Input family と揃える `focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-border-focus` を追加。(3) 非 active hover に `bg-state-hover-primary` (8% teal) を追加し Pagination / Accordion / NumberInput と branded pattern 整合。(4) 角丸 `rounded-full` (pill) → `rounded-md` (8px、Polaris 流の控えめな丸み、Badge / Button と integrate しやすい)。(5) Stories の「両端アイコン」例で iconRegistry 未登録の `filter_list` icon (silent no-op) を登録済の `tune` に修正。

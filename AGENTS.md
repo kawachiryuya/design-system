@@ -2,6 +2,8 @@
 
 Claude Code / Cursor などの AI コーディングエージェントが本リポを操作する際の **実装ルール** を集約。設計戦略 (なぜ・何を) は [`design-system-strategy.md`](./design-system-strategy.md) を参照。
 
+> **Note**: `principles/` ディレクトリは 2026-06-08 をもって **凍結** (以降更新しない) されました。現行ルールの SSoT は本ファイル (AGENTS.md) と `components/**/*.guideline.mdx` です。principles/ に書かれていた内容の代替参照先は [`principles/_ARCHIVE_NOTE.md`](./principles/_ARCHIVE_NOTE.md) を参照してください。
+
 ---
 
 ## 1. 新規セッションで最初に読むもの

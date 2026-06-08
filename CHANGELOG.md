@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-06-08
+
 ### Fixed
 
 - **`peerDependencies` に `tailwind-variants` / `tailwind-merge` を追加** (packaging bug fix): shipped dist (`dist/components/_internal/tv.js` 等) が両者を bare import しているにもかかわらず `devDependencies` にしか宣言されていなかったため、consumer 側で `Failed to resolve import "tailwind-variants"` で build が失敗していた。consumer は `npm install` 時に両者を自動 install する (npm 7+ の auto-install-peers)、または明示的に install することで build が通るようになる。本リポ dogfood (rail-demo) で発覚。

@@ -19,8 +19,6 @@ import { TOKENS } from './build/tokens';
 export const COLORS = TOKENS.color;
 /** Spacing scale（8px base） */
 export const SPACING = TOKENS.spacing;
-/** Spacing semantic aliases（component / section） */
-export const SPACING_SEMANTIC = TOKENS['spacing-semantic'];
 /** Typography（font-size / weight / line-height / letter-spacing / family） */
 export const TYPOGRAPHY = TOKENS.typography;
 /** Typography semantic aliases（heading / body / label / caption） */

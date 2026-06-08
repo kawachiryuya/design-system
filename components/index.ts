@@ -12,9 +12,10 @@
  * @see components/composites/   — 複数構造 or 状態管理 or 振る舞い（20 個）
  */
 
-// ── Primitives (13) ──
+// ── Primitives (14) ──
 export * from './primitives/Badge';
 export * from './primitives/Button';
+export * from './primitives/Center';
 export * from './primitives/Divider';
 export * from './primitives/Icon';
 export * from './primitives/Image';

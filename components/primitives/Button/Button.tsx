@@ -71,6 +71,17 @@ interface ButtonRegularProps extends ButtonBaseProps {
   iconPosition?: 'left' | 'right';
   /** ボタンラベル（必須）。 */
   children: React.ReactNode;
+  /**
+   * 主ラベル下に並ぶ 2 行目テキスト（モバイル CTA 想定）。
+   *
+   * 例: 「購入する / ¥1,200」「予約する / 残り3席」のように、主アクションに付随する
+   * 数値・補足情報を 1 つの押下対象に集約したい時に使う。
+   *
+   * - `text-xs`(md) / `text-sm`(lg) で主ラベルより一段小さく、階層化は font-size のみで作る (opacity は当てない — 価格・残数など読ませたい情報なのでフル不透明)
+   * - **`size="sm"` 時は描画されない**（タッチターゲット内で 2 行は潰れるため）
+   * - icon と共存可。アイコンは 2 行ブロック全体の左右に配置される
+   */
+  description?: React.ReactNode;
 }
 
 /**
@@ -103,6 +114,12 @@ interface ButtonRegularProps extends ButtonBaseProps {
  * @example
  *   // Icon-only（aria-label 必須、TS が強制）
  *   <Button iconOnly icon={<Icon name="close" />} aria-label="閉じる" />
+ *
+ * @example
+ *   // 2 行 CTA（主ラベル + サブ情報）。`size="sm"` では description は描画されない。
+ *   <Button variant="primary" size="lg" description="¥1,200">
+ *     購入する
+ *   </Button>
  *
  * @see principles/Interaction/button/priority.mdx
  */
@@ -323,12 +340,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth,
       disabled,
       children,
+      description,
       className,
       type = 'button',
       ...rest
     } = props;
     const iconWrap = icon && (
       <span className="flex-shrink-0 inline-flex items-center">{icon}</span>
+    );
+
+    // 2 行 CTA: size="sm" では描画しない (タッチターゲット内で潰れる)。
+    // 主ラベル + description を縦並びにまとめて、icon/spinner と横並びにする。
+    const showDescription = Boolean(description) && size !== 'sm';
+    const labelBlock = showDescription ? (
+      <span className="inline-flex flex-col items-center leading-tight">
+        <span>{children}</span>
+        <span className={size === 'lg' ? 'text-sm' : 'text-xs'}>{description}</span>
+      </span>
+    ) : (
+      children
     );
 
     return (
@@ -341,7 +371,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && loadingSpinner}
         {!isLoading && iconPosition === 'left' && iconWrap}
-        {children}
+        {labelBlock}
         {!isLoading && iconPosition === 'right' && iconWrap}
       </button>
     );

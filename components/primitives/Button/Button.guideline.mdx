@@ -97,6 +97,20 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 />
 
 <DoDontExample
+  label="2 行 CTA (description) は補足が短い数値・事実情報に限る"
+  doExample={
+    <Button size="lg" description="¥1,200">購入する</Button>
+  }
+  doCaption="価格・残数・到着日など、主アクションと不可分の短い事実情報を 1 押下対象に集約できる。"
+  dontExample={
+    <Button size="lg" description="ボタンを押すとフォームの内容が送信されサーバーに保存されます">
+      送信する
+    </Button>
+  }
+  dontCaption="長い説明文は description ではなくボタン外の補助テキストに置く。description は読み流せる短さに留める。"
+/>
+
+<DoDontExample
   label="横並びは2〜3個まで"
   doExample={
     <>

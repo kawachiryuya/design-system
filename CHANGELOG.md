@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Button に `description` prop** ([`components/primitives/Button/Button.tsx`](./components/primitives/Button/Button.tsx)): モバイル CTA で「購入する / ¥1,200」「予約する / 残り3席」のように主アクション + サブ情報を 1 押下対象に集約するための 2 行目テキストを追加。`ButtonRegularProps` に optional として組み込み (iconOnly モードとは型レベルで両立不可)。主ラベルとの縦並び、`text-xs`(md) / `text-sm`(lg) で font-size のみで階層化 (価格・残数など読ませたい情報のため opacity は当てない)、`size="sm"` 時は描画されない (タッチターゲット内で潰れるため)。icon との共存可。Storybook に `WithDescription` story を追加 (Playground / Variants / Sizes / States / WithIcon / **WithDescription** / EdgeCases の順)。
+
 ## [0.13.0] - 2026-06-09
 
 ### Added

@@ -45,7 +45,7 @@ export type CenterElement = 'div' | 'section' | 'article' | 'main';
  *     </Center>
  *   </section>
  */
-export interface CenterProps {
+export interface CenterProps extends React.HTMLAttributes<HTMLElement> {
   /**
    * 最大幅の段階。用途名で指定する。値は固定 (Tailwind default の max-w-md/3xl/4xl/5xl)。
    * 必須プロパティ — Center の存在意義そのものなので default を持たない。
@@ -99,9 +99,10 @@ export const Center: React.FC<CenterProps> = ({
   as: Tag = 'div',
   children,
   className,
+  ...rest
 }) => {
   return (
-    <Tag className={centerVariants({ max, className })}>
+    <Tag {...rest} className={centerVariants({ max, className })}>
       {children}
     </Tag>
   );

@@ -6,9 +6,15 @@
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-06-10
+
 ### Added
 
 - **Button に `description` prop** ([`components/primitives/Button/Button.tsx`](./components/primitives/Button/Button.tsx)): モバイル CTA で「購入する / ¥1,200」「予約する / 残り3席」のように主アクション + サブ情報を 1 押下対象に集約するための 2 行目テキストを追加。`ButtonRegularProps` に optional として組み込み (iconOnly モードとは型レベルで両立不可)。主ラベルとの縦並び、`text-xs`(md) / `text-sm`(lg) で font-size のみで階層化 (価格・残数など読ませたい情報のため opacity は当てない)、`size="sm"` 時は描画されない (タッチターゲット内で潰れるため)。icon との共存可。Storybook に `WithDescription` story を追加 (Playground / Variants / Sizes / States / WithIcon / **WithDescription** / EdgeCases の順)。
+
+### Changed
+
+- **docs/layout-patterns-inventory.md を実装後の状態に更新**: Phase A (Center / Stack / Cluster) + Phase B (AppShell / TwoColumn / SplitPane) + 全 dogfood 完了を受けて、冒頭に「実装結果サマリ」表 (5 パターン × release × dogfood PR) を追加、末尾の「次のステップ」を「完了結果と dogfood の振り返り」(発見した API gap 4 件、設計判断の検証、検証ループ / Semver 運用の実態、今後の課題) に置換。実装規約への影響なし。
 
 ## [0.13.0] - 2026-06-09
 

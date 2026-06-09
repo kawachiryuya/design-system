@@ -1,11 +1,34 @@
 # Layout patterns inventory (2026-06)
 
-design-system に追加すべき **layout primitive / composite** の API 設計のため、consumer 1 号機 (rail-demo) で実装されている画面レイアウトを inventory し 5 パターンに集約した。次の段階で各パターンを DS に primitive / composite として実装 → rail-demo で dogfood ループ。
+design-system に追加すべき **layout primitive / composite** の API 設計のため、consumer 1 号機 (rail-demo) で実装されている画面レイアウトを inventory し 5 パターンに集約した。**Phase A (primitives) + Phase B (composites) + 全 dogfood 完了**。本ドキュメントは実装後の現状を反映済 (2026-06-10 更新)。
 
-- **Source**: rail-demo `main` branch (2026-06-08 時点、design-system 0.5.1 追従済)
+- **Inventory source**: rail-demo `main` branch (2026-06-08 時点、design-system 0.5.1 追従済)
 - **対象画面**: 19 page + 1 shell layout
 - **準拠する規約**: [AGENTS.md §3-4](../AGENTS.md#3-4-spacing-層) / [layout token (`tokens/source/layout.json`)](../tokens/source/layout.json) (Container / Section / Grid utility が既に存在)
 - **関連**: [`principles/_ARCHIVE_NOTE.md`](../principles/_ARCHIVE_NOTE.md) (principles 凍結) / [rail-demo の利用箇所](https://github.com/kawachiryuya/rail-demo)
+
+---
+
+## 実装結果サマリ (2026-06-10 時点)
+
+| # | Pattern | 実装 | release | dogfood (rail-demo) |
+|---|---------|------|---------|---------------------|
+| 1 | **AppShell** | [`components/composites/AppShell/`](../components/composites/AppShell/) | 0.11.0 | [#7](https://github.com/kawachiryuya/rail-demo/pull/7) `Layout.tsx` 全置換 ✅ |
+| 2 | **CenteredContent** | [`components/primitives/Center/`](../components/primitives/Center/) (`max="form/reading/wide/marketing"`) | 0.6.0 | [#3](https://github.com/kawachiryuya/rail-demo/pull/3) form 段階 + [#4](https://github.com/kawachiryuya/rail-demo/pull/4) reading/wide/marketing ✅ |
+| 3 | **TwoColumn** | [`components/composites/TwoColumn/`](../components/composites/TwoColumn/) (`split="6/6"/"7/3"/"8/4"` + `mobileReverse`) | 0.12.0 | [#8](https://github.com/kawachiryuya/rail-demo/pull/8) 4 ページ置換 ✅ |
+| 4 | **CenteredOnGrid** | **scope 外 (ConfirmPage/CompletePage は手書き grid 維持)** | - | dogfood 中の判断で deferment、必要時に別 PR |
+| 5 | **SplitPane** | [`components/composites/SplitPane/`](../components/composites/SplitPane/) (`listWidth` + `divider` + `height`) | 0.13.0 | [#9](https://github.com/kawachiryuya/rail-demo/pull/9) `ReservationsLayout.tsx` 置換 ✅ |
+
+加えて Phase A の補助 primitive と patch:
+
+| primitive | release | 役割 |
+|-----------|---------|------|
+| `Stack` | 0.7.0 | 垂直方向 flex + gap (form / list / section 用、`gap` 6 段、`as` 8 種) |
+| `Cluster` | 0.9.0 | 水平方向 flex-wrap + gap (menu / chip / icon+label 用、`gap` 6 段、`align`/`justify` 制御) |
+| Stack/Center rest props | 0.8.0 | `React.HTMLAttributes<HTMLElement>` 継承で `onSubmit` / `aria-*` / `data-*` pass-through |
+| Cluster/Stack `'span'` | 0.10.0 | inline 文脈 (記事 meta / breadcrumb 等) で semantic な `<span>` 使用可能化 |
+
+**rail-demo の手書き layout (`flex` / `grid` / `col-span` / `gap` / `max-w-*` / `space-y-*`) は実質ゼロ**。全 page が DS の primitive / composite で構成。
 
 ## 5 パターン (集約版)
 
@@ -221,23 +244,40 @@ design-system に追加すべき **layout primitive / composite** の API 設計
 
 ---
 
-## 次のステップ
+## 完了結果と dogfood の振り返り
 
-### Phase A: primitives 追加 ([components/primitives/](../components/primitives/))
-1. `Stack` (vertical spacing) — まず最小限。`gap` prop は `layout.section.gap` token 利用。
-2. `Cluster` (horizontal + wrap) — Header の menu / FilterChip 列等。
-3. `Center` (#2 CenteredContent の実装) — `max` prop で 4 段。
+### dogfood で発見した API gap (全て対処済)
 
-### Phase B: composites 追加 ([components/composites/](../components/composites/))
-4. `AppShell` (#1) — rail-demo の Layout.tsx の置換ターゲット。padding は `px-container` 直接利用。
-5. `TwoColumn` (#3 + #4 を吸収) — `split` enum + `mobileReverse` + `gap` prop。
-6. `SplitPane` (#5) — Phase A/B が安定したら最後に。
+| 発見元 | 内容 | 対処 |
+|--------|------|------|
+| rail-demo Login form (Stack 適用時) | `<Stack as="form" onSubmit={...}>` で onSubmit が pass-through されない | DS 0.8.0 で `React.HTMLAttributes<HTMLElement>` 継承、Stack + Center に rest props 対応 |
+| rail-demo ArticleDetailPage meta (Cluster 適用時) | `<Cluster as="span">` で TS エラー (`'span'` が enum 外) | DS 0.10.0 で `ClusterElement` / `StackElement` の as enum に `'span'` 追加 |
+| rail-demo ResultsPage TwoColumn 適用時 | TwoColumn の children に Modal を入れると 3 つ目以降が render されない | API 変更不要、**Modal を Fragment で TwoColumn の外側 sibling に出す**のが正しい semantic と判断 (Modal は layout grid の外にあるべき) |
+| rail-demo ReservationsLayout SplitPane 適用時 | `height` default の `calc(100vh - 4rem)` が AppShell `py-container` (lg で 4rem) と一致 | default 値を活用、prop 渡し不要に |
 
-### Phase C: rail-demo dogfood
-- Phase B の各 composite を rail-demo で順次置換 → PR → 違和感 / 不足 API を DS にフィードバック → 修正 → re-release
-- 優先順位: AppShell → TwoColumn → CenteredContent → SplitPane (影響範囲の広い順)
+### 振り返り — 設計判断の検証
 
-### 検証ループ
-- 各 primitive / composite の Storybook story を **AGENTS.md §3-6** 準拠の標準節 (Playground / Variants / States / EdgeCases) で書く
-- rail-demo PR で **before/after の Playwright screenshot 比較**を行う (現状は post-only 検証だが、Chromatic 導入後は自動化、[`MEMORY.md`](../../../.claude/projects/-Users-kawachi-Develop-design-system/memory/MEMORY.md) `[Future: Chromatic for DS]` 参照)
-- [`AGENTS.md §11`](../AGENTS.md#11-semver-規約) に従い、追加は `Added` セクション。既存 utility の rename / 廃止が発生する場合のみ breaking 扱い。
+- ✅ **slot 形式 (compound より positional)**: 全 composite で採用、consumer の typing 量が増えず採用しやすい
+- ✅ **`lg` breakpoint hardcode**: multi-product でも同 breakpoint 想定で意識する場面なし
+- ✅ **content-level vs shell-level の責務分離**: Center (content) と AppShell `contentMax` (shell) が入れ子で同時動作、混乱なし
+- ✅ **router/state context は DS スコープ外**: AppShell が PageTitleProvider 等を取り込まない slot-based 設計、Next.js / Remix / React Router の差を吸収不要
+- ⏸ **CenteredOnGrid (ConfirmPage / CompletePage) は scope 外**: TwoColumn の degenerate case として吸収する Option A は採用せず、ページ側で手書き grid 維持。将来 product で繰り返し出るパターンになれば再評価
+
+### 検証ループ (実態)
+
+- 各 primitive / composite の Storybook story を **AGENTS.md §3-6** 準拠の標準節 (Playground / Variants / EdgeCases / Guideline) で書く運用が定着
+- rail-demo PR で **Playwright + Chrome (channel: 'chrome')** で post-implementation screenshot を撮り、視覚回帰を目視確認する流れ。before/after pixel-diff は未導入
+- 自動化候補は memory [`[Future: Chromatic for DS]`](../../../.claude/projects/-Users-kawachi-Develop-design-system/memory/project_future_chromatic_for_ds.md) に保存済、いずれ着手
+
+### Semver 運用 (実態)
+
+- [`AGENTS.md §11`](../AGENTS.md#11-semver-規約) に従い、Layout layer 追加は全て MINOR bump (0.6.0 → 0.13.0 で 8 回の MINOR + 1 patch)
+- セッション中に「新 primitive 追加 = PATCH と誤判定 → release tag/commit force-push で復旧」のミスを 1 回発生、対処済 ([memory `semver-check-agents-table`](../../../.claude/projects/-Users-kawachi-Develop-design-system/memory/feedback_semver_check_agents_table.md) に再発防止策保存)
+
+---
+
+## 今後 (本 inventory の範囲外)
+
+- **DS 1.0.0 release 判断**: Layout layer が安定したので 1.0.0 候補。判断は別途
+- **CenteredOnGrid 再評価**: 別 product で同 pattern が現れた場合、TwoColumn の degenerate case / 別 composite のどちらで吸収するか再検討
+- **Footer.tsx (orphan)**: rail-demo の Footer.tsx は現状どこからも import されていない (Cluster dogfood PR #6 で発見)。将来 AppShell に footer slot を追加するか、独自にしておくか consumer 判断

@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-06-09
+
 ### Added
 
 - **新規 Primitive `Center`** ([`components/primitives/Center/`](./components/primitives/Center/)): 単列コンテンツの水平センタリング (max-width + mx-auto) を担う layout primitive。`max` prop で 4 段階 (`form` 448 / `reading` 768 / `wide` 896 / `marketing` 1024) を use-case 名で指定、`as` prop で `div / section / article / main` の semantic タグを切り替え。垂直 padding やセクション間 spacing は持たず、`className` 経由 (`py-12` 等) で別途与える単機能設計。AppShell の shell-level max-width (1280px) とは別軸で、入れ子で同時に効く。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) で抽出した 5 パターン中 #2 CenteredContent の primitive 化、Phase A の第 1 弾。

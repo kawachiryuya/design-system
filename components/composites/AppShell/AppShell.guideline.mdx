@@ -1,0 +1,158 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as AppShellStories from './AppShell.stories';
+import { AppShell } from './AppShell';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={AppShellStories} name="Guideline" />
+
+# AppShell
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: '4 slot の役割', href: '#4-slot-の役割' },
+  { label: 'Breakpoint 挙動', href: '#breakpoint-挙動' },
+  { label: 'consumer 側の責務', href: '#consumer-側の責務' },
+  { label: '別コンポーネントの方が適切な場面', href: '#別コンポーネントの方が適切な場面' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+Application shell の骨格を提供する composite。**mobile と PC で構造そのものが変わる** タイプの layout で:
+- **mobile (< lg)**: Header (top) + subBar? + main + BottomNav (bottom fixed)
+- **PC (>= lg)**: Sidebar (left fixed) + 右 pane (subBar? + main)
+
+Header / Sidebar / BottomNav / subBar の **中身** は consumer 提供 (slot)。AppShell は配置・breakpoint 制御 (`lg:hidden` / `hidden lg:block`) と内側 main の `max-w` / `px-container` / `py` を担当する。`PageTitleProvider` 等の context は **consumer 側で実装**、AppShell は router/state 依存を持ち込まない。
+
+---
+
+## Props
+
+<ArgTypes of={AppShellStories.Playground} />
+
+---
+
+## 4 slot の役割
+
+| Slot | 表示条件 | 想定中身 | DOM 配置 |
+|------|---------|---------|---------|
+| `header` | mobile のみ (`lg:hidden`) | ブランドロゴ / ハンバーガー / 戻る button | 最上部、`flex` の最初の child |
+| `sidebar` | PC のみ (`hidden lg:block`) | ナビゲーション menu / ロゴ / utility link | 左、`<aside>` でラップ |
+| `bottomNav` | mobile のみ (`lg:hidden`)、かつ `showBottomNav=true` | tab bar (3-5 個の primary destination) | 最下部 (consumer 内部で `fixed bottom-0` 想定) |
+| `subBar` | 両方 (consumer 内部で表示制御推奨) | breadcrumb / step indicator / page title | main の上 |
+
+すべて optional。omit すると AppShell はその slot を描画しない。
+
+---
+
+## Breakpoint 挙動
+
+| viewport | 配置 |
+|----------|------|
+| **`< lg` (mobile/tablet)** | 縦積み: header / subBar / main / bottomNav |
+| **`>= lg` (PC)** | 横並び: sidebar (left) + (subBar + main 縦並び) |
+
+`lg` breakpoint (1024px) は **AppShell 内部 hardcode**。multi-product でも同じ breakpoint を想定し、外部から override 不可。これにより consumer 側で breakpoint を意識しなくて済む。
+
+**bottomNav 表示時の main クリアランス**:
+- mobile: `pb-20` (= h-16 nav + 16px gap)
+- PC: `pb-8` (= 32px、token desktop padding)
+- `showBottomNav={false}` だと両方とも `py-container` (= token-driven 対称 padding)
+
+---
+
+## consumer 側の責務
+
+### 1. slot コンポーネント本体の実装
+
+`<Header />` / `<Sidebar />` / `<BottomNav />` / `<PageSubBar />` の **中身** は consumer が決める。ブランド / メニュー構造 / アイコン選定は product 固有なので DS に持ち込まない。
+
+```tsx
+// rail-demo 例
+import { Header, TopHeader, BottomNav, PageSubBar } from './layouts';
+
+<AppShell
+  header={<Header />}
+  sidebar={<TopHeader />}
+  bottomNav={<BottomNav />}
+  subBar={<PageSubBar title="ホーム" />}
+>
+  <Outlet />
+</AppShell>
+```
+
+### 2. PageTitleProvider 等の Context
+
+各 route の meta (title / breadcrumb / step / showBottomNav) を画面間で共有したい場合、**consumer 側で Context** を持つ。
+
+```tsx
+// consumer 側
+<PageTitleProvider>
+  <Routes>
+    <Route element={<AppShellWrapper />}>{/* AppShell + Outlet を wrap */}
+      <Route path="/" element={<HomePage />} />
+      ...
+```
+
+AppShell は受け取った props をそのまま render するだけ、router 依存ゼロ。
+
+### 3. BottomNav の fixed positioning
+
+`BottomNav` slot の中身は `fixed bottom-0` を **consumer 側で適用**。AppShell はクリアランス (mobile main `pb-20`) のみ担当する。
+
+```tsx
+const BottomNav = () => (
+  <nav className="fixed bottom-0 left-0 right-0 z-40 ...">
+    {/* ... */}
+  </nav>
+);
+```
+
+### 4. main 内の content-level max-width
+
+AppShell の `contentMax` は **shell-level max-width** (= ページ全体の左右余白)。
+**content-level** (form / reading 等) は内側に `<Center>` を入れ子で:
+
+```tsx
+<AppShell contentMax="default"> {/* shell = 1280px */}
+  <Outlet />
+  {/* page 側で <Center max="form">...</Center> 等 */}
+</AppShell>
+```
+
+---
+
+## 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 単列コンテンツの content max-width | `<Center>` | Center は content-level、AppShell は shell-level (= ページ全体) |
+| 2 col / 3 col grid layout | `<TwoColumn>` (Phase B 予定) / `grid grid-cols-*` | AppShell の中で grid を組む、AppShell 自体は単純 shell |
+| Master-detail (固定幅 list + 流動 detail) | `<SplitPane>` (Phase B 予定) | reservation 一覧の左 list / 右 detail 等の split は別 composite |
+
+---
+
+## アクセシビリティ
+
+- **`<main>` の暗黙の役割**: AppShell は内部で `<main>` タグを使用、ページの主コンテンツ landmark を提供。consumer が `as="main"` で他に `<main>` を入れない運用を推奨 (1 ページ 1 main)
+- **`<aside>` の sidebar**: PC sidebar slot は AppShell が `<aside>` でラップ、補助コンテンツ landmark として SR 認識
+- **bottomNav の semantic タグ**: BottomNav 中身を `<nav>` として実装するのは consumer 側、AppShell は外側 `<div className="lg:hidden">` でラップするだけ
+- **skip-link**: AppShell に skip-link は内蔵していない、consumer 側で `<a href="#main">` 等を提供することを想定
+
+関連: [Layout Alignment](?path=/docs/principles-layout-alignment--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。AppShell は素の `div / aside / main` を組み立てる shell composite。Phase A primitive (Center / Stack / Cluster) は内側 children として consumer 自由。
+
+### AppShell を内部で使う代表的なコンポーネント / 使い方
+
+- React Router の `<Outlet />` を `children` に渡し、route ごとに違う page を render する layout 用途
+- multi-page SPA / SaaS app の app-level shell
+- Setting / Profile 等の sub-app では `contentMax="narrow"` で控えめ shell に切替えても OK

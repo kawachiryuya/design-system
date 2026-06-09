@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **新規 Composite `AppShell`** ([`components/composites/AppShell/`](./components/composites/AppShell/)): Application shell の骨格を提供する composite。mobile (< lg) は Header + subBar? + main + BottomNav (bottom fixed)、PC (>= lg) は Sidebar + 右 pane (subBar? + main) の構造を内部で制御。4 slot (`header` / `sidebar` / `bottomNav` / `subBar`) は consumer 提供、AppShell は配置・breakpoint 制御 (`lg:hidden` / `hidden lg:block`) と main の `max-w-container[*]` / `px-container` / `py` を担当。`contentMax` (`narrow` / `default` / `wide` / `full`) で shell-level max-width を切替、`showBottomNav` で mobile main の `pb-20` クリアランスを制御。`PageTitleProvider` 等の router/state context は **DS スコープ外**、consumer 側で実装する slot-based 設計。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) **Phase B 第 1 弾**、Phase A 完了後の composite layer。
+
 ## [0.10.0] - 2026-06-09
 
 ### Added

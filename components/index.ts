@@ -30,9 +30,10 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (20) ──
+// ── Composites (21) ──
 export * from './composites/Accordion';
 export * from './composites/Alert';
+export * from './composites/AppShell';
 export * from './composites/Avatar';
 export * from './composites/Breadcrumb';
 export * from './composites/Card';

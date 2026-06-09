@@ -180,7 +180,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           )}
         </div>
         {error && errorMessage && (
-          <div className="ml-7">
+          <div className="ml-8">
             <FormMessage error={error} errorMessage={errorMessage} errorId={errorId} />
           </div>
         )}

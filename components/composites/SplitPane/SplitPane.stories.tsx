@@ -1,7 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { SplitPane } from './SplitPane';
+import { Caption } from '@sb-blocks/Caption';
 
+/**
+ * SplitPane stories — 標準ストーリー構造に準拠 (Playground / Variants / EdgeCases)
+ *
+ * - States 省略: 状態を持たない layout primitive のため (AGENTS.md §5-3 注)
+ * - Sizes 省略: size prop なし (`listWidth` は Variants で扱う)
+ * - WithIcon 省略: icon prop なし
+ *
+ * Variants / EdgeCases は full-screen layout を固定高さ container で wrap して
+ * 1 story 内に縦に並べる方式 (Center.stories.tsx と同じ pattern)。
+ */
 const meta: Meta<typeof SplitPane> = {
   title: 'Composites/SplitPane',
   component: SplitPane,
@@ -45,12 +56,19 @@ const MockDetail = () => (
         list / detail の独立スクロールを確認できるよう、両 pane を長くしておく。
       </div>
     </div>
-    {Array.from({ length: 15 }, (_, i) => (
+    {Array.from({ length: 8 }, (_, i) => (
       <div key={i} className="bg-surface-layer-2 border border-border-default rounded-md p-4 text-sm">
         <div className="font-medium mb-1">セクション {i + 1}</div>
         <div className="text-onSurface-muted">scroll させて確認。</div>
       </div>
     ))}
+  </div>
+);
+
+/** sub-render を 1 story に並べるための固定高さ wrapper。 */
+const PanePreview = ({ children }: { children: React.ReactNode }) => (
+  <div className="h-[500px] overflow-hidden border border-border-default rounded-md">
+    {children}
   </div>
 );
 
@@ -79,88 +97,96 @@ export const Playground: Story = {
 
 // ── 2. Variants ────────────────────────────────────────────────
 
-export const NarrowList: Story = {
-  name: 'listWidth="280px" (狭め)',
+export const Variants: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: '`listWidth` 3 段階 (280 / 360 / 480px) と `divider={false}` を縦に並べて比較。各 sub-render は固定高さ container で wrap し、視覚的に list 幅の差を比較しやすくしている。',
+      },
+    },
+  },
   render: () => (
-    <SplitPane listWidth="280px">
-      <MockList count={10} />
-      <MockDetail />
-    </SplitPane>
-  ),
-};
+    <div className="flex flex-col gap-6 p-4">
+      <Caption text='listWidth="280px" (狭め)'>
+        <PanePreview>
+          <SplitPane listWidth="280px" height="500px">
+            <MockList count={10} />
+            <MockDetail />
+          </SplitPane>
+        </PanePreview>
+      </Caption>
 
-export const WideList: Story = {
-  name: 'listWidth="480px" (広め)',
-  render: () => (
-    <SplitPane listWidth="480px">
-      <MockList count={10} />
-      <MockDetail />
-    </SplitPane>
-  ),
-};
+      <Caption text='listWidth="360px" (default、rail-demo の ReservationsLayout 採用値)'>
+        <PanePreview>
+          <SplitPane listWidth="360px" height="500px">
+            <MockList count={10} />
+            <MockDetail />
+          </SplitPane>
+        </PanePreview>
+      </Caption>
 
-export const NoDivider: Story = {
-  name: 'divider={false}',
-  render: () => (
-    <SplitPane divider={false}>
-      <MockList count={10} />
-      <MockDetail />
-    </SplitPane>
+      <Caption text='listWidth="480px" (広め)'>
+        <PanePreview>
+          <SplitPane listWidth="480px" height="500px">
+            <MockList count={10} />
+            <MockDetail />
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+
+      <Caption text='divider={false} — 両 pane 間の縦境界線なし'>
+        <PanePreview>
+          <SplitPane divider={false} height="500px">
+            <MockList count={10} />
+            <MockDetail />
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+    </div>
   ),
 };
 
 // ── 3. EdgeCases ───────────────────────────────────────────────
 
-export const ConsumerHidesListOnMobile: Story = {
-  name: 'mobile で list 非表示 (rail-demo pattern)',
-  render: () => (
-    <SplitPane>
-      <div className="hidden lg:block">
-        <MockList count={10} />
-      </div>
-      <MockDetail />
-    </SplitPane>
-  ),
+export const EdgeCases: Story = {
   parameters: {
+    layout: 'padded',
     docs: {
       description: {
-        story: 'rail-demo の ReservationsLayout pattern: detail 選択時に mobile で list pane を `hidden lg:block` で隠す。consumer 側の router state に応じて表示制御。Storybook を mobile viewport で見ると detail のみが見える。',
+        story: 'mobile で list 非表示 (rail-demo pattern) / children 1 つ (detail 未選択時) / custom height (AppShell 外で利用) を確認。consumer が SplitPane を別の文脈で使う時に守るべき挙動。',
       },
     },
   },
-};
-
-export const SingleChild: Story = {
-  name: 'children 1 つ (list のみ)',
   render: () => (
-    <SplitPane>
-      <MockList count={10} />
-    </SplitPane>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'detail 未選択時に list のみを描画したいケース。detail pane の wrapper div は描画されず、list が grid 内の唯一の child として残る。',
-      },
-    },
-  },
-};
+    <div className="flex flex-col gap-6 p-4">
+      <Caption text='mobile で list 非表示 (rail-demo pattern) — consumer 側で hidden lg:block'>
+        <PanePreview>
+          <SplitPane height="500px">
+            <div className="hidden lg:block">
+              <MockList count={10} />
+            </div>
+            <MockDetail />
+          </SplitPane>
+        </PanePreview>
+      </Caption>
 
-export const CustomHeight: Story = {
-  name: 'height="600px" (固定高さ)',
-  render: () => (
-    <div className="p-4">
-      <SplitPane height="600px">
-        <MockList count={20} />
-        <MockDetail />
-      </SplitPane>
+      <Caption text='children 1 つ (list のみ) — detail pane wrapper は描画されない'>
+        <PanePreview>
+          <SplitPane height="500px">
+            <MockList count={10} />
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+
+      <Caption text='height="600px" 固定 (AppShell の外で利用するケース)'>
+        <div className="h-[600px]">
+          <SplitPane height="600px">
+            <MockList count={20} />
+            <MockDetail />
+          </SplitPane>
+        </div>
+      </Caption>
     </div>
   ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'AppShell の外で利用する等で viewport 高さ計算ができない場合の固定高さ指定例。両 pane の独立スクロールは機能。',
-      },
-    },
-  },
 };

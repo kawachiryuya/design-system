@@ -6,6 +6,20 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-10
+
+**Stable release**: Phase A (Center / Stack / Cluster) + Phase B (AppShell / TwoColumn / SplitPane) の Layout layer 完成と全 dogfood (rail-demo PR #3〜#9) を経て **MAJOR 昇格**。Storybook 標準ストーリー構造 + guideline 完備 + npm publish 済みの状態で API 安定宣言。
+
+過去の累積 breaking changes (`0.5.0` の Surface layer 階層化 / state token 命名 / Primitive color rename / 各 component の size 廃止 等) はすべて含まれた状態の API 安定版。以降、API の breaking change は厳密に MAJOR bump とする ([AGENTS.md §11-4](./AGENTS.md#11-4-0x-期の運用))。
+
+### Fixed
+
+- **`composites/Checkbox` の error message offset を `ml-7` (silent no-op) → `ml-8` に修正**: 本リポの curated spacing scale ([memory `custom-spacing-scale`](../../.claude/projects/-Users-kawachi-Develop-design-system/memory/project_custom_spacing_scale.md) 参照) に `7` (28px) が含まれないため Tailwind が CSS を生成せず、error message が input 左端に張り付いて label テキスト直下に揃わない silent UX 不具合があった。意図 (input `w-5` + 親 `gap-2` = 28px) と乖離する 4px 差を許容し、scale 内の `ml-8` (32px) に集約。
+
+### Changed (silent break, Storybook URL)
+
+- **AppShell / TwoColumn / SplitPane の Storybook story id を AGENTS.md §5-3 標準節 (`Playground` / `Variants` / `EdgeCases`) に集約** (silent break、Storybook URL): 旧 individual story (`ContentMaxNarrow` / `ContentMaxWide` / `WithoutBottomNav` / `HeaderOnly` / `NoSlots` / `LongContent` / `MobileReverse` / `GapVariants` / `SingleChild` / `StickyContent` / `NarrowList` / `WideList` / `NoDivider` / `ConsumerHidesListOnMobile` / `CustomHeight` 等) を `Variants` / `EdgeCases` 1 story 内に `Caption` sub-headers で集約。fullscreen layout の sub-render は固定高さ container (`h-[500px] overflow-hidden`) で wrap して 1 画面で比較可能に。旧 `?path=/story/composites-{appshell|twocolumn|splitpane}--{content-max-narrow|...}` 等の URL は壊れる、新 URL は `--playground` / `--variants` / `--edge-cases`。
+
 ## [0.14.0] - 2026-06-10
 
 ### Added

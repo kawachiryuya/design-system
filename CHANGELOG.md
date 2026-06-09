@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-06-09
+
 ### Added
 
 - **Layout primitives (`Stack` / `Center`) に rest props pass-through を追加**: `StackProps` / `CenterProps` が `React.HTMLAttributes<HTMLElement>` を継承するように変更し、コンポーネントは `...rest` を内部 Tag に展開する。これにより `<Stack as="form" onSubmit={...}>`、`<Center role="region" aria-label="...">`、`data-*` 属性等が直接渡せるようになる。これまで wrap が必要だった form 系の dogfood が綺麗にハマる (rail-demo の Login 等で発覚)。既存 API は不変。

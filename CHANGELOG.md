@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-06-09
+
 ### Added
 
 - **新規 Composite `SplitPane`** ([`components/composites/SplitPane/`](./components/composites/SplitPane/)): Master-detail layout (固定幅 list pane + 流動 detail pane、両 pane が独立スクロール) を提供する composite。mobile では縦積み、PC (lg+) で `grid grid-cols-[listWidth_1fr]` + 固定高さ + 縦境界線。`listWidth` (default `'360px'`、任意 CSS 値) で list 幅を、`divider` (default `true`) で境界線、`height` (default `'calc(100vh - 4rem)'`、AppShell `py-container` 連動) で固定高さを制御。**Positional children** で 1 番目が list、2 番目が detail。CSS variable (`--sp-cols` / `--sp-height`) 経由で動的値を Tailwind safelisted class に渡す実装。`React.HTMLAttributes<HTMLDivElement>` 継承で rest props 対応。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) **Phase B 第 3 弾 (= Phase B 完了)**、AppShell / TwoColumn に続く最後の layout composite。

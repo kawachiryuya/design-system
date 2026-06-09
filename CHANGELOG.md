@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **新規 Primitive `Cluster`** ([`components/primitives/Cluster/`](./components/primitives/Cluster/)): 子要素を水平方向に並べ、画面端で自動折り返しする layout primitive。`gap` で 6 段階 (Stack と同一スケール `xs/sm/md/lg/xl/2xl`) を指定、`as` で semantic タグ (`div / section / ul / ol / nav`)、`align` で cross-axis (`start/center/end/stretch/baseline`、default `center`)、`justify` で main-axis (`start/center/end/between/around`、default `start`) を制御。**常に折り返す** (`flex-wrap` 固定) のが Cluster の定義的特徴 — non-wrap には plain `flex items-center gap-N` を使う運用。`React.HTMLAttributes<HTMLElement>` 継承で rest props pass-through 対応済。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) Phase A 第 3 弾 (= Phase A 完了)、Center / Stack に続く layout primitive。
+
 ## [0.8.0] - 2026-06-09
 
 ### Added

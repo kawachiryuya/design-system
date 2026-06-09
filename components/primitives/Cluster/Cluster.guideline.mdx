@@ -1,0 +1,168 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ClusterStories from './Cluster.stories';
+import { Cluster } from './Cluster';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={ClusterStories} name="Guideline" />
+
+# Cluster
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: '別コンポーネントの方が適切な場面', href: '#別コンポーネントの方が適切な場面' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+子要素を水平方向に並べ、画面端で自動折り返しする layout primitive。`gap` で 6 段階 (Stack と同じスケール) の間隔を選び、`align` で cross-axis (垂直) 配置、`justify` で main-axis (水平) 配置を制御する。**常に折り返す** (`flex-wrap` 固定) のが Cluster の定義的特徴。
+
+**実装は `flex flex-wrap + gap-*`**。non-wrap 用途は plain な `flex items-center gap-N` を直接書いた方が簡潔。
+
+---
+
+## Props
+
+下表は Cluster.tsx の TypeScript 型と JSDoc から自動生成。インタラクティブに props を試したい場合は **カタログの Playground story** を開き、Controls タブで操作する。
+
+<ArgTypes of={ClusterStories.Playground} />
+
+詳細: [Layout Alignment 原則](?path=/docs/principles-layout-alignment--docs)
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="icon + label の組合せは gap=xs + align=center で"
+  doExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="xs">
+        <span>⏱</span>
+        <span className="text-sm text-onSurface-muted">5 分で読める</span>
+      </Cluster>
+    </div>
+  }
+  doCaption="icon + label のような密接した inline 要素は xs (4px) + align=center (default) で揃える。Cluster の default align=center が活きる典型用途。"
+  dontExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="xl" align="start">
+        <span>⏱</span>
+        <span className="text-sm text-onSurface-muted">5 分で読める</span>
+      </Cluster>
+    </div>
+  }
+  dontCaption="xl (24px) は密接要素間で空きすぎ、align=start は icon と text の縦位置がズレる。icon + label には xs + center が定石。"
+/>
+
+<DoDontExample
+  label="navigation は as='nav' で semantic タグを保つ"
+  doExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="md" as="nav">
+        <a href="#" className="text-sm">ホーム</a>
+        <a href="#" className="text-sm">予約一覧</a>
+        <a href="#" className="text-sm">マイページ</a>
+      </Cluster>
+    </div>
+  }
+  doCaption="navigation の役割を持つ menu は as='nav' で semantic タグを保つ。SR が「ナビゲーション」と読み上げる、skip-link 等の a11y 機能も効く。"
+  dontExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="md">
+        <a href="#" className="text-sm">ホーム</a>
+        <a href="#" className="text-sm">予約一覧</a>
+        <a href="#" className="text-sm">マイページ</a>
+      </Cluster>
+    </div>
+  }
+  dontCaption="navigation を div のままにすると SR にとってただの inline 要素群、landmark navigation で飛ばせない。"
+/>
+
+<DoDontExample
+  label="header pattern (title + action) は justify=between で"
+  doExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="md" justify="between">
+        <div className="text-base font-semibold">予約一覧</div>
+        <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button>
+      </Cluster>
+    </div>
+  }
+  doCaption="title 左 + action 右の典型 pattern は justify=between が定石。狭い画面では自動で折り返す。"
+  dontExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="md" justify="start">
+        <div className="text-base font-semibold">予約一覧</div>
+        <div className="ml-auto"><button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button></div>
+      </Cluster>
+    </div>
+  }
+  dontCaption="justify=start + ml-auto で右寄せ表現すると flex-wrap 時に ml-auto が意図しない位置に飛ぶ。Cluster のときは justify=between で素直に。"
+/>
+
+<DoDontExample
+  label="non-wrap が必要な場合は Cluster ではなく plain な flex を使う"
+  doExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <div className="flex items-center gap-2 whitespace-nowrap overflow-x-auto">
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 1</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 2</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 3</div>
+      </div>
+    </div>
+  }
+  doCaption="horizontal scroll させたい tab 列等は plain な flex + overflow-x-auto で。Cluster は『折り返す』のが定義なので不適合。"
+  dontExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="sm">
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 1</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 2</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 3</div>
+      </Cluster>
+    </div>
+  }
+  dontCaption="Cluster は flex-wrap 固定なので tab が画面端で改行されてしまう。non-wrap には不適、plain flex を使う。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 縦並び (form / list 等) | `<Stack>` | Cluster は水平専用、垂直は Stack の責務 |
+| max-width で中央寄せ | `<Center>` | Center は単列 horizontal centering、Cluster は children の inline 並び |
+| 折り返さない horizontal | plain `flex items-center gap-N` | Cluster の wrap は無効化できない (定義的特徴)、non-wrap には不適 |
+| Tabs / SegmentedControl | `<Tabs>` / `<SegmentedControl>` (既存 composite) | active state 等の振る舞いを伴う UI は専用 composite に |
+| 2 列以上の grid | `<TwoColumn>` (Phase B 予定) / `grid grid-cols-*` | Cluster は単一行 (折り返しはあるが grid ではない)、2col 構造は別 |
+
+---
+
+## アクセシビリティ
+
+- **`as` で semantic タグを保つ**: navigation なら `as="nav"`、繰り返し項目なら `as="ul"` (子は `<li>`)。SR / browser reader-mode / landmark navigation で正しく認識される
+- **`align="baseline"` と typography**: 異なる font-size の inline 要素を並べる時、baseline 揃えにすると視覚的に揃って見える (text と icon、見出し+補足等)
+- **gap と reading order**: gap は視覚的な余白のみ。読み上げ順序は DOM 順そのまま (flex-row による視覚順 = DOM 順)
+- **flex-wrap と RTL**: flex / gap は CSS logical、RTL でも自動反転する
+
+関連: [Layout Alignment](?path=/docs/principles-layout-alignment--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Cluster は単独で完結する Layout primitive。
+
+### Cluster を内部で使う代表的なコンポーネント / 使い方
+
+- AppShell (Phase B) の **Header menu / BottomNav button 列**
+- Footer の utility link 列 (regulation / privacy / contact)
+- `<FilterChip>` の group (折り返しで複数 chip を並べる)
+- 記事メタ情報 (date / read time / view count を icon + label で並べる)
+- header pattern (title 左 + action 右、`justify="between"`)
+- breadcrumb (`xs` gap で密接した item 列、separator 込み)

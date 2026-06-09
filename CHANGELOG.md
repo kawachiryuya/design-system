@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **`Cluster` / `Stack` の `as` enum に `'span'` を追加**: inline 文脈 (記事 meta / breadcrumb / icon+label 等) で semantic な `<span>` として layout primitive を使いたいケースに対応。`<Cluster as="span">` / `<Stack as="span">` が型 OK となる。`display: flex` で span が flex-container 化するのは browser 標準挙動。rail-demo の Cluster dogfood (PR #6) で発覚した API gap の解消。既存利用は不変。
+
 ## [0.9.0] - 2026-06-09
 
 ### Added

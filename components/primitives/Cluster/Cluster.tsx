@@ -17,8 +17,12 @@ import { tv } from '../../_internal/tv';
  */
 export type ClusterGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-/** Cluster が描画する HTML 要素。Stack より絞り、form / article は対象外 (用途が垂直方向)。 */
-export type ClusterElement = 'div' | 'section' | 'ul' | 'ol' | 'nav';
+/**
+ * Cluster が描画する HTML 要素。Stack より絞り、form / article は対象外 (用途が垂直方向)。
+ * `span` は inline 文脈 (記事 meta / breadcrumb / icon+label 等) で使う。
+ * `display: flex` で span が flex-container 化するのは browser 標準挙動。
+ */
+export type ClusterElement = 'div' | 'span' | 'section' | 'ul' | 'ol' | 'nav';
 
 /** Cluster の cross-axis (= vertical) alignment。 */
 export type ClusterAlign = 'start' | 'center' | 'end' | 'stretch' | 'baseline';

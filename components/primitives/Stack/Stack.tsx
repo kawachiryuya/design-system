@@ -53,7 +53,7 @@ export type StackAlign = 'start' | 'center' | 'end' | 'stretch';
  *     <section>...</section>
  *   </Stack>
  */
-export interface StackProps {
+export interface StackProps extends React.HTMLAttributes<HTMLElement> {
   /**
    * 子要素間の垂直方向 gap。必須 — Stack の存在意義そのものなので default を持たない。
    */
@@ -63,7 +63,7 @@ export interface StackProps {
    * - `div` 汎用 (default)
    * - `section` / `article` ページ構造の意味タグ
    * - `ul` / `ol` / `nav` リスト系の意味タグ (li 等を直接子に置く想定)
-   * - `form` フォーム
+   * - `form` フォーム (`onSubmit` 等のイベントは rest props 経由で受け取れる)
    * @default 'div'
    */
   as?: StackElement;
@@ -128,9 +128,10 @@ export const Stack: React.FC<StackProps> = ({
   align = 'stretch',
   children,
   className,
+  ...rest
 }) => {
   return (
-    <Tag className={stackVariants({ gap, align, className })}>
+    <Tag {...rest} className={stackVariants({ gap, align, className })}>
       {children}
     </Tag>
   );

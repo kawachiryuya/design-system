@@ -4,12 +4,14 @@ import { AppShell } from './AppShell';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * AppShell stories — 標準ストーリー構造に準拠
+ * AppShell stories — 標準ストーリー構造に準拠 (Playground / Variants / EdgeCases)
  *
- * 順序: Playground → Variants → EdgeCases
+ * - States 省略: 状態を持たない layout primitive のため (AGENTS.md §5-3 注)
+ * - Sizes 省略: size prop なし (contentMax は Variants で扱う)
+ * - WithIcon 省略: icon prop なし
  *
- * Storybook ではフルスクリーン (min-h-screen) を扱うため、各 story の outer wrapper で
- * 高さ制限 + scale-down を適用、複数 layout を 1 画面で比較できるようにしている。
+ * Variants / EdgeCases は full-screen layout を `h-[500px] overflow-hidden` で wrap して
+ * 1 story 内に縦に並べる方式 (Center.stories.tsx と同じ pattern)。
  */
 const meta: Meta<typeof AppShell> = {
   title: 'Composites/AppShell',
@@ -81,6 +83,13 @@ const MockContent = ({ children }: { children?: React.ReactNode }) => (
   </div>
 );
 
+/** sub-render を 1 story に並べるための fullscreen wrapper。 */
+const ShellPreview = ({ children }: { children: React.ReactNode }) => (
+  <div className="h-[500px] overflow-hidden border border-border-default rounded-md">
+    {children}
+  </div>
+);
+
 // ── 1. Playground ──────────────────────────────────────────────
 
 export const Playground: Story = {
@@ -110,95 +119,117 @@ export const Playground: Story = {
 
 // ── 2. Variants ────────────────────────────────────────────────
 
-export const ContentMaxNarrow: Story = {
-  name: 'contentMax="narrow" (768px shell)',
+export const Variants: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: '`contentMax` 3 段階 (narrow / default は Playground / wide) と `showBottomNav={false}` の挙動を比較。各 sub-render は固定高さ container で wrap し縦に並べる。',
+      },
+    },
+  },
   render: () => (
-    <AppShell
-      contentMax="narrow"
-      sidebar={<MockSidebar />}
-      subBar={<MockSubBar title="narrow shell" />}
-    >
-      <MockContent>
-        <div className="text-sm">contentMax=&quot;narrow&quot; → 内側 main wrapper は <code>max-w-container-narrow</code> (= 768px)。Settings / reading 中心の画面向け。</div>
-      </MockContent>
-    </AppShell>
-  ),
-};
+    <div className="flex flex-col gap-6 p-4">
+      <Caption text='contentMax="narrow" (768px shell) — Settings / reading 中心の画面向け'>
+        <ShellPreview>
+          <AppShell
+            contentMax="narrow"
+            sidebar={<MockSidebar />}
+            subBar={<MockSubBar title="narrow shell" />}
+          >
+            <MockContent>
+              <div className="text-sm">contentMax=&quot;narrow&quot; → 内側 main wrapper は <code>max-w-container-narrow</code> (= 768px)。</div>
+            </MockContent>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
 
-export const ContentMaxWide: Story = {
-  name: 'contentMax="wide" (1536px shell)',
-  render: () => (
-    <AppShell
-      contentMax="wide"
-      sidebar={<MockSidebar />}
-      subBar={<MockSubBar title="wide shell" />}
-    >
-      <MockContent>
-        <div className="text-sm">contentMax=&quot;wide&quot; → 内側 main wrapper は <code>max-w-container-wide</code> (= 1536px)。Dashboard / 横長 content 向け。</div>
-      </MockContent>
-    </AppShell>
-  ),
-};
+      <Caption text='contentMax="wide" (1536px shell) — Dashboard / 横長 content 向け'>
+        <ShellPreview>
+          <AppShell
+            contentMax="wide"
+            sidebar={<MockSidebar />}
+            subBar={<MockSubBar title="wide shell" />}
+          >
+            <MockContent>
+              <div className="text-sm">contentMax=&quot;wide&quot; → 内側 main wrapper は <code>max-w-container-wide</code> (= 1536px)。</div>
+            </MockContent>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
 
-export const WithoutBottomNav: Story = {
-  name: 'BottomNav なし (settings / detail)',
-  render: () => (
-    <AppShell
-      header={<MockHeader />}
-      sidebar={<MockSidebar />}
-      bottomNav={<MockBottomNav />}
-      showBottomNav={false}
-      subBar={<MockSubBar title="No BottomNav" />}
-    >
-      <MockContent>
-        <div className="text-sm">
-          <p>showBottomNav=&#123;false&#125; で BottomNav 非表示、mobile main の <code>pb-20</code> クリアランスも無効化。</p>
-          <p className="mt-2">設定画面 / 詳細画面で sticky nav を消したい時に。</p>
-        </div>
-      </MockContent>
-    </AppShell>
+      <Caption text='showBottomNav={false} — BottomNav 非表示 + mobile main の pb-20 クリアランス無効化'>
+        <ShellPreview>
+          <AppShell
+            header={<MockHeader />}
+            sidebar={<MockSidebar />}
+            bottomNav={<MockBottomNav />}
+            showBottomNav={false}
+            subBar={<MockSubBar title="No BottomNav" />}
+          >
+            <MockContent>
+              <div className="text-sm">
+                <p>showBottomNav=&#123;false&#125; で BottomNav 非表示、mobile main の <code>pb-20</code> クリアランスも無効化。</p>
+                <p className="mt-2">設定画面 / 詳細画面で sticky nav を消したい時に。</p>
+              </div>
+            </MockContent>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
+    </div>
   ),
 };
 
 // ── 3. EdgeCases ───────────────────────────────────────────────
 
-export const HeaderOnly: Story = {
-  name: 'header のみ (sidebar / bottomNav なし)',
+export const EdgeCases: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: 'slot omit パターン (header only / 全 slot なし) と long content での scroll 挙動を確認。AppShell が slot を渡されない場合に degrade しても破綻しないことを示す。',
+      },
+    },
+  },
   render: () => (
-    <AppShell header={<MockHeader />}>
-      <MockContent>
-        <div className="text-sm">header のみ提供、sidebar/bottomNav 未指定。mobile はトップ Header あり、PC は単純 main 表示。</div>
-      </MockContent>
-    </AppShell>
-  ),
-};
+    <div className="flex flex-col gap-6 p-4">
+      <Caption text='header のみ (sidebar / bottomNav なし) — mobile は Header のみ、PC は単純 main'>
+        <ShellPreview>
+          <AppShell header={<MockHeader />}>
+            <MockContent>
+              <div className="text-sm">header のみ提供、sidebar/bottomNav 未指定。mobile はトップ Header あり、PC は単純 main 表示。</div>
+            </MockContent>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
 
-export const NoSlots: Story = {
-  name: '全 slot なし (= 単純 shell)',
-  render: () => (
-    <AppShell>
-      <MockContent>
-        <div className="text-sm">全 slot 未指定でも min-h-screen / px-container / max-w-container は効く。最小限の app shell として使える。</div>
-      </MockContent>
-    </AppShell>
-  ),
-};
+      <Caption text='全 slot なし (= 単純 shell) — 最小限の app shell'>
+        <ShellPreview>
+          <AppShell>
+            <MockContent>
+              <div className="text-sm">全 slot 未指定でも min-h-screen / px-container / max-w-container は効く。最小限の app shell として使える。</div>
+            </MockContent>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
 
-export const LongContent: Story = {
-  name: 'main content 長い (scroll 確認)',
-  render: () => (
-    <AppShell
-      header={<MockHeader />}
-      sidebar={<MockSidebar />}
-      bottomNav={<MockBottomNav />}
-    >
-      <div className="flex flex-col gap-3">
-        {Array.from({ length: 30 }, (_, i) => (
-          <div key={i} className="bg-surface border border-border-default rounded-md p-4 text-sm">
-            セクション {i + 1} — long content で scroll 挙動を確認。BottomNav は mobile で fixed なので main が下に流れても重ならない (pb-20 クリアランス効果)。
-          </div>
-        ))}
-      </div>
-    </AppShell>
+      <Caption text='main content 長い (scroll 確認) — BottomNav は fixed なので重ならない (pb-20 クリアランス)'>
+        <ShellPreview>
+          <AppShell
+            header={<MockHeader />}
+            sidebar={<MockSidebar />}
+            bottomNav={<MockBottomNav />}
+          >
+            <div className="flex flex-col gap-3">
+              {Array.from({ length: 10 }, (_, i) => (
+                <div key={i} className="bg-surface border border-border-default rounded-md p-4 text-sm">
+                  セクション {i + 1} — long content で scroll 挙動を確認。
+                </div>
+              ))}
+            </div>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
+    </div>
   ),
 };

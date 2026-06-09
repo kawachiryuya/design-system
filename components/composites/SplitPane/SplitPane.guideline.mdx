@@ -1,0 +1,134 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SplitPaneStories from './SplitPane.stories';
+import { SplitPane } from './SplitPane';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={SplitPaneStories} name="Guideline" />
+
+# SplitPane
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Breakpoint 挙動', href: '#breakpoint-挙動' },
+  { label: 'consumer 側の責務', href: '#consumer-側の責務' },
+  { label: '別コンポーネントの方が適切な場面', href: '#別コンポーネントの方が適切な場面' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+**Master-detail layout** を提供する composite。固定幅 list pane + 流動 detail pane で、両 pane が独立スクロールする。
+
+- **mobile (< lg)**: 縦積み (両 pane が full width で順に表示)
+- **PC (>= lg)**: grid `[listWidth]_1fr` で左右並び + 独立スクロール + 縦境界線 (optional)
+
+予約一覧 / メッセージ受信箱 / 通知センター / ファイラー等、**list を選んで右で詳細を見る** UX に最適。`Router` の `<Outlet />` を detail pane に渡す使い方が定番。
+
+---
+
+## Props
+
+<ArgTypes of={SplitPaneStories.Playground} />
+
+---
+
+## Breakpoint 挙動
+
+| viewport | 配置 |
+|----------|------|
+| **`< lg` (mobile/tablet)** | block layout: list と detail が縦積み、それぞれ通常の document flow |
+| **`>= lg` (PC)** | `grid grid-cols-[listWidth_1fr]` + 固定高さ (`h-[height]`) + 両 pane `overflow-y-auto` |
+
+`lg` breakpoint (1024px) は SplitPane 内部 hardcode。AppShell / TwoColumn と同じ判断。
+
+---
+
+## consumer 側の責務
+
+### 1. mobile での list / detail 表示制御
+
+SplitPane は mobile で **両 pane を縦積みで表示**する。実際の master-detail UX (list を選んで detail を見る) では consumer 側で router state に応じて片方を `hidden lg:block` で隠す:
+
+```tsx
+// rail-demo ReservationsLayout pattern
+<SplitPane listWidth="360px">
+  {/* detail 選択時は mobile で list を隠す */}
+  <div className="hidden lg:block">
+    <ReservationsPage selectedId={selectedId} />
+  </div>
+  <div ref={rightRef} key={selectedId}>
+    <Outlet />
+  </div>
+</SplitPane>
+```
+
+### 2. detail 切替時の scroll-to-top
+
+list の選択変更で detail pane が異なる内容に切り替わる時、scroll 位置を先頭に戻すのは consumer 側:
+
+```tsx
+const rightRef = useRef<HTMLDivElement>(null);
+const prevId = useRef<string | null>(null);
+useEffect(() => {
+  if (selectedId !== prevId.current) {
+    rightRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  prevId.current = selectedId;
+}, [selectedId]);
+```
+
+### 3. `height` の AppShell padding 連動
+
+SplitPane の `height` は AppShell の main padding に応じて調整する:
+- AppShell default (`py-container` = lg で 32px × 2 = 4rem): `height="calc(100vh - 4rem)"` (default 値)
+- AppShell + subBar の場合は subBar の高さも引く必要あり
+
+### 4. detail pane の force remount
+
+URL params 等で detail を切り替える時、内部 state を resets するため `key` で remount:
+
+```tsx
+<SplitPane>
+  <List />
+  <div key={selectedId}>
+    <Outlet />
+  </div>
+</SplitPane>
+```
+
+---
+
+## 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 比率ベースの 2 列 (7/3 / 8/4 等) | `<TwoColumn>` | TwoColumn は比率 + col-span、SplitPane は固定幅 + 流動 (master-detail UX) |
+| Drawer のような開閉式 sidebar | (DS 未提供 — consumer 実装) | SplitPane は常時表示、開閉式は別 |
+| ページ全体の app-level layout | `<AppShell>` | SplitPane は AppShell の main 内で使う想定の sub-layout |
+
+---
+
+## アクセシビリティ
+
+- **semantic タグは consumer 責務**: list pane を `<aside>` や `<nav>`、detail pane を `<main>` 等で囲むのは consumer 側
+- **focus 管理**: detail 切替時に focus を detail pane の先頭に飛ばす運用 (skip-link / `tabIndex={-1}` + ref focus 等) は consumer 側で実装
+- **scroll 同期は無し**: 両 pane は独立スクロール、SR / keyboard 操作で list を移動しても detail は scroll しない。これは典型的な master-detail UX と一致
+
+関連: [Layout Alignment](?path=/docs/principles-layout-alignment--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。SplitPane は `<div>` で構成される素のレイアウト composite。
+
+### SplitPane を内部で使う代表的なコンポーネント / 使い方
+
+- 予約一覧 / メッセージ受信箱 / 通知センター (list + detail UX)
+- ファイラー / アセット管理 (folder/file tree + プレビュー)
+- 設定画面のサブセクション選択 (左 menu + 右 form)
+- `<AppShell>` の main 内で `<SplitPane>` を使う構成が典型 (`AppShell > main > Outlet (= SplitPane page)`)

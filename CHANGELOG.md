@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **新規 Primitive `Stack`** ([`components/primitives/Stack/`](./components/primitives/Stack/)): 子要素を垂直方向に等間隔で並べる layout primitive。`gap` で 6 段階 (`xs` 4px / `sm` 8px / `md` 12px / `lg` 16px / `xl` 24px / `2xl` 48px) を指定、`as` で semantic タグ (`div / section / article / ul / ol / nav / form`) を切替、`align` で cross-axis 配置 (`start / center / end / stretch`) を制御。**実装は `flex flex-col + gap-*`** (`space-y-*` ではない) — Fragment や条件付き children で margin が消える silent bug を回避。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) の Phase A 第 2 弾、Center に続く layout primitive。
+
 ## [0.6.0] - 2026-06-09
 
 ### Added

@@ -7,7 +7,7 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Button stories — 標準ストーリー構造に準拠
  *
- * 順序固定: Playground → Variants → Sizes → States → WithIcon → EdgeCases
+ * 順序固定: Playground → Variants → Sizes → States → WithIcon → WithDescription → EdgeCases
  *
  * - Playground: args を全開放、Controls の起点
  * - Variants / Sizes / WithIcon: 静的横並び (args 非依存) でカタログ化
@@ -29,6 +29,7 @@ const meta: Meta<typeof Button> = {
     disabled: { control: 'boolean' },
     iconPosition: { control: 'radio', options: ['left', 'right'] },
     children: { control: 'text' },
+    description: { control: 'text' },
     icon: { control: false },
     iconOnly: { control: false },
   },
@@ -168,7 +169,52 @@ export const WithIcon: Story = {
   ),
 };
 
-// ── 6. EdgeCases ───────────────────────────────────────────────
+// ── 6. WithDescription ─────────────────────────────────────────
+// 2 行 CTA (主ラベル + サブ情報)。モバイル CTA で価格・残数などを 1 押下対象に集約する用途。
+// size="sm" では description は描画されない (タッチターゲット内で潰れるため)。
+
+export const WithDescription: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '主ラベル下に description を並べる 2 行 CTA。価格・残数などのサブ情報を主アクションと同じ押下対象に集約する想定。`size="sm"` では description は描画されない (タッチターゲット内で潰れるため、最下段で挙動確認)。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-6 items-start">
+      <Caption text="md (text-base + text-xs)">
+        <Button description="¥1,200">購入する</Button>
+      </Caption>
+      <Caption text="lg (text-lg + text-sm) — モバイル CTA 想定">
+        <Button size="lg" description="残り3席">予約する</Button>
+      </Caption>
+      <Caption text="lg + fullWidth + icon (左)">
+        <Button
+          size="lg"
+          fullWidth
+          icon={<Icon name="check_circle" size="md" />}
+          description="送料無料 / 明日お届け"
+        >
+          注文を確定する
+        </Button>
+      </Caption>
+      <Caption text="variant ごとの見え方">
+        <div className="flex flex-wrap gap-3 items-end">
+          <Button description="¥1,200">購入する</Button>
+          <Button variant="secondary" description="¥1,200">あとで決済</Button>
+          <Button variant="tertiary" description="¥1,200">カートに入れる</Button>
+          <Button variant="destructive" description="この操作は取り消せません">削除する</Button>
+        </div>
+      </Caption>
+      <Caption text="size='sm' は description を無視 (1 行のまま)">
+        <Button size="sm" description="¥1,200">購入</Button>
+      </Caption>
+    </div>
+  ),
+};
+
+// ── 7. EdgeCases ───────────────────────────────────────────────
 // fullWidth / 長文ラベル / 短文 + min-width / icon-only に長文 aria-label など、
 // 視覚的に壊れやすいケースの監視用。
 

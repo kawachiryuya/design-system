@@ -18,8 +18,11 @@ import { tv } from '../../_internal/tv';
  */
 export type StackGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-/** Stack が描画する HTML 要素。semantic な意味タグを保つために `as` で切り替える。 */
-export type StackElement = 'div' | 'section' | 'article' | 'ul' | 'ol' | 'nav' | 'form';
+/**
+ * Stack が描画する HTML 要素。semantic な意味タグを保つために `as` で切り替える。
+ * `span` は inline 文脈で flex-col の縦並びをしたい稀なケース用 (block 用途の方が主)。
+ */
+export type StackElement = 'div' | 'span' | 'section' | 'article' | 'ul' | 'ol' | 'nav' | 'form';
 
 /** Stack の cross-axis (= horizontal) alignment。 */
 export type StackAlign = 'start' | 'center' | 'end' | 'stretch';

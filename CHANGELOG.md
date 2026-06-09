@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **新規 Composite `TwoColumn`** ([`components/composites/TwoColumn/`](./components/composites/TwoColumn/)): 2 列レイアウト (main + sidebar) を mobile 縦積み → PC 横並び grid で表現する composite。`split` (`6/6` / `7/3` / `8/4`) で grid base (10 or 12) と各 child の col-span を内部マッピング、`gap` (`sm` / `md` / `lg`、default `md` = rail-demo 実態 `gap-4 md:gap-6 xl:gap-8`) で列間 gap を制御、`mobileReverse` (boolean) で mobile 時の表示順を逆転 (SearchPage form 下 + preview 上 pattern)。**Positional children** で 1 番目が main、2 番目が sidebar として render される。`React.HTMLAttributes<HTMLDivElement>` 継承で rest props 対応。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) **Phase B 第 2 弾**、AppShell に続く composite layer。
+
 ## [0.11.0] - 2026-06-09
 
 ### Added

@@ -1,0 +1,106 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TwoColumnStories from './TwoColumn.stories';
+import { TwoColumn } from './TwoColumn';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={TwoColumnStories} name="Guideline" />
+
+# TwoColumn
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'split 比率と用途', href: '#split-比率と用途' },
+  { label: 'Breakpoint 挙動', href: '#breakpoint-挙動' },
+  { label: 'mobileReverse の使い分け', href: '#mobilereverse-の使い分け' },
+  { label: '別コンポーネントの方が適切な場面', href: '#別コンポーネントの方が適切な場面' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+2 列レイアウト (main + sidebar) を **mobile 縦積み → PC 横並び grid** で表現する composite。1 番目の子要素が main、2 番目が sidebar として render される positional 設計。
+
+`split` 比率 (`6/6` / `7/3` / `8/4`) は rail-demo の実態 (検索結果 / 座席 / Search 等) を吸収。`mobileReverse` で mobile 時の表示順を逆転させる SearchPage 系パターンに対応。
+
+---
+
+## Props
+
+<ArgTypes of={TwoColumnStories.Playground} />
+
+---
+
+## split 比率と用途
+
+| split | grid base | main | sidebar | 想定用途 (rail-demo) |
+|-------|-----------|------|---------|---------------------|
+| `6/6` | `grid-cols-12` | col-span-6 | col-span-6 | Search (form + preview) |
+| `7/3` | `grid-cols-10` | col-span-7 | col-span-3 | Results (検索結果 + 条件 sidebar) |
+| `8/4` | `grid-cols-12` | col-span-8 | col-span-4 | Seat / SeatMap (座席 + 料金 sidebar) |
+
+**grid base が 10 vs 12 で異なる理由**: `7/3` を 12-col grid で表現すると 7/12 ≈ 58% / 3/12 = 25% で残りの 17% が gap になる。10-col grid なら 7/10 = 70% / 3/10 = 30% で gap 後の比率が綺麗に出る。**rail-demo の ResultsPage が 10-col grid を使っているのを踏襲**。
+
+---
+
+## Breakpoint 挙動
+
+| viewport | 配置 |
+|----------|------|
+| **`< lg` (mobile/tablet)** | `flex flex-col` で main → sidebar の縦積み (各 full width) |
+| **`>= lg` (PC)** | `grid grid-cols-{N}` で横並び、main 左 + sidebar 右 |
+
+`lg` breakpoint (1024px) は TwoColumn 内部 hardcode。AppShell と同じ判断 (multi-product でも同 breakpoint 想定)。
+
+---
+
+## mobileReverse の使い分け
+
+`mobileReverse=true` で 1 番目子要素 (main) と 2 番目子要素 (sidebar) の **mobile 表示順を入れ替え**:
+
+| mobileReverse | mobile | PC |
+|---------------|--------|----|
+| `false` (default) | main 上 → sidebar 下 | main 左 + sidebar 右 |
+| `true` | sidebar 上 → main 下 | main 左 + sidebar 右 |
+
+**使い所**:
+- SearchPage: `mobileReverse=true` で「**form (main) は下、preview (sidebar) は上**」にして、mobile UX で「検索条件を見てから入力する」流れに最適化
+- 大半のケースは `false` (mobile = PC と同じ DOM 順)
+
+---
+
+## 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 単列コンテンツの max-width | `<Center>` | Center は単列、TwoColumn は 2 col 構造 |
+| Master-detail (固定幅 list + 流動 detail) | `<SplitPane>` (Phase B 残り) | TwoColumn は比率ベース (grid-cols 上の col-span)、SplitPane は固定幅 + 流動の master-detail UX |
+| 3 col 以上の grid | plain `grid grid-cols-3` 等 | TwoColumn は 2 col 固定、3+ col は専用 layout |
+| ConfirmPage / CompletePage の grid 上中央寄せ | (Phase B で検討 — 現状は手書き grid 維持) | TwoColumn は split 2col 専用、`grid-cols-12 col-span-8 col-start-3` の centered pattern は別 |
+| sidebar を sticky 表示 | `<TwoColumn split="8/4">` + child の className で `lg:sticky lg:top-4` | sidebar 自体に sticky は **consumer 側で適用**、TwoColumn は配置のみ責務 |
+
+---
+
+## アクセシビリティ
+
+- **semantic タグは consumer 責務**: TwoColumn は中身を wrap する `<div>` のみ、main を `<main>` / sidebar を `<aside>` 等で囲むのは consumer 側で行う (1 ページの semantic 構造は consumer のみが知る)
+- **reading order**: DOM 順 = main → sidebar、`mobileReverse` 使用時も DOM 順は変わらず CSS の `order` のみ反転。SR は DOM 順で読み上げるので、`mobileReverse=true` でも main を「主役」として認識する
+- **`order` 反転の注意**: visual order と DOM order が乖離すると認知的負荷が増えるため、`mobileReverse` は必要な場面 (mobile UX 最適化) のみで使う
+
+関連: [Layout Alignment](?path=/docs/principles-layout-alignment--docs)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。TwoColumn は `<div>` で構成される素のレイアウト composite。
+
+### TwoColumn を内部で使う代表的なコンポーネント / 使い方
+
+- 検索結果 ページ (Results pattern) — `split="7/3"` で list + 条件 sidebar
+- 座席選択ページ (Seat pattern) — `split="8/4"` で seat picker + 料金 sidebar (`lg:sticky` で固定)
+- 予約検索ページ (Search pattern) — `split="6/6" mobileReverse` で form + preview
+- AppShell の main 内で TwoColumn を組合せる構成が典型 (`<AppShell><Outlet /></AppShell>` → 各 page で `<TwoColumn>...</TwoColumn>`)

@@ -36,9 +36,6 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'full';
  *       <p>本文…</p>
  *     </Modal.Body>
  *   </Modal>
- *
- * @see principles/Foundation/accessibility/focus-management.mdx
- * @see principles/Foundation/accessibility/keyboard-navigation.mdx
  */
 export interface ModalProps extends Omit<React.DialogHTMLAttributes<HTMLDialogElement>, 'title' | 'onClose'> {
   /** モーダルの開閉状態。 */

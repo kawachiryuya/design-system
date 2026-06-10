@@ -26,15 +26,11 @@ import { Meta } from '@storybook/addon-docs/blocks';
     </tr>
     <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Primitives</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Button・Input・Badge・Label・VisuallyHidden など、単一HTML要素のラッパー（13コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Button・Input・Badge・Label・VisuallyHidden・Stack・Cluster など、単一HTML要素のラッパーまたは Layout primitive（16コンポーネント）</td>
     </tr>
     <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Composites</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Card・Tabs・Modal・Toast・CheckboxGroup など、複数要素を組み合わせた複合コンポーネント（20コンポーネント）</td>
-    </tr>
-    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
-      <td style={{ padding: '10px 12px', fontWeight: 600 }}>Principles</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Foundation・Layout・Interaction・Typography・Color などのデザイン原則ドキュメント</td>
+      <td style={{ padding: '10px 12px', color: '#525252' }}>Card・Tabs・Modal・Toast・CheckboxGroup・AppShell・TwoColumn など、複数要素を組み合わせた複合コンポーネント（23コンポーネント）</td>
     </tr>
     <tr>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>[Product名]</td>
@@ -193,12 +189,16 @@ module.exports = {
 
 ## アクセシビリティへの取り組み
 
-すべてのコンポーネントで以下を考慮しています。
+WCAG 2.1 の **POUR 原則** (Perceivable / Operable / Understandable / Robust) に従い、**Level AA を最低目標** として実装しています。
 
-- **ARIA属性**：role・aria-label・aria-invalid などを適切に付与
-- **キーボード操作**：Tab・Enter・矢印キーによる操作対応
-- **色コントラスト**：WCAG 2.1 AA 基準（4.5:1以上）を遵守
-- **a11y アドオン**：各Storyの「Accessibility」タブで検証結果を確認できます
+- **ARIA属性**：role・aria-label・aria-invalid・aria-modal などを適切に付与
+- **キーボード操作**：Tab / Shift+Tab / Enter / Space / Escape / 矢印キー対応。`tabindex` は 0 または -1 のみ（DOM 順序 = フォーカス順序）
+- **フォーカス管理**：2px outline + コントラスト 3:1+ のフォーカスインジケータ、Modal は focus trap（ネイティブ `<dialog>` で標準対応）、動的コンテンツ追加/削除時は論理的な次要素へフォーカス移動
+- **色コントラスト**：通常テキスト 4.5:1 以上、大テキスト・UI 要素 3:1 以上を遵守
+- **タッチ操作**：最小ターゲット 44×44px、隣接間隔 8px+、ホバー依存禁止
+- **a11y アドオン**：各 Story の「Accessibility」タブで axe-core 自動検証結果を表示
+
+実装規約の詳細は `AGENTS.md §8 アクセシビリティ前提`、設計思想は `design-system-strategy.md > 設計原則 > アクセシビリティ基本方針` を参照。
 
 ---
 

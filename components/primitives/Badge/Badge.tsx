@@ -105,8 +105,6 @@ const dotColorMap: Record<BadgeVariant, string> = {
  * @example
  *   // 数値カウント
  *   <Badge variant="error" appearance="solid">12</Badge>
- *
- * @see principles/Color/semantic-colors.mdx
  */
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   /**

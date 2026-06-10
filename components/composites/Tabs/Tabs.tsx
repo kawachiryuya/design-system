@@ -68,9 +68,6 @@ export interface TabItem {
  *       { id: 'b', label: '準備中', content: <B />, disabled: true },
  *     ]}
  *   />
- *
- * @see principles/README.mdx
- * @see principles/Interaction/state/overview.mdx
  */
 export interface TabsProps {
   /** タブ項目の配列。順序通りに表示される。 */

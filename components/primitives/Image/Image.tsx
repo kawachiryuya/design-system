@@ -40,9 +40,6 @@ export type ImageRounded = 'none' | 'sm' | 'md' | 'lg' | 'full';
  *     alt="プロフィール"
  *     fallback={<DefaultAvatar />}
  *   />
- *
- * @see principles/Typography/imagery/overview.mdx
- * @see principles/Typography/imagery/alt-text.mdx
  */
 export interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   /** 画像 URL（必須）。 */

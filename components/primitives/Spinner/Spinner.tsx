@@ -31,8 +31,6 @@ export type SpinnerColor = 'primary' | 'neutral' | 'white';
  * @example
  *   // ニュートラル色（カード内）
  *   <Spinner size="md" color="neutral" />
- *
- * @see principles/Interaction/feedback/loading-indicators.mdx
  */
 export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   /**

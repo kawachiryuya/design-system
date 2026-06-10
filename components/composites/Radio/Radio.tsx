@@ -37,8 +37,6 @@ const RadioGroupContext = React.createContext<RadioGroupContextValue>({ error: f
  * @example
  *   // 個別 error (通常は RadioGroup の error と連動。個別指定すれば優先)
  *   <Radio name="agree" value="yes" label="同意する" error />
- *
- * @see principles/Patterns/forms.mdx
  */
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
   /** ラベルテキスト。未指定時はラジオボタンのみ表示。 */

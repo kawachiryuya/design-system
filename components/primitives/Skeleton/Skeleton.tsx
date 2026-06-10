@@ -28,8 +28,6 @@ export type SkeletonVariant = 'text' | 'circular' | 'rectangular' | 'rounded';
  * @example
  *   // アニメーション無効（複数並べる場合のパフォーマンス対策）
  *   <Skeleton variant="text" lines={5} animated={false} />
- *
- * @see principles/Interaction/feedback/loading-indicators.mdx
  */
 export interface SkeletonProps {
   /**

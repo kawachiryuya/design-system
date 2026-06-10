@@ -37,8 +37,6 @@ export interface ToastContent {
  *     variant="success"
  *     description="保存しました"
  *   />
- *
- * @see principles/Interaction/feedback/toast-notifications.mdx
  */
 export interface ToastProps extends ToastContent {
   /** 表示状態。 */

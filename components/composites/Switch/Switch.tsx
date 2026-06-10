@@ -32,9 +32,6 @@ export type SwitchLabelPosition = 'left' | 'right';
  *     checked={autoUpdate}
  *     onChange={setAutoUpdate}
  *   />
- *
- * @see principles/Patterns/forms.mdx
- * @see principles/Interaction/state/overview.mdx
  */
 export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
   /**

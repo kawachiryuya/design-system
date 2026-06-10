@@ -27,8 +27,6 @@ export type DividerWeight = 'thin' | 'normal';
  * @example
  *   // 太線（強調的な区切り）
  *   <Divider weight="normal" />
- *
- * @see principles/Layout/alignment.mdx
  */
 export interface DividerProps {
   /**

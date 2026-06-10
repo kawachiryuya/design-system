@@ -34,8 +34,6 @@ export type ProgressBarColor = 'primary' | 'success' | 'error' | 'warning';
  * @example
  *   // エラー時（送信失敗等）
  *   <ProgressBar value={75} color="error" label="送信失敗（75% 完了時）" />
- *
- * @see principles/README.mdx
  */
 export interface ProgressBarProps {
   /**

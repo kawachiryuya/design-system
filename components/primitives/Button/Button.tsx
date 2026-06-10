@@ -120,8 +120,6 @@ interface ButtonRegularProps extends ButtonBaseProps {
  *   <Button variant="primary" size="lg" description="¥1,200">
  *     購入する
  *   </Button>
- *
- * @see principles/Interaction/button/priority.mdx
  */
 export type ButtonProps =
   (ButtonIconOnlyProps | ButtonRegularProps) &

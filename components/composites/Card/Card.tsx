@@ -58,8 +58,6 @@ export type CardFooterJustify = 'start' | 'end' | 'between';
  *       <Button variant="primary">確定</Button>
  *     </Card.Footer>
  *   </Card>
- *
- * @see principles/README.mdx
  */
 export interface CardProps {
   /**

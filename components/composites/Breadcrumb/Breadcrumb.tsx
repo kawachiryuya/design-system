@@ -45,8 +45,6 @@ export interface BreadcrumbItem {
  *       { label: 'TypeScript' },
  *     ]}
  *   />
- *
- * @see principles/README.mdx
  */
 export interface BreadcrumbProps {
   /** パンくずの項目リスト。最後の項目は通常 `href` なし（現在ページ）。 */

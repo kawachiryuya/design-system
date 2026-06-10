@@ -2,8 +2,6 @@
 
 Claude Code / Cursor などの AI コーディングエージェントが本リポを操作する際の **実装ルール** を集約。設計戦略 (なぜ・何を) は [`design-system-strategy.md`](./design-system-strategy.md) を参照。
 
-> **Note**: `principles/` ディレクトリは 2026-06-08 をもって **凍結** (以降更新しない) されました。現行ルールの SSoT は本ファイル (AGENTS.md) と `components/**/*.guideline.mdx` です。principles/ に書かれていた内容の代替参照先は [`principles/_ARCHIVE_NOTE.md`](./principles/_ARCHIVE_NOTE.md) を参照してください。
-
 ---
 
 ## 1. 新規セッションで最初に読むもの
@@ -35,6 +33,12 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | スクリーンリーダ専用テキスト | `<VisuallyHidden>` | icon-only Button の補助ラベル / live region |
 | モーダル表示 | `<Modal>` | ネイティブ `<dialog>` ベース。確認ダイアログ・フォーム入力等 |
 | 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け |
+| 要素の縦並び | `<Stack>` | 等間隔で縦積み。spacing は token 経由 |
+| 要素の横並び | `<Cluster>` | 等間隔で横並び + 折返し対応 |
+| 中央配置 | `<Center>` | 縦横中央、内側コンテナ用 |
+| ページ全体の骨格 (header / nav / content / footer) | `<AppShell>` | sticky header + bottom nav + body slot 構造 |
+| 左右 2 カラム (main / aside) | `<TwoColumn>` | レスポンシブで縦スタックに切替 |
+| 上下 / 左右の領域分割 | `<SplitPane>` | resizable / fixed-ratio の分割 |
 
 ### Primitive vs Composite
 
@@ -54,11 +58,13 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | Badge | Primitive | 単一 `<span>`、状態なし |
 | Spinner / Skeleton / Divider / VisuallyHidden | Primitive | 単一要素、状態なし |
 | Input / Textarea / Image | Primitive | 単一 HTML 要素 (`<input>` / `<textarea>` / `<img>`)、状態は uncontrolled or controlled prop のみ |
+| Center / Stack / Cluster | Primitive (Layout) | 単一 `<div>` ラッパーで子要素を flex/grid 配置するのみ、状態なし |
 | Switch | Composite | `<Label>` 内包 + `<button role="switch">`、label position 切替 |
 | Checkbox / Radio | Composite | `<Label>` + `<input>` + `<FormMessage>` を内包、`CheckboxGroup` / `RadioGroup` で group state |
 | ProgressBar | Composite | label + value 表示 + track + fill の **複数 `<div>` / `<span>`** 構造 |
 | Modal / Toast / Popover | Composite | portal / focus trap / overlay |
 | Card / Tabs / Accordion / Pagination | Composite | 構造の組合せ + 状態管理 |
+| AppShell / TwoColumn / SplitPane | Composite (Layout) | 複数 slot (header / nav / main / aside 等) + レスポンシブ振る舞い |
 
 ### 禁則
 
@@ -302,7 +308,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 3. **`## カタログ`** — story への link list。**`<Story of={...} />` 埋め込みは禁止** (Catalog は story 側で完結させ、Guideline はリンクのみ)。複数 story がある場合は箇条書きで全 story を 1 行説明付きで列挙
 4. **`## 設計方針`** (任意) — why の箇条書き。how (具体値) は story が見せるので冗長にしない
 5. **`## 迷ったらこれ`** (任意) — quick-pick 表。複数候補から迷う場面が多い token (Color / Typography / Spacing 等) で有効
-6. **`## 関連`** (必須) — 他 token / AGENTS.md §3 / principles へのリンク
+6. **`## 関連`** (必須) — 他 token / AGENTS.md §3 / `design-system-strategy.md` 設計原則 へのリンク
 
 **書かない**:
 
@@ -363,7 +369,6 @@ Composite (Blocks) → components/composites/ComponentName/
 - コンポーネント本体に `@example` JSDoc を 2〜3 例
 - `forwardRef` で ref 透過
 - **styling は `tailwind-variants` (`tv`)** で variant マップを宣言的に保持 (`Button.tsx` の `buttonVariants` 参照)。文字列配列の組立て・object lookup は避ける
-- `@see principles/...` は **`.mdx` 拡張子で統一** (§9-1)
 
 ### 5-3. `.stories.tsx` の規約 — 標準ストーリー構造 (固定順序)
 
@@ -430,7 +435,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 **標準セクション** (上から順、5 セクション):
 
 1. **概要** — 1〜2 文で **「何のためのコンポーネントか / いつ使うか / いつ使わないか (代替コンポーネント名)」** を端的に書く。サブセクション禁止
-2. **Props** — `<ArgTypes of={ComponentStories.Playground} />` のみ。表の Description は `.tsx` JSDoc から autodocs が自動生成。関連 principles へのリンクを末尾に置く
+2. **Props** — `<ArgTypes of={ComponentStories.Playground} />` のみ。表の Description は `.tsx` JSDoc から autodocs が自動生成
 3. **Do / Don't** — 2 サブセクション:
    - `<DoDontExample>` を **3〜5 ペア配置**。重要な NG パターンも視覚カード化 (「色だけで意味」「横並び 4 個以上」など)
    - `### 別コンポーネントの方が適切な場面` — 「やろうとすること / 使うべき別コンポーネント / 理由」の表で他コンポーネントに誘導
@@ -454,8 +459,6 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - 使用例コードブロック (純粋な props 例) → Story と重複。ユースケース内の図解スニペットは可
 - 実装詳細 (使用トークン表 / Tailwind クラス一覧)
 - バージョン履歴 → `git log` で十分
-
-**principles へのリンクは `?path=` 形式** (§9-2)。
 
 参考実装: [`components/primitives/Button/Button.guideline.mdx`](./components/primitives/Button/Button.guideline.mdx)
 
@@ -489,7 +492,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 1. **配置判断** (§2): Primitive (`components/primitives/`) か Composite (`components/composites/`) か
 2. **雛形コピー**: [`components/primitives/Button/`](./components/primitives/Button/) を新コンポーネント名にリネームコピー
 3. **実装**: §5-2 規約に従って `.tsx`、§5-3 で `.stories.tsx`、§5-4 で `.guideline.mdx` を埋める
-4. **検証**: §5-5 チェックリスト + §10 検証フロー
+4. **検証**: §5-5 チェックリスト + §9 検証フロー
 
 ### 6-2. 新規追加時の依頼プロンプト例
 
@@ -499,8 +502,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 【参照ファイル】
 - components/primitives/Button/Button.{tsx,stories.tsx,guideline.mdx} — 規約のリファレンス実装
 - components/composites/Card/Card.tsx — Composite 実装パターン
-- AGENTS.md §3 トークン参照ルール / §5 コンポーネント実装規約
-- principles/ の関連ドキュメント
+- AGENTS.md §3 トークン参照ルール / §5 コンポーネント実装規約 / §8 アクセシビリティ前提
+- design-system-strategy.md 設計原則 (a11y / ヒエラルキー / レスポンシブ / 可読性 / UI ライティング)
 
 【作成するファイル】
 - components/{primitives|composites}/XXX/XXX.tsx
@@ -519,7 +522,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ### 7-1. 進める単位
 
-**1 コンポーネント = 1 PR / 1 commit**。Primitives → Composites の順 (依存方向)。1 PR で複数を触ると review/revert の単位が壊れる。破壊的変更 (story id の変更等) は [`CHANGELOG.md`](./CHANGELOG.md) の `[Unreleased]` に都度追記 (§11)。
+**1 コンポーネント = 1 PR / 1 commit**。Primitives → Composites の順 (依存方向)。1 PR で複数を触ると review/revert の単位が壊れる。破壊的変更 (story id の変更等) は [`CHANGELOG.md`](./CHANGELOG.md) の `[Unreleased]` に都度追記 (§10)。
 
 ### 7-2. 監査 (5 分)
 
@@ -545,7 +548,6 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **styling が文字列配列 / object lookup で書かれている** → `tailwind-variants` (`tv`) に移行 ([Button.tsx](./components/primitives/Button/Button.tsx) の `buttonVariants` 参照)
 - **hover/active overlay を variant ごとに当てたい** → `--color-state-*` semantic token を `shadow-[inset_0_0_0_9999px_var(--color-state-...)]` で重ねる (Material state layer 同等)。下地の variant 色を残したまま半透明オーバーレイ可能
 - **discriminated union がある場合** → `props as _InternalType` でキャストせず、discriminant で **render を 2 分岐** する (Button.tsx の `if (props.iconOnly) { ... } else { ... }` パターン)
-- **`@see principles/...` は `.mdx` 拡張子で統一** (§9-1)
 
 ### 7-4. `.stories.tsx` の書き直し
 
@@ -579,11 +581,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 # 1. 型チェック (新標準で型エラーゼロを保証)
 npx tsc --noEmit
 
-# 2. 壊れリンクチェック (§9-3)
-grep -rn "principles/[A-Za-z/_-]*\.md\b" components --include="*.tsx"
-grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
-
-# 3. Storybook 起動
+# 2. Storybook 起動
 npm run storybook
 ```
 
@@ -601,7 +599,7 @@ http://localhost:6006 で目視確認:
 ### 7-8. PR / コミットメッセージ
 
 - title: `refactor(<ComponentName>): 標準ストーリー構造へ移行`
-- body: 監査結果と判断 (省略した節とその理由 / 新規追加した節) + 破壊的変更があれば §11 に従って CHANGELOG `[Unreleased]` に追記
+- body: 監査結果と判断 (省略した節とその理由 / 新規追加した節) + 破壊的変更があれば §10 に従って CHANGELOG `[Unreleased]` に追記
 - 1 PR で複数コンポーネントは触らない
 
 ### 7-9. よくある詰まりどころ
@@ -619,70 +617,35 @@ http://localhost:6006 で目視確認:
 
 ## 8. アクセシビリティ前提
 
-- フォーカスリング: `focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-border-focus` を Primitive に標準装備
-- 最小タッチターゲット: 44x44px (WCAG 2.5.5 AAA)
-- セマンティック HTML: `<button>` / `<a>` / `<label>` を Primitive 内で適切に使用
-- aria 属性: 状態を持つコンポーネント (Tabs, Pagination, Switch 等) は aria-* を実装済み
-- 詳細は [`principles/Foundation/accessibility/overview.mdx`](./principles/Foundation/accessibility/overview.mdx) 参照
+WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に従い、**Level AA を最低目標** とする。設計判断の背景は [`design-system-strategy.md`](./design-system-strategy.md) の「設計原則」を参照。
+
+### 8-1. 基本前提
+
+- **フォーカスリング**: `focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-border-focus` を Primitive に標準装備。`outline: none` 単独は禁止 (フォーカスインジケータ削除 = WCAG 2.4.7 違反)
+- **最小タッチターゲット**: 44x44px (WCAG 2.5.5 AAA)、隣接要素との間隔 8px+
+- **セマンティック HTML**: `<button>` / `<a>` / `<label>` を Primitive 内で適切に使用
+- **aria 属性**: 状態を持つコンポーネント (Tabs, Pagination, Switch 等) は aria-* を実装済み
+- **ホバー依存禁止**: hover でしか出ない操作要素は作らない (タッチで操作不能)
+
+### 8-2. キーボード操作とフォーカス順序
+
+- すべてのインタラクティブ要素は **Tab / Shift+Tab / Enter / Space / Escape** で操作可能
+- `tabindex` は **0 または -1 のみ**。`1` 以上は予測不能のため禁止。視覚順序と DOM 順序を一致させ tabindex で順序制御しない
+- ↑↓←→ での内部移動: Tabs / Radio / Menu 等の同列要素を持つ composite で実装 (各 component States story で確認)
+- ヘッダーの大きいページでは「メインコンテンツへスキップ」を `<a href="#main">` で先頭に置く
+
+### 8-3. フォーカス管理
+
+- **インジケータ**: 2px outline / コントラスト比 3:1+ (WCAG 2.4.11)、全 focusable で統一
+- **トラップ (Modal)**: ネイティブ `<dialog>.showModal()` を使えばブラウザ標準でトラップ + Esc close + 閉じ後 trigger 復帰。自前 modal は同等の挙動を実装
+- **動的コンテンツ追加時**: 追加要素に focus 移動 (例: 検索結果リスト)
+- **動的コンテンツ削除時**: 削除アイテムの **論理的な次** (なければ前) に focus 移動。`<body>` 戻りを避ける
+- **ページ遷移時**: 先頭または `<main>` に focus を戻す
 
 ---
 
-## 9. principles リンク規約
 
-`.tsx` / `.guideline.mdx` から [`principles/`](./principles/) (デザイン原則) へ参照を貼る箇所は 2 つあり、それぞれ書き方を固定する。書き方を統一する目的は **grep で全リンクが拾えること** と **principles ファイル名変更時の追従コストを下げること**。
-
-### 9-1. `.tsx` JSDoc `@see` — リポ内パス形式
-
-```ts
-/**
- * @see principles/Interaction/button/priority.mdx
- * @see principles/Foundation/accessibility/touch-targets.mdx
- */
-```
-
-- 拡張子は **必ず `.mdx`** (実体ファイルがすべて `.mdx` のため、`.md` は壊れリンク)
-- リポルートからの **相対パス** で書く (IDE のジャンプは効かないが、grep で追える)
-- `@see` で参照したパスは autodocs の Props 表には出ない (`react-docgen-typescript` が `@see` を拾わないため)。読者向けのリンクは下記 `.guideline.mdx` 側で書く
-
-### 9-2. `.guideline.mdx` 関連リンク — `?path=` クエリ形式
-
-Storybook 内でクリック遷移できるリンクは、`?path=/docs/<storyId>--docs` 形式の URL クエリで書く。
-
-```mdx
-関連: [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)
-```
-
-**`<storyId>` の作り方** (principles 側 `<Meta title="..." />` の値を変換):
-
-1. title を取得: 例 `Principles/Foundation/Accessibility/Keyboard Navigation`
-2. すべて **小文字** に
-3. `/` と **半角空白** を `-` に置換
-4. → `principles-foundation-accessibility-keyboard-navigation`
-5. 末尾に `--docs` を付与
-
-**なぜ `?path=` 形式か**:
-
-- `@storybook/addon-links` の `<LinkTo>` でも同じ URL を生成するが、JSX 記法は MDX の中で冗長
-- 相対パス (`../../../principles/...mdx`) は Storybook docs iframe で 404 になる
-- principles 側で `title` を変えると壊れるが、`<LinkTo>` でも同じく壊れるため共通
-
-### 9-3. 壊れリンクのチェック
-
-PR を出す前に下記コマンドで全 `.md` 参照が残っていないことを確認する:
-
-```sh
-# .tsx 内の壊れリンク (実体は .mdx)
-grep -rn "principles/[A-Za-z/_-]*\.md\b" components --include="*.tsx"
-
-# .guideline.mdx 内の相対パス形式 (?path= 形式に統一されているべき)
-grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
-```
-
-両コマンドの出力が空であること。
-
----
-
-## 10. 検証フローと変更時に守ること
+## 9. 検証フローと変更時に守ること
 
 コンポーネント / トークン変更時の標準フロー:
 
@@ -698,15 +661,15 @@ grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
 - semantic 色を追加したら `tokens/build/variables.css` が自動生成されることを `npm run tokens:build` で確認
 - 依存している product 側のビルドが壊れないか、本リポを `npm link` または公開バージョン経由で確認
 - 戦略レベルの変更 (Parts/Blocks 分類の変更、新カテゴリ追加等) は [`design-system-strategy.md`](./design-system-strategy.md) も同 PR で更新
-- 破壊的変更を伴うときは §11 に従って [`CHANGELOG.md`](./CHANGELOG.md) `[Unreleased]` に追記
+- 破壊的変更を伴うときは §10 に従って [`CHANGELOG.md`](./CHANGELOG.md) `[Unreleased]` に追記
 
 ---
 
-## 11. Semver 規約
+## 10. Semver 規約
 
 本リポは [Semantic Versioning](https://semver.org/lang/ja/) に従い、変更は必ず [`CHANGELOG.md`](./CHANGELOG.md) に記録する。下流 product に **silent break (型では catch されない壊れ方)** を起こさないため、Tailwind class / Storybook URL / token CSS 変数の rename・削除も BREAKING として扱う。
 
-### 11-1. MAJOR / MINOR / PATCH の判定基準
+### 10-1. MAJOR / MINOR / PATCH の判定基準
 
 | 種別 | 例 |
 |---|---|
@@ -714,7 +677,7 @@ grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
 | **MINOR** (後方互換ある追加) | 新コンポーネント追加 / 既存コンポーネントに optional prop / 新 variant・size・color の追加 / 新 semantic token / 新 Tailwind ユーティリティ |
 | **PATCH** (修正・互換維持) | バグ修正 / a11y 修正で見た目同等 / 内部実装の refactor / Storybook story の追加・節内補強 (story id は維持) / docs/guideline 修正 |
 
-### 11-2. silent break 警告
+### 10-2. silent break 警告
 
 下記は **型で catch されない** ため、利用箇所を grep で機械的に洗い出せない:
 
@@ -725,12 +688,12 @@ grep -rn "(\.\./\.\./\.\./principles/" components --include="*.guideline.mdx"
 
 これらに該当する変更は、コミット時点で [`CHANGELOG.md`](./CHANGELOG.md) の **⚠ BREAKING CHANGES** に明記し、可能なら Migration notes に **置換用 sed コマンド or codemod 例** を添える。
 
-### 11-3. CHANGELOG 更新手順
+### 10-3. CHANGELOG 更新手順
 
 1. PR 単位で `[Unreleased]` セクションに追記 (`Added` / `Changed` / `Removed` / `Fixed` / `⚠ BREAKING CHANGES` のいずれかに振り分け)
 2. リリース時に `[Unreleased]` を `[x.y.z] - YYYY-MM-DD` に確定、`package.json` の `version` も同期
 3. 末尾のリンク参照を更新
 
-### 11-4. 0.x 期の運用
+### 10-4. 0.x 期の運用
 
 `0.x` の間は破壊的変更を MINOR (0.y bump) に含めて差し支えないが、CHANGELOG の **⚠ BREAKING CHANGES** には必ず明記する。1.0.0 以降は厳密に MAJOR bump とする。

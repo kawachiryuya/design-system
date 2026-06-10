@@ -31,8 +31,6 @@ import { Icon } from '../../primitives/Icon';
  *     onPageChange={setPage}
  *     maxVisible={5}
  *   />
- *
- * @see principles/README.mdx
  */
 export interface PaginationProps {
   /** 現在のページ番号（1 始まり）。 */

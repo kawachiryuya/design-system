@@ -2,7 +2,7 @@ import React from 'react';
 import { tv } from '../../_internal/tv';
 import { getIconDef, type IconRenderMode } from './iconRegistry';
 
-/** Icon のサイズ（principles/Typography/scale.mdx） */
+/** Icon のサイズ */
 export type IconSize = 'sm' | 'md' | 'lg' | 'xl';
 
 /** Icon のセマンティックカラー */
@@ -41,8 +41,6 @@ export type IconColor =
  * @example
  *   // カスタム SVG パス（fill 系、Material Icons 系）
  *   <Icon size="md" variant="fill"><path d="..." /></Icon>
- *
- * @see principles/Typography/scale.mdx
  */
 export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
   /**
@@ -77,7 +75,7 @@ export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
   children?: React.ReactNode;
 }
 
-/** サイズ → px 値のマップ（principles/Typography/scale.mdx）。SVG の width/height に直接渡す。 */
+/** サイズ → px 値のマップ。SVG の width/height に直接渡す。 */
 const sizePx = {
   sm:  20,
   md:  24,

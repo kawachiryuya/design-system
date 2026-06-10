@@ -6,7 +6,6 @@ import { tv } from '../../_internal/tv';
  *
  * h5 / h6 は h4 と視覚的差が小さく実利用も少ないため省略。
  * 階層がさらに深い場合は `as` で <h5>/<h6> タグを指定しつつ `variant="h4"` で見た目を共有する。
- * @see principles/Typography/scale.mdx
  */
 export type TypographyVariant =
   | 'display'
@@ -80,8 +79,6 @@ export type TypographyElement =
  *   <Typography variant="h4" truncate>
  *     {longTitle}
  *   </Typography>
- *
- * @see principles/Typography/scale.mdx
  */
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   /**

@@ -39,8 +39,6 @@ export type SearchBarSize = 'sm' | 'md' | 'lg';
  * @example
  *   // a11y: 用途固有の aria-label
  *   <SearchBar value={q} onChange={setQ} ariaLabel="商品名で検索" />
- *
- * @see principles/Patterns/forms.mdx
  */
 export interface SearchBarProps {
   /** 入力値（controlled）。 */

@@ -26,7 +26,6 @@
       "default": "./tokens/preset.cjs"
     },
     "./tokens/variables.css": "./tokens/build/variables.css",
-    "./principles/*": "./principles/*",
     "./AGENTS.md": "./AGENTS.md"
   },
   "files": [
@@ -34,7 +33,6 @@
     "tokens/preset.cjs",
     "tokens/build/variables.css",
     "tokens/build/tokens.json",
-    "principles",
     "AGENTS.md",
     "README.md"
   ],

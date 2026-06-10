@@ -5,7 +5,7 @@ design-system に追加すべき **layout primitive / composite** の API 設計
 - **Inventory source**: rail-demo `main` branch (2026-06-08 時点、design-system 0.5.1 追従済)
 - **対象画面**: 19 page + 1 shell layout
 - **準拠する規約**: [AGENTS.md §3-4](../AGENTS.md#3-4-spacing-層) / [layout token (`tokens/source/layout.json`)](../tokens/source/layout.json) (Container / Section / Grid utility が既に存在)
-- **関連**: [`principles/_ARCHIVE_NOTE.md`](../principles/_ARCHIVE_NOTE.md) (principles 凍結) / [rail-demo の利用箇所](https://github.com/kawachiryuya/rail-demo)
+- **関連**: [rail-demo の利用箇所](https://github.com/kawachiryuya/rail-demo)
 
 ---
 

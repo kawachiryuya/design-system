@@ -27,8 +27,6 @@ export type VisuallyHiddenElement = 'span' | 'div' | 'p' | 'label';
  *   <VisuallyHidden role="status" aria-live="polite">
  *     保存しました
  *   </VisuallyHidden>
- *
- * @see principles/Foundation/accessibility/screen-readers.mdx
  */
 export interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLElement> {
   /**

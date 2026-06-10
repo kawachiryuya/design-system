@@ -84,8 +84,6 @@ interface SelectNormalProps extends SelectBaseProps {
  *     <option value="free">Free</option>
  *     <option value="pro">Pro</option>
  *   </Select>
- *
- * @see principles/Patterns/forms.mdx
  */
 export type SelectProps =
   (SelectErrorProps | SelectNormalProps) &

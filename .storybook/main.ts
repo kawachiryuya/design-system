@@ -11,7 +11,6 @@ const config: StorybookConfig = {
   stories: [
     '../components/**/*.mdx',
     '../components/**/*.stories.@(ts|tsx)',
-    '../principles/**/*.mdx',
   ],
   addons: [
     '@storybook/addon-a11y',

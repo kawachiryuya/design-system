@@ -1,16 +1,51 @@
+
 # Changelog
 
 本プロジェクトの主要な変更点を記載する。フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に準拠し、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) に従う。
 
-判定基準は [AGENTS.md §11 Semver 規約](./AGENTS.md#11-semver-規約) を参照。
+判定基準は [AGENTS.md §10 Semver 規約](./AGENTS.md#10-semver-規約) を参照。
 
 ## [Unreleased]
+
+### Removed (breaking, npm export)
+
+- **`principles/` ディレクトリを物理削除し、`package.json` の `./principles/*` export と `files` 包含を撤去**: 0.5.0 で凍結された [`principles/`](./principles/) 59 ファイル ＋ `_ARCHIVE_NOTE.md` を全削除。SSoT を [`AGENTS.md`](./AGENTS.md) + `components/**/*.guideline.mdx` + [`design-system-strategy.md`](./design-system-strategy.md) の 3 階層に完全一本化し、二重管理状態を解消。
+  - **npm 影響**: `@kawachiryuya/design-system/principles/*` 形式の import path は使用不可に。consumer 1 号機 ([rail-demo](https://github.com/kawachiryuya/rail-demo)) は principles/ を import しておらず実害なし。他に consumer は存在しないため effective break なし
+  - **設計原則の核を SSoT に吸収**: 削除前に principles/ の (b)(c) 候補から「設計判断の核となる原則」を抽出して保存:
+    - [`design-system-strategy.md`](./design-system-strategy.md) に **設計原則セクション** を新設 — アクセシビリティ基本方針 (POUR / WCAG AA) / 視覚的ヒエラルキー (サイズ・色・余白・位置・太さ の 5 手段、3〜4 段超え禁止) / レスポンシブ (モバイルファースト、コンテンツ削除禁止、44px タッチ) / テキスト可読性 (行長 25〜35 文字、行間 1.5+、左揃え、200% ズーム対応) / UI ライティング (ボイス 4 軸、ダークパターン禁止、能動態)
+    - [`AGENTS.md §8`](./AGENTS.md) を拡充 — §8-1 基本前提 / §8-2 キーボード操作 (tabindex は 0/-1 のみ、スキップリンク) / §8-3 フォーカス管理 (インジケータ、Modal トラップ、動的コンテンツ時の focus 移動)
+  - **救済しなかったもの**: button/priority (Button.guideline.mdx 完全カバー) / interactive-states (AGENTS.md §5-3 + 各 component States story カバー) / iconography overview (Icon.guideline.mdx カバー) / grid (Breakpoints.guideline.mdx カバー) / その他冗長な例示・チェックリスト
+
+### Removed (breaking, AGENTS.md sections)
+
+- **`AGENTS.md §9 principles リンク規約` を削除し §10/§11 を §9/§10 にリナンバー**: §9 (旧「principles リンク規約」、`@see principles/...` 形式と `?path=` クエリ形式の 2 種類の参照規約) は参照先 principles/ ごと不要になったため削除。後続セクションを 1 段繰り上げ。
+  - **CHANGELOG / AGENTS.md 内のクロス参照** (§10 / §11 → §9 / §10、`#10-` / `#11-` アンカー含む) を全件更新
+
+### Changed
+
+- **`.tsx` JSDoc から `@see principles/...` 行を全削除** (36 件、22 ファイル): SSoT が `.guideline.mdx` 側に集約されているため、JSDoc から原則へのリンクを廃止。各 component の Storybook Docs (`.guideline.mdx`) から `design-system-strategy.md` 設計原則 + AGENTS.md §8 a11y 規約 を参照する流れに統一
+- **`.storybook/main.ts` の stories 配列から `'../principles/**/*.mdx'` を削除**: Storybook サイドバーから "Principles" 系セクションが消える
+- **[`README.md`](./README.md)** のディレクトリツリー説明と「ドキュメントの読む順」リストから principles/ 行を削除し、`design-system-strategy.md` (設計原則を含む) → `AGENTS.md` → `components/**/*.guideline.mdx` の 3 段構成として案内
+- **[`design-system-strategy.md`](./design-system-strategy.md)** の §本リポでの実装対応 表で「設計原則ドキュメント」行を「本ファイル設計原則 + AGENTS.md §8 + 各 `.guideline.mdx`」に更新
+- **[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md)** から `principles/_ARCHIVE_NOTE.md` 参照を削除
+- **[`components/primitives/Icon/Icon.tsx`](./components/primitives/Icon/Icon.tsx)** の JSDoc inline コメントから `（principles/Typography/scale.mdx）` 参照を削除
+
+### Changed (docs accuracy / structure cleanup)
+
+- **コンポーネント数を全 docs で実数に正確化**: README.md / design-system-strategy.md / components/Introduction.mdx で primitives を 11〜13 → **16 個** (Layout primitive `Center` / `Stack` / `Cluster` 含む)、composites を 19〜21 → **23 個** (Layout composite `AppShell` / `TwoColumn` / `SplitPane` 含む)。README.md で composites に誤分類されていた Badge を primitives に修正。README.md のファイル構成記述で `.md` → `.guideline.mdx` を更新
+- **AGENTS.md §2 に Layout コンポーネント分類を追加**: Primitive vs Composite 判定表に「Center / Stack / Cluster → Primitive (Layout)」「AppShell / TwoColumn / SplitPane → Composite (Layout)」行を追加。用途別マッピングに「要素の縦/横/中央並び」「ページ全体の骨格」「2 カラム」「領域分割」の 6 エントリを追加し、新規読者が Layout 系コンポーネントの存在と分類を把握できる状態に
+- **design-system-strategy.md の構築ステップを依存方向図に簡潔化**: 旧 5 段の procedural 記述を `Token → Parts → Blocks → Layout → Organism` の 1 図に圧縮し、各ステップの実装実績は「進捗状況」セクションに集約 (旧構造では計画と実績が並列で重複していた)。Step 4 (Layout) を「未着手」→「完了 (Phase A/B)」に、Step 1 タイポグラフィ semantic 完了も反映
+- **design-system-strategy.md ディレクトリ構成 diagram に命名読み替え注釈を追加**: `parts` / `blocks` (戦略上の概念名) と `primitives` / `composites` (本リポ実装名) の対応を diagram 直下で 1 文補足
+- **design-system-strategy.md の「命名について」独立節を削除**: 「Parts (実装上は `primitives`)」「Blocks (実装上は `composites`)」を Atomic Design 2 層構成表の初出セルに inline 化し、独立節を削除
+- **design-system-strategy.md「demo/」historical 言及を整理**: 「旧 `demo/` を分離」の歴史的注釈を削除し、`rail-demo` を「本 DS を npm 消費する dogfood consumer」と簡潔に説明
+- **README.md コンポーネント一覧を rot 防止の pointer 形式に置換**: 16 / 23 個の名前列挙を削除し、`components/primitives/` / `components/composites/` ディレクトリリンク + Storybook サイドバー案内に置換 (今後コンポーネント追加で再 rot しない)
+- **Introduction.mdx「アクセシビリティへの取り組み」を AGENTS.md §8 拡充内容に整合**: WCAG 2.1 POUR 原則 / Level AA / `tabindex` 規約 / フォーカス管理 (Modal trap、動的コンテンツ時の focus 移動) / 44px タッチターゲット / ホバー依存禁止 を追記
 
 ## [1.0.0] - 2026-06-10
 
 **Stable release**: Phase A (Center / Stack / Cluster) + Phase B (AppShell / TwoColumn / SplitPane) の Layout layer 完成と全 dogfood (rail-demo PR #3〜#9) を経て **MAJOR 昇格**。Storybook 標準ストーリー構造 + guideline 完備 + npm publish 済みの状態で API 安定宣言。
 
-過去の累積 breaking changes (`0.5.0` の Surface layer 階層化 / state token 命名 / Primitive color rename / 各 component の size 廃止 等) はすべて含まれた状態の API 安定版。以降、API の breaking change は厳密に MAJOR bump とする ([AGENTS.md §11-4](./AGENTS.md#11-4-0x-期の運用))。
+過去の累積 breaking changes (`0.5.0` の Surface layer 階層化 / state token 命名 / Primitive color rename / 各 component の size 廃止 等) はすべて含まれた状態の API 安定版。以降、API の breaking change は厳密に MAJOR bump とする ([AGENTS.md §10-4](./AGENTS.md#10-4-0x-期の運用))。
 
 ### Fixed
 
@@ -266,7 +301,7 @@ Token / Tailwind preset の silent bug 多数解消 + 全 Composite および主
 - Badge.tsx を [`tailwind-variants`](https://www.tailwind-variants.org/) ベースに refactor。6 variant × 3 appearance の 18 組合せを `compoundVariants` で宣言的に保持。スタイル指定の重複を解消
 - Badge.stories.tsx を標準ストーリー構造 (Playground / Variants / Sizes / EdgeCases) に再構成。`tags: ['autodocs']` 削除、`argTypes` の description を JSDoc に集約、play test で `<span>` レンダリングを検証。States / WithIcon は省略 (Badge は非 interactive で状態なし / icon prop なし)
 - Badge.tsx の JSDoc 表記を "Atomic Design: Atom" → "Primitive: 単一 `<span>` 装飾、状態なし" に修正
-- [`AGENTS.md`](./AGENTS.md) を再構成 — §5 (旧「新規追加時の規約」147 行) と §10 (旧「既存移行手順」148 行) で重複していた **規約本体 (4 ファイル構成 / 標準 7 節 / Guideline 5 節 / DoDontExample / 完了条件)** を §5「コンポーネント実装規約 (新規・既存共通)」に集約し SSoT 化。§6 (新規追加) / §7 (既存移行) は §5 への delta + 手順だけに薄くした。旧 §7 検証フロー + §8 変更時に守ること は §10 に統合。`States` 節の必須要件を「状態を持つ component で必須、非 interactive (Badge / Skeleton / Spinner / Divider / VisuallyHidden) は省略可」と明文化 (既成事実だった運用を規約化)。外部参照は §3 (`Badge.tsx`) と §11 (`CHANGELOG.md`) のみで、両者とも番号変わらず無影響
+- [`AGENTS.md`](./AGENTS.md) を再構成 — §5 (旧「新規追加時の規約」147 行) と §9 (旧「既存移行手順」148 行) で重複していた **規約本体 (4 ファイル構成 / 標準 7 節 / Guideline 5 節 / DoDontExample / 完了条件)** を §5「コンポーネント実装規約 (新規・既存共通)」に集約し SSoT 化。§6 (新規追加) / §7 (既存移行) は §5 への delta + 手順だけに薄くした。旧 §7 検証フロー + §8 変更時に守ること は §9 に統合。`States` 節の必須要件を「状態を持つ component で必須、非 interactive (Badge / Skeleton / Spinner / Divider / VisuallyHidden) は省略可」と明文化 (既成事実だった運用を規約化)。外部参照は §3 (`Badge.tsx`) と §10 (`CHANGELOG.md`) のみで、両者とも番号変わらず無影響
 - [`AGENTS.md`](./AGENTS.md) §3 に **「semantic token を定義するときの規約」** を新設。3-1 必ず primitive 参照 (生 hex 禁止) / 3-2 透過オーバーレイは `color-mix()` で primitive と連動 / 3-3 `primary.25` は `bg.default` 専用 — の 3 ルールを明文化 (今回の M1 / H2 / primary.25 新設で固めた規約の SSoT 化)
 - [`AGENTS.md`](./AGENTS.md) §3 に **「サイズスケール内の `md = default` 規約」** を新設。`radius` / `shadow` のように size label 持つカテゴリは preset 側で `DEFAULT: md` をエイリアス宣言する設計方針を明文化。`font-size` の `base` 維持 (Tailwind 慣習) など非対象も列挙
 - `bg.default` の値定義を 生 hex `#F5F7F5` から `{color.primary.25}` への参照に変更 (M1)。値は不変、構造のみ統一 (semantic は全 primitive 経由になる)
@@ -363,8 +398,8 @@ find . -type f \( -name "*.ts" -o -name "*.tsx" \) \
 
 ### Added
 
-- [`AGENTS.md`](./AGENTS.md) §10 — 既存コンポーネントの標準ストーリー移行手順 (Button を雛形にした段階手順)
-- [`AGENTS.md`](./AGENTS.md) §11 — Semver 規約 (本リリースで追加)
+- [`AGENTS.md`](./AGENTS.md) §9 — 既存コンポーネントの標準ストーリー移行手順 (Button を雛形にした段階手順)
+- [`AGENTS.md`](./AGENTS.md) §10 — Semver 規約 (本リリースで追加)
 - 本 `CHANGELOG.md`
 - Icon の iconRegistry を Library story として独立
 - `.storybook/blocks/` に Caption helper を切り出し (Story 間共有)

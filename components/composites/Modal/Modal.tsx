@@ -106,7 +106,7 @@ const sizeStyles: Record<ModalSize, string> = {
  *
  * @see ModalProps for usage examples.
  */
-const ModalRoot: React.FC<ModalProps> = ({
+const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
   open,
   onClose,
   title,
@@ -117,9 +117,16 @@ const ModalRoot: React.FC<ModalProps> = ({
   className = '',
   children,
   ...rest
-}) => {
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
+}, ref) => {
+  const dialogRef = React.useRef<HTMLDialogElement | null>(null);
   const titleId = React.useId();
+
+  // 外部 ref と内部 dialogRef の両方へ代入する callback ref (open 同期 / overlay 判定で内部 ref が必要)。
+  const setDialogRef = React.useCallback((node: HTMLDialogElement | null) => {
+    dialogRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) ref.current = node;
+  }, [ref]);
 
   React.useEffect(() => {
     const dialog = dialogRef.current;
@@ -129,6 +136,19 @@ const ModalRoot: React.FC<ModalProps> = ({
     } else if (!open && dialog.open) {
       dialog.close();
     }
+  }, [open]);
+
+  // 背景スクロールロック。native `<dialog>.showModal()` は背後ページのホイール/スワイプ
+  // スクロールを止めないため、開いている間だけ body の overflow を hidden にする。
+  // CSS (`.storybook/tailwind.css`) は consumer に出荷されないので JS 側で制御する。
+  // 従前値を save/restore するため、ネストした複数 Modal でも cleanup の LIFO 順で正しく復元される。
+  React.useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
 
   const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
@@ -145,7 +165,7 @@ const ModalRoot: React.FC<ModalProps> = ({
 
   return (
     <dialog
-      ref={dialogRef}
+      ref={setDialogRef}
       onCancel={handleCancel}
       onClick={handleClick}
       aria-labelledby={ariaLabelledBy}
@@ -182,7 +202,7 @@ const ModalRoot: React.FC<ModalProps> = ({
       {children}
     </dialog>
   );
-};
+});
 
 ModalRoot.displayName = 'Modal';
 

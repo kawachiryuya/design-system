@@ -38,7 +38,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | 中央配置 | `<Center>` | 縦横中央、内側コンテナ用 |
 | ページ全体の骨格 (header / nav / content / footer) | `<AppShell>` | sticky header + bottom nav + body slot 構造 |
 | 左右 2 カラム (main / aside) | `<TwoColumn>` | レスポンシブで縦スタックに切替 |
-| 上下 / 左右の領域分割 | `<SplitPane>` | resizable / fixed-ratio の分割 |
+| 左右の領域分割 (master-detail) | `<SplitPane>` | 固定幅 list pane + 流動 detail pane。リサイズ機能はなし (`listWidth` で固定幅指定) |
 
 ### Primitive vs Composite
 
@@ -367,7 +367,7 @@ Composite (Blocks) → components/composites/ComponentName/
 - **Props の説明は `.tsx` JSDoc が唯一の情報源**。`.stories.tsx` の `argTypes` 側に `description` を書くと JSDoc を上書きしてしまうので書かない
 - ネイティブ HTML 属性 (`disabled` 等、`React.ButtonHTMLAttributes` 等から継承) は **再宣言して JSDoc を上書き** する (React の型には JSDoc が付いておらず Props 表で Description 空欄になる回避)
 - コンポーネント本体に `@example` JSDoc を 2〜3 例
-- `forwardRef` で ref 透過
+- **`forwardRef` で ref 透過**: primitive は必須 (単一 HTML 要素なので ref 先が自明)。composite は **ref を当てる対象要素が明確な場合のみ**実装する (例: `Modal`→`<dialog>`、`SearchBar`→`<input>`)。対象が曖昧な複合レイアウト系 (AppShell / TwoColumn 等) は無理に付けず `React.FC` のままでよい
 - **styling は `tailwind-variants` (`tv`)** で variant マップを宣言的に保持 (`Button.tsx` の `buttonVariants` 参照)。文字列配列の組立て・object lookup は避ける
 
 ### 5-3. `.stories.tsx` の規約 — 標準ストーリー構造 (固定順序)
@@ -479,7 +479,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - [ ] Do/Don't プレビューが **本物のコンポーネント** で描画されている (画像でない)
 - [ ] 色・余白が semantic Tokens (`bg-surface` `text-onSurface` 等) 参照になっている
 - [ ] `npx tsc --noEmit` がクリーン
-- [ ] §9-3 の壊れリンクチェックが空
+- [ ] §9-3 の壊れリンクチェック (`npm run check:links`) がパスする
 
 ---
 
@@ -662,6 +662,15 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 - 依存している product 側のビルドが壊れないか、本リポを `npm link` または公開バージョン経由で確認
 - 戦略レベルの変更 (Parts/Blocks 分類の変更、新カテゴリ追加等) は [`design-system-strategy.md`](./design-system-strategy.md) も同 PR で更新
 - 破壊的変更を伴うときは §10 に従って [`CHANGELOG.md`](./CHANGELOG.md) `[Unreleased]` に追記
+
+### 9-3. 壊れリンクチェック
+
+`.guideline.mdx` / `.mdx` から張る Storybook 内リンク (`?path=/docs/<id>--<name>`) の参照先ページが実在するかを機械チェックする。`?path=` は型では catch されない silent break (§10-2) の典型。
+
+- 実行: `npm run check:links` ([`scripts/check-links.mjs`](./scripts/check-links.mjs))
+- 仕組み: 全 `*.stories.tsx` の `title:` と `*.mdx` の `<Meta title=... />` / `<Meta of={...} name=... />` から既知ページ ID 集合を構築し、`.mdx` 内の `?path=/docs/...` 参照を照合。未定義 ID があれば exit 1。
+- CI ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) の `pull_request` / `push:main` で自動実行する。
+- 参照先のページ (story id) を rename / 削除したら、リンク側も同 PR で追従する。
 
 ---
 

@@ -2,7 +2,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Introduction" />
 
-<div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '720px', margin: '0 auto', padding: '40px 24px', color: '#171717' }}>
+<div style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', maxWidth: '720px', margin: '0 auto', padding: '40px 24px', color: 'var(--color-neutral-900)' }}>
 
 # Design System
 
@@ -10,31 +10,41 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ---
 
+## 読む人別の入口
+
+初めて見る方は、自分のロールの行から読み始めてください。
+
+- **PM / ディレクター**：まず [Primitives 一覧](?path=/docs/primitives-overview--docs) でどんな部品が揃っているかを把握。呼び名 (Primitives / Composites) は下の「設計思想：Parts / Blocks と依存ルール」を参照。サイドバーの **Primitives** / **Composites** カテゴリが全コンポーネントの一覧です。
+- **デザイナー**：[Tokens](?path=/docs/tokens-overview--docs) で色・タイポグラフィ・余白の設計値を確認し、各コンポーネントの **Guideline** ([例: Button](?path=/docs/primitives-button--guideline)) の Do / Don't で「いつ使う / 使わない」を掴む。
+- **エンジニア**：下の「Product 側で使う際の setup」で導入手順を、「設計思想：Parts / Blocks と依存ルール」で import 制約を確認。実装規約の詳細はリポジトリ直下の `AGENTS.md`。
+
+---
+
 ## このStorybookの構成
 
 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
   <thead>
-    <tr style={{ borderBottom: '2px solid #E5E5E5' }}>
-      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600, width: '140px' }}>カテゴリ</th>
-      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600 }}>内容</th>
+    <tr style={{ borderBottom: '2px solid var(--color-neutral-200)' }}>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--color-neutral-600)', fontWeight: 600, width: '140px' }}>カテゴリ</th>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--color-neutral-600)', fontWeight: 600 }}>内容</th>
     </tr>
   </thead>
   <tbody>
-    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+    <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Tokens</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>カラー・タイポグラフィ・スペーシング・シャドウ・角丸・アニメーションのデザイントークン可視化</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>カラー・タイポグラフィ・スペーシング・シャドウ・角丸・アニメーションのデザイントークン可視化</td>
     </tr>
-    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+    <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Primitives</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Button・Input・Badge・Label・VisuallyHidden・Stack・Cluster など、単一HTML要素のラッパーまたは Layout primitive（16コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Button・Input・Badge・Label・VisuallyHidden・Stack・Cluster など、単一HTML要素のラッパーまたは Layout primitive（16コンポーネント）</td>
     </tr>
-    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+    <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Composites</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>Card・Tabs・Modal・Toast・CheckboxGroup・AppShell・TwoColumn など、複数要素を組み合わせた複合コンポーネント（23コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Card・Tabs・Modal・Toast・CheckboxGroup・AppShell・TwoColumn など、複数要素を組み合わせた複合コンポーネント（23コンポーネント）</td>
     </tr>
     <tr>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>[Product名]</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>プロダクト固有のコンポーネント（別リポジトリで管理）</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>プロダクト固有のコンポーネント（別リポジトリで管理）</td>
     </tr>
   </tbody>
 </table>
@@ -152,32 +162,32 @@ module.exports = {
 
 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
   <thead>
-    <tr style={{ borderBottom: '2px solid #E5E5E5' }}>
-      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600, width: '120px' }}>タブ</th>
-      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600 }}>概要</th>
-      <th style={{ textAlign: 'left', padding: '10px 12px', color: '#525252', fontWeight: 600, width: '140px' }}>誰が使うか</th>
+    <tr style={{ borderBottom: '2px solid var(--color-neutral-200)' }}>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--color-neutral-600)', fontWeight: 600, width: '120px' }}>タブ</th>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--color-neutral-600)', fontWeight: 600 }}>概要</th>
+      <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--color-neutral-600)', fontWeight: 600, width: '140px' }}>誰が使うか</th>
     </tr>
   </thead>
   <tbody>
-    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+    <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Controls</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>props（色・サイズ・状態など）をリアルタイムに切り替えて見た目を確認できる</td>
-      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>デザイナー・PM・エンジニア</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>props（色・サイズ・状態など）をリアルタイムに切り替えて見た目を確認できる</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-500)', fontSize: '13px' }}>デザイナー・PM・エンジニア</td>
     </tr>
-    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+    <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Actions</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>ボタンクリックや入力変更などのイベント発火ログを表示する</td>
-      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>主にエンジニア</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>ボタンクリックや入力変更などのイベント発火ログを表示する</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-500)', fontSize: '13px' }}>主にエンジニア</td>
     </tr>
-    <tr style={{ borderBottom: '1px solid #F5F5F5' }}>
+    <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Interactions</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>操作テスト（クリック→状態変化など）をステップごとに自動実行し、結果を表示する。全ステップが緑なら「正常に動作している」と判断できる</td>
-      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>全員</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>操作テスト（クリック→状態変化など）をステップごとに自動実行し、結果を表示する。全ステップが緑なら「正常に動作している」と判断できる</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-500)', fontSize: '13px' }}>全員</td>
     </tr>
     <tr>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Accessibility</td>
-      <td style={{ padding: '10px 12px', color: '#525252' }}>axe-core によるアクセシビリティ自動検証。コントラスト不足や ARIA 属性の漏れを検出する</td>
-      <td style={{ padding: '10px 12px', color: '#737373', fontSize: '13px' }}>全員</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>axe-core によるアクセシビリティ自動検証。コントラスト不足や ARIA 属性の漏れを検出する</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-500)', fontSize: '13px' }}>全員</td>
     </tr>
   </tbody>
 </table>

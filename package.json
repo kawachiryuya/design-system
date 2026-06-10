@@ -1,7 +1,7 @@
 {
   "name": "@kawachiryuya/design-system",
   "version": "1.1.0",
-  "description": "Storybook を Single Source of Truth とする React コンポーネントライブラリ — Parts (primitives) / Blocks (composites) と semantic トークン",
+  "description": "Storybook を Single Source of Truth とする React コンポーネントライブラリ — Primitives / Composites の 2 層と semantic トークン",
   "type": "module",
   "license": "UNLICENSED",
   "repository": {
@@ -50,6 +50,8 @@
     "tokens:build": "style-dictionary build --config style-dictionary.config.js",
     "tokens:watch": "style-dictionary build --config style-dictionary.config.js --watch",
     "tokens:typecheck": "tsc -p tsconfig.tokens.json",
+    "typecheck": "tsc --noEmit",
+    "check:links": "node scripts/check-links.mjs",
     "build": "npm run tokens:build && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build",
     "prestorybook": "npm run tokens:build",

@@ -24,10 +24,14 @@ export interface TabItem {
  *
  * a11y 完全対応のタブナビゲーション。`role="tablist"` / `role="tab"` / `role="tabpanel"` 自動付与。
  *
- * **キーボード操作**:
- * - `←` `→` `↑` `↓` 矢印キー: 隣のタブへ移動（disabled をスキップ）
- * - `Home` `End`: 最初/最後のタブへ
- * - `Enter` `Space`: タブ選択
+ * **キーボード操作 (automatic activation)**:
+ * - `←` `→` `↑` `↓` 矢印キー: 隣のタブへ移動 = **即時選択**（disabled をスキップ）
+ * - `Home` `End`: 最初/最後のタブへ（即時選択）
+ * - `Enter` `Space`: フォーカス中のタブを選択
+ *
+ * > 矢印キー移動で即座にパネルが切り替わる (automatic activation)。パネルが遅延ロード / 通信を伴う
+ * > 場合、矢印キー連打のたびに fetch が走るため不向き。将来的に
+ * > `activationMode?: 'automatic' | 'manual'` の opt-in を検討 (現状は automatic 固定)。
  *
  * **controlled vs uncontrolled**:
  * - `activeId` を渡すと controlled モード（`onChange` で外部が状態管理）
@@ -103,7 +107,15 @@ export const Tabs: React.FC<TabsProps> = ({
   const uid = useId();
   const isControlled = controlledId !== undefined;
   const [internalId, setInternalId] = useState(defaultActiveId ?? tabs[0]?.id);
-  const currentId = isControlled ? controlledId : internalId;
+  const rawCurrentId = isControlled ? controlledId : internalId;
+  // activeId が tabs に存在しないと全 panel が非表示になるため tabs[0] にフォールバックする。
+  const currentId = tabs.some((t) => t.id === rawCurrentId) ? rawCurrentId : tabs[0]?.id;
+
+  if (process.env.NODE_ENV !== 'production' && rawCurrentId !== undefined && rawCurrentId !== currentId) {
+    console.warn(
+      `[Tabs] activeId "${rawCurrentId}" は tabs に存在しません。tabs[0] ("${tabs[0]?.id}") にフォールバックします。`
+    );
+  }
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -157,8 +169,6 @@ export const Tabs: React.FC<TabsProps> = ({
     ].join(' ');
   };
 
-  const currentContent = tabs.find((t) => t.id === currentId)?.content;
-
   return (
     <div className={['w-full', className].join(' ')}>
       {/* タブリスト */}
@@ -176,7 +186,6 @@ export const Tabs: React.FC<TabsProps> = ({
               id={`${uid}-tab-${tab.id}`}
               aria-controls={`${uid}-panel-${tab.id}`}
               aria-selected={tab.id === currentId}
-              aria-disabled={tab.disabled}
               tabIndex={tab.id === currentId ? 0 : -1}
               disabled={tab.disabled}
               className={tabButtonClass(tab)}
@@ -207,7 +216,7 @@ export const Tabs: React.FC<TabsProps> = ({
           tabIndex={0}
           className="focus:outline-none pt-4"
         >
-          {tab.id === currentId && currentContent}
+          {tab.id === currentId && tab.content}
         </div>
       ))}
     </div>

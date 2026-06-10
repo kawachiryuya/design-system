@@ -130,7 +130,8 @@ const { showToast } = useToast();
 - **close ボタン**: `<VisuallyHidden>` で「閉じる」を SR 用テキストで付与
 - **focus 管理**: 自動消滅 / overlay ではないため focus trap なし。トリガー (button 等) の focus はそのまま
 - **キーボード操作**: close ボタンに Tab で focus 可、Enter / Space で発火
-- **autohide の停止**: pause-on-hover は実装未対応 (将来検討)。長文 / 重要な情報は duration=0 で手動 close へ
+- **autohide の一時停止 (WCAG 2.2.1)**: hover / focus 中は自動消滅タイマーを停止し、離脱で残り時間から再開する。読んでいる / 操作しようとしている途中に消えない
+- **action 付きは無期限 + 明示 close**: `action` を持つ Toast は到達性 (キーボード / SR ユーザーが操作ボタンへ届く時間) のため自動消滅を無期限化する。明示 `duration` を渡しても最低 10000ms にクランプされる。確実に伝えたい / 操作させたい場合は close ボタンでの明示クローズを基本とする
 - **動画 / 強い色変化を避ける**: 視覚に敏感なユーザーへの配慮
 
 ---

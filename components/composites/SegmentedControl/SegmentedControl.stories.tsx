@@ -30,7 +30,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'click でセグメントが切り替わり onChange が呼ばれることを play test で保証。',
+        story: 'click / 矢印キーでセグメントが切り替わり onChange が呼ばれること、radiogroup の role/aria-checked を play test で保証。',
       },
     },
   },
@@ -57,9 +57,14 @@ export const Playground: Story = {
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const inactiveBtn = canvas.getByRole('button', { name: '無効' });
-    await userEvent.click(inactiveBtn);
+    const inactive = canvas.getByRole('radio', { name: '無効' });
+    await userEvent.click(inactive);
     await expect(args.onChange).toHaveBeenCalledWith('inactive');
+    await expect(inactive).toHaveAttribute('aria-checked', 'true');
+
+    // roving tabindex + 矢印キー: 末尾 (無効) から ArrowRight でラップして先頭 (すべて) を選択
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(args.onChange).toHaveBeenCalledWith('all');
   },
 };
 

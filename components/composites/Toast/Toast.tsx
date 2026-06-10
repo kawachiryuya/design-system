@@ -49,7 +49,8 @@ export interface ToastProps extends ToastContent {
    */
   position?: ToastPosition;
   /**
-   * 自動消滅までの ms。`0` で無期限。
+   * 自動消滅までの ms。`0` で無期限。**`action` がある場合は到達性のため自動消滅を無期限化**し、
+   * 明示指定しても最低 10000ms にクランプする (WCAG 2.2.1)。hover / focus 中は一時停止する。
    * @default 5000
    */
   duration?: number;
@@ -113,14 +114,74 @@ const positionStyles: Record<ToastPosition, string> = {
 };
 
 /**
+ * 実効 duration を解決する。`action` 付き Toast は SR / キーボードユーザーが操作ボタンへ
+ * 到達するのに時間が要るため自動消滅を抑制する: 未指定 (または 0 以下) は無期限、明示指定でも
+ * 最低 10 秒を保証する。`action` なしは従来どおり `raw ?? fallback`。
+ */
+function resolveDuration(raw: number | undefined, hasAction: boolean, fallback: number): number {
+  if (hasAction) {
+    return raw === undefined || raw <= 0 ? 0 : Math.max(raw, 10000);
+  }
+  return raw ?? fallback;
+}
+
+/**
+ * 自動消滅タイマー。`duration <= 0` で無効。
+ * hover / focus 中は `pause()` で停止し、離脱時の `resume()` で**残り時間から**再開する
+ * (WCAG 2.2.1 Timing Adjustable: 読んでいる / 操作しようとしている途中に消えない)。
+ */
+function useAutoDismiss(duration: number, onClose: () => void) {
+  const onCloseRef = React.useRef(onClose);
+  onCloseRef.current = onClose;
+  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const remainingRef = React.useRef(duration);
+  const startedAtRef = React.useRef(0);
+
+  const clear = React.useCallback(() => {
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const run = React.useCallback(() => {
+    clear();
+    if (remainingRef.current <= 0) return;
+    startedAtRef.current = Date.now();
+    timerRef.current = setTimeout(() => onCloseRef.current(), remainingRef.current);
+  }, [clear]);
+
+  const pause = React.useCallback(() => {
+    if (timerRef.current === null) return;
+    clear();
+    remainingRef.current -= Date.now() - startedAtRef.current;
+  }, [clear]);
+
+  React.useEffect(() => {
+    remainingRef.current = duration;
+    run();
+    return clear;
+  }, [duration, run, clear]);
+
+  return { pause, resume: run };
+}
+
+/**
  * Toast 本体の見た目だけを描画する内部コンポーネント。Provider と単発 API 両方で使う。
  */
-const ToastBody: React.FC<ToastContent & { onClose?: () => void }> = ({
+const ToastBody: React.FC<ToastContent & {
+  onClose?: () => void;
+  /** hover / focus 中に自動消滅タイマーを止める / 再開するハンドラ (`useAutoDismiss` と連動)。 */
+  onPause?: () => void;
+  onResume?: () => void;
+}> = ({
   variant = 'info',
   title,
   description,
   action,
   onClose,
+  onPause,
+  onResume,
 }) => {
   const config = variantConfig[variant];
   return (
@@ -128,6 +189,10 @@ const ToastBody: React.FC<ToastContent & { onClose?: () => void }> = ({
       role={config.role}
       aria-live={config.ariaLive}
       aria-atomic="true"
+      onMouseEnter={onPause}
+      onMouseLeave={onResume}
+      onFocus={onPause}
+      onBlur={onResume}
       className={[
         'relative flex gap-3 rounded-md p-4 shadow-md min-w-[20rem] max-w-[28rem]',
         onClose ? 'pr-12' : '',
@@ -186,20 +251,18 @@ export const Toast: React.FC<ToastProps> = ({
   open,
   onClose,
   position = 'bottom-right',
-  duration = 5000,
+  duration,
   ...content
 }) => {
-  React.useEffect(() => {
-    if (!open || duration <= 0) return;
-    const t = setTimeout(onClose, duration);
-    return () => clearTimeout(t);
-  }, [open, duration, onClose]);
+  const effectiveDuration = resolveDuration(duration, !!content.action, 5000);
+  // 閉じている間はタイマーを動かさない (duration <= 0 で useAutoDismiss が no-op)。
+  const { pause, resume } = useAutoDismiss(open ? effectiveDuration : 0, onClose);
 
   if (!open) return null;
 
   return (
     <div className={['fixed z-toast', positionStyles[position]].join(' ')}>
-      <ToastBody {...content} onClose={onClose} />
+      <ToastBody {...content} onClose={onClose} onPause={pause} onResume={resume} />
     </div>
   );
 };
@@ -219,6 +282,8 @@ interface ToastContextValue {
   /**
    * Toast を表示する。返り値の id で個別に dismiss 可能。
    * `duration` 省略時は Provider のデフォルト (5000ms)。
+   * `action` 付きの場合は到達性のため自動消滅を無期限化する (明示 `duration` も最低 10000ms にクランプ)。
+   * hover / focus 中は自動消滅を一時停止する。
    */
   showToast: (content: ToastContent & { duration?: number }) => string;
   /** 指定 id の Toast を即座に閉じる。 */
@@ -280,7 +345,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
     (content: ToastContent & { duration?: number }) => {
       counterRef.current += 1;
       const id = `toast-${counterRef.current}`;
-      const duration = content.duration ?? defaultDuration;
+      const duration = resolveDuration(content.duration, !!content.action, defaultDuration);
       setToasts((prev) => {
         const next = [...prev, { ...content, id, duration }];
         return next.length > maxToasts ? next.slice(next.length - maxToasts) : next;
@@ -313,13 +378,8 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 ToastProvider.displayName = 'ToastProvider';
 
 const ToastEntryView: React.FC<{ entry: ToastEntry; onDismiss: () => void }> = ({ entry, onDismiss }) => {
-  React.useEffect(() => {
-    if (entry.duration <= 0) return;
-    const t = setTimeout(onDismiss, entry.duration);
-    return () => clearTimeout(t);
-  }, [entry.duration, onDismiss]);
-
-  return <ToastBody {...entry} onClose={onDismiss} />;
+  const { pause, resume } = useAutoDismiss(entry.duration, onDismiss);
+  return <ToastBody {...entry} onClose={onDismiss} onPause={pause} onResume={resume} />;
 };
 
 /**

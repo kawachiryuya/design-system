@@ -32,6 +32,7 @@ heading (5 段) → body (3 段) → label → caption の順で全 10 token を
 - **役割名で意図を表現**: `text-2xl` ではなく `text-heading-md` と書くことで「これは見出し」が明確
 - **font-weight を含まない utility**: Typography variant の weight 上書きを `font-{weight}` で効かせるため、font-size utility には weight を注入しない (preset.cjs の `flattenSemanticTypo` で意図的に省略)
 - **heading は 5 段、body は 3 段**: 大半の UI に必要十分
+- **見出しは和文最適化**: display/xl/lg は letter-spacing 0 (欧文のネガティブ字間は漢字連続で窮屈になるため) + line-height snug (1.35)。さらに詰めたい場合は字形側の `font-feature-settings: "palt"` を推奨
 
 ---
 

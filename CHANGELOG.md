@@ -15,6 +15,8 @@
 - **CI ワークフロー [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)**: `pull_request` / `push:main` で `typecheck` (tsc --noEmit) / `build-storybook` / `check:links` を強制
 - **壊れリンクチェック [`scripts/check-links.mjs`](./scripts/check-links.mjs)** (`npm run check:links`): `.mdx` の `?path=/docs|story/...` 参照が実在する Storybook ページ / story を指すか機械検証 (AGENTS.md §9-3)。`typecheck` script も追加
 - **`Tabs` の不正 `activeId` フォールバック**: `tabs` に存在しない `activeId` が来た場合 `tabs[0]` にフォールバック (開発時 console.warn)。全 panel が消える事故を防止
+- **`prefers-reduced-motion` 対応 (WCAG 2.3.3)**: [`tokens/preset.cjs`](./tokens/preset.cjs) の base layer に「視差効果を減らす」設定時の animation / transition 無効化 (`0.01ms`) を注入。preset 経由で Storybook と consumer 双方に自動適用され、個別コンポーネントで `motion-reduce:` を書く必要がない
+- **`line-height.snug` (1.35) トークンを新設**: 和文見出し (display/xl/lg) 用
 
 ### Changed
 
@@ -23,6 +25,10 @@
 - **[`components/Introduction.mdx`](./components/Introduction.mdx)**: 冒頭に「読む人別の入口」(PM / デザイナー / エンジニア) を追加。インラインスタイルの生 hex を semantic/neutral トークンの CSS 変数に置換
 - **AGENTS.md**: §2 SplitPane 記述を実態 (固定幅 master-detail、リサイズ機能なし) に修正。§9 に「9-3. 壊れリンクチェック」小節を新設し、空参照だったチェックリスト項目を実体に紐付け
 - **`Tabs`**: automatic activation である旨と「重い / 遅延ロード panel には不向き」を JSDoc / guideline に明記。無効タブの `aria-disabled` を削除 (native `disabled` で十分・冗長解消)、`currentContent` の冗長参照を整理
+- **sans フォントスタックに和文フォントを追加** (visual): 欧文 stack の後ろに `"Hiragino Kaku Gothic ProN" / "Hiragino Sans" / "Noto Sans JP" / "Yu Gothic UI" / Meiryo` を明示。従来は和文がブラウザ既定にフォールバックし Windows で別物になっていたのを是正
+- **見出し (display/xl/lg) を和文最適化** (visual): letter-spacing を `-0.02em` → `0`、line-height を `tight (1.25)` → `snug (1.35)`。漢字連続で字面が窮屈になる欧文慣習を是正
+- **shadow スケールの段差を拡大** (visual): sm/md/lg の elevation 差を明確化し階層言語として機能させる。lg を Tailwind 標準級 (`0 10px 15px -3px`) に引き上げ Modal / Popover の浮きをはっきりさせる
+- **[`design-system-strategy.md`](./design-system-strategy.md) に「今後の検討 (ロードマップ)」を追加**: デスクトップ compact 密度ティアの方針 / オーバーレイ系 (Popover → DropdownMenu → Tooltip) のロードマップを明文化
 
 ### Fixed
 

@@ -301,7 +301,6 @@ const PairRow: React.FC<{ pair: PairRole }> = ({ pair }) => {
 };
 
 export const ContainerPairs: Story = {
-  name: 'Container Pairs',
   parameters: {
     docs: {
       description: {

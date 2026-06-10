@@ -11,6 +11,7 @@
 
 ### Added
 
+- **`DropdownMenu` コンポーネントを新規追加**: `Popover` と同じ overlay 基盤 (native `popover` + `@floating-ui/dom`) に、WAI-ARIA APG の Menu Button パターン (`menu` / `menuitem` の roving tabindex + 矢印キー + Home/End + typeahead + Esc/Tab close) を載せた単一階層アクションメニュー。`items` で宣言、`icon` / `disabled` / `destructive` 対応、選択で `onSelect` + 自動 close + trigger へ focus 復帰。Composites は 25 個に
 - **`Popover` コンポーネントを新規追加**: native `popover` 属性 (top-layer / 外側クリック・Esc の light-dismiss) を土台に、位置決めを [`@floating-ui/dom`](https://floating-ui.com/) (offset / flip / shift + autoUpdate) で行う非モーダル overlay。トリガーに `aria-haspopup` / `aria-expanded` / `aria-controls` + ref / onClick を自動注入、`role="dialog"` + フォーカス管理 (開→パネル内 / 閉→trigger) 付き。`DropdownMenu` / `Tooltip` の土台 (strategy.md ロードマップ)。Composites は 24 個に
   - **新規 runtime dependency**: `@floating-ui/dom` (本リポ初の `dependencies`、位置決めのみに使用)
 - **`Modal` / `SearchBar` を `forwardRef` 対応**: `Modal` は内部 `<dialog>`、`SearchBar` は内部 `<input>` へ ref を透過 (外部 ref と内部 ref をマージ)。外から `dialog` 操作 / input への focus が可能に。AGENTS.md §5-2 の forwardRef 規約を「primitive 必須・composite は ref 対象が明確な場合のみ」に改訂し、規約と実装の乖離を解消

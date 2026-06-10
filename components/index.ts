@@ -30,7 +30,7 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (24) ──
+// ── Composites (25) ──
 export * from './composites/Accordion';
 export * from './composites/Alert';
 export * from './composites/AppShell';
@@ -38,6 +38,7 @@ export * from './composites/Avatar';
 export * from './composites/Breadcrumb';
 export * from './composites/Card';
 export * from './composites/Checkbox';
+export * from './composites/DropdownMenu';
 export * from './composites/EmptyState';
 export * from './composites/FilterChip';
 export * from './composites/Modal';

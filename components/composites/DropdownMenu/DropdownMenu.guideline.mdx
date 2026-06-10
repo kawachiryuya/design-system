@@ -1,0 +1,147 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as DropdownMenuStories from './DropdownMenu.stories';
+import { DropdownMenu } from './DropdownMenu';
+import { Button } from '../../primitives/Button';
+import { Icon } from '../../primitives/Icon';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={DropdownMenuStories} name="Guideline" />
+
+# DropdownMenu
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+トリガーから開く単一階層のアクションメニュー (WAI-ARIA APG の Menu Button パターン)。「実行できる操作」を集約する用途に使う。`<Popover>` と同じ overlay 基盤 (native `popover` 属性 + `@floating-ui/dom`) を共有し、その上に `menu` / `menuitem` の roving tabindex・矢印キー・typeahead を載せている。
+
+**「選択して実行」専用**。フォームの値入力やフィルタ条件の選択 (選んだ状態が残る) は `<Select>` / `<SegmentedControl>` を使う。ナビゲーションのタブ切替は `<Tabs>`。
+
+---
+
+## Props
+
+下表は DropdownMenu.tsx の TypeScript 型と JSDoc から自動生成。
+
+<ArgTypes of={DropdownMenuStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="メニューには aria-label を付ける"
+  doExample={
+    <DropdownMenu
+      trigger={<Button>操作</Button>}
+      aria-label="行の操作"
+      items={[
+        { label: '編集', icon: <Icon name="mode" size="sm" />, onSelect: () => {} },
+        { label: '削除', icon: <Icon name="remove" size="sm" />, destructive: true, onSelect: () => {} },
+      ]}
+    />
+  }
+  doCaption="aria-label があると SR が「何のメニューか」を読み上げられる。"
+  dontExample={
+    <DropdownMenu
+      trigger={<Button>操作</Button>}
+      items={[
+        { label: '編集', onSelect: () => {} },
+        { label: '削除', destructive: true, onSelect: () => {} },
+      ]}
+    />
+  }
+  dontCaption="ラベルなしだと用途不明の無名メニューになる。トリガーのラベルだけでは文脈が伝わらない。"
+/>
+
+<DoDontExample
+  label="破壊的操作は destructive で明示する"
+  doExample={
+    <DropdownMenu
+      trigger={<Button>操作</Button>}
+      aria-label="操作 (destructive あり)"
+      items={[
+        { label: '複製', onSelect: () => {} },
+        { label: '削除', icon: <Icon name="remove" size="sm" />, destructive: true, onSelect: () => {} },
+      ]}
+    />
+  }
+  doCaption="削除等は destructive: true で赤系にし、色 + アイコンで取り返しのつかない操作だと伝える。"
+  dontExample={
+    <DropdownMenu
+      trigger={<Button>操作</Button>}
+      aria-label="操作 (destructive なし)"
+      items={[
+        { label: '複製', onSelect: () => {} },
+        { label: '削除', onSelect: () => {} },
+      ]}
+    />
+  }
+  dontCaption="削除が他項目と同じ見た目だと、誤操作のリスクが上がる。"
+/>
+
+<DoDontExample
+  label="選択して実行する操作だけに使う"
+  doExample={
+    <DropdownMenu
+      trigger={<Button>並び替え</Button>}
+      aria-label="並び替え"
+      items={[
+        { label: '新着順', onSelect: () => {} },
+        { label: '人気順', onSelect: () => {} },
+      ]}
+    />
+  }
+  doCaption="押すと即座に実行される短いアクション群に向く。"
+  dontExample={
+    <DropdownMenu
+      trigger={<Button>表示形式</Button>}
+      aria-label="表示形式"
+      items={[
+        { label: 'リスト (現在)', onSelect: () => {} },
+        { label: 'グリッド', onSelect: () => {} },
+      ]}
+    />
+  }
+  dontCaption="「選んだ状態が残る」切替は SegmentedControl / Select。メニューは選択状態を保持しない。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべきコンポーネント | 理由 |
+|---|---|---|
+| **値・条件を選んで保持** (フィルタ / 設定値) | `<Select>` / `<SegmentedControl>` | 選択状態が残るコントロール。menu は実行のみ |
+| **ナビゲーションのタブ切替** | `<Tabs>` | 同階層コンテンツの表示切替 |
+| **補助情報・自由なレイアウト** | `<Popover>` | menu 構造でない任意コンテンツ |
+| **背景遮断して確認させる** | `<Modal>` | focus trap + 背景遮断が要る重要操作 |
+
+---
+
+## アクセシビリティ
+
+- **WAI-ARIA APG Menu Button 準拠**: トリガー `aria-haspopup="menu"` / `aria-expanded` / `aria-controls`、パネル `role="menu"`、各項目 `role="menuitem"`
+- **キーボード操作**: 開くと最初の有効項目へフォーカス。`↑` `↓` で項目移動 (disabled をスキップ)、`Home` / `End` で先頭 / 末尾、`Enter` / `Space` で実行、`Esc` / `Tab` で閉じて trigger にフォーカスを戻す
+- **typeahead**: 項目名の先頭文字を入力すると一致項目へジャンプ (`label` が文字列でない場合は `textValue` を指定)
+- **roving tabindex**: アクティブな項目のみ `tabIndex=0`。メニュー全体で Tab 1 ストップ
+- **light-dismiss**: native `popover="auto"` により外側クリック / Esc で閉じる
+- **非モーダル**: focus trap は張らない (メニューの標準的な振る舞い)。`prefers-reduced-motion` は preset でグローバル対応済
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- `<Button>` — `trigger` に渡す代表例
+- `<Icon>` — 各項目の `icon` に渡す
+
+### 基盤
+
+- [`<Popover>`](?path=/docs/composites-popover--guideline) — 同じ overlay 基盤 (native popover + floating-ui) を共有する土台コンポーネント

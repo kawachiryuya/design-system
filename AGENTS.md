@@ -33,6 +33,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | スクリーンリーダ専用テキスト | `<VisuallyHidden>` | icon-only Button の補助ラベル / live region |
 | モーダル表示 | `<Modal>` | ネイティブ `<dialog>` ベース。確認ダイアログ・フォーム入力等 |
 | アンカー付き overlay (補助情報 / 軽い操作) | `<Popover>` | native `popover` 属性 + floating-ui。非モーダル。確認・重要操作は Modal |
+| アクションメニュー (選択して実行) | `<DropdownMenu>` | Popover 基盤 + `menu`/`menuitem` roving。値の保持は Select/SegmentedControl |
 | 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け |
 | 要素の縦並び | `<Stack>` | 等間隔で縦積み。spacing は token 経由 |
 | 要素の横並び | `<Cluster>` | 等間隔で横並び + 折返し対応 |
@@ -63,7 +64,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | Switch | Composite | `<Label>` 内包 + `<button role="switch">`、label position 切替 |
 | Checkbox / Radio | Composite | `<Label>` + `<input>` + `<FormMessage>` を内包、`CheckboxGroup` / `RadioGroup` で group state |
 | ProgressBar | Composite | label + value 表示 + track + fill の **複数 `<div>` / `<span>`** 構造 |
-| Modal / Toast / Popover | Composite | portal / focus trap / overlay |
+| Modal / Toast / Popover / DropdownMenu | Composite | portal / focus trap / overlay |
 | Card / Tabs / Accordion / Pagination | Composite | 構造の組合せ + 状態管理 |
 | AppShell / TwoColumn / SplitPane | Composite (Layout) | 複数 slot (header / nav / main / aside 等) + レスポンシブ振る舞い |
 

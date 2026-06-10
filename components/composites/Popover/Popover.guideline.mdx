@@ -1,0 +1,117 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as PopoverStories from './Popover.stories';
+import { Popover } from './Popover';
+import { Button } from '../../primitives/Button';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={PopoverStories} name="Guideline" />
+
+# Popover
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+トリガーの近くに浮かせて補助情報や軽い操作を出す非モーダルの overlay。native の `popover` 属性で top-layer 表示・外側クリック / Esc での light-dismiss をブラウザ標準に委ね、位置決めだけ `@floating-ui/dom` (offset / flip / shift) で行う。背景を遮断して確認させたい操作には Popover ではなく `<Modal>` を使う。
+
+`DropdownMenu` (複数アクションのメニュー) と `Tooltip` (hover ヒント) は、この Popover を土台に積む予定 (ロードマップは `design-system-strategy.md`)。
+
+---
+
+## Props
+
+下表は Popover.tsx の TypeScript 型と JSDoc から自動生成。
+
+<ArgTypes of={PopoverStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="補助情報・軽い操作は Popover、重要な確認は Modal"
+  doExample={
+    <Popover trigger={<Button>送料について</Button>} aria-label="送料の補足">
+      <p className="text-onSurface">3,000 円以上の購入で送料無料になります。</p>
+    </Popover>
+  }
+  doCaption="読み流せる補足や、戻せる軽い操作は Popover。背景を操作したまま参照できる。"
+  dontExample={
+    <Popover trigger={<Button variant="destructive">アカウント削除</Button>} aria-label="削除確認">
+      <p className="text-onSurface">本当に削除しますか？</p>
+      <Button variant="destructive" size="sm">削除する</Button>
+    </Popover>
+  }
+  dontCaption="不可逆・重要な確認は外側クリックで消える Popover では危険。focus trap + 背景遮断のある Modal を使う。"
+/>
+
+<DoDontExample
+  label="パネルに aria-label か見出しを付ける"
+  doExample={
+    <Popover trigger={<Button>ヘルプ</Button>} aria-label="パスワードの要件">
+      <p className="text-onSurface">8 文字以上、英数字を含めてください。</p>
+    </Popover>
+  }
+  doCaption="aria-label (または内部の見出し) があると SR が「何のダイアログか」を読み上げられる。"
+  dontExample={
+    <Popover trigger={<Button>ヘルプ</Button>}>
+      <p className="text-onSurface">8 文字以上、英数字を含めてください。</p>
+    </Popover>
+  }
+  dontCaption="ラベルなしだと SR では用途が分からない無名のダイアログになる。"
+/>
+
+<DoDontExample
+  label="長い・複雑なコンテンツは Modal へ"
+  doExample={
+    <Popover trigger={<Button>表示順</Button>} aria-label="表示順">
+      <p className="text-onSurface">新着順 / 人気順 を選ぶだけの軽い切替。</p>
+    </Popover>
+  }
+  doCaption="数項目の選択や短い補足など、画面遷移を伴わない軽量な内容に留める。"
+  dontExample={
+    <Popover trigger={<Button>会員登録</Button>} aria-label="会員登録">
+      <p className="text-onSurface">氏名・住所・支払い方法…と続く長いフォーム</p>
+    </Popover>
+  }
+  dontCaption="スクロールや多数の入力が要る内容は、はみ出して操作しづらい。Modal か専用ページにする。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべきコンポーネント | 理由 |
+|---|---|---|
+| **背景を遮断して確認させる** (不可逆操作) | `<Modal>` | focus trap + 背景遮断。外側クリックで消えては困る |
+| **ホバーで出る短いヒント** | `<Tooltip>` (将来) | hover/focus で出る補助。現状は未実装 |
+| **複数アクションのメニュー** | `<DropdownMenu>` (将来) | `menu` / `menuitem` の roving。現状は Popover で代用可 |
+| **ページ内に常設する通知** | `<Alert>` | 常時表示・overlay ではない |
+
+---
+
+## アクセシビリティ
+
+- **native `popover="auto"`**: top-layer 表示 / 外側クリック・Esc での light-dismiss をブラウザ標準に委ねる (自前の outside-click 監視より堅牢)
+- **`role="dialog"` + `aria-label`**: パネルの用途を SR に伝える。見出しが無い場合は `aria-label` を指定する
+- **トリガーの ARIA を自動付与**: `aria-haspopup="dialog"` / `aria-expanded` (開閉に連動) / `aria-controls` (パネル id)
+- **フォーカス管理**: 開くとパネル内の最初の focusable (無ければパネル本体) へ移動。閉じると trigger へ戻す (外側の別コントロールを押して閉じた場合は focus を奪わない)
+- **非モーダル**: focus trap は張らない。背景操作をブロックしたい確認は `<Modal>` を使う
+- **アニメーション**: `prefers-reduced-motion` は preset でグローバル対応済 (個別対応不要)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- `<Button>` — `trigger` に渡す代表例 (任意の focusable 要素を渡せる)
+
+### 依存
+
+- [`@floating-ui/dom`](https://floating-ui.com/) — パネルの位置決め (offset / flip / shift + autoUpdate) のみに使用

@@ -30,7 +30,7 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (23) ──
+// ── Composites (24) ──
 export * from './composites/Accordion';
 export * from './composites/Alert';
 export * from './composites/AppShell';
@@ -43,6 +43,7 @@ export * from './composites/FilterChip';
 export * from './composites/Modal';
 export * from './composites/NumberInput';
 export * from './composites/Pagination';
+export * from './composites/Popover';
 export * from './composites/ProgressBar';
 export * from './composites/Radio';
 export * from './composites/SearchBar';

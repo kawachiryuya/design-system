@@ -1,0 +1,120 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TooltipStories from './Tooltip.stories';
+import { Tooltip } from './Tooltip';
+import { Button } from '../../primitives/Button';
+import { Icon } from '../../primitives/Icon';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={TooltipStories} name="Guideline" />
+
+# Tooltip
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+トリガーに hover / focus したとき、その近くに**短い補足テキスト**を浮かせる。アイコンのみのボタンの説明、省略表示の全文、補助的なヒントなどに使う。`<Popover>` と同じ overlay 基盤 (native `popover` + `@floating-ui/dom`) を共有しつつ、表示は hover / focus + 遅延、意味づけは `role="tooltip"` + `aria-describedby` で行う。
+
+**読み上げ補足であって操作対象ではない**。tooltip の中に button / link などの操作要素は入れない (フォーカスもできない)。操作や複数行の内容が要るなら `<Popover>` を使う。
+
+---
+
+## Props
+
+下表は Tooltip.tsx の TypeScript 型と JSDoc から自動生成。
+
+<ArgTypes of={TooltipStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="アイコンのみのボタンに補足を添える"
+  doExample={
+    <Tooltip content="お気に入りに追加">
+      <Button iconOnly icon={<Icon name="favorite" />} aria-label="お気に入りに追加" variant="tertiary" />
+    </Tooltip>
+  }
+  doCaption="aria-label で名前、tooltip で補足。アイコンの意味を hover / focus で確かめられる。"
+  dontExample={
+    <Tooltip content="保存">
+      <span className="text-onSurface">保存</span>
+    </Tooltip>
+  }
+  dontCaption="focusable でない要素 (素の span) に付けるとキーボード / SR で開けない。トリガーは Button / Link 等にする。"
+/>
+
+<DoDontExample
+  label="操作は入れず、短い説明に留める"
+  doExample={
+    <Tooltip content="3,000 円以上で送料無料">
+      <Button variant="tertiary">送料</Button>
+    </Tooltip>
+  }
+  doCaption="読み流せる短い補足に使う。tooltip は自動では消えず、Esc で閉じられる。"
+  dontExample={
+    <Tooltip content={<span>詳細はこちら</span>}>
+      <Button variant="tertiary">詳細</Button>
+    </Tooltip>
+  }
+  dontCaption="リンクやボタンを入れても tooltip 内はフォーカスできず操作不能。操作が要るなら Popover。"
+/>
+
+<DoDontExample
+  label="ラベルの代わりにしない"
+  doExample={
+    <Tooltip content="下書きとして保存します">
+      <Button>下書き保存</Button>
+    </Tooltip>
+  }
+  doCaption="ボタン自身に可視ラベルを持たせ、tooltip は補足に徹する。"
+  dontExample={
+    <Tooltip content="送信">
+      <Button iconOnly icon={<Icon name="arrow_forward" />} />
+    </Tooltip>
+  }
+  dontCaption="tooltip だけが唯一の名前だと、tooltip 非表示時 (タッチ等) に意味が消える。iconOnly には aria-label を必須にする。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべきコンポーネント | 理由 |
+|---|---|---|
+| **操作 / 複数行 / リッチな内容** | `<Popover>` | tooltip 内はフォーカス・操作できない |
+| **選択して実行するメニュー** | `<DropdownMenu>` | menu/menuitem の操作対象 |
+| **常時見せたい注意書き** | `<Alert>` / 補助テキスト | hover/focus に隠さず常設する |
+| **入力欄の説明・エラー** | `<Label>` / フィールドの説明文 | フォーム要素に紐づく恒常的な説明 |
+
+---
+
+## アクセシビリティ
+
+- **`role="tooltip"` + `aria-describedby`**: トリガーに `aria-describedby` を自動付与し、tooltip を「補足の説明」として紐づける (名前を置き換える `aria-labelledby` ではない)
+- **hover と focus の両方で表示**: focus 時は即時表示 (キーボード / SR)、hover 時は `delay` 後に表示
+- **WCAG 1.4.13 (Content on Hover or Focus)**:
+  - **Dismissible**: 表示中は `Esc` で閉じられる (ポインタ / フォーカスを動かさずに消せる)
+  - **Hoverable**: tooltip 上にポインタを移しても消えない (trigger→tooltip 間に猶予あり)
+  - **Persistent**: 自動では消えず、hover / focus が外れるまで表示し続ける
+- **トリガーは focusable**: `<Button>` / `<Link>` 等、または `tabIndex={0}` を持つ要素にする (素の `<span>` 等は不可)
+- **content は非操作テキスト**: tooltip はフォーカスできないため、button / link を入れない
+- **`prefers-reduced-motion`**: preset でグローバル対応済 (個別不要)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- `<Button>` / `<Icon>` — トリガーの代表例 (特に iconOnly ボタンの補足に有効)
+
+### 基盤
+
+- [`<Popover>`](?path=/docs/composites-popover--guideline) — 同じ overlay 基盤 (native popover + floating-ui)。操作 / リッチな内容はこちら

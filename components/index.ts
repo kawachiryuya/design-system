@@ -30,7 +30,7 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (25) ──
+// ── Composites (26) ──
 export * from './composites/Accordion';
 export * from './composites/Alert';
 export * from './composites/AppShell';
@@ -55,4 +55,5 @@ export * from './composites/Switch';
 export * from './composites/Tabs';
 export * from './composites/Toast';
 export * from './composites/ToggleButton';
+export * from './composites/Tooltip';
 export * from './composites/TwoColumn';

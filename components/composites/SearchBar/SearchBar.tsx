@@ -1,4 +1,4 @@
-import React, { useId, useRef } from 'react';
+import React, { forwardRef, useCallback, useId, useRef } from 'react';
 import { Icon } from '../../primitives/Icon';
 
 /** SearchBar のサイズ */
@@ -105,7 +105,7 @@ const LoadingSpinner: React.FC<{ size: number }> = ({ size }) => (
  *
  * @see SearchBarProps for usage examples.
  */
-export const SearchBar: React.FC<SearchBarProps> = ({
+export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
   value,
   onChange,
   onSearch,
@@ -117,9 +117,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   disabled = false,
   ariaLabel = '検索',
   className = '',
-}) => {
+}, ref) => {
   const id = useId();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // 外部 ref と内部 inputRef の両方へ代入 (Escape clear / clear ボタンの blur/focus 制御で内部 ref が必要)。
+  const setInputRef = useCallback((node: HTMLInputElement | null) => {
+    inputRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) ref.current = node;
+  }, [ref]);
 
   const sizeStyles = {
     sm: {
@@ -234,7 +241,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </span>
 
       <input
-        ref={inputRef}
+        ref={setInputRef}
         id={id}
         type="search"
         role="searchbox"
@@ -271,6 +278,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </span>
     </div>
   );
-};
+});
 
 SearchBar.displayName = 'SearchBar';

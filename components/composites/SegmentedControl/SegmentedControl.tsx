@@ -14,6 +14,9 @@ export interface SegmentedControlItem<T extends string | number> {
  * 排他的な選択肢を横並びで表示する UI（iOS の Segmented Control 風）。
  * 用途: フィルター切替、表示モード切替（リスト/グリッド等）、少数（2〜5 個）の排他的選択。
  *
+ * a11y: `role="radiogroup"` + 各 option `role="radio"` / `aria-checked`。グループ全体で Tab 1 ストップ
+ * (roving tabindex)、矢印キー (`←` `→` `↑` `↓` / `Home` / `End`) で移動 = 即選択。
+ *
  * @example
  *   // 基本（表示モード切替）
  *   <SegmentedControl
@@ -75,15 +78,46 @@ export const SegmentedControl = <T extends string | number>({
   // h-10 (40px) = Material 3 segmented button 標準値。filter bar / view mode switcher 用途
   const segmentSizeStyle = 'h-10 px-3 text-sm';
 
+  const btnRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
+
+  // 単一選択コントロールの正準パターン = radiogroup + roving tabindex。
+  // 選択中の radio のみ Tab ストップ (tabIndex=0)、未選択時は先頭を Tab ストップにする。
+  const selectedIndex = items.findIndex((item) => item.value === value);
+  const focusableIndex = selectedIndex >= 0 ? selectedIndex : 0;
+
+  // 矢印キーで移動 = 即選択 (Tabs.handleKeyDown と同型)。SegmentedControl に disabled は無い。
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    let nextIndex: number | null = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      nextIndex = (index + 1) % items.length;
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      nextIndex = (index - 1 + items.length) % items.length;
+    } else if (e.key === 'Home') {
+      nextIndex = 0;
+    } else if (e.key === 'End') {
+      nextIndex = items.length - 1;
+    }
+    if (nextIndex !== null) {
+      e.preventDefault();
+      onChange(items[nextIndex].value);
+      btnRefs.current[nextIndex]?.focus();
+    }
+  };
+
   return (
-    <div className="flex gap-1 overflow-x-auto" role="group" aria-label={ariaLabel}>
-      {items.map((item) => {
+    <div className="flex gap-1 overflow-x-auto" role="radiogroup" aria-label={ariaLabel}>
+      {items.map((item, index) => {
         const isSelected = item.value === value;
         return (
           <button
             key={String(item.value)}
+            ref={(el) => { btnRefs.current[index] = el; }}
             type="button"
+            role="radio"
+            aria-checked={isSelected}
+            tabIndex={index === focusableIndex ? 0 : -1}
             onClick={() => onChange(item.value)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
             // inline-flex items-center justify-center で label 内コンテンツ (icon + text 等) を縦中央配置。
             // selected 時も border を残す (border-transparent) ことで高さを揃え layout shift 防止。
             // 非 selected hover に bg-state-hover-primary (8% teal) で branded feedback。
@@ -96,7 +130,6 @@ export const SegmentedControl = <T extends string | number>({
                 ? 'bg-surface-primary border-transparent text-onSurface-inverse focus-visible:ring-surface'
                 : 'bg-surface border-border-subtle text-onSurface hover:border-border-strong hover:bg-state-hover-primary focus-visible:ring-border-focus',
             ].join(' ')}
-            aria-pressed={isSelected}
           >
             {item.label}
           </button>

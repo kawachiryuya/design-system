@@ -24,8 +24,8 @@ npm run build-storybook    # 静的サイトとして storybook-static/ へ出�
 ```
 design-system/
 ├── components/
-│   ├── primitives/    Parts: 単一 HTML 要素ラッパー / Layout primitive (16 個)
-│   └── composites/    Blocks: 複合コンポーネント / Layout composite (23 個)
+│   ├── primitives/    単一 HTML 要素ラッパー / Layout primitive (16 個)
+│   └── composites/    複合コンポーネント / Layout composite (23 個)
 ├── tokens/
 │   ├── source/        グローバル / セマンティックトークン (JSON)
 │   ├── build/         Style Dictionary 自動生成成果物
@@ -36,7 +36,7 @@ design-system/
 
 ## ドキュメントの読む順
 
-1. [`design-system-strategy.md`](./design-system-strategy.md) — **なぜ・何を**: Parts/Blocks 構成、common/product 分離、トークン 2 層構造、設計原則 (a11y / ヒエラルキー / レスポンシブ / 可読性 / UI ライティング)
+1. [`design-system-strategy.md`](./design-system-strategy.md) — **なぜ・何を**: Primitives/Composites 構成、common/product 分離、トークン 2 層構造、設計原則 (a11y / ヒエラルキー / レスポンシブ / 可読性 / UI ライティング)
 2. [`AGENTS.md`](./AGENTS.md) — **どう作る**: トークン参照ルール、コンポーネント実装規約、a11y 実装規約、禁則、Semver
 3. `components/**/*.guideline.mdx` — **個別コンポーネントの使い方**: Storybook 上で各 component の Docs ページとして閲覧 (`npm run storybook`)
 

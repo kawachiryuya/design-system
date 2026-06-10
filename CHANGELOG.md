@@ -7,6 +7,30 @@
 
 ## [Unreleased]
 
+レビュー (`design-system-review.md`) 指摘の解消。次回 release は forwardRef の後方互換追加と CI 追加があるため §10-1 表上 **MINOR** 相当 (version 確定は release 時)。
+
+### Added
+
+- **`Modal` / `SearchBar` を `forwardRef` 対応**: `Modal` は内部 `<dialog>`、`SearchBar` は内部 `<input>` へ ref を透過 (外部 ref と内部 ref をマージ)。外から `dialog` 操作 / input への focus が可能に。AGENTS.md §5-2 の forwardRef 規約を「primitive 必須・composite は ref 対象が明確な場合のみ」に改訂し、規約と実装の乖離を解消
+- **CI ワークフロー [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)**: `pull_request` / `push:main` で `typecheck` (tsc --noEmit) / `build-storybook` / `check:links` を強制
+- **壊れリンクチェック [`scripts/check-links.mjs`](./scripts/check-links.mjs)** (`npm run check:links`): `.mdx` の `?path=/docs|story/...` 参照が実在する Storybook ページ / story を指すか機械検証 (AGENTS.md §9-3)。`typecheck` script も追加
+- **`Tabs` の不正 `activeId` フォールバック**: `tabs` に存在しない `activeId` が来た場合 `tabs[0]` にフォールバック (開発時 console.warn)。全 panel が消える事故を防止
+
+### Changed
+
+- **語彙を `Primitives` / `Composites` に一本化**: 公式語彙を実装名に統一し、`Parts` / `Blocks` は [`design-system-strategy.md`](./design-system-strategy.md) 内の由来 (経緯) に格下げ。`README.md` / `package.json` description / strategy.md の分類表を更新
+- **[`design-system-strategy.md`](./design-system-strategy.md) の経緯と運用方針を分離**: 勤務先スクラム文脈を「Origin (経緯)」へ集約し、汎用基盤としての「現在の運用方針」セクションを新設。**配布ポリシー** (現状 UNLICENSED + GitHub Packages restricted、外部導入時の MIT 化は Phase 0 規約確認待ちの pending decision) を明文化
+- **[`components/Introduction.mdx`](./components/Introduction.mdx)**: 冒頭に「読む人別の入口」(PM / デザイナー / エンジニア) を追加。インラインスタイルの生 hex を semantic/neutral トークンの CSS 変数に置換
+- **AGENTS.md**: §2 SplitPane 記述を実態 (固定幅 master-detail、リサイズ機能なし) に修正。§9 に「9-3. 壊れリンクチェック」小節を新設し、空参照だったチェックリスト項目を実体に紐付け
+- **`Tabs`**: automatic activation である旨と「重い / 遅延ロード panel には不向き」を JSDoc / guideline に明記。無効タブの `aria-disabled` を削除 (native `disabled` で十分・冗長解消)、`currentContent` の冗長参照を整理
+
+### Fixed
+
+- **`Modal` の背景スクロールロック**: 開いている間 `document.body` の overflow を hidden にし、背後ページのホイール / スワイプスクロールを防止 (`<dialog>.showModal()` 単体では止まらない)。consumer に出荷されない `.storybook` CSS ではなく Modal 側 JS で制御
+- **`Toast` の自動消滅を WCAG 2.2.1 準拠に**: hover / focus 中はタイマーを停止し離脱で残り時間から再開。`action` 付き Toast は到達性のため自動消滅を無期限化 (明示 `duration` も最低 10000ms にクランプ)
+- **`SegmentedControl` を radiogroup パターンへ** (a11y、見た目・props 変更なし): `role="group"` + `aria-pressed` → `role="radiogroup"` + 各 option `role="radio"` / `aria-checked`、roving tabindex + 矢印キー移動 (Tab 1 ストップ)。排他選択であることが支援技術に正しく伝わる
+- **Principles 壊れリンクを解消**: guideline.mdx 群の `?path=/docs/principles-*` 参照 (38 箇所 / 21 ファイル、参照先ページは 0 個) を、実在する Tokens guideline (Layout / Color / Typography) へ付替え、該当ページの無いものは削除。`preview.ts` storySort の未使用 `Principles` カテゴリも除去
+
 ## [1.1.0] - 2026-06-10
 
 ### Removed (breaking, npm export)

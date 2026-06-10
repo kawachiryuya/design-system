@@ -178,6 +178,8 @@ import React from 'react';
 - **`aria-modal="true"`**: 自動付与、SR がモーダルとして扱う
 - **`aria-labelledby`**: title 指定時は自動配線、title 省略時は呼出側で id を渡す
 - **focus 管理**: 開いた瞬間に内部の最初の focusable に focus (browser default)。閉じると元の trigger button に戻る
+- **初期 focus の指定**: 既定では header の close ボタンが最初に focus される。確認ダイアログ等で Footer の primary アクションに focus を当てたい場合は、その `<Button>` に `autoFocus` を付与する (native `<dialog>` は `autofocus` 属性を尊重する)
+- **背景スクロールロック**: 開いている間は `document.body` の overflow を hidden にし、背後ページのホイール/スワイプスクロールを防ぐ (`showModal()` 単体では止まらないため Modal 側で制御)
 - **キーボード操作**: `Tab` で trap、`Esc` で close (closeOnEsc=true 時)
 - **overlay クリックでも close**: closeOnOverlayClick=true (default)。破壊的操作の確認では false に
 - **close ボタン**: `<VisuallyHidden>` で SR 用テキスト「閉じる」を付与

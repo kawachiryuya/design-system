@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-10
+
 ### Removed (breaking, npm export)
 
 - **`principles/` ディレクトリを物理削除し、`package.json` の `./principles/*` export と `files` 包含を撤去**: 0.5.0 で凍結された [`principles/`](./principles/) 59 ファイル ＋ `_ARCHIVE_NOTE.md` を全削除。SSoT を [`AGENTS.md`](./AGENTS.md) + `components/**/*.guideline.mdx` + [`design-system-strategy.md`](./design-system-strategy.md) の 3 階層に完全一本化し、二重管理状態を解消。
@@ -500,7 +502,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/kawachiryuya/design-system/compare/v1.0.0...v1.1.0
 [0.4.0]: https://github.com/kawachiryuya/design-system/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/kawachiryuya/design-system/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/kawachiryuya/design-system/releases/tag/v0.2.0

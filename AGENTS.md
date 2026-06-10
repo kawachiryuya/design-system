@@ -32,6 +32,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | ローディング | `<Spinner>` または `<Skeleton>` | 待機状態の見せ方で使い分け |
 | スクリーンリーダ専用テキスト | `<VisuallyHidden>` | icon-only Button の補助ラベル / live region |
 | モーダル表示 | `<Modal>` | ネイティブ `<dialog>` ベース。確認ダイアログ・フォーム入力等 |
+| アンカー付き overlay (補助情報 / 軽い操作) | `<Popover>` | native `popover` 属性 + floating-ui。非モーダル。確認・重要操作は Modal |
 | 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け |
 | 要素の縦並び | `<Stack>` | 等間隔で縦積み。spacing は token 経由 |
 | 要素の横並び | `<Cluster>` | 等間隔で横並び + 折返し対応 |

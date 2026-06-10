@@ -11,6 +11,8 @@
 
 ### Added
 
+- **`Popover` コンポーネントを新規追加**: native `popover` 属性 (top-layer / 外側クリック・Esc の light-dismiss) を土台に、位置決めを [`@floating-ui/dom`](https://floating-ui.com/) (offset / flip / shift + autoUpdate) で行う非モーダル overlay。トリガーに `aria-haspopup` / `aria-expanded` / `aria-controls` + ref / onClick を自動注入、`role="dialog"` + フォーカス管理 (開→パネル内 / 閉→trigger) 付き。`DropdownMenu` / `Tooltip` の土台 (strategy.md ロードマップ)。Composites は 24 個に
+  - **新規 runtime dependency**: `@floating-ui/dom` (本リポ初の `dependencies`、位置決めのみに使用)
 - **`Modal` / `SearchBar` を `forwardRef` 対応**: `Modal` は内部 `<dialog>`、`SearchBar` は内部 `<input>` へ ref を透過 (外部 ref と内部 ref をマージ)。外から `dialog` 操作 / input への focus が可能に。AGENTS.md §5-2 の forwardRef 規約を「primitive 必須・composite は ref 対象が明確な場合のみ」に改訂し、規約と実装の乖離を解消
 - **CI ワークフロー [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)**: `pull_request` / `push:main` で `typecheck` (tsc --noEmit) / `build-storybook` / `check:links` を強制
 - **壊れリンクチェック [`scripts/check-links.mjs`](./scripts/check-links.mjs)** (`npm run check:links`): `.mdx` の `?path=/docs|story/...` 参照が実在する Storybook ページ / story を指すか機械検証 (AGENTS.md §9-3)。`typecheck` script も追加

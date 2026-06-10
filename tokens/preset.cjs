@@ -237,6 +237,22 @@ module.exports = {
   // CSS 変数経由なので product 側は :root で値を 1 行 override 可能。
   // 詳細: components/tokens/Layout.guideline.mdx
   plugins: [
+    // ── prefers-reduced-motion (a11y / WCAG 2.3.3) ──
+    // animation / transition トークンを多用するため、視覚過敏・前庭障害ユーザー向けに
+    // OS の「視差効果を減らす」設定時はアニメーションをほぼ無効化する。
+    // preset 経由で consumer の `@tailwind base` にも注入され、Storybook と出荷先の双方に効く。
+    plugin(function ({ addBase }) {
+      addBase({
+        '@media (prefers-reduced-motion: reduce)': {
+          '*, *::before, *::after': {
+            animationDuration: '0.01ms !important',
+            animationIterationCount: '1 !important',
+            transitionDuration: '0.01ms !important',
+            scrollBehavior: 'auto !important',
+          },
+        },
+      });
+    }),
     plugin(function ({ addUtilities }) {
       addUtilities({
         // -- container: 大外 page wrapper の左右 / 上下 padding (breakpoint 内蔵) --

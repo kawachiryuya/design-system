@@ -227,6 +227,26 @@ if (featureFlag.newDesign) {
 
 ---
 
+## 今後の検討 (デザイン / ロードマップ)
+
+すぐには着手しないが、場当たり対応を防ぐため方向性を固めておく項目。
+
+### 密度ティア (デスクトップ compact)
+
+コントロール高 `sm=40 / md=48 / lg=56` はモバイルのタッチターゲット (44px 基準) 起点で正しい。一方「モバイルファーストのサービスを PC レイアウトへ広げる」フェーズでは、テーブル操作・管理画面・フィルタ列など高密度 UI で 40px 最小が間延びする。
+
+- **方針**: PC 適用フェーズで `h-8` (32px) 等のハードコードが場当たり的に生えるのを防ぐため、**「ポインタデバイス時のみ compact (32px) を許可」** という条件付き density ティアを将来導入する。`control-height` の compact 段を semantic 化し、`@media (pointer: fine)` または明示 prop で出し分ける案を検討する
+- 現時点では追加しない (タッチ基準の単一ティアを維持)
+
+### オーバーレイ系コンポーネント (Popover / DropdownMenu / Tooltip)
+
+z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだが実体コンポーネントが無く、現状 Button guideline は「メニューは暫定で `<Modal>` 代用」と案内している。複数アクションの集約をモーダルで代替するのは操作コストが高く、デザイン的にも過剰な中断。
+
+- **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (Popover + `menu`/`menuitem` roving) → `Tooltip` (Popover + hover/focus delay)。Popover を土台に積み上げる
+- いずれも実装は別 PR。着手時に native `popover` 属性 / CSS Anchor Positioning の採用可否を最初に判断する
+
+---
+
 ## 本リポジトリでの実装対応
 
 戦略上の概念と、本リポジトリ (`@kawachiryuya/design-system`) の現在の実装の対応関係:

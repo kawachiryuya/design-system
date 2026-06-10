@@ -65,6 +65,10 @@
         "value": "1.25",
         "type": "number"
       },
+      "snug": {
+        "value": "1.35",
+        "type": "number"
+      },
       "normal": {
         "value": "1.5",
         "type": "number"
@@ -90,7 +94,7 @@
     },
     "font-family": {
       "sans": {
-        "value": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+        "value": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Hiragino Kaku Gothic ProN\", \"Hiragino Sans\", \"Noto Sans JP\", \"Yu Gothic UI\", Meiryo, sans-serif",
         "type": "fontFamily"
       },
       "mono": {
@@ -104,20 +108,20 @@
       "display": {
         "font-size":      { "value": "{typography.font-size.5xl}", "type": "dimension" },
         "font-weight":    { "value": "{typography.font-weight.bold}", "type": "fontWeight" },
-        "line-height":    { "value": "{typography.line-height.tight}", "type": "number" },
-        "letter-spacing": { "value": "{typography.letter-spacing.tight}", "type": "dimension" }
+        "line-height":    { "value": "{typography.line-height.snug}", "type": "number" },
+        "letter-spacing": { "value": "{typography.letter-spacing.normal}", "type": "dimension" }
       },
       "xl": {
         "font-size":      { "value": "{typography.font-size.4xl}", "type": "dimension" },
         "font-weight":    { "value": "{typography.font-weight.bold}", "type": "fontWeight" },
-        "line-height":    { "value": "{typography.line-height.tight}", "type": "number" },
-        "letter-spacing": { "value": "{typography.letter-spacing.tight}", "type": "dimension" }
+        "line-height":    { "value": "{typography.line-height.snug}", "type": "number" },
+        "letter-spacing": { "value": "{typography.letter-spacing.normal}", "type": "dimension" }
       },
       "lg": {
         "font-size":      { "value": "{typography.font-size.3xl}", "type": "dimension" },
         "font-weight":    { "value": "{typography.font-weight.bold}", "type": "fontWeight" },
-        "line-height":    { "value": "{typography.line-height.tight}", "type": "number" },
-        "letter-spacing": { "value": "{typography.letter-spacing.tight}", "type": "dimension" }
+        "line-height":    { "value": "{typography.line-height.snug}", "type": "number" },
+        "letter-spacing": { "value": "{typography.letter-spacing.normal}", "type": "dimension" }
       },
       "md": {
         "font-size":      { "value": "{typography.font-size.2xl}", "type": "dimension" },

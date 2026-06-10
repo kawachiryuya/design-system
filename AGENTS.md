@@ -324,6 +324,17 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - [`components/tokens/Colors.{stories,guideline}`](./components/tokens/) — Primitive 軸 1 (palette catalog 1 つ)
 - [`components/tokens/SemanticColors.{stories,guideline}`](./components/tokens/) — Semantic 軸複数 (6 story、Container Pairs を含む) + 迷ったらこれ
 
+### 3-7. lint が強制する規約 (`npm run lint`)
+
+[`eslint.config.mjs`](./eslint.config.mjs) で、これまでドキュメント任せだった規約の一部を機械強制する (CI の Lint ステップで違反 PR をブロック)。
+
+- **生 hex / 色 bracket 禁止** (§3): 出荷される component 実装 (`components/**/*.tsx`。stories / tokens カタログ / `.storybook` 設定は対象外) の `className` 等に `#xxxxxx` / `[#xxx]` / `[rgb(...)]` / `[hsl(...)]` を書くと error。semantic token を使う。**spacing/サイズ bracket (`w-[44px]`) は意図的利用のため対象外**
+- **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
+- **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
+- **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
+
+新しい規約を機械化したくなったら、まず本ルールに足せるか検討する (「ドキュメントで守らせる」< 「lint で弾く」)。
+
 ---
 
 ## 4. ビルドコマンド

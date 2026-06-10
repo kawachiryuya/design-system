@@ -43,7 +43,8 @@ export const Playground: Story = {
   render: (args) => {
     function Demo() {
       const [s, setS] = useState(args.selected ?? false);
-      // Controls から selected を変えた時にも反映
+      // Controls から selected を変えた時にも反映 (args 変化で再 render → 再同期する意図的な dep)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       useEffect(() => { setS(args.selected ?? false); }, [args.selected]);
       return (
         <ToggleButton

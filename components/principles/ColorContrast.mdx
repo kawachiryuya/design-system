@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Foundation/Accessibility/Color Contrast" />
+
+# 色コントラスト (Color Contrast)
+
+テキストと UI 要素は、背景との十分なコントラストを確保し、低視力・高齢・屋外など様々な条件でも読めるようにする。
+
+## 原則
+
+1. **テキストは AA 比率を満たす** (WCAG 1.4.3): 通常テキスト **4.5:1**、大テキスト (≥24px、または ≥18.66px の bold) **3:1**。
+2. **UI 要素・状態は 3:1** (WCAG 1.4.11): border / focus ring / 意味を持つアイコン / グラフの境界など。
+3. **semantic token で担保する**: solid な role 色は白文字で 4.5 以上になる shade を semantic 側で選ぶ (例: `surface-error` は red-600)。生 hex を直書きしない (lint で弾く)。
+4. **disabled は contrast 免除**: WCAG は disabled UI を contrast 要件から除外する。ただし「無効」と分かる視覚 + `disabled` / `aria-disabled` は付ける。
+5. **contrast を満たしても色だけに頼らない**: コントラストは「明るさ」の問題、色覚特性は別問題。success/error 等は色 + アイコン + テキストで伝える。
+
+## Do / Don't
+
+- **Do**: 補助テキスト (muted) も 4.5:1 を満たす neutral shade を使う。
+- **Do**: focus ring を背景に対し 3:1 以上にする。
+- **Don't**: `#cccccc` のような薄いグレー文字を白背景の本文に使う。
+- **Don't**: 「薄い色だから上品」と可読性を犠牲にする。
+
+## 関連
+
+- [Tokens / Color / Semantic](?path=/docs/tokens-color-semantic--guideline) — AA を満たす role 色
+- [Tokens / Focus Ring](?path=/docs/tokens-focus-ring--guideline) — 3:1 の focus インジケータ
+- [`<Badge>`](?path=/docs/primitives-badge--guideline) / [`<Alert>`](?path=/docs/composites-alert--guideline) — solid role 色 + 白文字の例
+
+関連原則: [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs) / [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs)

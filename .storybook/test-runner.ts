@@ -43,6 +43,11 @@ const COLOR_CONTRAST_EXEMPT: Record<string, string> = {
 
 const config: TestRunnerConfig = {
   async preVisit(page) {
+    // 決定性のため reduced-motion を常時強制する。CI の Playwright は既定で
+    // prefers-reduced-motion をエミュレートせず、transition / animation が play・axe の
+    // タイミング flake を生む。flake はエージェントに誤った自己修正を誘発するため排除する。
+    // (reduced-motion 対応自体の検証は別途手動)
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await injectAxe(page);
   },
   async postVisit(page, context) {

@@ -11,10 +11,13 @@
 
 ### Fixed (a11y / visual)
 
+- **`Toast` の live region を常設コンテナ化** (a11y): `ToastProvider` を `role="status"`/`aria-live="polite"` と `role="alert"`/`aria-live="assertive"` の **2 コンテナ常設**に変え、Toast を variant で振り分けて注入。個別 Toast の live 属性を撤去し、live region のマウント遅延による告知漏れを防ぐ (単発 `<Toast>` API はラッパに同等属性を付与)
 - **solid セマンティックロール色を AA 4.5 準拠にダーク化** (visual): `surface-success` (green.500→**600**) / `surface-error` (red.500→**600**) / `surface-warning` (orange.400→**600**) / `surface-info` (blue.500→**600**)。白文字/マークとのコントラストが 2.73〜3.96 → **4.57〜5.31** に改善 (WCAG 1.4.3 AA)。Badge solid / Avatar / Checkbox / Radio / ProgressBar 等が対象。axe ゲートの一時 exempt (Badge/Avatar) を撤去
 
 ### Added
 
+- **`Modal` に `initialFocusRef` prop**: 開いた直後にフォーカスを当てる要素を指定できる (未指定は browser 既定 = 最初の focusable)。確認ダイアログで Footer の primary アクションに当て、SR が先に主要操作を読むようにする。play test 付き
+- **`Tabs` に `activationMode` prop** (`'automatic'` | `'manual'`、既定 automatic): `manual` は矢印キーで focus のみ移動し `Enter`/`Space` で選択確定 (WAI-ARIA APG)。遅延ロード / 通信を伴う重い panel 向け。play test 付き
 - **AI 協業ワークフローを整備**: (1) [`.claude/commands/add-component.md`](./.claude/commands/add-component.md) (§5 準拠の 4 ファイル scaffold→実装→検証) と [`audit-drift.md`](./.claude/commands/audit-drift.md) (規約と実装の乖離検査) を追加。(2) PR テンプレに「規約への還元 (要/不要/更新済み)」「レビュー観点ラベル」節を追加し、stale な §11→§10 (Semver) 参照を修正。(3) AGENTS.md **§11「規約更新の運用」**を新設 (指摘 → 分類 → 規約化 → §追記 のループ)。(4) GitHub ラベル `review:conformance` / `review:judgement` を作成し、strategy.md「現在の運用方針」に月次計測メモを追記
 - **Principles (設計原則) セクションを需要順に再構築開始**: 2026-06-10 に撤去した principles を、責務を分離した形で `components/principles/` に再導入。第 1 弾 = 需要上位 3 本 (`Principles/Layout/Alignment` / `.../Accessibility/Screen Readers` / `Patterns/Forms`) + `Principles/Overview` (残り 19 を需要順 TODO 化)。各ページは横断的原則 (3〜5) + Do/Don't + 関連コンポーネントリンクで構成し、component 固有の具体例は guideline に置き重複させない。`preview.ts` storySort に `Principles` カテゴリを再追加
 - **Storybook test-runner + axe を CI に追加 (a11y 自動監査)**: [`.storybook/test-runner.ts`](./.storybook/test-runner.ts) で全 Story を smoke render + play + axe 監査。CI に「Run Storybook tests」ステップ (`npm run test-storybook`) を追加し、これまで手動でしか走らなかった play test と a11y チェックを自動化。AGENTS.md §8-4「axe と例外の付け方」を新設 (例外は理由付きで `test-runner.ts` に集約)

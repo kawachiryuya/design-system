@@ -1,4 +1,4 @@
-import React, { useState, useRef, useId } from 'react';
+import React, { useState, useRef, useId, useEffect } from 'react';
 
 /**
  * Tabs の 1 タブ項目。
@@ -87,6 +87,14 @@ export interface TabsProps {
    * @default 'タブナビゲーション'
    */
   ariaLabel?: string;
+  /**
+   * 矢印キー移動時の選択タイミング (WAI-ARIA APG)。
+   * - `automatic`: 矢印キーで移動 = 即選択 (panel も切替)。大半の UI 向け
+   * - `manual`: 矢印キーは focus のみ移動し、`Enter` / `Space` で選択確定。
+   *   **panel が遅延ロード / 通信を伴う場合に使う** (矢印連打ごとの fetch を防ぐ)
+   * @default 'automatic'
+   */
+  activationMode?: 'automatic' | 'manual';
   /** 追加 CSS クラス（コンテナに適用）。 */
   className?: string;
 }
@@ -102,6 +110,7 @@ export const Tabs: React.FC<TabsProps> = ({
   activeId: controlledId,
   onChange,
   ariaLabel = 'タブナビゲーション',
+  activationMode = 'automatic',
   className = '',
 }) => {
   const uid = useId();
@@ -119,9 +128,16 @@ export const Tabs: React.FC<TabsProps> = ({
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
+  // manual モードの roving 用。focus 中タブ (選択とは別軸)。automatic では currentId と一致。
+  const [focusedId, setFocusedId] = useState(currentId);
+  // 選択が外部 (controlled) で変わったら roving focus も追従させる。
+  useEffect(() => { setFocusedId(currentId); }, [currentId]);
+  const rovingId = activationMode === 'manual' ? focusedId : currentId;
+
   const handleSelect = (id: string) => {
     if (!isControlled) setInternalId(id);
     onChange?.(id);
+    setFocusedId(id);
   };
 
   const enabledTabs = tabs.filter((t) => !t.disabled);
@@ -148,8 +164,13 @@ export const Tabs: React.FC<TabsProps> = ({
     }
 
     if (nextTab) {
-      handleSelect(nextTab.id);
       const nextIndex = tabs.findIndex((t) => t.id === nextTab!.id);
+      // automatic: 移動 = 即選択。manual: focus のみ移動 (Enter/Space は button の onClick で選択)。
+      if (activationMode === 'automatic') {
+        handleSelect(nextTab.id);
+      } else {
+        setFocusedId(nextTab.id);
+      }
       tabRefs.current[nextIndex]?.focus();
     }
   };
@@ -186,7 +207,7 @@ export const Tabs: React.FC<TabsProps> = ({
               id={`${uid}-tab-${tab.id}`}
               aria-controls={`${uid}-panel-${tab.id}`}
               aria-selected={tab.id === currentId}
-              tabIndex={tab.id === currentId ? 0 : -1}
+              tabIndex={tab.id === rovingId ? 0 : -1}
               disabled={tab.disabled}
               className={tabButtonClass(tab)}
               onClick={() => !tab.disabled && handleSelect(tab.id)}

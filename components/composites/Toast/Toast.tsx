@@ -184,11 +184,10 @@ const ToastBody: React.FC<ToastContent & {
   onResume,
 }) => {
   const config = variantConfig[variant];
+  // role / aria-live は常設の live region コンテナ側に持たせる (告知の確実性向上)。
+  // ToastBody 自体は視覚表現のみを担う。
   return (
     <div
-      role={config.role}
-      aria-live={config.ariaLive}
-      aria-atomic="true"
       onMouseEnter={onPause}
       onMouseLeave={onResume}
       onFocus={onPause}
@@ -260,8 +259,16 @@ export const Toast: React.FC<ToastProps> = ({
 
   if (!open) return null;
 
+  // 単発 API は live region コンテナを持たないため、ラッパに role/aria-live を付与する。
+  const liveConfig = variantConfig[content.variant ?? 'info'];
+
   return (
-    <div className={['fixed z-toast', positionStyles[position]].join(' ')}>
+    <div
+      role={liveConfig.role}
+      aria-live={liveConfig.ariaLive}
+      aria-atomic="true"
+      className={['fixed z-toast', positionStyles[position]].join(' ')}
+    >
       <ToastBody {...content} onClose={onClose} onPause={pause} onResume={resume} />
     </div>
   );
@@ -357,19 +364,30 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 
   const value = React.useMemo(() => ({ showToast, dismissToast }), [showToast, dismissToast]);
 
+  // error は assertive (role=alert)、それ以外は polite (role=status) のコンテナへ振り分ける。
+  // 両コンテナは空でも DOM に常設し、内容注入を確実に告知させる (live region のマウント遅延を回避)。
+  const assertiveToasts = toasts.filter((t) => t.variant === 'error');
+  const politeToasts = toasts.filter((t) => t.variant !== 'error');
+  const stackClass = [
+    'flex flex-col gap-2',
+    position.startsWith('bottom') ? 'flex-col-reverse' : '',
+  ].filter(Boolean).join(' ');
+
+  const renderEntries = (entries: ToastEntry[]) =>
+    entries.map((t) => (
+      <ToastEntryView key={t.id} entry={t} onDismiss={() => dismissToast(t.id)} />
+    ));
+
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div
-        className={[
-          'fixed z-toast flex flex-col gap-2',
-          positionStyles[position],
-          position.startsWith('bottom') ? 'flex-col-reverse' : '',
-        ].join(' ')}
-      >
-        {toasts.map((t) => (
-          <ToastEntryView key={t.id} entry={t} onDismiss={() => dismissToast(t.id)} />
-        ))}
+      <div className={['fixed z-toast flex flex-col gap-2', positionStyles[position]].join(' ')}>
+        <div role="status" aria-live="polite" aria-relevant="additions" className={stackClass}>
+          {renderEntries(politeToasts)}
+        </div>
+        <div role="alert" aria-live="assertive" aria-relevant="additions" className={stackClass}>
+          {renderEntries(assertiveToasts)}
+        </div>
       </div>
     </ToastContext.Provider>
   );

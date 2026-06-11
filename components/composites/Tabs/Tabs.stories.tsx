@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, within, waitFor } from 'storybook/test';
 import { useState } from 'react';
 import { Tabs } from './Tabs';
 import { Badge } from '../../primitives/Badge/Badge';
@@ -256,5 +256,41 @@ export const EdgeCases: Story = {
         </Caption>
       </div>
     );
+  },
+};
+
+// ── 4. ManualActivation ────────────────────────────────────────
+
+export const ManualActivation: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '`activationMode="manual"`: 矢印キーは focus のみ移動し、`Enter` / `Space` で選択確定。panel が遅延ロード / 通信を伴う場合に使う。矢印で選択が変わらず Enter で確定することを play test で保証。',
+      },
+    },
+  },
+  render: () => {
+    function Demo() {
+      const [v, setV] = useState('overview');
+      return <Tabs tabs={sampleTabs} activeId={v} onChange={setV} activationMode="manual" ariaLabel="manual demo" />;
+    }
+    return <Demo />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const first = canvas.getByRole('tab', { name: '概要' });
+    first.focus();
+    await expect(first).toHaveAttribute('aria-selected', 'true');
+
+    // 矢印は focus のみ移動 (選択は変わらない)
+    await userEvent.keyboard('{ArrowRight}');
+    const members = canvas.getByRole('tab', { name: /メンバー/ });
+    await waitFor(() => expect(members).toHaveFocus());
+    await expect(members).toHaveAttribute('aria-selected', 'false');
+    await expect(first).toHaveAttribute('aria-selected', 'true');
+
+    // Enter で選択確定
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(members).toHaveAttribute('aria-selected', 'true'));
   },
 };

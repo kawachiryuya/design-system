@@ -74,6 +74,11 @@ export interface ModalProps extends Omit<React.DialogHTMLAttributes<HTMLDialogEl
    * @default false
    */
   hideCloseButton?: boolean;
+  /**
+   * 開いた直後にフォーカスを当てる要素の ref。未指定時は browser 既定 (最初の focusable = 通常 close ボタン)。
+   * 確認ダイアログでは Footer の primary アクションを指定し、SR が先に主要操作を読むようにする。
+   */
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
   children: React.ReactNode;
 }
 
@@ -114,6 +119,7 @@ const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
   closeOnEsc = true,
   closeOnOverlayClick = true,
   hideCloseButton = false,
+  initialFocusRef,
   className = '',
   children,
   ...rest
@@ -133,10 +139,13 @@ const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
+      // showModal は最初の focusable (通常 close ボタン) に focus する。
+      // initialFocusRef 指定時はその直後に上書きして主要アクション等へ移す。
+      if (initialFocusRef?.current) initialFocusRef.current.focus();
     } else if (!open && dialog.open) {
       dialog.close();
     }
-  }, [open]);
+  }, [open, initialFocusRef]);
 
   // 背景スクロールロック。native `<dialog>.showModal()` は背後ページのホイール/スワイプ
   // スクロールを止めないため、開いている間だけ body の overflow を hidden にする。

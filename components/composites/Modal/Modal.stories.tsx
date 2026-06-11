@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
 import { Modal } from './Modal';
 import { Button } from '../../primitives/Button';
 import { Input } from '../../primitives/Input';
@@ -271,5 +272,50 @@ export const EdgeCases: Story = {
         <Caption text="Layout token 適用 (size=full + 内部 grid-base でレスポンシブ多項目フォーム)"><ProfileFormDemo /></Caption>
       </div>
     );
+  },
+};
+
+// ── 5. InitialFocus ────────────────────────────────────────────
+
+export const InitialFocus: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '確認ダイアログで Footer の primary アクションに `initialFocusRef` を当てる。開いた直後に close ボタンではなく primary にフォーカスが乗ることを play test で保証。',
+      },
+    },
+  },
+  render: () => {
+    function Demo() {
+      const [open, setOpen] = React.useState(false);
+      const primaryRef = React.useRef<HTMLButtonElement>(null);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>削除確認を開く</Button>
+          <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            title="削除しますか？"
+            initialFocusRef={primaryRef}
+          >
+            <Modal.Body>この操作は取り消せません。</Modal.Body>
+            <Modal.Footer>
+              <Button variant="tertiary" onClick={() => setOpen(false)}>キャンセル</Button>
+              <Button ref={primaryRef} variant="destructive" onClick={() => setOpen(false)}>
+                削除する
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      );
+    }
+    return <Demo />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '削除確認を開く' }));
+    // 開くと initialFocusRef (削除する) にフォーカスが乗る (close ボタンではない)
+    const del = await screen.findByRole('button', { name: '削除する' });
+    await waitFor(() => expect(del).toHaveFocus());
   },
 };

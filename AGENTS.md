@@ -351,6 +351,21 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 | `npm run build-storybook` | Storybook 静的書き出し (`storybook-static/`) |
 | `npm run build` | コンポーネント + tokens の TS コンパイル (→ `dist/`) |
 
+### 4-1. 単一コンポーネントの内側ループ
+
+エージェントの内側ループ (1 コンポーネントの修正→検証の反復) は**秒単位**であるべき。全リポジトリ走査 (typecheck / build-storybook は重い) をイテレーションごとに払わない。
+
+| 用途 | コマンド |
+|---|---|
+| イテレーション中の lint (スコープ版) | `npx eslint components/<layer>/<Name>/` |
+| イテレーション中の test (story 絞り込み) | `npm run test-storybook:local -- <Name>` (要 `build-storybook` 済み) |
+| **コミット前の最終確認 (全体)** | `npm run verify` |
+| 視覚・a11y も含む全確認 | `npm run verify:full` |
+
+- `npm run verify` = `tokens:build → check:contrast → check:links → lint → typecheck` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
+- `typecheck` は incremental (`.tsbuildinfo`) のため 2 回目以降が速い。
+- **イテレーション中はスコープ版、全体走査はコミット前のみ** という方針を守る。
+
 ---
 
 ## 5. コンポーネント実装規約 (新規・既存共通)

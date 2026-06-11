@@ -44,9 +44,9 @@
         "description": "選択状態・アクティブ項目"
       },
       "success": {
-        "value": "{color.green.500}",
+        "value": "{color.green.600}",
         "type": "color",
-        "description": "成功の強調塗り（バッジ・ドット等）"
+        "description": "成功の強調塗り（バッジ・ドット等）。白文字/マークで AA 4.5 を満たすよう 600 を採用"
       },
       "success-muted": {
         "value": "{color.green.50}",
@@ -54,9 +54,9 @@
         "description": "成功Alert背景等"
       },
       "error": {
-        "value": "{color.red.500}",
+        "value": "{color.red.600}",
         "type": "color",
-        "description": "エラーの強調塗り（バッジ・ドット等）"
+        "description": "エラーの強調塗り（バッジ・ドット等）。白文字/マークで AA 4.5 を満たすよう 600 を採用"
       },
       "error-muted": {
         "value": "{color.red.50}",
@@ -64,9 +64,9 @@
         "description": "エラーAlert背景等"
       },
       "warning": {
-        "value": "{color.orange.400}",
+        "value": "{color.orange.600}",
         "type": "color",
-        "description": "警告の強調塗り（バッジ・ドット等）"
+        "description": "警告の強調塗り（バッジ・ドット等）。白文字/マークで AA 4.5 を満たすよう 600 を採用"
       },
       "warning-muted": {
         "value": "{color.orange.50}",
@@ -74,9 +74,9 @@
         "description": "警告Alert背景等"
       },
       "info": {
-        "value": "{color.blue.500}",
+        "value": "{color.blue.600}",
         "type": "color",
-        "description": "情報の強調塗り（バッジ・ドット等）"
+        "description": "情報の強調塗り（バッジ・ドット等）。白文字/マークで AA 4.5 を満たすよう 600 を採用"
       },
       "info-muted": {
         "value": "{color.blue.50}",

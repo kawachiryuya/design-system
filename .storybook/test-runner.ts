@@ -37,8 +37,6 @@ const COLOR_CONTRAST_EXEMPT: Record<string, string> = {
   'Primitives/Typography': 'disabled variant デモの意図的低コントラスト (WCAG 免除)',
   'Primitives/Image': 'empty/error placeholder の disabled 色テキスト (WCAG 免除)',
   'Composites/Tabs': 'disabled タブの件数 badge (disabled 状態、WCAG 免除)',
-  'Primitives/Badge': 'TODO(contrast): solid role 色 (success/error/warning/info) + 白文字が AA 4.5 未満。token ダーク化 PR で解消予定',
-  'Composites/Avatar': 'TODO(contrast): 色付き avatar 背景 + 白文字が AA 4.5 未満。token ダーク化 PR で解消予定',
   'Composites/Popover': 'TODO(contrast): muted text が layered 背景上で AA 4.5 未満。contrast 見直しで対応予定',
   'Composites/SplitPane': 'TODO(contrast): muted text が layered 背景上で AA 4.5 未満。contrast 見直しで対応予定',
 };

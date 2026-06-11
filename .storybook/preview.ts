@@ -7,6 +7,8 @@ const preview: Preview = {
       storySort: {
         order: [
           'Introduction',
+          'Principles',
+          ['Overview', 'Foundation', 'Color', 'Typography', 'Layout', 'Interaction', 'Patterns', 'Platform', '*'],
           'Tokens',
           [
             'Overview',

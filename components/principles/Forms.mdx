@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Patterns/Forms" />
+
+# フォーム (Forms)
+
+フォームは「入力の負荷を下げ、エラーを防ぎ、起きたエラーから回復しやすくする」ことを目的に設計する。見た目より、迷い・打ち間違い・やり直しコストを減らすことを優先する。
+
+## 原則
+
+1. **可視ラベルを常設する**: すべての入力に見えるラベルを付ける。`placeholder` はラベルの代替にしない (入力すると消え、何の欄か分からなくなる)。
+2. **必須 / 任意とフォーマットを先に伝える**: 必須は記号＋テキストで明示し、想定フォーマット (例: `YYYY-MM-DD`) は入力前に示す。
+3. **関連入力をグループ化する**: 住所・氏名など関連項目は `fieldset` / `legend` でまとめ、視覚と支援技術の双方で「ひとかたまり」と分かるようにする。
+4. **エラーは具体的に・その場で**: エラーは該当フィールドの近くに、何が・どう直すかをテキストで示す (`aria-invalid` + 説明の関連付け)。色だけに頼らない。
+5. **急かさず検証する**: インラインバリデーションは入力中ではなく blur 後 / 送信時に。送信ボタンは結果が予測できる動詞ラベル ("登録する") にする。
+
+## Do / Don't
+
+- **Do**: ラベルを常時表示し、必須に `*` ＋ "必須" の補助テキストを添える。
+- **Do**: エラーメッセージをフィールド直下に出し、`aria-describedby` で結びつける。
+- **Don't**: `placeholder="メールアドレス"` をラベル代わりにする。
+- **Don't**: 入力中の 1 文字ごとに赤エラーを出してユーザーを急かす。
+
+## 関連コンポーネント
+
+- [`<Label>`](?path=/docs/primitives-label--guideline) — 可視ラベルと必須マーク
+- [`<Input>`](?path=/docs/primitives-input--guideline) / [`<Textarea>`](?path=/docs/primitives-textarea--guideline) / [`<Select>`](?path=/docs/composites-select--guideline) / [`<SearchBar>`](?path=/docs/composites-searchbar--guideline) — 入力部品とエラー連携
+- [`<Checkbox>`](?path=/docs/composites-checkbox--guideline) / [`<Radio>`](?path=/docs/composites-radio--guideline) — fieldset/legend によるグループ化
+- [`<Button>`](?path=/docs/primitives-button--guideline) — 送信は動詞ラベル

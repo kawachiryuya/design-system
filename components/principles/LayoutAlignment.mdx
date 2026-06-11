@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Layout/Alignment" />
+
+# 整列とレイアウト (Alignment)
+
+整列は、ユーザーが無意識に秩序とまとまりを読み取るための最重要な手がかり。要素を見えない grid に沿わせるだけで、説明なしに「どれが関連し、どこから読むか」が伝わる。
+
+## 原則
+
+1. **見えない grid に沿わせる**: 要素の左端・上端・ベースラインを揃える。揃え軸を増やさない (1 ブロック内は原則 1 つの左揃え軸)。
+2. **左揃えを既定に**: 本文・ラベル・リストは左揃え。中央揃えは短い見出しや孤立した要素に限定し、両端揃え (justify) は和文で字間が崩れるため使わない。
+3. **近接で意味をまとめる**: 関連する要素は近づけ、無関係な要素は余白で離す。「線で囲う」より「余白で分ける」を優先 (装飾を増やさない)。
+4. **余白は spacing スケールの倍数で一貫させる**: 任意の px ではなく 8px ベースの [Spacing token](?path=/docs/tokens-spacing--guideline) を使い、リズムを揃える。
+5. **大外は Layout token に委ねる**: ページの container / section / grid は [Layout token](?path=/docs/tokens-layout--guideline) で統一し、コンポーネント側で再発明しない。
+
+## Do / Don't
+
+- **Do**: フォームのラベルと入力を左端で揃え、グループごとに余白を空ける。
+- **Do**: カードのタイトル・本文・メタ情報を 1 つの左揃え軸に乗せる。
+- **Don't**: 長文やリストを中央揃えにする (行頭が揃わず読みづらい)。
+- **Don't**: 余白を `mt-[13px]` のような任意値で散らす (spacing token を使う)。
+
+## 関連コンポーネント
+
+- [`<Stack>`](?path=/docs/primitives-stack--guideline) / [`<Cluster>`](?path=/docs/primitives-cluster--guideline) / [`<Center>`](?path=/docs/primitives-center--guideline) — 縦 / 横 / 中央の整列
+- [`<Divider>`](?path=/docs/primitives-divider--guideline) — 余白で足りないときの明示的区切り
+- [`<TwoColumn>`](?path=/docs/composites-twocolumn--guideline) / [`<SplitPane>`](?path=/docs/composites-splitpane--guideline) / [`<AppShell>`](?path=/docs/composites-appshell--guideline) — ページ骨格の整列
+- [Tokens / Layout](?path=/docs/tokens-layout--guideline) ・ [Tokens / Spacing](?path=/docs/tokens-spacing--guideline)

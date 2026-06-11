@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Foundation/Accessibility/Screen Readers" />
+
+# スクリーンリーダー (Screen Readers)
+
+スクリーンリーダー利用者に、視覚で得られる情報と**同等の情報**をマークアップで提供する。見た目を作り込む前に「読み上げで意味が通るか」を担保する。
+
+## 原則
+
+1. **意味はマークアップで伝える**: 役割は role / 適切な要素 (`<button>` `<nav>` `<h2>`) で、状態は `aria-*` (`aria-expanded` / `aria-selected` / `aria-invalid`) で表す。見た目だけで意味を作らない。
+2. **視覚のみの情報にテキスト等価を**: 色・位置・アイコンだけで伝わる情報 (エラー＝赤、必須＝* 等) には、テキストや `aria-label` を併置する。
+3. **機能要素は名前を、装飾要素は隠す**: 操作要素は必ずアクセシブルネームを持たせ (icon-only ボタンは `aria-label`)、純装飾の図形・アイコンは `aria-hidden` で読み上げから除く。
+4. **動的更新は live region で通知**: 非同期に現れる結果 (保存完了・検索件数・エラー) は `role="status"` / `aria-live` で知らせる。フォーカスを奪わずに伝える。
+5. **読み上げ順 = DOM 順**: 視覚順と DOM 順を一致させ、`tabindex` は 0 / -1 のみ使う (正の値で順序を捻じ曲げない)。
+
+## Do / Don't
+
+- **Do**: icon-only ボタンに用途を表す `aria-label` を付ける (型レベルで必須化済み)。
+- **Do**: 装飾アイコンに `aria-hidden`、SR 専用補足に [`<VisuallyHidden>`](?path=/docs/primitives-visuallyhidden--guideline)。
+- **Don't**: エラーを赤色だけで示す (テキストや `aria-invalid` を併用する)。
+- **Don't**: `<div onClick>` でボタンを作る ([`<Button>`](?path=/docs/primitives-button--guideline) を使う)。
+
+## 関連コンポーネント
+
+- [`<VisuallyHidden>`](?path=/docs/primitives-visuallyhidden--guideline) — SR 専用テキスト / live region の補助
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — 装飾は `aria-hidden`、意味があれば代替テキスト
+- [`<Label>`](?path=/docs/primitives-label--guideline) / [`<Link>`](?path=/docs/primitives-link--guideline) — 名前付けと遷移の明示
+- [`<Toast>`](?path=/docs/composites-toast--guideline) — `role`/`aria-live` による通知
+- [`<Button>`](?path=/docs/primitives-button--guideline) — icon-only の `aria-label` 必須

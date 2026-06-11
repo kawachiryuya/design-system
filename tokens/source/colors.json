@@ -253,16 +253,16 @@
       }
     },
     "yellow": {
-      "50":  { "value": "#FCF5E3", "type": "color" },
-      "100": { "value": "#F5E7C3", "type": "color" },
-      "200": { "value": "#E9D397", "type": "color" },
-      "300": { "value": "#D8B758", "type": "color" },
-      "400": { "value": "#C09910", "type": "color" },
-      "500": { "value": "#A98000", "type": "color", "description": "カテゴリカルパレット用 (データ可視化 / Avatar 背景等)。UI セマンティクス (success/error 等) には使わない" },
-      "600": { "value": "#916B00", "type": "color" },
-      "700": { "value": "#755600", "type": "color" },
-      "800": { "value": "#5A4100", "type": "color" },
-      "900": { "value": "#402D00", "type": "color" }
+      "50":  { "value": "#FEFCE8", "type": "color" },
+      "100": { "value": "#FEF9C3", "type": "color" },
+      "200": { "value": "#FEF08A", "type": "color" },
+      "300": { "value": "#FDE047", "type": "color" },
+      "400": { "value": "#FACC15", "type": "color" },
+      "500": { "value": "#EAB308", "type": "color", "description": "bright-hue (鮮やかな黄): 濃色文字前提の明るい色相。step 50〜600 は dark text (neutral-900 系) で ≥4.5、700〜900 は white text で ≥4.5。薄い面に白文字を載せない。L 正規化と白文字アンカーの例外 (contrast-policy C-7=B)。データ可視化 / 強調 / 注意喚起に" },
+      "600": { "value": "#CA8A04", "type": "color" },
+      "700": { "value": "#A16207", "type": "color" },
+      "800": { "value": "#854D0E", "type": "color" },
+      "900": { "value": "#713F12", "type": "color" }
     },
     "lime": {
       "50":  { "value": "#F1F8E6", "type": "color" },

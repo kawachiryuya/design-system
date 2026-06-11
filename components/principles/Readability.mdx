@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Typography/Readability" />
+
+# 可読性 (Readability)
+
+本文は「読む」ためのもの。行長・行間・字間・サイズを**和文に最適化**し、長文でも疲れず読めるようにする。
+
+## 原則
+
+1. **行長を抑える**: 和文 **25〜35 文字** / 欧文 45〜75 文字。記事本文は `max-w-2xl` (≈672px) 程度に収める (長すぎる行は次の行頭を見失う)。
+2. **行間は本文 1.5+**: 本文 line-height 1.5 以上、見出しは snug (1.35)、ボタンは 1.0〜1.25。和文は仮想ボディが詰まるため欧文より広めに。
+3. **モバイル最小 16px**: 本文は 16px 以上 (それ未満だと iOS が自動ズームし、レイアウトが崩れる)。
+4. **左揃えを基本に**: 両端揃え (justify) は和文で単語間隔が崩れるため使わない。中央揃えは短い見出し・短文のみ。
+5. **200% ズーム対応**: `rem` 単位で組み、文字を 200% に拡大しても横スクロールが出ない。
+
+## Do / Don't
+
+- **Do**: 記事本文を `max-w-2xl` + line-height 1.5+ で組む。
+- **Do**: 見出しは line-height snug、本文と階層を分ける。
+- **Don't**: 全幅で 1 行 100 文字を超える本文を流す。
+- **Don't**: 本文を 14px 以下にして情報密度を上げる。
+
+## 関連
+
+- [`<Typography>`](?path=/docs/primitives-typography--guideline) — variant で role 別のメトリクスを適用
+- [Tokens / Typography / Semantic](?path=/docs/tokens-typography-semantic--guideline) — heading / body / label の行間・字間
+- [Tokens / Breakpoints](?path=/docs/tokens-breakpoints--guideline) — 画面幅に応じた行長制御
+
+関連原則: [Layout / Alignment](?path=/docs/principles-layout-alignment--docs)

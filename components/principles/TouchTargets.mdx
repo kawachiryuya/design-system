@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Foundation/Accessibility/Touch Targets" />
+
+# タッチターゲット (Touch Targets)
+
+タッチ操作での誤タップを防ぐため、操作対象に十分な大きさと間隔を確保する。指は精密でなく、画面も小さい。
+
+## 原則
+
+1. **最小 44×44px** (WCAG 2.5.5 / iOS HIG): 主要な操作対象はこのサイズを満たす (Material は 48px 推奨)。
+2. **隣接ターゲット間は 8px 以上**: 詰めすぎると隣を誤タップする。
+3. **見た目が小さくても hit area は広げる**: アイコンの見た目は小さくても、padding や擬似要素で実際のタップ領域を 44px に拡張する。
+4. **ホバー依存を作らない**: タッチにはホバーが無い。重要な情報・操作をホバーでしか出さない設計にしない。
+5. **compact (sm) は用途を限定**: 密度の高い一覧 (テーブル等) で 40px を使う場合は用途を絞り、WCAG 厳守の context では親側で hit area を拡張する。
+
+## Do / Don't
+
+- **Do**: icon-only ボタンを `size="md"` 以上 (44px) にする。
+- **Do**: 小さなクローズアイコンの周囲に padding を足して 44px の hit area を作る。
+- **Don't**: 32px のアイコンボタンを隙間なく並べる。
+- **Don't**: 操作のヒントをホバーツールチップだけに置く (タッチで出ない)。
+
+## 関連コンポーネント
+
+- [`<Button>`](?path=/docs/primitives-button--guideline) — `size` でターゲットサイズを確保 (md/large が 44px)
+- [`<SegmentedControl>`](?path=/docs/composites-segmentedcontrol--guideline) / [`<Pagination>`](?path=/docs/composites-pagination--guideline) / [`<Tabs>`](?path=/docs/composites-tabs--guideline) — 密度と hit area の両立
+
+関連原則: [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)

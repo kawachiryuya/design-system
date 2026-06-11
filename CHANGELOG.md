@@ -39,6 +39,7 @@
 
 ### Changed
 
+- **orange-500 を条件付きステップとして明文化** (contrast-policy C-3): 鮮オレンジ orange-500 (#BE7200) は白文字が 3.75 で AA 未満のため **large-text / 非テキスト (アイコン・グラフ) 限定**。本文面は白文字=orange-600/700 (濃色シフト)、濃色文字=orange-50〜200 (文字色反転) を使う。colors.json に description 追記、`contrast-pairs.json` に orange-500+白の条件付き non-text ペアを登録。L 正規化のため中間オレンジは muddy で、濃色文字でも APCA Lc が body 目標に届かない点も記録
 - **AGENTS.md §8-5「コントラスト基準 (WCAG 2 床 + APCA レンズ)」を新設**: 適合は WCAG 2.2 AA を機械強制の床、APCA Lc は設計レンズ (ゲートにしない) とする二層方針を明文化。条件付きペア (3:1 以上を large-text/非テキスト/装飾/disabled に限定) の機械可読表、APCA Lc 参考目標表を追加。「ゲートは WCAG 2 のみ」を明記 (`design-system-contrast-policy.md` C-1)
 - **AGENTS.md §5-5 受け入れ基準を「機械 / 人間」に二分**: CI が保証する項目 (typecheck / lint / check:links / test-storybook の担保ステップを明記) と、人間がレビューで判断する項目 (API 設計・命名・配置・Do/Don't 内容・UX 妥当性) を分離。レビュアーが機械項目を二重確認しない運用に
 - **語彙を `Primitives` / `Composites` に一本化**: 公式語彙を実装名に統一し、`Parts` / `Blocks` は [`design-system-strategy.md`](./design-system-strategy.md) 内の由来 (経緯) に格下げ。`README.md` / `package.json` description / strategy.md の分類表を更新。**さらに strategy.md / AGENTS.md / Introduction.mdx 本文の `Parts` / `Blocks` を一掃**し経緯注記 1 箇所に集約 (Introduction の迂回文削除・見出し更新を含む)

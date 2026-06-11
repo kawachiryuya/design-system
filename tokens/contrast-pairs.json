@@ -28,6 +28,8 @@
     { "fg": "border-warning-emphasis", "bg": "surface-layer-1", "usage": "non-text" },
     { "fg": "border-info-emphasis", "bg": "surface-layer-1", "usage": "non-text" },
 
+    { "fg": "orange-500", "bg": "surface-layer-1", "usage": "non-text", "note": "C-3 条件付き: 鮮オレンジのアイコン/グラフ on 白 = 3.75 (≥3:1)。body 不可" },
+
     { "fg": "border-default", "bg": "surface-layer-1", "usage": "decorative", "note": "分離線・罫線 (純装飾、WCAG 1.4.11 例外)。識別は label/focus で担保" },
     { "fg": "border-subtle", "bg": "surface-layer-1", "usage": "decorative", "note": "淡い分離線 (純装飾)" },
     { "fg": "on-disabled", "bg": "surface-disabled", "usage": "decorative", "note": "disabled (WCAG 1.4.3 免除)" }

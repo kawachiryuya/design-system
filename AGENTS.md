@@ -673,6 +673,34 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 **原則**: disabled 状態の意図的低コントラストは WCAG 1.4.3 が免除するため恒久例外でよい。それ以外の違反は「直す」が既定で、例外は finding として明示し追跡する。
 
+### 8-5. コントラスト基準 (WCAG 2 床 + APCA レンズ)
+
+コントラストは **WCAG 2.2 AA を機械強制の床、APCA Lc を設計レンズ** とする二層方針で運用する ([`design-system-contrast-policy.md`](./design-system-contrast-policy.md))。
+
+- **適合基準 (床)**: WCAG 2.2 AA。テキスト 4.5:1、大きいテキスト (24px 以上、または太字 18.66px 以上) と非テキスト (UI 部品・アイコン・グラフィック) は 3:1。`check:contrast` (§5-5-1) が機械的に強制し、例外はない。
+- **設計基準 (レンズ)**: APCA Lc。適合判定には使わず、(1) AA を通るペア内の読みやすさ比較、(2)「AA は通るが知覚的に不十分」の警告、(3) ダークモード設計指針、に使う。
+- **条件付きペア**: 4.5:1 未満かつ 3:1 以上のペアは「条件付き合格」とし、大きいテキスト・非テキスト・装飾/ロゴ/disabled のみに使用を限定する (WCAG 2 自身の例外条項であり、基準の改変ではない)。
+- **禁止**: 「APCA を満たすので AA 未満でも可」という運用 (適合は計算式で判定され、APCA に救済条項はない)。
+
+**条件付きペアの可否 (機械可読)**:
+
+| 区分 | 閾値 | 使用可能な場所 |
+|---|---|---|
+| 合格 | ≥ 4.5:1 | 全テキスト |
+| 条件付き | ≥ 3:1 | heading lg 以上 / 太字 18.66px 以上 / アイコン・グラフィック・UI 境界線 / 装飾・ロゴ・disabled |
+| 不合格 | < 3:1 | 使用不可 (装飾・ロゴ・disabled を除く) |
+
+**APCA Lc 参考目標 (警告基準であり、ゲートではない)**:
+
+| タイポトークン | APCA Lc 参考目標 |
+|---|---|
+| body md 以下 | Lc 75 以上 |
+| body lg / heading md 以上 | Lc 60 以上 |
+| caption / 補助テキスト | Lc 60 以上 (太字推奨) |
+| 非テキスト | Lc 45 以上 |
+
+**ゲートは WCAG 2 のみ**。APCA Lc は `check:contrast` のレポートに warn (exit 0) として出るだけで CI を fail させない。検証は §5-5-1 の `check:contrast`、階調設計は [Tokens/Color/Primitive guideline](?path=/docs/tokens-color-primitive--guideline) と Principles の Semantic Colors を参照。
+
 ---
 
 

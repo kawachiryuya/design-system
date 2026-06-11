@@ -32,6 +32,7 @@
 
 ### Changed
 
+- **AGENTS.md §5-5 受け入れ基準を「機械 / 人間」に二分**: CI が保証する項目 (typecheck / lint / check:links / test-storybook の担保ステップを明記) と、人間がレビューで判断する項目 (API 設計・命名・配置・Do/Don't 内容・UX 妥当性) を分離。レビュアーが機械項目を二重確認しない運用に
 - **語彙を `Primitives` / `Composites` に一本化**: 公式語彙を実装名に統一し、`Parts` / `Blocks` は [`design-system-strategy.md`](./design-system-strategy.md) 内の由来 (経緯) に格下げ。`README.md` / `package.json` description / strategy.md の分類表を更新
 - **[`design-system-strategy.md`](./design-system-strategy.md) の経緯と運用方針を分離**: 勤務先スクラム文脈を「Origin (経緯)」へ集約し、汎用基盤としての「現在の運用方針」セクションを新設。**配布ポリシー** (現状 UNLICENSED + GitHub Packages restricted、外部導入時の MIT 化は Phase 0 規約確認待ちの pending decision) を明文化
 - **[`components/Introduction.mdx`](./components/Introduction.mdx)**: 冒頭に「読む人別の入口」(PM / デザイナー / エンジニア) を追加。インラインスタイルの生 hex を semantic/neutral トークンの CSS 変数に置換

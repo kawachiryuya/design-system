@@ -7,7 +7,7 @@ argument-hint: "<ComponentName> <primitive|composite>"
 
 `/add-component <ComponentName> <primitive|composite>` で呼び出す。`$1` = コンポーネント名、`$2` = 層。
 
-**前提**: cwd が `~/Develop/design-system`。AGENTS.md §5 / §5-5 / §3 に厳密準拠すること。
+**前提**: `git rev-parse --show-toplevel` でリポジトリルートを特定し、以降のパスはすべてルート相対で扱う。design-system リポジトリでなければ (package.json の `name` が `@kawachiryuya/design-system` でなければ) 中断してユーザーに確認する。AGENTS.md §5 / §5-5 / §3 に厳密準拠すること。
 
 ---
 

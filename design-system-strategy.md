@@ -29,13 +29,13 @@
 
 ### Atomic Design を簡略化した 2 層構成
 
-**公式語彙は `Primitives` / `Composites`** (実装・Storybook サイドバー・ドキュメント全体で統一する)。
-`Parts` / `Blocks` は構築当初の Atomic Design 由来の概念名で、現在は経緯として併記するに留める。
+**公式語彙は `Primitives` / `Composites`** で、実装・Storybook サイドバー・ドキュメント全体で統一する。
+(経緯: 構築当初は Atomic Design 由来の `Parts` / `Blocks` と呼んでいたが、Storybook の実装名と二重化するため現語彙に一本化した。)
 
-| 層 (公式) | 由来の概念名 | 定義 | 例 |
-|---|---|---|---|
-| **Primitives** | Parts | 単体で意味しない最小の UI 要素 | ボタン、入力、バッジ、アイコン |
-| **Composites** | Blocks | Primitives の組み合わせで 1 つの機能を持つ UI | 検索バー、カードレイアウト、フォームセクション |
+| 層 | 定義 | 例 |
+|---|---|---|
+| **Primitives** | 単体で意味しない最小の UI 要素 | ボタン、入力、バッジ、アイコン |
+| **Composites** | Primitives の組み合わせで 1 つの機能を持つ UI | 検索バー、カードレイアウト、フォームセクション |
 
 ### 汎用 / プロダクト固有の切り分け
 
@@ -113,14 +113,14 @@ common/                      ← 汎用、将来 npm パッケージとして切
 
 ## 構築ステップ
 
-**Token → Parts → Blocks → Layout → Organism** の依存方向に沿って下から積み上げる。Step 4 (Layout) までは common パッケージ (本リポジトリ)、Step 5 (Organism) は product 側で実装。Step 4 まではデザイナー単独で進行可能、バックエンド依存なし。
+**Token → Primitives → Composites → Layout → Organism** の依存方向に沿って下から積み上げる。Step 4 (Layout) までは common パッケージ (本リポジトリ)、Step 5 (Organism) は product 側で実装。Step 4 まではデザイナー単独で進行可能、バックエンド依存なし。
 
 ```
-Step 1  Token       (色 / spacing / typography 等の semantic 2 層化)
+Step 1  Token        (色 / spacing / typography 等の semantic 2 層化)
    ↓
-Step 2  Parts       (Button / Input / Icon 等、単一 HTML 要素のラッパー)
+Step 2  Primitives   (Button / Input / Icon 等、単一 HTML 要素のラッパー)
    ↓
-Step 3  Blocks      (Card / Modal / Form 等、Parts の組合せ + 状態)
+Step 3  Composites   (Card / Modal / Form 等、Primitives の組合せ + 状態)
    ↓
 Step 4  Layout      (ページ骨格 / グリッド / レスポンシブ / Navigation)
    ↓
@@ -138,7 +138,7 @@ Step 5  Organism    (product 固有、ドメイン UI、バックエンド接続
 新 UI をオブジェクト単位で段階的に置き換える。画面単位ではなくコンポーネントの依存方向に沿って下から積み上げる:
 
 ```
-トークン → Parts → Blocks → Organism → 結果として画面が変わる
+トークン → Primitives → Composites → Organism → 結果として画面が変わる
 ```
 
 ### フィーチャーフラグ
@@ -253,8 +253,8 @@ z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだ
 
 | 戦略上の概念 | 本リポでの実体 |
 |---|---|
-| **Parts** | [`components/primitives/`](./components/primitives/) (Button, Input, Icon, Typography, Stack, Cluster, Center 等 16 個) |
-| **Blocks** | [`components/composites/`](./components/composites/) (Alert, Card, SearchBar, Tabs, AppShell, TwoColumn, SplitPane 等 23 個) |
+| **Primitives** | [`components/primitives/`](./components/primitives/) (Button, Input, Icon, Typography, Stack, Cluster, Center 等 16 個) |
+| **Composites** | [`components/composites/`](./components/composites/) (Alert, Card, SearchBar, Tabs, AppShell, TwoColumn, SplitPane 等 23 個) |
 | **common (汎用)** | 本リポジトリ全体 (`components/`, `tokens/`) — npm パッケージ `@kawachiryuya/design-system` として配信 |
 | **[product-name] (プロダクト固有)** | 別リポジトリで管理 (本リポを npm 依存として参照)。[`gunmaas`](https://github.com/kawachiryuya/gunmaas) (鉄道予約) / [`rail-demo-lp`](https://github.com/kawachiryuya/rail-demo-lp) (LP) |
 | **グローバルトークン** | [`tokens/source/colors.json`](./tokens/source/colors.json) ほか primitive スケール |
@@ -266,8 +266,8 @@ z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだ
 ### 進捗状況
 
 - Step 1 (トークン定義): カラー・スペーシング・タイポグラフィすべて semantic 層完了 (common 側にデフォルトを提供)
-- Step 2 (Parts): 完了 (primitives 16 個、Layout primitive `Center` / `Stack` / `Cluster` 含む)
-- Step 3 (Blocks): 完了 (composites 23 個、Layout composite `AppShell` / `TwoColumn` / `SplitPane` 含む)
+- Step 2 (Primitives): 完了 (primitives 16 個、Layout primitive `Center` / `Stack` / `Cluster` 含む)
+- Step 3 (Composites): 完了 (composites 23 個、Layout composite `AppShell` / `TwoColumn` / `SplitPane` 含む)
 - Step 4 (レイアウト基礎): 完了 (Phase A: Layout primitives / Phase B: Layout composites、いずれも rail-demo で dogfood 済 + v1.0.0 stable)
 - Step 5 (プロダクト固有 Organism): 別リポジトリ (product 側) で実装する。本リポからは切り出し済み
 

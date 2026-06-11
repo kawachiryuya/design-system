@@ -14,9 +14,9 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 初めて見る方は、自分のロールの行から読み始めてください。
 
-- **PM / ディレクター**：まず [Primitives 一覧](?path=/docs/primitives-overview--docs) でどんな部品が揃っているかを把握。呼び名 (Primitives / Composites) は下の「設計思想：Parts / Blocks と依存ルール」を参照。サイドバーの **Primitives** / **Composites** カテゴリが全コンポーネントの一覧です。
+- **PM / ディレクター**：まず [Primitives 一覧](?path=/docs/primitives-overview--docs) でどんな部品が揃っているかを把握。サイドバーの **Primitives** / **Composites** カテゴリが全コンポーネントの一覧です。
 - **デザイナー**：[Tokens](?path=/docs/tokens-overview--docs) で色・タイポグラフィ・余白の設計値を確認し、各コンポーネントの **Guideline** ([例: Button](?path=/docs/primitives-button--guideline)) の Do / Don't で「いつ使う / 使わない」を掴む。
-- **エンジニア**：下の「Product 側で使う際の setup」で導入手順を、「設計思想：Parts / Blocks と依存ルール」で import 制約を確認。実装規約の詳細はリポジトリ直下の `AGENTS.md`。
+- **エンジニア**：下の「Product 側で使う際の setup」で導入手順を、「設計思想：Primitives / Composites と依存ルール」で import 制約を確認。実装規約の詳細はリポジトリ直下の `AGENTS.md`。
 
 ---
 
@@ -51,12 +51,12 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ---
 
-## 設計思想：Parts / Blocks と依存ルール
+## 設計思想：Primitives / Composites と依存ルール
 
 戦略文書 `design-system-strategy.md` で定義した 2 層構成です。Atomic Design の「依存方向の制約」を継承しつつ、分類の曖昧さを排除しています。
 
-- **Primitives (= Parts)**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
-- **Composites (= Blocks)**：Primitives を組み合わせた複合コンポーネント。Primitives のみ import 可。
+- **Primitives**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
+- **Composites**：Primitives を組み合わせた複合コンポーネント。Primitives のみ import 可。
 - **プロダクト層**：すべてを import 可。本リポジトリ外（gunmaas など別プロダクトリポ）で管理。
 
 ```

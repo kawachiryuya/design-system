@@ -1,0 +1,33 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Overview" />
+
+# 設計原則 (Principles)
+
+コンポーネント横断の「**なぜそう作るか / どう判断するか**」をまとめる層。個別コンポーネントの使い方は各 **Guideline** に、実装規約は [`AGENTS.md`](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md)、戦略は [`design-system-strategy.md`](https://github.com/kawachiryuya/design-system/blob/main/design-system-strategy.md) にある。本セクションは横断的な原則を担い、**Guideline と具体例を重複させない** (責務分離)。
+
+> 経緯: 0.5.0〜1.1.0 で principles を一度 SSoT 統合のため撤去したが、需要 (guideline からの参照頻度) の高いトピックから、責務を分離した形で再構築している。
+
+## 公開済み
+
+- [Layout / Alignment](?path=/docs/principles-layout-alignment--docs) — 整列と近接
+- [Foundation / Accessibility / Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs) — 支援技術への情報等価
+- [Patterns / Forms](?path=/docs/principles-patterns-forms--docs) — 入力負荷とエラー回復
+
+## 今後の予定 (需要順 TODO)
+
+guideline からの参照頻度が高い順に追加する:
+
+| 参照数 | トピック |
+|---|---|
+| 5 | Interaction / Feedback / Inline Validation |
+| 5 | Foundation / Accessibility / Keyboard Navigation |
+| 5 | Color / Semantic Colors |
+| 3 | Foundation / Accessibility / Color Contrast |
+| 3 | Typography / Readability |
+| 2 | Foundation / Accessibility / Touch Targets ・ Focus Management |
+| 2 | Typography / Scale ・ Hierarchy |
+| 2 | Interaction / Feedback (Overview / Loading Indicators) |
+| 1 | Interaction / Button (Priority / Placement)、Typography / Imagery・Iconography ほか |
+
+各ページは **原則 (3〜5) → Do / Don't → 関連コンポーネント** の構成で、guideline と重複する component 固有の例は置かない。

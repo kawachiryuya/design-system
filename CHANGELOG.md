@@ -15,6 +15,7 @@
 
 ### Added
 
+- **Principles (設計原則) セクションを需要順に再構築開始**: 2026-06-10 に撤去した principles を、責務を分離した形で `components/principles/` に再導入。第 1 弾 = 需要上位 3 本 (`Principles/Layout/Alignment` / `.../Accessibility/Screen Readers` / `Patterns/Forms`) + `Principles/Overview` (残り 19 を需要順 TODO 化)。各ページは横断的原則 (3〜5) + Do/Don't + 関連コンポーネントリンクで構成し、component 固有の具体例は guideline に置き重複させない。`preview.ts` storySort に `Principles` カテゴリを再追加
 - **Storybook test-runner + axe を CI に追加 (a11y 自動監査)**: [`.storybook/test-runner.ts`](./.storybook/test-runner.ts) で全 Story を smoke render + play + axe 監査。CI に「Run Storybook tests」ステップ (`npm run test-storybook`) を追加し、これまで手動でしか走らなかった play test と a11y チェックを自動化。AGENTS.md §8-4「axe と例外の付け方」を新設 (例外は理由付きで `test-runner.ts` に集約)
   - 検出した **既知 contrast finding** (solid role 色 + 白文字 / muted on layered bg が AA 4.5 未満) は `TODO(contrast)` 付きで一時 exempt — token ダーク化は別 PR
 - **`SplitPane` の独立スクロール pane をキーボード対応** (a11y fix): `overflow-y-auto` の list/detail pane に `tabIndex={0}` を付与 (WCAG 2.1.1 / axe scrollable-region-focusable)

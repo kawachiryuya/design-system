@@ -51,6 +51,9 @@ jobs:
       - name: Check Storybook links (§9-3)
         run: npm run check:links
 
+      - name: Check doc §refs (§5-5-1)
+        run: npm run check:refs
+
       - name: Build Storybook
         run: npm run build-storybook
 

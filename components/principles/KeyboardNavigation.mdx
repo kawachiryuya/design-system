@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Foundation/Accessibility/Keyboard Navigation" />
+
+# キーボード操作 (Keyboard Navigation)
+
+マウスなしで**全機能**を操作できることを保証する。フォーカスの順序・到達性・複合ウィジェットの操作を一貫させる。
+
+## 原則
+
+1. **すべての操作要素はキーボードで到達・操作できる**: `Tab` で到達、`Enter` / `Space` で実行。`<div onClick>` ではなく `<button>` / `<a>` を使う (native のキーボード挙動を得る)。
+2. **`tabindex` は 0 / -1 のみ**: DOM 順 = フォーカス順にし、正の `tabindex` で順序を捻じ曲げない。
+3. **複合ウィジェットは roving tabindex + 矢印キー**: tabs / menu / radiogroup / segmented control は「1 ウィジェット = 1 Tab ストップ」にし、内部移動は矢印キー (`Home` / `End` 併用)。
+4. **フォーカスを常に可視化**: `focus-visible` で 2px・コントラスト 3:1+ のリングを出す。`outline: none` だけにしない。
+5. **overlay は Esc で閉じ、focus を戻す**: Modal / Popover / DropdownMenu は `Esc` で閉じ、閉じたらトリガーへ focus を返す。Modal は focus trap、それ以外は非トラップ。
+
+## Do / Don't
+
+- **Do**: メニューを矢印キーで移動し、グループ全体で Tab 1 ストップにする。
+- **Do**: Modal を閉じたら開いたボタンに focus を戻す。
+- **Don't**: クリックハンドラだけの `<div>` を操作要素にする (キーボードで押せない)。
+- **Don't**: focus リングを消して、どこにフォーカスがあるか分からなくする。
+
+## 関連コンポーネント
+
+- [`<Tabs>`](?path=/docs/composites-tabs--guideline) / [`<DropdownMenu>`](?path=/docs/composites-dropdownmenu--guideline) / [`<SegmentedControl>`](?path=/docs/composites-segmentedcontrol--guideline) / [`<Radio>`](?path=/docs/composites-radio--guideline) — roving tabindex + 矢印キー
+- [`<Modal>`](?path=/docs/composites-modal--guideline) / [`<Popover>`](?path=/docs/composites-popover--guideline) — Esc close + focus 復帰
+- [`<Button>`](?path=/docs/primitives-button--guideline) / [`<Link>`](?path=/docs/primitives-link--guideline) — native のキーボード操作
+
+関連原則: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs)

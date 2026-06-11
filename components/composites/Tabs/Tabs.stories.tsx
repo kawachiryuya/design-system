@@ -82,7 +82,8 @@ export const Playground: Story = {
     await expect(firstTab).toHaveAttribute('aria-selected', 'true');
     await userEvent.click(firstTab);
     await userEvent.keyboard('{ArrowRight}');
-    const membersTab = canvas.getByRole('tab', { name: 'メンバー' });
+    // 'メンバー' タブは badge:5 付きでアクセシブル名が「メンバー 5」になるため部分一致で取る
+    const membersTab = canvas.getByRole('tab', { name: /メンバー/ });
     await expect(membersTab).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{End}');
     await expect(canvas.getByRole('tab', { name: '設定' })).toHaveAttribute('aria-selected', 'true');

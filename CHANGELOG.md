@@ -11,6 +11,9 @@
 
 ### Added
 
+- **Storybook test-runner + axe を CI に追加 (a11y 自動監査)**: [`.storybook/test-runner.ts`](./.storybook/test-runner.ts) で全 Story を smoke render + play + axe 監査。CI に「Run Storybook tests」ステップ (`npm run test-storybook`) を追加し、これまで手動でしか走らなかった play test と a11y チェックを自動化。AGENTS.md §8-4「axe と例外の付け方」を新設 (例外は理由付きで `test-runner.ts` に集約)
+  - 検出した **既知 contrast finding** (solid role 色 + 白文字 / muted on layered bg が AA 4.5 未満) は `TODO(contrast)` 付きで一時 exempt — token ダーク化は別 PR
+- **`SplitPane` の独立スクロール pane をキーボード対応** (a11y fix): `overflow-y-auto` の list/detail pane に `tabIndex={0}` を付与 (WCAG 2.1.1 / axe scrollable-region-focusable)
 - **ESLint (flat config) を導入し規約を機械強制**: [`eslint.config.mjs`](./eslint.config.mjs) で生 hex / 色 bracket 禁止 (出荷 component 実装のみ、spacing bracket は対象外)、`components/` からの `@/` import 禁止、react-hooks、storybook recommended を強制。`npm run lint` を CI (typecheck の後) に追加。AGENTS.md §3-7「lint が強制する規約」を新設
 - **`Tooltip` コンポーネントを新規追加**: `Popover` と同じ overlay 基盤 (native `popover="manual"` + `@floating-ui/dom`) に、hover / focus + 遅延表示と `role="tooltip"` / `aria-describedby` を載せた短い補足表示。**WCAG 1.4.13** (Esc で Dismissible / tooltip 上で Hoverable / 自動で消えない Persistent) 対応。focus 時は即時、hover 時は `delay` 後。オーバーレイ三部作 (Popover → DropdownMenu → Tooltip) 完了、Composites は 26 個に
 - **`DropdownMenu` コンポーネントを新規追加**: `Popover` と同じ overlay 基盤 (native `popover` + `@floating-ui/dom`) に、WAI-ARIA APG の Menu Button パターン (`menu` / `menuitem` の roving tabindex + 矢印キー + Home/End + typeahead + Esc/Tab close) を載せた単一階層アクションメニュー。`items` で宣言、`icon` / `disabled` / `destructive` 対応、選択で `onSelect` + 自動 close + trigger へ focus 復帰。Composites は 25 個に

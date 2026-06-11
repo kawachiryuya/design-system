@@ -2,7 +2,7 @@
 //
 // 方針: typescript-eslint の recommended ルールセットは入れない (既存コードへの大量指摘を避ける)。
 // TS パーサだけ有効化し、AGENTS.md の規約に直結するルール (生 hex 禁止 / 依存 import 禁止) +
-// react-hooks + storybook recommended のみを足す。詳細は AGENTS.md §3-5 (lint が強制する規約)。
+// react-hooks + storybook recommended のみを足す。詳細は AGENTS.md §3-7 (lint が強制する規約)。
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';

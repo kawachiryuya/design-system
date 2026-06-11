@@ -11,6 +11,7 @@
 
 ### Fixed (a11y / visual)
 
+- **`yellow` 色相を bright-hue (鮮やかな黄) に再設計** (visual): L 正規化の代償でマスタード調 (#A98000) だった yellow を vivid な黄ランプ (500=#EAB308 / 400=#FACC15) に置換。step 50〜600 は dark text (neutral-900)、700〜900 は white text で AA 準拠。**「濃色文字前提の bright-hue」** として L 正規化・白文字アンカーの例外に位置づけ (contrast-policy C-7=B)。yellow は semantic 未参照のため影響は consumer の `bg-yellow-*` 直利用のみ (warning semantic は orange-600 のまま)
 - **`Toast` の live region を常設コンテナ化** (a11y): `ToastProvider` を `role="status"`/`aria-live="polite"` と `role="alert"`/`aria-live="assertive"` の **2 コンテナ常設**に変え、Toast を variant で振り分けて注入。個別 Toast の live 属性を撤去し、live region のマウント遅延による告知漏れを防ぐ (単発 `<Toast>` API はラッパに同等属性を付与)
 - **solid セマンティックロール色を AA 4.5 準拠にダーク化** (visual): `surface-success` (green.500→**600**) / `surface-error` (red.500→**600**) / `surface-warning` (orange.400→**600**) / `surface-info` (blue.500→**600**)。白文字/マークとのコントラストが 2.73〜3.96 → **4.57〜5.31** に改善 (WCAG 1.4.3 AA)。Badge solid / Avatar / Checkbox / Radio / ProgressBar 等が対象。axe ゲートの一時 exempt (Badge/Avatar) を撤去
 

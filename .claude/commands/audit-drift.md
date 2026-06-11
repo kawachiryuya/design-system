@@ -13,20 +13,19 @@ argument-hint: "(任意) 対象コンポーネント名"
 
 ---
 
-## 検査項目
+> **機械化済みは CI に委譲**: 適合性の機械検査 (forwardRef の有無 / Props の JSDoc / 4 ファイル構成 / barrel 同期 / 標準ストーリー構造) は CI の **`check:conventions`** ([`scripts/check-conventions.mjs`](../../scripts/check-conventions.mjs)、§5-5-1) が常時ゲートする。semantic token (生 hex / 色 bracket) は lint が弾く。本コマンドはこれらを再検査せず、**機械化できない判断項目のみ**に注力する。
 
-1. **forwardRef (§5-2)**: 規約は「primitive 必須 / composite は ref 対象が明確な場合のみ」。primitive で `forwardRef` 未使用のもの、composite で対象が明確なのに未対応のものを列挙
-2. **JSDoc 必須 (§5-2)**: Props interface の各メンバに JSDoc / `@default` が欠けているもの (Props 表が空欄になる)
-3. **標準ストーリー構造 (§5-3)**: `title` 命名規則、節の固定順序、`tags: ['autodocs']` の誤付与
-4. **semantic token (§3)**: 生 hex / 色 bracket の混入 (lint と重複するが、lint 対象外パスや stories も含め確認)
-5. **4 ファイル構成 (§5-1)**: `.tsx` / `.stories.tsx` / `.guideline.mdx` / `index.ts` の欠落
-6. **barrel export**: `components/index.ts` に未 export のコンポーネント / 件数コメントのズレ
-7. **a11y 例外 (§8-4)**: `test-runner.ts` の `COLOR_CONTRAST_EXEMPT` に `TODO(contrast)` が残っていないか (放置 finding の検出)
+## 検査項目 (判断が要るもの)
+
+1. **composite の forwardRef 要否 (§5-2)**: ref を当てる対象要素が明確 (例: 単一の input / dialog を露出) なのに `forwardRef` 未対応の composite を列挙。「対象が明確か」は判断なので機械化しない
+2. **forwardRef allowlist の見直し (§5-2)**: `check:conventions` の `FORWARDREF_ALLOWLIST` (Stack / Cluster / Center / Divider / Image / Skeleton) を forwardRef 化すべきか (polymorphic / wrapper の debt)。Image など ref 需要が高いものから検討
+3. **a11y 例外 TODO の放置 (§8-4)**: [`test-runner.ts`](../../.storybook/test-runner.ts) の `COLOR_CONTRAST_EXEMPT` に `TODO(contrast)` が残っていないか (放置 finding の検出)
+4. **規約改訂の要否 (§11)**: 上記で「コードを直す」より「規約を現実に合わせ改訂する」が妥当なものを抽出
 
 ## 進め方
 
-- `grep` / ファイル走査で機械的に候補を集める (例: `grep -rL "forwardRef" components/primitives/*/*.tsx`)
-- CI で機械化済みの項目 (§5-5-1) は CI に委ね、ここでは **CI で拾えない構造・規約の乖離** に注力する
+- `grep` / ファイル走査で機械的に候補を集める (例: composite の `useRef` / `<input>` 露出箇所)
+- `check:conventions` が緑であることを前提に、**CI で拾えない構造・規約の乖離** にのみ注力する
 
 ## 出力フォーマット
 

@@ -156,7 +156,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`role="tablist"` / `role="tab"` / `role="tabpanel"`**: 自動付与、WAI-ARIA 1.2 標準
 - **`aria-selected` / `aria-controls` / `aria-labelledby`**: tab ↔ panel の関連付けを自動配線
 - **`tabIndex` 管理**: active タブのみ `tabIndex=0`、他は `tabIndex=-1` (Roving tabindex)。Tab キーで tabpanel へ抜けられる
-- **キーボード操作 (automatic activation)**: `← → ↑ ↓` 矢印で隣のタブへ移動 = **即時選択** (disabled スキップ)、`Home` / `End` で先頭/末尾、`Enter` / `Space` でも選択。矢印移動でパネルが即切替わるため、**遅延ロード / 通信を伴う重いパネルには不向き** (矢印連打のたびに fetch が走る)。その用途では将来の manual activation 対応を待つか別 UI を検討
+- **キーボード操作 (既定 = automatic activation)**: `← → ↑ ↓` 矢印で隣のタブへ移動 = **即時選択** (disabled スキップ)、`Home` / `End` で先頭/末尾、`Enter` / `Space` でも選択
+- **`activationMode="manual"` (遅延ロード panel 向け)**: 矢印移動が即選択だと、panel が遅延ロード / 通信を伴う場合に矢印連打のたび fetch が走る。`activationMode="manual"` にすると矢印は **focus のみ移動**し、`Enter` / `Space` で選択確定する (WAI-ARIA APG の manual activation)。重い panel では manual を推奨
 - **不正な activeId のフォールバック**: controlled で `tabs` に無い `activeId` が来た場合は `tabs[0]` にフォールバック (開発時は console.warn)。全 panel が消える事故を防ぐ
 - **focus ring**: `focus-visible:ring-focus` でキーボード focus 時のみリング表示
 - **無効タブ**: native `disabled` 属性のみ付与 (支援技術に「無効」が伝わり、矢印移動・Tab からもスキップされる)

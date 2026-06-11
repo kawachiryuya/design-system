@@ -125,8 +125,8 @@ const { showToast } = useToast();
 
 ## アクセシビリティ
 
-- **`role="alert"`** (error variant): aria-live="assertive" 自動付与、SR が即時読み上げ
-- **`role="status"`** (それ以外): aria-live="polite" 自動付与、SR が次の文末で読み上げ
+- **常設の live region コンテナ**: Provider は `role="status"`/`aria-live="polite"` と `role="alert"`/`aria-live="assertive"` の **2 コンテナを空でも常設**し、Toast を variant で振り分けて注入する (live region のマウント遅延を避け、告知の確実性を上げる)。個別 Toast 自体は live 属性を持たない
+- **error は assertive、それ以外は polite**: error variant は alert コンテナで即時読み上げ、他は status コンテナで次の文末に読まれる (単発 `<Toast>` API はラッパに同等の role/aria-live を付与)
 - **close ボタン**: `<VisuallyHidden>` で「閉じる」を SR 用テキストで付与
 - **focus 管理**: 自動消滅 / overlay ではないため focus trap なし。トリガー (button 等) の focus はそのまま
 - **キーボード操作**: close ボタンに Tab で focus 可、Enter / Space で発火

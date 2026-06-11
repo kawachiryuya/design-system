@@ -6,6 +6,8 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 
 ## 1. 新規セッションで最初に読むもの
 
+> ルートの [`CLAUDE.md`](./CLAUDE.md) は本ファイルへのブリッジ (Claude Code の自動読込点) であり、規約の実体は持たない。実装規約の SSoT は本 AGENTS.md。
+
 1. [`README.md`](./README.md) — リポ全体像とビルドコマンド
 2. [`design-system-strategy.md`](./design-system-strategy.md) — Primitives/Composites 構成、common/product 分離、トークン階層
 3. 本ファイル — 実装規約と禁則
@@ -780,3 +782,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 3. **§番号へ追記し、PR で記録する**: 追記した § を PR テンプレの「更新済み (§___)」にチェック。判断指摘 (UX/命名) は規約化せず、§5-5-2 の人間レビュー観点として蓄積する
 
 > 「ドキュメントで守らせる < lint で弾く」(§3-7)。規約化の第一候補は常に機械強制できないかの検討から始める。
+
+### 11-1. コマンドの鮮度管理
+
+`.claude/commands/` の常設コマンドは **evergreen なもの (恒常的に有効) のみ** とする。特定フェーズ・外部 Issue 紐付きのワンショットコマンドは、フェーズ完了時に `.claude/commands/archive/` へ移動して常設群から外す (鮮度低下の防止)。

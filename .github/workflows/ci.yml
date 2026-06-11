@@ -36,6 +36,9 @@ jobs:
       - name: Build tokens
         run: npm run tokens:build
 
+      - name: Check contrast (WCAG 2 AA / §8-5)
+        run: npm run check:contrast
+
       - name: Typecheck (tsc --noEmit)
         run: npm run typecheck
 

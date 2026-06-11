@@ -487,6 +487,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | 型が通る (`tsc --noEmit` クリーン) | **Typecheck** (`npm run typecheck`) |
 | 色・余白が semantic Tokens 参照 (生 hex / 色 bracket 不使用)、`components/` で `@/` import 不使用、react-hooks / storybook 規約 | **Lint** (`npm run lint`、§3-7) |
 | 壊れた Storybook 内リンク (`?path=...`) が無い | **Check links** (`npm run check:links`、§9-3) |
+| semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化 / bright-hue) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
 | 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
 
 #### 5-5-2. 人間が判断する

@@ -101,9 +101,11 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
   };
   return (
     <div {...rest} className={containerClass} style={mergedStyle}>
-      <div className="lg:pr-8 lg:overflow-y-auto">{list}</div>
+      {/* 独立スクロールする pane はキーボードでもスクロールできるよう tabindex=0 を付与
+          (WCAG 2.1.1 / axe scrollable-region-focusable)。 */}
+      <div tabIndex={0} className="lg:pr-8 lg:overflow-y-auto">{list}</div>
       {detail !== undefined && (
-        <div className="lg:pl-8 lg:overflow-y-auto">{detail}</div>
+        <div tabIndex={0} className="lg:pl-8 lg:overflow-y-auto">{detail}</div>
       )}
     </div>
   );

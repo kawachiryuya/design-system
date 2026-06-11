@@ -656,6 +656,21 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 - **動的コンテンツ削除時**: 削除アイテムの **論理的な次** (なければ前) に focus 移動。`<body>` 戻りを避ける
 - **ページ遷移時**: 先頭または `<main>` に focus を戻す
 
+### 8-4. a11y 自動検証 (axe) と例外の付け方
+
+CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test-runner`](./.storybook/test-runner.ts) + axe (`axe-playwright`) により自動監査する (smoke render + play + a11y)。`npm run test-storybook` でローカル実行可 (別端末で `npm run build-storybook` → `http-server storybook-static` を起動)。
+
+意図的に許容する違反は **必ず理由を残して** 例外化する:
+
+- **Story 単位で axe をスキップ**: `parameters.a11y.disable = true` (理由コメント必須)
+- **特定ルールのみ無効化**: `parameters.a11y.config.rules = [{ id: 'color-contrast', enabled: false }]`
+- **グローバル例外** ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts) に集約):
+  - `Tokens/*` カテゴリは axe 対象外 (色・値の可視化であり UI ではない)
+  - ページ全体前提の best-practice ルール (`region` / `landmark-unique` / `landmark-no-duplicate-*` 等) は無効 (孤立 story / 複数デモ並置のため)
+  - `COLOR_CONTRAST_EXEMPT` に component 単位の color-contrast 免除を理由付きで列挙。`TODO(contrast):` 付きは**既知 finding** (token contrast 見直しで解消後にエントリ削除)
+
+**原則**: disabled 状態の意図的低コントラストは WCAG 1.4.3 が免除するため恒久例外でよい。それ以外の違反は「直す」が既定で、例外は finding として明示し追跡する。
+
 ---
 
 

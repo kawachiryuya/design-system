@@ -25,11 +25,7 @@ argument-hint: "<ComponentName> <primitive|composite>"
 
 4. **CHANGELOG**: `[Unreleased]` の `Added` に新コンポーネントを追記 (§10-1: 新規コンポーネント = **MINOR**)。
 
-5. **検証 (機械 / §5-5-1)**: 以下をすべて pass させる:
-   ```bash
-   npm run tokens:build && npm run typecheck && npm run lint && npm run check:links && npm run build-storybook
-   ```
-   可能なら `npm run test-storybook` (別端末で storybook-static を serve) で play + axe も確認。
+5. **検証 (機械 / §5-5-1)**: `npm run verify` をすべて pass させる (tokens:build / check:contrast / check:links / lint / typecheck)。視覚・play・axe も確認するなら `npm run verify:full` (build-storybook + test-storybook:local)。内側ループのスコープ版は §4-1 参照。
 
 ---
 

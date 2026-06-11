@@ -14,12 +14,31 @@ import { Meta } from '@storybook/addon-docs/blocks';
 4. **コントラストは token で担保**: テキスト 4.5:1 / UI 3:1 (AA) を満たす shade を semantic 側で選ぶ (solid role 色は白文字で 4.5 以上)。
 5. **brand から独立した中性 canvas**: `bg.default` は neutral 参照で、下流が brand を変えても背景は中性に保つ (マルチプロダクト基盤の独立性)。
 
+## コントラスト基準 (WCAG 2 床 + APCA レンズ)
+
+適合は **WCAG 2.2 AA を機械強制の床** (テキスト 4.5:1 / 大きいテキスト・非テキスト 3:1)、**APCA Lc は設計レンズ** (適合判定には使わず、読みやすさ比較とダークモード設計に使う)。`npm run check:contrast` が semantic ペアを WCAG で検証してゲートし、APCA Lc 未達は warn として出す ([AGENTS §8-5](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md))。
+
+**条件付きペアは「救済」ではなく WCAG 2 の正確な運用**: 4.5:1 未満かつ 3:1 以上のペアは、**大きいテキスト・非テキスト (アイコン/グラフ)・装飾・disabled** に限定すれば WCAG 2 自身の例外条項で適合する。「APCA を通るので AA 未満でも本文に使う」は禁止 — 適合は計算式で判定され、APCA に救済条項はない。
+
+## 階調の読み方
+
+palette の各 step は共通のコントラスト役割を持つ ([Tokens / Color / Primitive の階調設計](?path=/docs/tokens-color-primitive--guideline) に役割表)。semantic 側はこれに従って step を選ぶ:
+
+- **白文字 solid 面 = step 700** (全 hue で白文字 4.5:1 の普遍アンカー)。role 色は step 600 を使う (teal / cyan のみ 700)
+- **非テキスト (アイコン・境界) = step 500 以上** (白に対し 3:1)
+- 有彩色は同一 step の知覚明度 (OKLCH L) を揃えてあり、`bg≤100 × text≥700` は全 hue で 4.5:1 を満たす。この性質は `check:contrast` の不変条件として固定されている (override で崩すと CI が fail する)
+- **bright-hue (yellow)** は L 正規化の例外で濃色文字前提 (step 50〜600 = 濃色文字 / 700〜900 = 白文字)
+
 ## Do / Don't
 
 - **Do**: エラーを `text-onSurface-error` + `<Icon name="error">` + 文言の三重で示す。
 - **Do**: brand を変えたい下流は `--color-teal-700` を override し、semantic チェーン全体を追従させる。
+- **Do**: 鮮オレンジに白文字を載せる CTA は **orange-600/700** (濃色シフト) を使う。鮮オレンジの**アイコン・グラフ**は orange-500 を非テキスト (3:1) として使う。
 - **Don't**: `bg-red-500` を直書きする (override 不可・lint エラー)。
 - **Don't**: 「赤い」だけでエラーを表現する (色覚特性のあるユーザーに伝わらない)。
+- **Don't**: **orange-500 + 白文字を本文サイズ**に使う (3.75 で AA 未満)。「APCA を通るから」を根拠に AA 未満ペアを本文に使う。
+
+> **ダークモード (将来方針)**: WCAG 2 は暗色ペアのコントラストを過大評価する傾向がある。ダークパレット設計時は APCA を主指針に昇格し、`check:contrast` にテーマ別ペアセットを追加する (contrast-policy C-5)。
 
 ## 関連
 

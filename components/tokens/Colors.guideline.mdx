@@ -26,6 +26,30 @@ OKLCH ベースで知覚明度を統一したカラーパレット。**Primitive
 
 ---
 
+## 階調設計 (step の役割アンカー)
+
+各 step は palette 全体で共通の「コントラスト上の役割」を持つ。semantic 層はこのアンカーに従って step を選ぶ (例: 白文字 solid 面 = 700、role 色 = 600)。**数値は `npm run check:contrast` の実測に基づく較正値** (AGENTS §8-5 / contrast-policy)。
+
+| step | 役割アンカー (白背景/白文字基準) |
+|---|---|
+| 50 / 100 | ページ背景 / サブ背景・hover 面 |
+| 200 / 300 | ボーダー・分離線・selected 面 |
+| 400 | 装飾・disabled・プレースホルダ (白に対し 2.5〜2.9、**非テキスト 3:1 には届かない**) |
+| **500** | **白に対し 3:1 (非テキストの基準色)**。アイコン・グラフィック |
+| 600 | 白文字 4.5:1 を満たす最も明るい面 (role 色のアンカー)。※teal / cyan のみ僅かに未達のため solid 面は 700 を使う |
+| **700** | **白文字 4.5:1 の普遍アンカー** (全 hue で成立) / 白背景上のテキスト色 |
+| 800 / 900 | pressed・強調面 / 高強調テキスト・最深面 |
+
+**この階調が保証する不変条件** (`check:contrast` がゲート):
+
+- **L 正規化**: 有彩色は同一 step の OKLCH L を hue 間で揃えている (差 ≤ 0.03)。同じ step なら hue を入れ替えてもコントラスト特性が保たれる
+- **step 差ルール**: `bg ≤ 100` × `text ≥ 700` の全 hue 組合せが 4.5:1 を満たす (L 正規化に依存)。崩れたら正規化が壊れたシグナル
+- **新 hue 追加 / 既存調整時は、既存 step の L に合わせること** (合わせないと step 差ルールが崩れ CI が fail する)
+
+**bright-hue の例外 (yellow)**: vivid な発色を優先し L 正規化・白文字アンカーから除外。**step 50〜600 は濃色 (neutral-900 系) 文字、700〜900 は白文字**で AA を満たす (薄い面に白文字を載せない)。詳細は [Principles / Semantic Colors](?path=/docs/principles-color-semantic-colors--docs)。
+
+---
+
 ## カタログ
 
 White / Black から各 hue palette まで全 13 palette + 2 base 色を横ストリップで一覧できます。同 shade を縦に揃えて palette 間の明度・彩度を比較するのに便利。

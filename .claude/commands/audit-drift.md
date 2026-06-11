@@ -7,6 +7,8 @@ argument-hint: "(任意) 対象コンポーネント名"
 
 `/audit-drift [ComponentName]` で呼び出す。引数なしなら全コンポーネント、指定があればそのコンポーネントのみ。
 
+**前提**: `git rev-parse --show-toplevel` でリポジトリルートを特定し、以降のパスはすべてルート相対で扱う。design-system リポジトリでなければ (package.json の `name` が `@kawachiryuya/design-system` でなければ) 中断してユーザーに確認する。
+
 **目的**: AGENTS.md の規約と `components/` 実装のズレを洗い出し、各ズレを **「コードを直す」か「規約を現実に合わせ改訂する」か** の判断リストにする。**適用はしない (レポートのみ)**。「規約と実装が乖離したまま放置が一番悪い」(§5-2 forwardRef の教訓) を前提に、必ずどちらかへ倒す判断を促す。
 
 ---

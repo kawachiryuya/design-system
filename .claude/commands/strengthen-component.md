@@ -9,7 +9,7 @@ argument-hint: "<ComponentName>"
 
 design-system リポ内の対象コンポーネントを **AI が型補完で正しく扱える形** に変換する。Button をショーケースに、同パターンを残コンポーネントへ展開する目的。
 
-**前提**: cwd が `~/Develop/design-system` であること。違う場合はユーザーに移動を依頼。
+**前提**: `git rev-parse --show-toplevel` でリポジトリルートを特定し、以降のパスはすべてルート相対で扱う。design-system リポジトリでなければ (package.json の `name` が `@kawachiryuya/design-system` でなければ) 中断してユーザーに確認する。
 **親 Issue**: kawachiryuya/ai-management#34
 
 ---
@@ -202,7 +202,7 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 
 ## 制約
 
-- cwd が `~/Develop/design-system` でない場合は中断してユーザーに移動依頼
+- `git rev-parse --show-toplevel` でルートを特定できない / package.json の `name` が `@kawachiryuya/design-system` でない場合は中断してユーザーに確認
 - `tokens/build/` が無い場合は `npm install` または `npm run tokens:build` を先に実行
 - 同じコンポーネントが既にショーケース化済みなら、追加で改善余地があるか分析した上でユーザーに確認
 

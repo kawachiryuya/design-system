@@ -9,6 +9,10 @@
 
 レビュー (`design-system-review.md`) 指摘の解消。次回 release は forwardRef の後方互換追加と CI 追加があるため §10-1 表上 **MINOR** 相当 (version 確定は release 時)。
 
+### Fixed (a11y / visual)
+
+- **solid セマンティックロール色を AA 4.5 準拠にダーク化** (visual): `surface-success` (green.500→**600**) / `surface-error` (red.500→**600**) / `surface-warning` (orange.400→**600**) / `surface-info` (blue.500→**600**)。白文字/マークとのコントラストが 2.73〜3.96 → **4.57〜5.31** に改善 (WCAG 1.4.3 AA)。Badge solid / Avatar / Checkbox / Radio / ProgressBar 等が対象。axe ゲートの一時 exempt (Badge/Avatar) を撤去
+
 ### Added
 
 - **Storybook test-runner + axe を CI に追加 (a11y 自動監査)**: [`.storybook/test-runner.ts`](./.storybook/test-runner.ts) で全 Story を smoke render + play + axe 監査。CI に「Run Storybook tests」ステップ (`npm run test-storybook`) を追加し、これまで手動でしか走らなかった play test と a11y チェックを自動化。AGENTS.md §8-4「axe と例外の付け方」を新設 (例外は理由付きで `test-runner.ts` に集約)

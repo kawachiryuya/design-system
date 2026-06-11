@@ -163,7 +163,7 @@ export const EdgeCases: Story = {
             <Avatar key={name} src={src} name={name} size="sm" className="ring-2 ring-surface" />
           ))}
           <span className="w-8 h-8 rounded-full bg-surface-disabled ring-2 ring-surface
-            flex items-center justify-center text-caption text-onSurface-muted font-medium flex-shrink-0">
+            flex items-center justify-center text-caption text-onSurface font-medium flex-shrink-0">
             +5
           </span>
         </div>

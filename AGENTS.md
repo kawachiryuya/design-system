@@ -478,22 +478,24 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ### 5-5. 完了条件 (受け入れ基準)
 
-新規・既存問わずコンポーネントを規約準拠と判定するチェックリスト:
+規約準拠は **CI が機械的に保証する項目** と **人間がレビューで判断する項目** に分ける。機械項目は PR で自動ブロックされるので、レビュアーは原則「人間が判断する項目」に集中する (機械項目を二重に目視しない)。
 
-- [ ] `.stories.tsx` が標準節 (Playground / Variants / Sizes / States / WithIcon / EdgeCases) を持ち、不要な節は省略しつつ順序が守られている
-- [ ] `tags: ['autodocs']` が付いていない (`.guideline.mdx` 側が Docs を兼ねるため)
-- [ ] `Playground` で `args` 全開放、Controls 操作で props 単位の挙動が見られる
-- [ ] Variants / Sizes / States が静的な一覧として持たれている
-- [ ] States 節が必要なら Hover / Focus-visible / Active が `parameters.pseudo` 経由で強制表示される
-- [ ] 各 story に `parameters.docs.description.story` で一行説明がある
-- [ ] `.guideline.mdx` が `<Meta of={...} name="Guideline" />` で Docs を兼ねる
-- [ ] H1 直下に `<GuidelineToc>` を配置し、5 セクションに 1 クリックで飛べる
-- [ ] `## Do / Don't` セクションに `<DoDontExample>` が **3〜5 ペア** ある
-- [ ] 各 `dontCaption` に「なぜ Don't なのか」の理由が書かれている
-- [ ] Do/Don't プレビューが **本物のコンポーネント** で描画されている (画像でない)
-- [ ] 色・余白が semantic Tokens (`bg-surface` `text-onSurface` 等) 参照になっている
-- [ ] `npx tsc --noEmit` がクリーン
-- [ ] §9-3 の壊れリンクチェック (`npm run check:links`) がパスする
+#### 5-5-1. CI が保証する (機械的に弾く)
+
+| 項目 | 担保する CI ステップ |
+|---|---|
+| 型が通る (`tsc --noEmit` クリーン) | **Typecheck** (`npm run typecheck`) |
+| 色・余白が semantic Tokens 参照 (生 hex / 色 bracket 不使用)、`components/` で `@/` import 不使用、react-hooks / storybook 規約 | **Lint** (`npm run lint`、§3-7) |
+| 壊れた Storybook 内リンク (`?path=...`) が無い | **Check links** (`npm run check:links`、§9-3) |
+| 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
+
+#### 5-5-2. 人間が判断する
+
+- **API 設計**: props の粒度・命名・discriminated union 等が妥当か。native 要素ファーストか (§5-2)
+- **配置判断**: Primitive / Composite の分類が §2 基準に合うか
+- **標準ストーリー構造**: 節 (Playground / Variants / Sizes / States / WithIcon / EdgeCases) の取捨選択と順序が意図に合うか / `Playground` が `args` 全開放か / Variants・Sizes・States が静的一覧で持たれ、States で `parameters.pseudo` が必要十分か / `tags: ['autodocs']` 不使用 (`.guideline.mdx` が Docs を兼ねる)
+- **Docs 内容**: `.guideline.mdx` が `<Meta of={...} name="Guideline" />` + 直下に `<GuidelineToc>` を持ち、`## Do / Don't` に **3〜5 ペア**の `<DoDontExample>` (**本物のコンポーネント**描画) があり、各 `dontCaption` に「なぜ Don't か」の理由があるか / 各 story の `parameters.docs.description.story` 一行説明が的確か
+- **UX 妥当性**: 実際の利用文脈で迷わず使えるか、Do/Don't が現実の誤用を捉えているか
 
 ---
 

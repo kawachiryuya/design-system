@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Interaction/Button/Hierarchy" />
+
+# アクションの優先度と配置 (Button Hierarchy & Placement)
+
+複数のアクションが並ぶとき、視覚的な強さと配置で「どれが主要か」を一目で伝える。迷いと誤操作を減らすのが目的。
+
+## 原則
+
+1. **1 画面に primary は 1 つ**: 最重要アクションだけを primary (強い塗り) にし、副次は secondary、取り消し系は tertiary に逃がす。primary が複数あると優先順位が消える。
+2. **動詞ラベルで結果を予測させる**: 「保存する」「削除する」のように動詞 + 対象で、押した結果がラベルから読み取れるようにする (「OK」「はい」を避ける)。
+3. **横並びは 2〜3 個まで**: 主要な選択肢を絞ると視線が誘導される。4 個以上はメニュー化や階層化を検討。
+4. **配置を規約化する**: 主要アクションの位置 (例: ダイアログ右端) をプロダクト内で統一し、ユーザーが探さなくて済むようにする。
+5. **破壊的アクションは三重に補強**: 色 (destructive) + アイコン + 動詞ラベルで、色覚特性に依存せず「取り返しのつかない操作」と伝える。確認が要るなら `<Modal>`。
+
+## Do / Don't
+
+- **Do**: 「保存する」(primary) + 「キャンセル」(tertiary) の 2 ボタン。
+- **Do**: 削除を destructive 色 + remove アイコン + 「削除する」で示す。
+- **Don't**: 「保存」「送信」を両方 primary にして、どちらを押すか迷わせる。
+- **Don't**: 「OK」「はい」など結果が読めない曖昧ラベルを使う。
+
+## 関連コンポーネント
+
+- [`<Button>`](?path=/docs/primitives-button--guideline) — variant (primary / secondary / tertiary / destructive) で優先度を表現
+- [`<DropdownMenu>`](?path=/docs/composites-dropdownmenu--guideline) — 4 個以上のアクションを集約
+- [`<Modal>`](?path=/docs/composites-modal--guideline) — 破壊的操作の確認
+
+関連原則: [Semantic Colors](?path=/docs/principles-color-semantic-colors--docs) / [Layout / Alignment](?path=/docs/principles-layout-alignment--docs)

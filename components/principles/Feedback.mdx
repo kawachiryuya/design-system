@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Interaction/Feedback/Overview" />
+
+# フィードバック (Feedback)
+
+ユーザーの操作には必ず反応を返す。「効いたのか」「進行中か」「終わったか」を、適切な強さ・場所・タイミングで知らせ、不安と二重操作を防ぐ。
+
+## 原則
+
+1. **すべての操作に即時の反応**: hover / focus / active の状態変化で「押せる/押した」を返す。100ms 以内の反応が体感の即時性を作る。
+2. **待ち時間は進行を可視化**: 即座に終わらない処理は `<Spinner>` (短い不定) / `<ProgressBar>` (進捗あり) / `<Skeleton>` (コンテンツの形) で「進行中」を示す。無反応の空白を作らない。
+3. **結果は適切なチャンネルで**: 一時的な成功通知は `<Toast>`、画面内の定常的なお知らせは `<Alert>`、致命的な確認は `<Modal>`。重要度で使い分ける ([Semantic Colors](?path=/docs/principles-color-semantic-colors--docs))。
+4. **支援技術にも届ける**: 視覚的フィードバックは live region / role で SR にも通知する ([Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs))。
+5. **可逆な操作は Undo を添える**: 削除等は即実行 + Toast の「元に戻す」で、確認ダイアログの分断を避ける。
+
+## Do / Don't
+
+- **Do**: 保存ボタン押下で `isLoading` 表示 → 完了で成功 Toast。
+- **Do**: 一覧読み込み中は `<Skeleton>` で形を見せる。
+- **Don't**: 送信後に無反応で、ユーザーに二重送信させる。
+- **Don't**: 5 秒で消える Toast に操作 (Undo) を入れ、到達前に消す ([Toast guideline 参照](?path=/docs/composites-toast--guideline))。
+
+## 関連コンポーネント
+
+- [`<Spinner>`](?path=/docs/primitives-spinner--guideline) / [`<Skeleton>`](?path=/docs/primitives-skeleton--guideline) / [`<ProgressBar>`](?path=/docs/composites-progressbar--guideline) — 進行中
+- [`<Toast>`](?path=/docs/composites-toast--guideline) / [`<Alert>`](?path=/docs/composites-alert--guideline) — 結果通知
+
+関連原則: [Inline Validation](?path=/docs/principles-interaction-feedback-inline-validation--docs)

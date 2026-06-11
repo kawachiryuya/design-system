@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Typography/Imagery" />
+
+# 画像 (Imagery)
+
+画像はレイアウトを安定させ、意味のあるものには代替テキストを与え、無駄なデータ転送を避けて軽く速く配信する。
+
+## 原則
+
+1. **意味のある画像に alt、装飾は空 alt**: 情報を持つ画像は内容を表す `alt` を、純装飾は `alt=""` (+ `aria-hidden`) で読み上げから除く ([Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs))。
+2. **アスペクト比を固定してレイアウトシフトを防ぐ**: `width`/`height` または aspect-ratio を指定し、読み込み中に後続要素がガクッと動かないようにする (CLS 対策)。
+3. **オブジェクトフィットで枠に収める**: トリミングは `object-fit: cover`、収めるは `contain`。比率を歪ませない。
+4. **最適化して配信する**: 表示サイズに合った解像度・近代フォーマット (WebP/AVIF) を使い、過大な原寸画像を出さない。遅延読み込み (`loading="lazy"`) を活用。
+5. **読み込み失敗・空状態を用意**: 画像が無い / 失敗した場合の placeholder (`<Skeleton>` / fallback) を設計する。
+
+## Do / Don't
+
+- **Do**: アバター画像に固定の縦横比 + `object-fit: cover` + 失敗時 Initials フォールバック。
+- **Do**: 情報画像 (図表) に内容を説明する `alt`。
+- **Don't**: 比率指定なしで画像を流し込み、読み込み時にレイアウトを跳ねさせる。
+- **Don't**: 装飾画像に冗長な `alt="画像"` を付けて SR を煩わせる。
+
+## 関連コンポーネント
+
+- [`<Image>`](?path=/docs/primitives-image--guideline) — aspect-ratio / object-fit / fallback
+- [`<Avatar>`](?path=/docs/composites-avatar--guideline) — 比率固定 + Initials フォールバック
+- [`<Skeleton>`](?path=/docs/primitives-skeleton--guideline) — 読み込み中の placeholder
+
+関連原則: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs)

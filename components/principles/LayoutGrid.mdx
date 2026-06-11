@@ -1,0 +1,27 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Layout/Grid" />
+
+# グリッド (Grid)
+
+グリッドは、要素配置に一貫した骨格を与え、画面間・breakpoint 間でレイアウトを予測可能にする。整列 ([Alignment](?path=/docs/principles-layout-alignment--docs)) の「揃える軸」をシステム化したもの。
+
+## 原則
+
+1. **12 カラムを基準にする**: desktop 12 / tablet 8 / mobile 4 カラムへ段階的に減らす。要素は `col-span` でカラム単位に乗せる。
+2. **gutter とマージンは token で固定**: カラム間の溝 (gutter) と外側マージンは [Layout token](?path=/docs/tokens-layout--guideline) に従い、任意 px で散らさない。
+3. **breakpoint で「形を変える」**: カラム数や span を breakpoint で変え、コンテンツを削らずに再配置する ([Responsive 原則](?path=/docs/principles-typography-readability--docs) と整合)。
+4. **大外は container で統一**: ページの最大幅・左右 padding は container token で揃え、コンポーネント側で再発明しない。
+5. **グリッドに乗らない例外を最小化**: full-bleed 等の逸脱は意図を持って限定的に使う。
+
+## Do / Don't
+
+- **Do**: カード一覧を `grid-base` + `col-span-4`(mobile) / `col-span-6`(tablet) / `col-span-4`(desktop) でレスポンシブに。
+- **Don't**: 各要素を `ml-[37px]` のような任意マージンで個別配置する。
+
+## 関連
+
+- [Tokens / Layout](?path=/docs/tokens-layout--guideline) — container / section / grid token
+- [`<TwoColumn>`](?path=/docs/composites-twocolumn--guideline) / [`<SplitPane>`](?path=/docs/composites-splitpane--guideline) — 2 分割の骨格
+
+関連原則: [Layout / Alignment](?path=/docs/principles-layout-alignment--docs)

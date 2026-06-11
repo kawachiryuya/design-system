@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Foundation/Accessibility/Focus Management" />
+
+# フォーカス管理 (Focus Management)
+
+フォーカスは「いま操作している場所」を示す唯一の手がかり。動的な UI 変化のたびに、フォーカスを論理的な位置へ運び、見失わせない。
+
+## 原則
+
+1. **フォーカスを常に可視化**: `focus-visible` で 2px・コントラスト 3:1+ のリングを出す。キーボード操作時に「どこにいるか」が分かる。
+2. **overlay は開いたら中へ、閉じたら trigger へ**: Modal / Popover / DropdownMenu は開いた直後に内部へ focus を移し、閉じたら開いたトリガーへ返す。Modal は trap、それ以外は非 trap。
+3. **動的追加時は新要素へ**: 検索結果リストの表示など、新たに現れた領域へ focus を移して読み上げ・操作に繋げる。
+4. **動的削除時は論理的な次へ**: 削除したアイテムの **次** (なければ前) に focus を移す。`<body>` へ落とさない。
+5. **初期 focus を設計する**: 確認ダイアログでは close ボタンではなく主要アクションへ (`Modal` の `initialFocusRef`)。SR が先に主要操作を読む。
+
+## Do / Don't
+
+- **Do**: Modal を閉じたら、開いたボタンに focus を戻す。
+- **Do**: リストアイテム削除後、次のアイテムに focus を移す。
+- **Don't**: `outline: none` だけにして focus の所在を消す。
+- **Don't**: モーダルを閉じた後 focus が `<body>` に落ち、キーボード位置を見失わせる。
+
+## 関連コンポーネント
+
+- [`<Modal>`](?path=/docs/composites-modal--guideline) — focus trap + `initialFocusRef` + 復帰
+- [`<Popover>`](?path=/docs/composites-popover--guideline) / [`<DropdownMenu>`](?path=/docs/composites-dropdownmenu--guideline) — 開→内 / 閉→trigger
+- [Tokens / Focus Ring](?path=/docs/tokens-focus-ring--guideline) — 可視リングの token
+
+関連原則: [Keyboard Navigation](?path=/docs/principles-foundation-accessibility-keyboard-navigation--docs)

@@ -15,6 +15,7 @@
 
 ### Added
 
+- **AI 協業ワークフローを整備**: (1) [`.claude/commands/add-component.md`](./.claude/commands/add-component.md) (§5 準拠の 4 ファイル scaffold→実装→検証) と [`audit-drift.md`](./.claude/commands/audit-drift.md) (規約と実装の乖離検査) を追加。(2) PR テンプレに「規約への還元 (要/不要/更新済み)」「レビュー観点ラベル」節を追加し、stale な §11→§10 (Semver) 参照を修正。(3) AGENTS.md **§11「規約更新の運用」**を新設 (指摘 → 分類 → 規約化 → §追記 のループ)。(4) GitHub ラベル `review:conformance` / `review:judgement` を作成し、strategy.md「現在の運用方針」に月次計測メモを追記
 - **Principles (設計原則) セクションを需要順に再構築開始**: 2026-06-10 に撤去した principles を、責務を分離した形で `components/principles/` に再導入。第 1 弾 = 需要上位 3 本 (`Principles/Layout/Alignment` / `.../Accessibility/Screen Readers` / `Patterns/Forms`) + `Principles/Overview` (残り 19 を需要順 TODO 化)。各ページは横断的原則 (3〜5) + Do/Don't + 関連コンポーネントリンクで構成し、component 固有の具体例は guideline に置き重複させない。`preview.ts` storySort に `Principles` カテゴリを再追加
 - **Storybook test-runner + axe を CI に追加 (a11y 自動監査)**: [`.storybook/test-runner.ts`](./.storybook/test-runner.ts) で全 Story を smoke render + play + axe 監査。CI に「Run Storybook tests」ステップ (`npm run test-storybook`) を追加し、これまで手動でしか走らなかった play test と a11y チェックを自動化。AGENTS.md §8-4「axe と例外の付け方」を新設 (例外は理由付きで `test-runner.ts` に集約)
   - 検出した **既知 contrast finding** (solid role 色 + 白文字 / muted on layered bg が AA 4.5 未満) は `TODO(contrast)` 付きで一時 exempt — token ダーク化は別 PR

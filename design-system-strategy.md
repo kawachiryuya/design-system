@@ -217,8 +217,9 @@ if (featureFlag.newDesign) {
 本 DS は現在、特定プロダクトの一機能ではなく**汎用基盤** (`@kawachiryuya/design-system`) として運用している。
 
 - **バージョニング**: Semantic Versioning。破壊的変更は [`CHANGELOG.md`](./CHANGELOG.md) と [`AGENTS.md §10`](./AGENTS.md) に従う。1.0.0 以降は厳密に MAJOR bump
-- **品質ゲート**: PR で typecheck / build-storybook / 壊れリンクチェック (§9-3) を CI ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) で強制。release は tag push で GitHub Actions が自動 publish (ローカル publish は行わない)
+- **品質ゲート**: PR で typecheck / **lint** / 壊れリンクチェック (§9-3) / build-storybook / **test-storybook (play + axe a11y)** を CI ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) で強制。AI 生成物の適合性チェックは CI に移管済み。release は tag push で GitHub Actions が自動 publish (ローカル publish は行わない)
 - **ドキュメント責務**: 本ファイル (なぜ・何を) / [`AGENTS.md`](./AGENTS.md) (どう作る) / 各 `.guideline.mdx` (個別の使い方) の三層
+- **規約還元ループ**: レビュー指摘は「適合性 (`review:conformance`)」と「判断 (`review:judgement`)」に分類してラベル付けし、適合性指摘は AGENTS.md / lint へ還元する ([AGENTS.md §11](./AGENTS.md))。**月次で 2 ラベルの割合を見る** — 適合性指摘の比率が下がれば、品質ゲートと規約整備が機能している証左 (人間レビューが判断系に集中できている)
 
 ### 配布ポリシー
 

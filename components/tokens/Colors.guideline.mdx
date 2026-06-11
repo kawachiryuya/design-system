@@ -22,6 +22,7 @@ OKLCH ベースで知覚明度を統一したカラーパレット。**Primitive
 - **shade 数値スケール (50〜900)**: Tailwind / Material 慣習に準拠
 - **brand から独立した bg**: `bg.default` は `neutral.50` を参照。下流 product が brand を override しても bg は中性のまま ([AGENTS.md §3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
 - **13 hue + base**: teal / neutral / green / red / orange / blue (semantic で参照される 6 hue) + yellow / lime / cyan / sky / violet / purple / pink (下流用予備 7 hue) + base (white / black / transparent)
+- **予備 7 hue は「カテゴリカルパレット」用に予約**: データ可視化 (グラフの系列色) / Avatar 背景など、**意味を持たない区別** のための色。`success` / `error` 等の UI セマンティクスには使わない (semantic 層を経由する)。各 hue の `500` に同旨の description を付与済み
 
 ---
 

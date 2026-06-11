@@ -7,7 +7,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 ## 1. 新規セッションで最初に読むもの
 
 1. [`README.md`](./README.md) — リポ全体像とビルドコマンド
-2. [`design-system-strategy.md`](./design-system-strategy.md) — Parts/Blocks 構成、common/product 分離、トークン階層
+2. [`design-system-strategy.md`](./design-system-strategy.md) — Primitives/Composites 構成、common/product 分離、トークン階層
 3. 本ファイル — 実装規約と禁則
 4. [`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) — semantic 色の構造
 5. [`components/primitives/Button/Button.tsx`](./components/primitives/Button/Button.tsx) — Primitive 実装パターンの参照点
@@ -47,8 +47,8 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 
 判定基準を **構造と状態の 2 軸** で厳密化する (2026-06-04 Phase 1)。
 
-- **Primitive** (`components/primitives/`): **単一の HTML 要素を装飾**する薄いラッパー、かつ **状態管理を持たない**。戦略上の Parts に対応
-- **Composite** (`components/composites/`): いずれかを満たす場合 (戦略上の Blocks に対応)
+- **Primitive** (`components/primitives/`): **単一の HTML 要素を装飾**する薄いラッパー、かつ **状態管理を持たない**
+- **Composite** (`components/composites/`): いずれかを満たす場合
   - 複数の HTML 要素 / Primitive を組み合わせる (例: Switch の `<Label>` + `<button>` 内包)
   - 状態管理を持つ (例: Modal の open/close、CheckboxGroup の group state)
   - 振る舞いを持つ (focus trap / portal / animation / overlay 等)
@@ -369,8 +369,8 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 配置先は §2 の Primitive vs Composite 判定に従う:
 
 ```
-Primitive (Parts) → components/primitives/ComponentName/
-Composite (Blocks) → components/composites/ComponentName/
+Primitive → components/primitives/ComponentName/
+Composite → components/composites/ComponentName/
 ```
 
 ### 5-2. `.tsx` の規約
@@ -691,7 +691,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 - semantic 色を追加したら `tokens/build/variables.css` が自動生成されることを `npm run tokens:build` で確認
 - 依存している product 側のビルドが壊れないか、本リポを `npm link` または公開バージョン経由で確認
-- 戦略レベルの変更 (Parts/Blocks 分類の変更、新カテゴリ追加等) は [`design-system-strategy.md`](./design-system-strategy.md) も同 PR で更新
+- 戦略レベルの変更 (Primitives/Composites 分類の変更、新カテゴリ追加等) は [`design-system-strategy.md`](./design-system-strategy.md) も同 PR で更新
 - 破壊的変更を伴うときは §10 に従って [`CHANGELOG.md`](./CHANGELOG.md) `[Unreleased]` に追記
 
 ### 9-3. 壊れリンクチェック

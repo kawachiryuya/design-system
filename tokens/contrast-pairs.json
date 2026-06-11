@@ -1,0 +1,35 @@
+{
+  "_comment": "check:contrast (scripts/check-contrast.mjs) が検証する semantic 配色ペア。fg/bg は variables.css の --color-<name> の <name>。usage: body(≥4.5) / large-text(≥3) / non-text(≥3, UI 部品・アイコン境界) / decorative(免除: 純装飾の罫線・disabled 等、WCAG 1.4.11/1.4.3 例外)。DS が『適合を保証する組合せ』のみ登録する。注意: on-muted は layer-1/bg-default(=layer-2) までが committed (4.74/4.54)。layer-3(neutral-100) では 4.35 で 4.5 未満になるため muted 本文を layer-3 に置かない (Colors guideline / Principles 参照)。",
+  "pairs": [
+    { "fg": "on-inverse", "bg": "surface-primary", "usage": "body", "note": "primary 面 + 白文字 (Button primary)" },
+    { "fg": "on-inverse", "bg": "surface-success", "usage": "body", "note": "success solid + 白 (Badge)" },
+    { "fg": "on-inverse", "bg": "surface-error", "usage": "body" },
+    { "fg": "on-inverse", "bg": "surface-warning", "usage": "body" },
+    { "fg": "on-inverse", "bg": "surface-info", "usage": "body" },
+    { "fg": "on-inverse", "bg": "surface-neutral-strong", "usage": "body", "note": "Tooltip 等の濃色面 + 白" },
+
+    { "fg": "on-default", "bg": "bg-default", "usage": "body", "note": "本文 on ページ背景" },
+    { "fg": "on-default", "bg": "surface-layer-1", "usage": "body" },
+    { "fg": "on-default", "bg": "surface-layer-2", "usage": "body" },
+    { "fg": "on-default", "bg": "surface-layer-3", "usage": "body" },
+    { "fg": "on-soft", "bg": "surface-layer-1", "usage": "body", "note": "やや弱いテキスト" },
+    { "fg": "on-muted", "bg": "surface-layer-1", "usage": "body", "note": "補助テキスト on 白" },
+    { "fg": "on-muted", "bg": "bg-default", "usage": "body", "note": "補助テキスト on ページ背景 (= layer-2)" },
+
+    { "fg": "on-success", "bg": "surface-success-muted", "usage": "body", "note": "Alert success: 濃緑文字 on 淡緑" },
+    { "fg": "on-error", "bg": "surface-error-muted", "usage": "body" },
+    { "fg": "on-warning", "bg": "surface-warning-muted", "usage": "body" },
+    { "fg": "on-info", "bg": "surface-info-muted", "usage": "body" },
+
+    { "fg": "on-muted", "bg": "surface-layer-1", "usage": "non-text", "note": "icon (text-onSurface-muted) on 白" },
+    { "fg": "border-focus", "bg": "surface-layer-1", "usage": "non-text", "note": "focus ring / focused input border" },
+    { "fg": "border-success-emphasis", "bg": "surface-layer-1", "usage": "non-text" },
+    { "fg": "border-error-emphasis", "bg": "surface-layer-1", "usage": "non-text" },
+    { "fg": "border-warning-emphasis", "bg": "surface-layer-1", "usage": "non-text" },
+    { "fg": "border-info-emphasis", "bg": "surface-layer-1", "usage": "non-text" },
+
+    { "fg": "border-default", "bg": "surface-layer-1", "usage": "decorative", "note": "分離線・罫線 (純装飾、WCAG 1.4.11 例外)。識別は label/focus で担保" },
+    { "fg": "border-subtle", "bg": "surface-layer-1", "usage": "decorative", "note": "淡い分離線 (純装飾)" },
+    { "fg": "on-disabled", "bg": "surface-disabled", "usage": "decorative", "note": "disabled (WCAG 1.4.3 免除)" }
+  ]
+}

@@ -17,6 +17,7 @@
 
 ### Added
 
+- **`check:contrast` コントラスト検証ゲートを追加** (contrast-policy C-2): [`scripts/check-contrast.mjs`](./scripts/check-contrast.mjs) + [`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)。semantic 配色ペアを WCAG 2 AA で判定 (fail → CI fail) し、APCA Lc 参考目標未達は warn (exit 0、設計レンズ)。加えて**パレットの階調不変条件** (アンカー step700=白4.5 / step500=白3:1、step 差ルール、OKLCH L 正規化 ±0.03、bright-hue yellow + 濃色文字) を検証し、token override での破壊を検出。`culori` / `apca-w3` を devDeps 追加 (出荷しない)、CI の tokens:build 後に実行、AGENTS §5-5-1 機械表に追加。現行トークンは fail 0 (Lc 注意 2 件 = on-muted 本文)
 - **`Modal` に `initialFocusRef` prop**: 開いた直後にフォーカスを当てる要素を指定できる (未指定は browser 既定 = 最初の focusable)。確認ダイアログで Footer の primary アクションに当て、SR が先に主要操作を読むようにする。play test 付き
 - **`Tabs` に `activationMode` prop** (`'automatic'` | `'manual'`、既定 automatic): `manual` は矢印キーで focus のみ移動し `Enter`/`Space` で選択確定 (WAI-ARIA APG)。遅延ロード / 通信を伴う重い panel 向け。play test 付き
 - **AI 協業ワークフローを整備**: (1) [`.claude/commands/add-component.md`](./.claude/commands/add-component.md) (§5 準拠の 4 ファイル scaffold→実装→検証) と [`audit-drift.md`](./.claude/commands/audit-drift.md) (規約と実装の乖離検査) を追加。(2) PR テンプレに「規約への還元 (要/不要/更新済み)」「レビュー観点ラベル」節を追加し、stale な §11→§10 (Semver) 参照を修正。(3) AGENTS.md **§11「規約更新の運用」**を新設 (指摘 → 分類 → 規約化 → §追記 のループ)。(4) GitHub ラベル `review:conformance` / `review:judgement` を作成し、strategy.md「現在の運用方針」に月次計測メモを追記

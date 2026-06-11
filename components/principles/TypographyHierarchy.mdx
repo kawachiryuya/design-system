@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Typography/Hierarchy" />
+
+# タイポグラフィ階層 (Hierarchy & Scale)
+
+文字のサイズ・太さ・色で情報の重要度を表し、ユーザーが「どこから読むか」を一瞬で判断できるようにする。スケール (型の段階) と階層 (その使い分け) はセット。
+
+## 原則
+
+1. **限られたスケールを使う**: font-size は token のスケール (xs〜5xl) から選び、任意 px を作らない。段階を絞ることで一貫性が出る。
+2. **役割名で選ぶ**: `text-heading-lg` / `text-body-md` のように semantic typography token を使い、「見出し」「本文」の意図を明示する (`text-2xl` 直書きより)。
+3. **階層は 3〜4 段まで**: 見出し階層を増やしすぎると 1 段差が小さくなり、かえって伝わらない。
+4. **サイズだけに頼らない**: 太さ (weight) と色 (muted) も併用して階層を作る。強調は 1 段落に 1〜2 箇所まで。
+5. **和文メトリクス**: 見出しは line-height snug (1.35) + letter-spacing 0、本文は line-height 1.5+ ([Readability](?path=/docs/principles-typography-readability--docs))。
+
+## Do / Don't
+
+- **Do**: ページ見出し (heading-xl) → セクション (heading-md) → 本文 (body-md) の 3 段で組む。
+- **Don't**: 見出しを 6 段に分け、隣り合う段の差を 1px にする。
+- **Don't**: すべてを bold にして「全部重要 = 何も強調されない」状態にする。
+
+## 関連
+
+- [`<Typography>`](?path=/docs/primitives-typography--guideline) — variant で role 別メトリクス
+- [Tokens / Typography / Primitive](?path=/docs/tokens-typography-primitive--guideline) — font-size スケール
+- [Tokens / Typography / Semantic](?path=/docs/tokens-typography-semantic--guideline) — heading / body の役割
+
+関連原則: [Readability](?path=/docs/principles-typography-readability--docs)

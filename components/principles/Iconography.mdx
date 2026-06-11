@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Typography/Iconography" />
+
+# アイコン (Iconography)
+
+アイコンは認識を速める視覚的ショートカット。サイズ・意味・余白を揃え、テキストの補助として一貫して使う。
+
+## 原則
+
+1. **サイズは段階を揃える**: アイコンは token のサイズ段階 (sm / md / lg) から選び、隣接するテキストの行高・視覚中心に合わせる。
+2. **意味のあるアイコンに名前、装飾は隠す**: 単独で機能を表すアイコン (icon-only ボタン) は `aria-label` を、テキストに添える装飾は `aria-hidden` ([Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs))。
+3. **アイコンだけで意味を伝えない**: 重要な操作はアイコン + テキストラベルで。アイコンの解釈は文化・文脈で揺れる。
+4. **タップ領域を確保する**: 見た目が小さくても hit area は 44px に広げる ([Touch Targets](?path=/docs/principles-foundation-accessibility-touch-targets--docs))。
+5. **スタイルを統一する**: 線幅・塗り/線・角の処理を揃え、`<Icon>` レジストリ経由で使う (直接 SVG 埋め込みを避ける)。
+
+## Do / Don't
+
+- **Do**: 破壊的ボタンを「色 + アイコン + 動詞ラベル」の三重で表す。
+- **Do**: icon-only ボタンに用途を表す `aria-label` を必須化する。
+- **Don't**: アイコンだけのボタンを並べ、意味を推測させる。
+- **Don't**: 行ごとに線幅や塗りの異なるアイコンを混在させる。
+
+## 関連コンポーネント
+
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — レジストリ + サイズ段階
+- [`<Button>`](?path=/docs/primitives-button--guideline) — iconOnly の `aria-label` 必須
+
+関連原則: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs) / [Touch Targets](?path=/docs/principles-foundation-accessibility-touch-targets--docs)

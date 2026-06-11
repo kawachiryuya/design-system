@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Color/Semantic Colors" />
+
+# セマンティックカラー (Semantic Colors)
+
+色は「**役割**」で参照する。生の hue (`teal` / `red`) ではなく semantic token (`primary` / `success` / `error`) を使い、**意味と外観を分離**する。これにより下流プロダクトは token を 1 行 override するだけで全体の見た目を差し替えられる。
+
+## 原則
+
+1. **semantic token のみ使う**: `bg-surface-primary` / `text-onSurface-error` 等。primitive hue の直参照 (`bg-red-500`) は禁止 — 下流の brand override が効かず、生 hex は lint で弾かれる ([AGENTS §3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md))。
+2. **色を唯一の情報手段にしない**: success / error 等は **色 + アイコン + テキスト**の三重で表す (色覚特性に依存させない)。
+3. **役割の一貫性**: success = 緑系、error = 赤系、warning = 橙系、info = 青系を全 component で統一する。
+4. **コントラストは token で担保**: テキスト 4.5:1 / UI 3:1 (AA) を満たす shade を semantic 側で選ぶ (solid role 色は白文字で 4.5 以上)。
+5. **brand から独立した中性 canvas**: `bg.default` は neutral 参照で、下流が brand を変えても背景は中性に保つ (マルチプロダクト基盤の独立性)。
+
+## Do / Don't
+
+- **Do**: エラーを `text-onSurface-error` + `<Icon name="error">` + 文言の三重で示す。
+- **Do**: brand を変えたい下流は `--color-teal-700` を override し、semantic チェーン全体を追従させる。
+- **Don't**: `bg-red-500` を直書きする (override 不可・lint エラー)。
+- **Don't**: 「赤い」だけでエラーを表現する (色覚特性のあるユーザーに伝わらない)。
+
+## 関連
+
+- [Tokens / Color / Semantic](?path=/docs/tokens-color-semantic--guideline) — WHERE × WHAT のセマンティック構造
+- [`<Badge>`](?path=/docs/primitives-badge--guideline) / [`<Alert>`](?path=/docs/composites-alert--guideline) / [`<Button>`](?path=/docs/primitives-button--guideline) — role 色の利用例
+
+関連原則: [Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs) (色 + テキストの併用)

@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Principles/Interaction/Feedback/Inline Validation" />
+
+# インラインバリデーション (Inline Validation)
+
+入力の正誤を、送信を待たずに**適切なタイミング**でその場に伝える。早すぎる検証はユーザーを急かし、遅すぎる検証はやり直しコストを上げる。
+
+## 原則
+
+1. **検証は blur 後 / 送信時に**: 入力中 (on-change) の 1 文字ごとに赤エラーを出さない。フィールドを離れた時 (blur) か送信時に判定する。
+2. **エラー後は即時回復を見せる**: 一度エラーを表示したフィールドは、その後の入力中 (on-change) に再検証し、直った瞬間にエラーを消す。
+3. **具体的に・近くに・色だけに頼らない**: 「何が・どう直すか」をフィールド直下にテキストで示し、`aria-invalid` + `aria-describedby` で結びつける (色覚特性に依存しない)。
+4. **成功も伝える**: エラーだけでなく、必要に応じてチェックマーク等で「OK」も返す。
+5. **送信時は最初のエラーへフォーカス**: 複数エラー時、ユーザーが修正に着手できるよう先頭のエラーフィールドへ focus を移す。
+
+## Do / Don't
+
+- **Do**: メール欄を離れた時にフォーマット検証し、直したら即エラーを消す。
+- **Don't**: 入力 1 文字目から「メールアドレスが不正です」と赤表示してユーザーを急かす。
+- **Don't**: エラーを色 (赤枠) だけで示し、何を直すべきか書かない。
+
+## 関連コンポーネント
+
+- [`<Input>`](?path=/docs/primitives-input--guideline) / [`<Textarea>`](?path=/docs/primitives-textarea--guideline) / [`<Select>`](?path=/docs/composites-select--guideline) — `aria-invalid` / エラー連携
+- [`<Label>`](?path=/docs/primitives-label--guideline) — 必須マークとエラーメッセージの結びつけ
+- [`<Checkbox>`](?path=/docs/composites-checkbox--guideline) / [`<Radio>`](?path=/docs/composites-radio--guideline) — group error の伝播
+
+関連原則: [Patterns / Forms](?path=/docs/principles-patterns-forms--docs)

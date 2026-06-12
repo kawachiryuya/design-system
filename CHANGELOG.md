@@ -36,6 +36,8 @@
 - **`Tabs` の不正 `activeId` フォールバック**: `tabs` に存在しない `activeId` が来た場合 `tabs[0]` にフォールバック (開発時 console.warn)。全 panel が消える事故を防止
 - **`prefers-reduced-motion` 対応 (WCAG 2.3.3)**: [`tokens/preset.cjs`](./tokens/preset.cjs) の base layer に「視差効果を減らす」設定時の animation / transition 無効化 (`0.01ms`) を注入。preset 経由で Storybook と consumer 双方に自動適用され、個別コンポーネントで `motion-reduce:` を書く必要がない
 - **`line-height.snug` (1.35) トークンを新設**: 和文見出し (display/xl/lg) 用
+- **`tokens/index.ts` の public API を source 全カテゴリと 1:1 化**: 参照漏れだった `Z_INDEX` / `OPACITY` / `FOCUS_RING` / `LAYOUT` を型付きで追加 export (型 re-export 含む)。`import { Z_INDEX } from '@kawachiryuya/design-system/tokens'` が可能に
+- **`tailwindcss` を `peerDependencies` に追加** (`^3.4.0`): `./tokens/preset` を使う consumer に Tailwind 3 要件を明示。`peerDependenciesMeta` で optional 指定とし、variables.css のみ使う consumer には未インストール警告を出さない
 
 ### Changed
 
@@ -59,6 +61,12 @@
 - **見出し (display/xl/lg) を和文最適化** (visual): letter-spacing を `-0.02em` → `0`、line-height を `tight (1.25)` → `snug (1.35)`。漢字連続で字面が窮屈になる欧文慣習を是正
 - **shadow スケールの段差を拡大** (visual): sm/md/lg の elevation 差を明確化し階層言語として機能させる。lg を Tailwind 標準級 (`0 10px 15px -3px`) に引き上げ Modal / Popover の浮きをはっきりさせる
 - **[`design-system-strategy.md`](./design-system-strategy.md) に「今後の検討 (ロードマップ)」を追加**: デスクトップ compact 密度ティアの方針 / オーバーレイ系 (Popover → DropdownMenu → Tooltip) のロードマップを明文化
+- **mono フォントスタックをモダン化** (visual): `"Courier New", Courier, monospace` → `ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace`。code 表示系が各 OS 標準の等幅フォントを使う。`tokens/preset.cjs` 経由で consumer にも伝播
+- **ルート直下ファイルの整備**: README のディレクトリ構成を実態に合わせ全列挙し**コンポーネント個数のハードコードを廃止** (Storybook サイドバーを SSoT 化)。`tailwind.config.js` → **`tailwind.config.cjs`** にリネーム (`"type": "module"` との形式不一致解消) + デッドグロブ `./principles/**` を削除。`eslint.config.mjs` にテンプレートリテラル内 hex / `[rgb(`・`[hsl(` の検知を追加。`prepublishOnly` を `npm run verify && npm run build` に強化。`package.json` に `engines` (node>=20) / `sideEffects` (CSS) / `files` (CHANGELOG.md) を補完
+
+### Removed (breaking, Tailwind utility)
+
+- **`font-serif` Tailwind ユーティリティを削除** (silent break, §10-2): `tokens/preset.cjs` の `fontFamily.serif` を削除。元々 source に serif 定義がなく `undefined` を出力する**実質非機能**ユーティリティで、リポ内利用もゼロ。serif が必要な consumer は PJ 側 `tailwind.config` の `theme.extend.fontFamily.serif` で定義する
 
 ### Fixed
 

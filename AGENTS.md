@@ -779,8 +779,9 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 ### 10-3. CHANGELOG 更新手順
 
 1. PR 単位で `[Unreleased]` セクションに追記 (`Added` / `Changed` / `Removed` / `Fixed` / `⚠ BREAKING CHANGES` のいずれかに振り分け)
-2. リリース時に `[Unreleased]` を `[x.y.z] - YYYY-MM-DD` に確定、`package.json` の `version` も同期
-3. 末尾のリンク参照を更新
+2. リリース確定時、`[Unreleased]` の各エントリを **1〜2 文 + 参照リンク** に圧縮してからバージョン節へ移動する (詳細な経緯は PR / commit が SSoT。CHANGELOG には要点のみ残し、肥大化を防ぐ)
+3. `[Unreleased]` を `[x.y.z] - YYYY-MM-DD` に確定、`package.json` の `version` も同期
+4. 末尾のリンク参照を更新
 
 ### 10-4. 0.x 期の運用
 

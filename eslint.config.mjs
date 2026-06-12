@@ -43,6 +43,15 @@ export default tseslint.config(
           selector: 'Literal[value=/\\[(rgb|hsl)/]',
           message: 'rgb()/hsl() の任意値 bracket は禁止。semantic token を使う (AGENTS §3)。',
         },
+        {
+          selector: 'TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}/]',
+          message:
+            '生 hex / 色 bracket はテンプレートリテラル内でも禁止。semantic token を使う (AGENTS §3)。',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/\\[(rgb|hsl)/]',
+          message: 'rgb()/hsl() の任意値 bracket はテンプレートリテラル内でも禁止。semantic token を使う (AGENTS §3)。',
+        },
       ],
     },
   },

@@ -7,17 +7,17 @@
 
 ## [Unreleased]
 
-レビュー (`design-system-review.md`) 指摘の解消。次回 release は forwardRef の後方互換追加と CI 追加があるため §10-1 表上 **MINOR** 相当 (version 確定は release 時)。
+レビュー指摘の解消。次回 release は forwardRef の後方互換追加と CI 追加があるため §10-1 表上 **MINOR** 相当 (version 確定は release 時)。
 
 ### Fixed (a11y / visual)
 
-- **`yellow` 色相を bright-hue (鮮やかな黄) に再設計** (visual): L 正規化の代償でマスタード調 (#A98000) だった yellow を vivid な黄ランプ (500=#EAB308 / 400=#FACC15) に置換。step 50〜600 は dark text (neutral-900)、700〜900 は white text で AA 準拠。**「濃色文字前提の bright-hue」** として L 正規化・白文字アンカーの例外に位置づけ (contrast-policy C-7=B)。yellow は semantic 未参照のため影響は consumer の `bg-yellow-*` 直利用のみ (warning semantic は orange-600 のまま)
+- **`yellow` 色相を bright-hue (鮮やかな黄) に再設計** (visual): L 正規化の代償でマスタード調 (#A98000) だった yellow を vivid な黄ランプ (500=#EAB308 / 400=#FACC15) に置換。step 50〜600 は dark text (neutral-900)、700〜900 は white text で AA 準拠。**「濃色文字前提の bright-hue」** として L 正規化・白文字アンカーの例外に位置づけ。yellow は semantic 未参照のため影響は consumer の `bg-yellow-*` 直利用のみ (warning semantic は orange-600 のまま)
 - **`Toast` の live region を常設コンテナ化** (a11y): `ToastProvider` を `role="status"`/`aria-live="polite"` と `role="alert"`/`aria-live="assertive"` の **2 コンテナ常設**に変え、Toast を variant で振り分けて注入。個別 Toast の live 属性を撤去し、live region のマウント遅延による告知漏れを防ぐ (単発 `<Toast>` API はラッパに同等属性を付与)
 - **solid セマンティックロール色を AA 4.5 準拠にダーク化** (visual): `surface-success` (green.500→**600**) / `surface-error` (red.500→**600**) / `surface-warning` (orange.400→**600**) / `surface-info` (blue.500→**600**)。白文字/マークとのコントラストが 2.73〜3.96 → **4.57〜5.31** に改善 (WCAG 1.4.3 AA)。Badge solid / Avatar / Checkbox / Radio / ProgressBar 等が対象。axe ゲートの一時 exempt (Badge/Avatar) を撤去
 
 ### Added
 
-- **`check:contrast` コントラスト検証ゲートを追加** (contrast-policy C-2): [`scripts/check-contrast.mjs`](./scripts/check-contrast.mjs) + [`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)。semantic 配色ペアを WCAG 2 AA で判定 (fail → CI fail) し、APCA Lc 参考目標未達は warn (exit 0、設計レンズ)。加えて**パレットの階調不変条件** (アンカー step700=白4.5 / step500=白3:1、step 差ルール、OKLCH L 正規化 ±0.03、bright-hue yellow + 濃色文字) を検証し、token override での破壊を検出。`culori` / `apca-w3` を devDeps 追加 (出荷しない)、CI の tokens:build 後に実行、AGENTS §5-5-1 機械表に追加。現行トークンは fail 0 (Lc 注意 2 件 = on-muted 本文)
+- **`check:contrast` コントラスト検証ゲートを追加**: [`scripts/check-contrast.mjs`](./scripts/check-contrast.mjs) + [`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)。semantic 配色ペアを WCAG 2 AA で判定 (fail → CI fail) し、APCA Lc 参考目標未達は warn (exit 0、設計レンズ)。加えて**パレットの階調不変条件** (アンカー step700=白4.5 / step500=白3:1、step 差ルール、OKLCH L 正規化 ±0.03、bright-hue yellow + 濃色文字) を検証し、token override での破壊を検出。`culori` / `apca-w3` を devDeps 追加 (出荷しない)、CI の tokens:build 後に実行、AGENTS §5-5-1 機械表に追加。現行トークンは fail 0 (Lc 注意 2 件 = on-muted 本文)
 - **`Modal` に `initialFocusRef` prop**: 開いた直後にフォーカスを当てる要素を指定できる (未指定は browser 既定 = 最初の focusable)。確認ダイアログで Footer の primary アクションに当て、SR が先に主要操作を読むようにする。play test 付き
 - **`Tabs` に `activationMode` prop** (`'automatic'` | `'manual'`、既定 automatic): `manual` は矢印キーで focus のみ移動し `Enter`/`Space` で選択確定 (WAI-ARIA APG)。遅延ロード / 通信を伴う重い panel 向け。play test 付き
 - **AI 協業ワークフローを整備**: (1) [`.claude/commands/add-component.md`](./.claude/commands/add-component.md) (§5 準拠の 4 ファイル scaffold→実装→検証) と [`audit-drift.md`](./.claude/commands/audit-drift.md) (規約と実装の乖離検査) を追加。(2) PR テンプレに「規約への還元 (要/不要/更新済み)」「レビュー観点ラベル」節を追加し、stale な §11→§10 (Semver) 参照を修正。(3) AGENTS.md **§11「規約更新の運用」**を新設 (指摘 → 分類 → 規約化 → §追記 のループ)。(4) GitHub ラベル `review:conformance` / `review:judgement` を作成し、strategy.md「現在の運用方針」に月次計測メモを追記
@@ -39,13 +39,14 @@
 
 ### Changed
 
+- **ドキュメント・コメントの参照表現を汎用化**: 外部プロダクト / 検証 consumer / 作業メモへの固有参照を中立表現 (consumer 等) に置換し、`docs/layout-patterns-inventory.md` を固有名を含まない要約に差し替え。公開リポとして自己完結する状態に整理 (技術内容・数値根拠・API は不変)
 - **`check:refs` でドキュメント間 §参照の整合をゲート** (harness H-7): [`scripts/check-refs.mjs`](./scripts/check-refs.mjs) が `.claude/commands/*` / PR テンプレ / `scripts/*.mjs` / `eslint.config.mjs` の `§N` 参照を AGENTS.md の実在見出しと突合し、改番でのリンク切れを検出 (Principles リンク切れと同型の予防)。`verify` チェーン・AGENTS §5-5-1・ci.yml に追加。導入時に既存のダングリング参照 1 件 (`eslint.config.mjs` の §3-5 → 正しくは §3-7「lint が強制する規約」) を即検出・修正
 - **`check:conventions` で §5 規約適合を機械検査** (harness H-4): [`scripts/check-conventions.mjs`](./scripts/check-conventions.mjs) が forwardRef (§5-2) / Props の JSDoc (§5-2) / 4 ファイル構成 (§5-1) / barrel 同期・件数コメント / 標準ストーリー構造 (§5-3、title 命名・autodocs 誤付与・節順序) を CI でゲート (エラーは §番号 + 現状 + 修正方向)。`verify` チェーン・AGENTS §5-5-1 機械表・ci.yml に追加。forwardRef 未対応の 6 primitive (Stack/Cluster/Center/Divider/Image/Skeleton、polymorphic/wrapper) は allowlist で debt 化。`audit-drift` コマンドは機械化 5 項目を CI に委譲し**判断項目のみ**に整理 (composite の forwardRef 要否 / allowlist 見直し / a11y TODO 放置 / 規約改訂要否)
 - **検証の単一エントリ `verify` + 内側ループ高速化** (harness H-2): `npm run verify` (tokens:build → check:contrast → check:links → lint → typecheck、安い順 fail-fast) と `verify:full` (+ build-storybook + test-storybook:local) を追加。`test-storybook:local` ([`scripts/test-storybook-local.mjs`](./scripts/test-storybook-local.mjs)) で CI の serve→wait→test→kill を 1 コマンド化 (新 dep なし、story 絞り込み可)。`typecheck` を `--incremental` 化 (`.tsbuildinfo`、2 回目以降 14s→1s)。AGENTS.md §4-1 に「単一コンポーネントの内側ループ」(スコープ版 lint/test、全体走査はコミット前のみ) を明記。add-component コマンドの検証手順を `npm run verify` 参照に集約
 - **AI 協業ハーネスを強化** (harness 第2ティア H-1/H-3/H-5/H-8): ルートに [`CLAUDE.md`](./CLAUDE.md) ブリッジを新設 (規約実体は AGENTS.md のみ、自動読込点を確保)。`.claude/commands/*.md` の cwd ハードコードを `git rev-parse --show-toplevel` + リポジトリ判定ガードに置換 (worktree / 別マシンで壊れない)。`.storybook/test-runner.ts` の preVisit で **reduced-motion を常時強制** (CI の play / axe の flake を排除)。AGENTS.md §11-1 にワンショットコマンドの `archive/` 運用を規定
-- **階調設計とコントラスト方針を docs に明文化** (contrast-policy C-6 / C-4): [Colors guideline](./components/tokens/Colors.guideline.mdx) に **step→役割アンカー表** (500=白3:1 / 700=白文字4.5 の普遍アンカー等、実測較正) と **L 正規化・step 差ルール**の設計原則を追加 (`check:contrast` の不変条件と 1:1)。[Principles/Semantic Colors](./components/principles/SemanticColors.mdx) に二層方針 (WCAG 2 床 + APCA レンズ)、条件付きペアの考え方、「階調の読み方」、ダークモード将来方針を追記。これで contrast-policy (C-1〜C-7、将来の C-5 を除く) が完走
-- **orange-500 を条件付きステップとして明文化** (contrast-policy C-3): 鮮オレンジ orange-500 (#BE7200) は白文字が 3.75 で AA 未満のため **large-text / 非テキスト (アイコン・グラフ) 限定**。本文面は白文字=orange-600/700 (濃色シフト)、濃色文字=orange-50〜200 (文字色反転) を使う。colors.json に description 追記、`contrast-pairs.json` に orange-500+白の条件付き non-text ペアを登録。L 正規化のため中間オレンジは muddy で、濃色文字でも APCA Lc が body 目標に届かない点も記録
-- **AGENTS.md §8-5「コントラスト基準 (WCAG 2 床 + APCA レンズ)」を新設**: 適合は WCAG 2.2 AA を機械強制の床、APCA Lc は設計レンズ (ゲートにしない) とする二層方針を明文化。条件付きペア (3:1 以上を large-text/非テキスト/装飾/disabled に限定) の機械可読表、APCA Lc 参考目標表を追加。「ゲートは WCAG 2 のみ」を明記 (`design-system-contrast-policy.md` C-1)
+- **階調設計とコントラスト方針を docs に明文化**: [Colors guideline](./components/tokens/Colors.guideline.mdx) に **step→役割アンカー表** (500=白3:1 / 700=白文字4.5 の普遍アンカー等、実測較正) と **L 正規化・step 差ルール**の設計原則を追加 (`check:contrast` の不変条件と 1:1)。[Principles/Semantic Colors](./components/principles/SemanticColors.mdx) に二層方針 (WCAG 2 床 + APCA レンズ)、条件付きペアの考え方、「階調の読み方」、ダークモード将来方針を追記。これでコントラスト方針 (将来のダークモード対応を除く) の明文化が完了
+- **orange-500 を条件付きステップとして明文化**: 鮮オレンジ orange-500 (#BE7200) は白文字が 3.75 で AA 未満のため **large-text / 非テキスト (アイコン・グラフ) 限定**。本文面は白文字=orange-600/700 (濃色シフト)、濃色文字=orange-50〜200 (文字色反転) を使う。colors.json に description 追記、`contrast-pairs.json` に orange-500+白の条件付き non-text ペアを登録。L 正規化のため中間オレンジは muddy で、濃色文字でも APCA Lc が body 目標に届かない点も記録
+- **AGENTS.md §8-5「コントラスト基準 (WCAG 2 床 + APCA レンズ)」を新設**: 適合は WCAG 2.2 AA を機械強制の床、APCA Lc は設計レンズ (ゲートにしない) とする二層方針を明文化。条件付きペア (3:1 以上を large-text/非テキスト/装飾/disabled に限定) の機械可読表、APCA Lc 参考目標表を追加。「ゲートは WCAG 2 のみ」を明記
 - **AGENTS.md §5-5 受け入れ基準を「機械 / 人間」に二分**: CI が保証する項目 (typecheck / lint / check:links / test-storybook の担保ステップを明記) と、人間がレビューで判断する項目 (API 設計・命名・配置・Do/Don't 内容・UX 妥当性) を分離。レビュアーが機械項目を二重確認しない運用に
 - **語彙を `Primitives` / `Composites` に一本化**: 公式語彙を実装名に統一し、`Parts` / `Blocks` は [`design-system-strategy.md`](./design-system-strategy.md) 内の由来 (経緯) に格下げ。`README.md` / `package.json` description / strategy.md の分類表を更新。**さらに strategy.md / AGENTS.md / Introduction.mdx 本文の `Parts` / `Blocks` を一掃**し経緯注記 1 箇所に集約 (Introduction の迂回文削除・見出し更新を含む)
 - **未使用 7 hue (yellow/lime/cyan/sky/violet/purple/pink) の用途を予約**: 各 hue の `500` に description で「カテゴリカルパレット用 (データ可視化 / Avatar 背景)。UI セマンティクスには使わない」を明記。Colors guideline にも同旨の節を追加
@@ -71,7 +72,7 @@
 ### Removed (breaking, npm export)
 
 - **`principles/` ディレクトリを物理削除し、`package.json` の `./principles/*` export と `files` 包含を撤去**: 0.5.0 で凍結された [`principles/`](./principles/) 59 ファイル ＋ `_ARCHIVE_NOTE.md` を全削除。SSoT を [`AGENTS.md`](./AGENTS.md) + `components/**/*.guideline.mdx` + [`design-system-strategy.md`](./design-system-strategy.md) の 3 階層に完全一本化し、二重管理状態を解消。
-  - **npm 影響**: `@kawachiryuya/design-system/principles/*` 形式の import path は使用不可に。consumer 1 号機 ([rail-demo](https://github.com/kawachiryuya/rail-demo)) は principles/ を import しておらず実害なし。他に consumer は存在しないため effective break なし
+  - **npm 影響**: `@kawachiryuya/design-system/principles/*` 形式の import path は使用不可に。consumer 側は principles/ を import しておらず実害なし。他に consumer は存在しないため effective break なし
   - **設計原則の核を SSoT に吸収**: 削除前に principles/ の (b)(c) 候補から「設計判断の核となる原則」を抽出して保存:
     - [`design-system-strategy.md`](./design-system-strategy.md) に **設計原則セクション** を新設 — アクセシビリティ基本方針 (POUR / WCAG AA) / 視覚的ヒエラルキー (サイズ・色・余白・位置・太さ の 5 手段、3〜4 段超え禁止) / レスポンシブ (モバイルファースト、コンテンツ削除禁止、44px タッチ) / テキスト可読性 (行長 25〜35 文字、行間 1.5+、左揃え、200% ズーム対応) / UI ライティング (ボイス 4 軸、ダークパターン禁止、能動態)
     - [`AGENTS.md §8`](./AGENTS.md) を拡充 — §8-1 基本前提 / §8-2 キーボード操作 (tabindex は 0/-1 のみ、スキップリンク) / §8-3 フォーカス管理 (インジケータ、Modal トラップ、動的コンテンツ時の focus 移動)
@@ -98,19 +99,19 @@
 - **design-system-strategy.md の構築ステップを依存方向図に簡潔化**: 旧 5 段の procedural 記述を `Token → Parts → Blocks → Layout → Organism` の 1 図に圧縮し、各ステップの実装実績は「進捗状況」セクションに集約 (旧構造では計画と実績が並列で重複していた)。Step 4 (Layout) を「未着手」→「完了 (Phase A/B)」に、Step 1 タイポグラフィ semantic 完了も反映
 - **design-system-strategy.md ディレクトリ構成 diagram に命名読み替え注釈を追加**: `parts` / `blocks` (戦略上の概念名) と `primitives` / `composites` (本リポ実装名) の対応を diagram 直下で 1 文補足
 - **design-system-strategy.md の「命名について」独立節を削除**: 「Parts (実装上は `primitives`)」「Blocks (実装上は `composites`)」を Atomic Design 2 層構成表の初出セルに inline 化し、独立節を削除
-- **design-system-strategy.md「demo/」historical 言及を整理**: 「旧 `demo/` を分離」の歴史的注釈を削除し、`rail-demo` を「本 DS を npm 消費する dogfood consumer」と簡潔に説明
+- **design-system-strategy.md「demo/」historical 言及を整理**: 「旧 `demo/` を分離」の歴史的注釈を削除し、consumer を「本 DS を npm 消費する dogfood consumer」と簡潔に説明
 - **README.md コンポーネント一覧を rot 防止の pointer 形式に置換**: 16 / 23 個の名前列挙を削除し、`components/primitives/` / `components/composites/` ディレクトリリンク + Storybook サイドバー案内に置換 (今後コンポーネント追加で再 rot しない)
 - **Introduction.mdx「アクセシビリティへの取り組み」を AGENTS.md §8 拡充内容に整合**: WCAG 2.1 POUR 原則 / Level AA / `tabindex` 規約 / フォーカス管理 (Modal trap、動的コンテンツ時の focus 移動) / 44px タッチターゲット / ホバー依存禁止 を追記
 
 ## [1.0.0] - 2026-06-10
 
-**Stable release**: Phase A (Center / Stack / Cluster) + Phase B (AppShell / TwoColumn / SplitPane) の Layout layer 完成と全 dogfood (rail-demo PR #3〜#9) を経て **MAJOR 昇格**。Storybook 標準ストーリー構造 + guideline 完備 + npm publish 済みの状態で API 安定宣言。
+**Stable release**: Phase A (Center / Stack / Cluster) + Phase B (AppShell / TwoColumn / SplitPane) の Layout layer 完成と全 dogfood (consumer 側) を経て **MAJOR 昇格**。Storybook 標準ストーリー構造 + guideline 完備 + npm publish 済みの状態で API 安定宣言。
 
 過去の累積 breaking changes (`0.5.0` の Surface layer 階層化 / state token 命名 / Primitive color rename / 各 component の size 廃止 等) はすべて含まれた状態の API 安定版。以降、API の breaking change は厳密に MAJOR bump とする ([AGENTS.md §10-4](./AGENTS.md#10-4-0x-期の運用))。
 
 ### Fixed
 
-- **`composites/Checkbox` の error message offset を `ml-7` (silent no-op) → `ml-8` に修正**: 本リポの curated spacing scale ([memory `custom-spacing-scale`](../../.claude/projects/-Users-kawachi-Develop-design-system/memory/project_custom_spacing_scale.md) 参照) に `7` (28px) が含まれないため Tailwind が CSS を生成せず、error message が input 左端に張り付いて label テキスト直下に揃わない silent UX 不具合があった。意図 (input `w-5` + 親 `gap-2` = 28px) と乖離する 4px 差を許容し、scale 内の `ml-8` (32px) に集約。
+- **`composites/Checkbox` の error message offset を `ml-7` (silent no-op) → `ml-8` に修正**: 本リポの curated spacing scale (メモ `custom-spacing-scale` 参照) に `7` (28px) が含まれないため Tailwind が CSS を生成せず、error message が input 左端に張り付いて label テキスト直下に揃わない silent UX 不具合があった。意図 (input `w-5` + 親 `gap-2` = 28px) と乖離する 4px 差を許容し、scale 内の `ml-8` (32px) に集約。
 
 ### Changed (silent break, Storybook URL)
 
@@ -136,7 +137,7 @@
 
 ### Added
 
-- **新規 Composite `TwoColumn`** ([`components/composites/TwoColumn/`](./components/composites/TwoColumn/)): 2 列レイアウト (main + sidebar) を mobile 縦積み → PC 横並び grid で表現する composite。`split` (`6/6` / `7/3` / `8/4`) で grid base (10 or 12) と各 child の col-span を内部マッピング、`gap` (`sm` / `md` / `lg`、default `md` = rail-demo 実態 `gap-4 md:gap-6 xl:gap-8`) で列間 gap を制御、`mobileReverse` (boolean) で mobile 時の表示順を逆転 (SearchPage form 下 + preview 上 pattern)。**Positional children** で 1 番目が main、2 番目が sidebar として render される。`React.HTMLAttributes<HTMLDivElement>` 継承で rest props 対応。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) **Phase B 第 2 弾**、AppShell に続く composite layer。
+- **新規 Composite `TwoColumn`** ([`components/composites/TwoColumn/`](./components/composites/TwoColumn/)): 2 列レイアウト (main + sidebar) を mobile 縦積み → PC 横並び grid で表現する composite。`split` (`6/6` / `7/3` / `8/4`) で grid base (10 or 12) と各 child の col-span を内部マッピング、`gap` (`sm` / `md` / `lg`、default `md` = consumer の実態 `gap-4 md:gap-6 xl:gap-8`) で列間 gap を制御、`mobileReverse` (boolean) で mobile 時の表示順を逆転 (SearchPage form 下 + preview 上 pattern)。**Positional children** で 1 番目が main、2 番目が sidebar として render される。`React.HTMLAttributes<HTMLDivElement>` 継承で rest props 対応。[`docs/layout-patterns-inventory.md`](./docs/layout-patterns-inventory.md) **Phase B 第 2 弾**、AppShell に続く composite layer。
 
 ## [0.11.0] - 2026-06-09
 
@@ -148,7 +149,7 @@
 
 ### Added
 
-- **`Cluster` / `Stack` の `as` enum に `'span'` を追加**: inline 文脈 (記事 meta / breadcrumb / icon+label 等) で semantic な `<span>` として layout primitive を使いたいケースに対応。`<Cluster as="span">` / `<Stack as="span">` が型 OK となる。`display: flex` で span が flex-container 化するのは browser 標準挙動。rail-demo の Cluster dogfood (PR #6) で発覚した API gap の解消。既存利用は不変。
+- **`Cluster` / `Stack` の `as` enum に `'span'` を追加**: inline 文脈 (記事 meta / breadcrumb / icon+label 等) で semantic な `<span>` として layout primitive を使いたいケースに対応。`<Cluster as="span">` / `<Stack as="span">` が型 OK となる。`display: flex` で span が flex-container 化するのは browser 標準挙動。consumer の Cluster dogfood で発覚した API gap の解消。既存利用は不変。
 
 ## [0.9.0] - 2026-06-09
 
@@ -160,7 +161,7 @@
 
 ### Added
 
-- **Layout primitives (`Stack` / `Center`) に rest props pass-through を追加**: `StackProps` / `CenterProps` が `React.HTMLAttributes<HTMLElement>` を継承するように変更し、コンポーネントは `...rest` を内部 Tag に展開する。これにより `<Stack as="form" onSubmit={...}>`、`<Center role="region" aria-label="...">`、`data-*` 属性等が直接渡せるようになる。これまで wrap が必要だった form 系の dogfood が綺麗にハマる (rail-demo の Login 等で発覚)。既存 API は不変。
+- **Layout primitives (`Stack` / `Center`) に rest props pass-through を追加**: `StackProps` / `CenterProps` が `React.HTMLAttributes<HTMLElement>` を継承するように変更し、コンポーネントは `...rest` を内部 Tag に展開する。これにより `<Stack as="form" onSubmit={...}>`、`<Center role="region" aria-label="...">`、`data-*` 属性等が直接渡せるようになる。これまで wrap が必要だった form 系の dogfood が綺麗にハマる (consumer の Login 等で発覚)。既存 API は不変。
 
 ## [0.7.0] - 2026-06-09
 
@@ -178,7 +179,7 @@
 
 ### Fixed
 
-- **`peerDependencies` に `tailwind-variants` / `tailwind-merge` を追加** (packaging bug fix): shipped dist (`dist/components/_internal/tv.js` 等) が両者を bare import しているにもかかわらず `devDependencies` にしか宣言されていなかったため、consumer 側で `Failed to resolve import "tailwind-variants"` で build が失敗していた。consumer は `npm install` 時に両者を自動 install する (npm 7+ の auto-install-peers)、または明示的に install することで build が通るようになる。本リポ dogfood (rail-demo) で発覚。
+- **`peerDependencies` に `tailwind-variants` / `tailwind-merge` を追加** (packaging bug fix): shipped dist (`dist/components/_internal/tv.js` 等) が両者を bare import しているにもかかわらず `devDependencies` にしか宣言されていなかったため、consumer 側で `Failed to resolve import "tailwind-variants"` で build が失敗していた。consumer は `npm install` 時に両者を自動 install する (npm 7+ の auto-install-peers)、または明示的に install することで build が通るようになる。本リポ dogfood (consumer) で発覚。
 
 ## [0.5.0] - 2026-06-08
 

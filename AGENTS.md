@@ -695,7 +695,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 ### 8-5. コントラスト基準 (WCAG 2 床 + APCA レンズ)
 
-コントラストは **WCAG 2.2 AA を機械強制の床、APCA Lc を設計レンズ** とする二層方針で運用する ([`design-system-contrast-policy.md`](./design-system-contrast-policy.md))。
+コントラストは **WCAG 2.2 AA を機械強制の床、APCA Lc を設計レンズ** とする二層方針で運用する。
 
 - **適合基準 (床)**: WCAG 2.2 AA。テキスト 4.5:1、大きいテキスト (24px 以上、または太字 18.66px 以上) と非テキスト (UI 部品・アイコン・グラフィック) は 3:1。`check:contrast` (§5-5-1) が機械的に強制し、例外はない。
 - **設計基準 (レンズ)**: APCA Lc。適合判定には使わず、(1) AA を通るペア内の読みやすさ比較、(2)「AA は通るが知覚的に不十分」の警告、(3) ダークモード設計指針、に使う。
@@ -733,7 +733,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 3. 必要なら `npm run build` で型エラーをチェック
 4. 本リポを依存として使う product 側のビルドが壊れないか確認 (本リポを `npm link` または公開済みパッケージ経由で参照)
 
-検証用のリアルアプリは別リポジトリで管理 (例: [`rail-demo`](https://github.com/kawachiryuya/rail-demo))。本リポは common (npm 化単位) のみを扱う。
+検証用のリアルアプリは別リポジトリで管理。本リポは common (npm 化単位) のみを扱う。
 
 **変更時に守ること**:
 

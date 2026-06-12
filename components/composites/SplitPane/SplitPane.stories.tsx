@@ -117,7 +117,7 @@ export const Variants: Story = {
         </PanePreview>
       </Caption>
 
-      <Caption text='listWidth="360px" (default、rail-demo の ReservationsLayout 採用値)'>
+      <Caption text='listWidth="360px" (default、consumer の標準採用値)'>
         <PanePreview>
           <SplitPane listWidth="360px" height="500px">
             <MockList count={10} />
@@ -154,13 +154,13 @@ export const EdgeCases: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'mobile で list 非表示 (rail-demo pattern) / children 1 つ (detail 未選択時) / custom height (AppShell 外で利用) を確認。consumer が SplitPane を別の文脈で使う時に守るべき挙動。',
+        story: 'mobile で list 非表示 (consumer pattern) / children 1 つ (detail 未選択時) / custom height (AppShell 外で利用) を確認。consumer が SplitPane を別の文脈で使う時に守るべき挙動。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6 p-4">
-      <Caption text='mobile で list 非表示 (rail-demo pattern) — consumer 側で hidden lg:block'>
+      <Caption text='mobile で list 非表示 (consumer pattern) — consumer 側で hidden lg:block'>
         <PanePreview>
           <SplitPane height="500px">
             <div className="hidden lg:block">

@@ -16,7 +16,7 @@ export type TwoColumnSplit = '6/6' | '7/3' | '8/4';
  * TwoColumn の column 間 gap 段階。
  *
  * - `sm` (16px) — gap-4 のみ、全 breakpoint 一定。compact UI 向け。
- * - `md` (16/24/32px) — gap-4 md:gap-6 xl:gap-8。**default**、rail-demo 4 ページ全てこの値。
+ * - `md` (16/24/32px) — gap-4 md:gap-6 xl:gap-8。**default**、consumer 4 ページ全てこの値。
  * - `lg` (24/32/48px) — gap-6 lg:gap-8 xl:gap-12。ゆったり配置。
  */
 export type TwoColumnGap = 'sm' | 'md' | 'lg';
@@ -82,7 +82,7 @@ const splitClasses: Record<TwoColumnSplit, { cols: string; main: string; sidebar
   '8/4': { cols: 'lg:grid-cols-12', main: 'lg:col-span-8', sidebar: 'lg:col-span-4' },
 };
 
-/** gap 段階ごとの Tailwind utility class。rail-demo の実態 (`gap-4 md:gap-6 xl:gap-8`) を `md` に。 */
+/** gap 段階ごとの Tailwind utility class。consumer の実態 (`gap-4 md:gap-6 xl:gap-8`) を `md` に。 */
 const gapClasses: Record<TwoColumnGap, string> = {
   sm: 'gap-4',
   md: 'gap-4 md:gap-6 xl:gap-8',

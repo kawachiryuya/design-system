@@ -4,7 +4,7 @@ import { tv } from '../../_internal/tv';
 /**
  * Stack の gap 段階。
  *
- * Tailwind spacing scale に紐づく 6 段、rail-demo の inventory に基づき
+ * Tailwind spacing scale に紐づく 6 段、consumer の inventory に基づき
  * 4 / 8 / 12 / 16 / 24 / 48 px を選定。`xs/sm/md/lg` は form / list 内部の
  * 日常用途、`xl/2xl` は段落間 / section 分割等の広めの余白に。
  *

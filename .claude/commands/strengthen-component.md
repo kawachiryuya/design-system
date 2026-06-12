@@ -10,7 +10,6 @@ argument-hint: "<ComponentName>"
 design-system リポ内の対象コンポーネントを **AI が型補完で正しく扱える形** に変換する。Button をショーケースに、同パターンを残コンポーネントへ展開する目的。
 
 **前提**: `git rev-parse --show-toplevel` でリポジトリルートを特定し、以降のパスはすべてルート相対で扱う。design-system リポジトリでなければ (package.json の `name` が `@kawachiryuya/design-system` でなければ) 中断してユーザーに確認する。
-**親 Issue**: kawachiryuya/ai-management#34
 
 ---
 
@@ -177,18 +176,8 @@ feat(components): <Name> を強化（discriminated union / JSDoc / @example）
 - npm run build-storybook
 - demo npm run build
 
-親 Issue: kawachiryuya/ai-management#34
-
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 ```
-
-### Step 12: 進捗コメント
-
-`gh issue comment 34 --repo kawachiryuya/ai-management` で短く進捗追記:
-
-- 完了したコンポーネント名
-- 主要な改善点（discriminator / @example 件数等）
-- 残数の可視化（例: 「Primitives 7/11 完了、残 4」）
 
 ---
 
@@ -217,6 +206,5 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 ## 出力
 
 - 改善 commit のハッシュ
-- 進捗コメントへのリンク
 - 変更したファイル一覧
 - 残コンポーネント数（簡易表）

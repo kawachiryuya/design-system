@@ -223,8 +223,8 @@ if (featureFlag.newDesign) {
 
 ### 配布ポリシー
 
-- **現状**: `license` は `UNLICENSED`、GitHub Packages へ `access: restricted` で配信。消費側プロダクトは GitHub の認証トークン (`NODE_AUTH_TOKEN`) を要する (社内 / 自分のプロダクトでの利用を前提)
-- **pending decision**: 様々なプロジェクト (クライアントワーク含む) の基盤として外部導入する場合、ライセンス (MIT 化) と配布チャネル (public registry 等) の意思決定が必要。現在は **規約確認 (Phase 0) 待ち**で、確定するまで現状の restricted 配信を維持する
+- **現状**: `license` は `UNLICENSED`、GitHub Packages へ `access: restricted` で配信。消費側プロダクトは GitHub の認証トークン (`NODE_AUTH_TOKEN`) を要する (自分のプロダクトでの利用を前提)
+- **pending decision**: 外部プロジェクトの基盤として導入する場合、ライセンス (MIT 化) と配布チャネル (public registry 等) の意思決定が必要。確定するまでは現状の restricted 配信を維持する
 
 ---
 
@@ -257,19 +257,19 @@ z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだ
 | **Primitives** | [`components/primitives/`](./components/primitives/) (Button, Input, Icon, Typography, Stack, Cluster, Center 等 16 個) |
 | **Composites** | [`components/composites/`](./components/composites/) (Alert, Card, SearchBar, Tabs, AppShell, TwoColumn, SplitPane 等 23 個) |
 | **common (汎用)** | 本リポジトリ全体 (`components/`, `tokens/`) — npm パッケージ `@kawachiryuya/design-system` として配信 |
-| **[product-name] (プロダクト固有)** | 別リポジトリで管理 (本リポを npm 依存として参照)。[`gunmaas`](https://github.com/kawachiryuya/gunmaas) (鉄道予約) / [`rail-demo-lp`](https://github.com/kawachiryuya/rail-demo-lp) (LP) |
+| **[product-name] (プロダクト固有)** | 別リポジトリで管理 (本リポを npm 依存として参照) |
 | **グローバルトークン** | [`tokens/source/colors.json`](./tokens/source/colors.json) ほか primitive スケール |
 | **セマンティックトークン** | [`tokens/source/semantic-colors.json`](./tokens/source/semantic-colors.json) (色: WHERE × WHAT 構造) / [`tokens/source/spacing.json`](./tokens/source/spacing.json) (`spacing-semantic`) / [`tokens/source/typography.json`](./tokens/source/typography.json) (`typography-semantic`) |
 | **設計原則ドキュメント** | 本ファイル「設計原則」セクション + [`AGENTS.md §8`](./AGENTS.md) (a11y 実装規約) + 各 component の `.guideline.mdx` |
 | **検証サイト (Storybook)** | `npm run storybook` / https://design-system-storybook-murex.vercel.app |
-| **検証サイト (アプリ内検証)** | 別リポ [`rail-demo`](https://github.com/kawachiryuya/rail-demo) (本 DS を npm 消費する dogfood consumer) |
+| **検証サイト (アプリ内検証)** | 別リポの dogfood consumer (本 DS を npm 消費する) |
 
 ### 進捗状況
 
 - Step 1 (トークン定義): カラー・スペーシング・タイポグラフィすべて semantic 層完了 (common 側にデフォルトを提供)
 - Step 2 (Primitives): 完了 (primitives 16 個、Layout primitive `Center` / `Stack` / `Cluster` 含む)
 - Step 3 (Composites): 完了 (composites 23 個、Layout composite `AppShell` / `TwoColumn` / `SplitPane` 含む)
-- Step 4 (レイアウト基礎): 完了 (Phase A: Layout primitives / Phase B: Layout composites、いずれも rail-demo で dogfood 済 + v1.0.0 stable)
+- Step 4 (レイアウト基礎): 完了 (Phase A: Layout primitives / Phase B: Layout composites、いずれも consumer 側で dogfood 済 + v1.0.0 stable)
 - Step 5 (プロダクト固有 Organism): 別リポジトリ (product 側) で実装する。本リポからは切り出し済み
 
 ### 運用規約 (どう作るか)

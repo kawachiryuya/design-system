@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * コントラスト検証 (design-system-contrast-policy.md / AGENTS §8-5)。
+ * コントラスト検証 (AGENTS §8-5)。
  *
  * 1. tokens/contrast-pairs.json の semantic ペアを WCAG 2 比で判定 (fail → exit 1)。
  *    APCA Lc は参考目標未達を warn 出力 (exit code に影響しない = 設計レンズ)。

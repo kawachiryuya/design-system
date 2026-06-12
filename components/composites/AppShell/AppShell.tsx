@@ -9,7 +9,7 @@ import React from 'react';
  *
  * 値は layout token `--layout-container-max-width-*` を参照:
  * - `narrow`  768px  — settings / 単列 reading ページ等の控えめな shell
- * - `default` 1280px — 標準 SaaS app width (rail-demo の現状値)
+ * - `default` 1280px — 標準 SaaS app width (consumer 実装の標準値)
  * - `wide`    1536px — Dashboard / 横長 content
  * - `full`    100%   — 制約なし (special case)
  */
@@ -30,7 +30,7 @@ export type AppShellContentMax = 'narrow' | 'default' | 'wide' | 'full';
  * router/state 依存を持ち込まず、純粋に slot-based。
  *
  * @example
- *   // 標準的な利用 (rail-demo を踏襲)
+ *   // 標準的な利用
  *   <AppShell
  *     header={<Header />}
  *     sidebar={<TopHeader />}

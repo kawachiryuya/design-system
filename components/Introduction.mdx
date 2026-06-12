@@ -57,7 +57,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 - **Primitives**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
 - **Composites**：Primitives を組み合わせた複合コンポーネント。Primitives のみ import 可。
-- **プロダクト層**：すべてを import 可。本リポジトリ外（gunmaas など別プロダクトリポ）で管理。
+- **プロダクト層**：すべてを import 可。本リポジトリ外（別プロダクトリポ）で管理。
 
 ```
 Primitives    他のコンポーネントを import しない
@@ -67,7 +67,7 @@ Composites    Primitives のみ import 可
 プロダクト層   すべてを import 可（別リポジトリ）
 ```
 
-プロダクト固有のコンポーネント（座席選択・運賃ラベル等のドメイン依存 UI）は本リポジトリには含めず、プロダクト側リポで本パッケージを依存として使う構成です。
+プロダクト固有のコンポーネント（プロダクト固有のドメイン依存 UI）は本リポジトリには含めず、プロダクト側リポで本パッケージを依存として使う構成です。
 
 ---
 
@@ -94,7 +94,7 @@ Tailwind CSS の設定にも統合済みです。
 
 ## Product 側で使う際の setup
 
-別 product (gunmaas / rail-demo / 他) で本パッケージを依存として使うときの手順。
+別 product で本パッケージを依存として使うときの手順。
 
 **1. Tailwind preset を継承** (`tailwind.config.js`)
 

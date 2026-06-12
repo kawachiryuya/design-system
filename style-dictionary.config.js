@@ -6,9 +6,6 @@
  *   - tokens/build/{tokens.json, tokens.flat.json, tokens.ts, variables.css}
  *   - tokens/{colors,semantic-colors,spacing,typography,shadows,radius,breakpoints,animation}.json
  *     (legacy-format build artifacts for backward compat with Storybook stories etc.)
- *
- * 詳細: docs/ai-roadmap.md §「Phase 1 / 施策 A」
- * 親 Issue: kawachiryuya/ai-management#32
  */
 
 /**

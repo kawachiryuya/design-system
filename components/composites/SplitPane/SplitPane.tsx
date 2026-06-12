@@ -7,7 +7,7 @@ import React from 'react';
  *
  * - **mobile (< lg)**: 単純に縦積み (両 pane が full width で順に表示)。
  *   consumer 側で router state に応じて `list` か `detail` に `hidden lg:block` を当てて
- *   表示制御するのが典型 (rail-demo の ReservationsLayout pattern)。
+ *   表示制御するのが典型 (list + detail レイアウトの典型 pattern)。
  * - **PC (>= lg)**: grid `[listWidth]_1fr` で左右並び。両 pane が **独立スクロール** (`overflow-y-auto`)、
  *   `divider` で境界線、高さは consumer 指定 (default `calc(100vh - 3rem)` = AppShell main padding 込み)。
  *
@@ -15,7 +15,7 @@ import React from 'react';
  * detail pane に渡すのが定番。
  *
  * @example
- *   // 標準 (rail-demo の ReservationsLayout pattern)
+ *   // 標準 (list + detail レイアウトの典型 pattern)
  *   <SplitPane listWidth="360px">
  *     <div className="hidden lg:block">
  *       <ReservationsPage />
@@ -56,7 +56,7 @@ export interface SplitPaneProps extends React.HTMLAttributes<HTMLDivElement> {
    *
    * AppShell の default padding (mobile 16, lg desktop 32 = 2rem) を考慮:
    * - AppShell の `py-container` 利用時 = lg で `pt-8 pb-8` = 64px = 4rem → `calc(100vh - 4rem)`
-   * - rail-demo の `py-6` 旧実装は 3rem → `calc(100vh - 3rem)`
+   * - consumer の `py-6` 旧実装は 3rem → `calc(100vh - 3rem)`
    *
    * @default 'calc(100vh - 4rem)'
    */

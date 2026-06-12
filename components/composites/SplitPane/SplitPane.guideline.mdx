@@ -52,7 +52,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 SplitPane は mobile で **両 pane を縦積みで表示**する。実際の master-detail UX (list を選んで detail を見る) では consumer 側で router state に応じて片方を `hidden lg:block` で隠す:
 
 ```tsx
-// rail-demo ReservationsLayout pattern
+// list + detail レイアウトの典型 pattern
 <SplitPane listWidth="360px">
   {/* detail 選択時は mobile で list を隠す */}
   <div className="hidden lg:block">

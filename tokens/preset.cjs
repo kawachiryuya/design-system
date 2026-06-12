@@ -92,7 +92,6 @@ module.exports = {
     letterSpacing: t.typography['letter-spacing'],
     fontFamily: {
       sans: splitFontFamily(t.typography['font-family'].sans),
-      serif: splitFontFamily(t.typography['font-family'].serif),
       mono: splitFontFamily(t.typography['font-family'].mono),
     },
     // size scale (xs/sm/md/lg/...) を持つカテゴリは `md` を default として宣言。

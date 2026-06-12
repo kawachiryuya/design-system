@@ -24,15 +24,26 @@ npm run build-storybook    # 静的サイトとして storybook-static/ へ出�
 ```
 design-system/
 ├── components/
-│   ├── primitives/    単一 HTML 要素ラッパー / Layout primitive (16 個)
-│   └── composites/    複合コンポーネント / Layout composite (23 個)
+│   ├── primitives/    単一 HTML 要素ラッパー + Layout primitive
+│   ├── composites/    複数要素を組み合わせた複合 + Layout composite
+│   ├── principles/    設計原則トピックページ (MDX)
+│   ├── tokens/        Token Catalog Story (token scale の可視化)
+│   ├── _internal/     内部ユーティリティ (非公開)
+│   ├── Introduction.mdx   Storybook トップ導入ページ
+│   └── index.ts       コンポーネント public API (barrel)
 ├── tokens/
-│   ├── source/        グローバル / セマンティックトークン (JSON)
+│   ├── source/        primitive / semantic トークン (JSON)
 │   ├── build/         Style Dictionary 自動生成成果物
 │   ├── preset.cjs     Tailwind preset
 │   └── index.ts       TS public API
-└── .storybook/        Storybook 設定
+├── scripts/           検証スクリプト (check-links / contrast / conventions / refs 等)
+├── docs/              リポ運用ドキュメント (strategy 補助・layout patterns 等)
+├── .storybook/        Storybook 設定
+├── .github/           CI ワークフロー
+└── .claude/           AI エージェント用コマンド (add-component / audit-drift)
 ```
+
+> コンポーネントの一覧と個数は Storybook サイドバー (Primitives / Composites) が Single Source of Truth。本 README には数を持たない (ドリフト防止)。
 
 ## ドキュメントの読む順
 

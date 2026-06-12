@@ -10,7 +10,6 @@ module.exports = {
   presets: [require('./tokens/preset.cjs')],
   content: [
     './components/**/*.{html,js,jsx,ts,tsx,mdx}',
-    './principles/**/*.mdx',
     './.storybook/**/*.{js,ts,tsx}',
   ],
   plugins: [],

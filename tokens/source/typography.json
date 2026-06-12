@@ -98,7 +98,7 @@
         "type": "fontFamily"
       },
       "mono": {
-        "value": "\"Courier New\", Courier, monospace",
+        "value": "ui-monospace, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace",
         "type": "fontFamily"
       }
     }

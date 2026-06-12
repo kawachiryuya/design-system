@@ -9,6 +9,12 @@
     "url": "git+https://github.com/kawachiryuya/design-system.git"
   },
   "homepage": "https://design-system-storybook-murex.vercel.app",
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/components/index.d.ts",
@@ -34,7 +40,8 @@
     "tokens/build/variables.css",
     "tokens/build/tokens.json",
     "AGENTS.md",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
@@ -43,8 +50,14 @@
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
+    "tailwindcss": "^3.4.0",
     "tailwind-merge": "^3.6.0",
     "tailwind-variants": "^3.2.2"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": true
+    }
   },
   "scripts": {
     "tokens:build": "style-dictionary build --config style-dictionary.config.js",
@@ -61,7 +74,7 @@
     "test-storybook": "test-storybook",
     "test-storybook:local": "node scripts/test-storybook-local.mjs",
     "build": "npm run tokens:build && tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run verify && npm run build",
     "prestorybook": "npm run tokens:build",
     "prebuild-storybook": "npm run tokens:build",
     "storybook": "storybook dev -p 6006",

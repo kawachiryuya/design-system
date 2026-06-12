@@ -33,8 +33,20 @@ export const BREAKPOINTS = TOKENS.screens;
 export const DURATION = TOKENS.duration;
 /** Animation easing */
 export const EASING = TOKENS.easing;
+/** Semantic z-index layers（dropdown / sticky / overlay / modal / popover / toast / tooltip） */
+export const Z_INDEX = TOKENS['z-index'];
+/** Semantic opacity（disabled / muted / spinner-track / spinner-spin） */
+export const OPACITY = TOKENS.opacity;
+/** Focus ring（a11y semantic: width / offset） */
+export const FOCUS_RING = TOKENS['focus-ring'];
+/** Layout（container / section / grid 等） */
+export const LAYOUT = TOKENS.layout;
 
 // Type re-exports for convenience
 export type Colors = typeof COLORS;
 export type Spacing = typeof SPACING;
 export type Typography = typeof TYPOGRAPHY;
+export type ZIndex = typeof Z_INDEX;
+export type Opacity = typeof OPACITY;
+export type FocusRing = typeof FOCUS_RING;
+export type Layout = typeof LAYOUT;

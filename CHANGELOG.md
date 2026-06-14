@@ -7,7 +7,9 @@
 
 ## [Unreleased]
 
-レビュー指摘の解消。次回 release は forwardRef の後方互換追加と CI 追加があるため §10-1 表上 **MINOR** 相当 (version 確定は release 時)。
+## [2.0.0] - 2026-06-14
+
+オーバーレイ三部作 (Popover / DropdownMenu / Tooltip) を中心とする新コンポーネント追加、`@floating-ui/dom` の初導入、AI 協業ハーネス・コントラスト / 参照 / 規約の検証ゲート整備、和文タイポ最適化を含む。新規追加が中心だが、**非機能だった `font-serif` Tailwind ユーティリティの削除 (silent break, §10-2)** を含むため §10-1 上 **MAJOR**。移行手順は下記「Removed (breaking, Tailwind utility)」を参照。
 
 ### Fixed (a11y / visual)
 
@@ -570,7 +572,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/kawachiryuya/design-system/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/kawachiryuya/design-system/compare/v1.0.0...v1.1.0
 [0.4.0]: https://github.com/kawachiryuya/design-system/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/kawachiryuya/design-system/compare/v0.2.0...v0.3.0

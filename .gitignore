@@ -50,3 +50,12 @@ yarn-error.log*
 
 # npm authentication（PAT を含む可能性、絶対 commit しない）
 .npmrc
+
+# ローカル作業メモ（追跡しない。docs/layout-patterns-inventory.md は追跡対象のまま）
+docs/CLAUDE.md-addition/
+docs/design-system-backlog.md
+docs/design-system-contrast-policy.md
+docs/design-system-harness.md
+docs/design-system-review.md
+docs/root-and-tokens-optimization.md
+docs/sanitize-work-context-instructions.md

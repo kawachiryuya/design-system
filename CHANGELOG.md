@@ -7,12 +7,11 @@
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-06-15
+
 ### Added
 
-- **`layout.content.max-width.*` トークンと `max-w-content-*` ユーティリティを新設** (MINOR): `Center` の max 段 (form 28rem / reading 48rem / wide 56rem / marketing 64rem) を、これまで Tailwind 既定クラス (`max-w-md/3xl/4xl/5xl`) 直書きだったのを **token 化**。[`tokens/source/layout.json`](./tokens/source/layout.json) に `layout.content.max-width` を追加し、[`tokens/preset.cjs`](./tokens/preset.cjs) に `.max-w-content-{form|reading|wide|marketing}` を追加、[`Center.tsx`](./components/primitives/Center/Center.tsx) がこれを参照するよう変更。shell-level の `container.max-width` (px) が token 化済みなのに content 側だけ未 token だった非対称を解消し、token カタログ ([Tokens/Layout](./components/tokens/Layout.stories.tsx) に `Content` story) にも掲載して発見可能性を揃えた。
-  - **値は rem を維持** (px に変換しない): content 幅は root font-size に追従させ本文 measure を保つため (a11y)。shell=px / content=rem の二軸を意図として明文化。
-  - **`Center` の公開 API (`max="form|reading|wide|marketing"`) は不変・visual も同値** のため非破壊 (内部実装の refactor + 新 token 追加で全体 MINOR)。利用側 (consumer product) の改修は不要。
-  - `wide` は content (896px) と container (1536px) の両軸に存在するが、token group が別 (`content.max-width` / `container.max-width`) なので CSS 変数レベルで衝突しない。
+- **`layout.content.max-width.*` トークンと `max-w-content-*` ユーティリティを新設** (MINOR): `Center` の max 段 (form/reading/wide/marketing) を Tailwind 既定クラス直書きから token 化し、shell-level の `container.max-width` (px) のみ token 化されていた非対称を解消。値は **rem を維持** (root font-size 追従で本文 measure を保つ a11y、shell=px / content=rem の二軸)、`Center` の公開 API・visual は不変で非破壊。token カタログに `Content` story を追加し container と発見可能性を揃えた。([#41](https://github.com/kawachiryuya/design-system/pull/41))
 
 ## [2.0.0] - 2026-06-14
 
@@ -579,7 +578,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/kawachiryuya/design-system/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/kawachiryuya/design-system/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/kawachiryuya/design-system/compare/v1.0.0...v1.1.0
 [0.4.0]: https://github.com/kawachiryuya/design-system/compare/v0.3.0...v0.4.0

@@ -17,6 +17,9 @@ const L = layoutToken.layout as {
     'padding-y': Record<'mobile' | 'tablet' | 'desktop', LeafEntry>;
     'max-width': Record<'narrow' | 'default' | 'wide' | 'full', LeafEntry>;
   };
+  content: {
+    'max-width': Record<'form' | 'reading' | 'wide' | 'marketing', LeafEntry>;
+  };
   section: {
     gap: Record<'sm' | 'md' | 'lg', LeafEntry>;
     'padding-y': Record<'sm' | 'md' | 'lg', LeafEntry>;
@@ -108,6 +111,50 @@ export const Container: Story = {
                     style={{
                       width: variant === 'full' ? '100%' : `${Math.min(parseInt(entry.value, 10) / 1536 * 100, 100)}%`,
                     }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  ),
+};
+
+// ── Content ────────────────────────────────────────────────
+
+export const Content: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'content-level の max-width (Center primitive 用)。shell-level の max-w-container (px) とは別軸で、rem 基準のため root font-size に追従する (本文 measure を保つ a11y)。`Center max="form|reading|wide|marketing"` がこの utility を参照する。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <section className="flex flex-col gap-3">
+        <h3 className="text-heading-sm m-0 text-onSurface">content.max-width (Center の 4 段)</h3>
+        <p className="m-0 text-body-sm text-onSurface-muted">utility: <code className="font-mono text-xs">max-w-content-{'{form|reading|wide|marketing}'}</code> / 値は rem (root font-size 追従)</p>
+        <div className="flex flex-col gap-3">
+          {(['form', 'reading', 'wide', 'marketing'] as const).map((variant) => {
+            const entry = L.content['max-width'][variant];
+            const px = parseFloat(entry.value) * 16; // rem → px (16px 基準) で帯幅を算出
+            return (
+              <div key={variant} className="rounded-md border border-border-subtle bg-surface p-3">
+                <div className="flex items-center gap-3 mb-2">
+                  <KeyBadge k={variant} />
+                  <code className="font-mono text-xs text-onSurface-muted">max-w-content-{variant}</code>
+                  <code className="font-mono text-xs text-onSurface">{entry.value}</code>
+                  <code className="font-mono text-xs text-onSurface-muted">Center max="{variant}"</code>
+                </div>
+                <p className="m-0 text-xs text-onSurface-muted mb-2">{entry.description}</p>
+                {/* 視覚プレビュー: container と同じ 1536px スケールで帯表示 (shell との大小関係が分かる) */}
+                <div className="bg-surface-inset h-4 rounded-sm relative overflow-hidden">
+                  <div
+                    className="h-full bg-surface-primary rounded-sm"
+                    style={{ width: `${Math.min((px / 1536) * 100, 100)}%` }}
                   />
                 </div>
               </div>

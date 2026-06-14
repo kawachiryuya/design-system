@@ -12,6 +12,11 @@ import { tv } from '../../_internal/tv';
  *
  * Shell-level の max-width (AppShell の `max-w-container-default = 1280px`) とは別軸。
  * Center は content-level の単列センタリング専用 primitive。
+ *
+ * 値は layout token `--layout-content-max-width-*` (rem 基準) を参照する。
+ * shell-level (`--layout-container-max-width-*` = px) を「枠」、content-level を
+ * 「枠の中の読み列」として責務分離し、content は rem で root font-size に追従させる
+ * (本文 measure を保つ a11y 観点)。
  */
 export type CenterMax = 'form' | 'reading' | 'wide' | 'marketing';
 
@@ -47,7 +52,8 @@ export type CenterElement = 'div' | 'section' | 'article' | 'main';
  */
 export interface CenterProps extends React.HTMLAttributes<HTMLElement> {
   /**
-   * 最大幅の段階。用途名で指定する。値は固定 (Tailwind default の max-w-md/3xl/4xl/5xl)。
+   * 最大幅の段階。用途名で指定する。値は layout token `--layout-content-max-width-*`
+   * (form 28rem / reading 48rem / wide 56rem / marketing 64rem) を参照。
    * 必須プロパティ — Center の存在意義そのものなので default を持たない。
    */
   max: CenterMax;
@@ -70,21 +76,22 @@ export interface CenterProps extends React.HTMLAttributes<HTMLElement> {
  * Center のスタイル定義 — `tailwind-variants` で max 段階を宣言的に保持。
  *
  * - base: `mx-auto w-full` (= 中央寄せ + 親に対して 100% width、max-width で頭打ち)
- * - max variant: Tailwind default `max-w-*` を 4 段階にマップ。
+ * - max variant: content-level token utility `max-w-content-*` を 4 段階にマップ
+ *   (値は `--layout-content-max-width-*` = form 28rem / reading 48rem / wide 56rem / marketing 64rem)。
  *
- * 注: layout token `--layout-container-max-width-*` (= AppShell 用、768/1280/1536/100%)
- *     とは namespace を分けている。Center は content-level、token は shell-level の責務分担。
- *     content-level の token category 追加 (`layout.content.max-width.*` 等) は
- *     揺れが顕在化したら検討する Phase B 以降の課題。
+ * 注: shell-level の `--layout-container-max-width-*` (= AppShell 用、768/1280/1536/100% px)
+ *     とは namespace を分けている。Center は content-level (rem)、container は shell-level (px) の責務分担。
+ *     `wide` は両軸に存在するが値が異なる (content=896px / container=1536px) ため
+ *     token は別 group で曖昧さを解消している。
  */
 const centerVariants = tv({
   base: 'mx-auto w-full',
   variants: {
     max: {
-      form:      'max-w-md',   // 448px
-      reading:   'max-w-3xl',  // 768px
-      wide:      'max-w-4xl',  // 896px
-      marketing: 'max-w-5xl',  // 1024px
+      form:      'max-w-content-form',       // 28rem (448px)
+      reading:   'max-w-content-reading',    // 48rem (768px)
+      wide:      'max-w-content-wide',        // 56rem (896px)
+      marketing: 'max-w-content-marketing',  // 64rem (1024px)
     },
   },
 });

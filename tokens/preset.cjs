@@ -286,6 +286,14 @@ module.exports = {
         '.max-w-container-wide':   { maxWidth: 'var(--layout-container-max-width-wide)' },
         '.max-w-container-full':   { maxWidth: 'var(--layout-container-max-width-full)' },
 
+        // -- content.max-width: Center 用の content-level 幅 (form/reading/wide/marketing) --
+        // shell-level の max-w-container (px) とは別軸。content 側は rem 基準で
+        // root font-size に追従し、本文 measure を保つ (a11y)。
+        '.max-w-content-form':      { maxWidth: 'var(--layout-content-max-width-form)' },
+        '.max-w-content-reading':   { maxWidth: 'var(--layout-content-max-width-reading)' },
+        '.max-w-content-wide':      { maxWidth: 'var(--layout-content-max-width-wide)' },
+        '.max-w-content-marketing': { maxWidth: 'var(--layout-content-max-width-marketing)' },
+
         // -- section: gap / padding-y の sm/md/lg density variant --
         '.gap-section-sm': { gap: 'var(--layout-section-gap-sm)' },
         '.gap-section-md': { gap: 'var(--layout-section-gap-md)' },

@@ -7,6 +7,13 @@
 
 ## [Unreleased]
 
+### Added
+
+- **`layout.content.max-width.*` トークンと `max-w-content-*` ユーティリティを新設** (MINOR): `Center` の max 段 (form 28rem / reading 48rem / wide 56rem / marketing 64rem) を、これまで Tailwind 既定クラス (`max-w-md/3xl/4xl/5xl`) 直書きだったのを **token 化**。[`tokens/source/layout.json`](./tokens/source/layout.json) に `layout.content.max-width` を追加し、[`tokens/preset.cjs`](./tokens/preset.cjs) に `.max-w-content-{form|reading|wide|marketing}` を追加、[`Center.tsx`](./components/primitives/Center/Center.tsx) がこれを参照するよう変更。shell-level の `container.max-width` (px) が token 化済みなのに content 側だけ未 token だった非対称を解消し、token カタログ ([Tokens/Layout](./components/tokens/Layout.stories.tsx) に `Content` story) にも掲載して発見可能性を揃えた。
+  - **値は rem を維持** (px に変換しない): content 幅は root font-size に追従させ本文 measure を保つため (a11y)。shell=px / content=rem の二軸を意図として明文化。
+  - **`Center` の公開 API (`max="form|reading|wide|marketing"`) は不変・visual も同値** のため非破壊 (内部実装の refactor + 新 token 追加で全体 MINOR)。利用側 (consumer product) の改修は不要。
+  - `wide` は content (896px) と container (1536px) の両軸に存在するが、token group が別 (`content.max-width` / `container.max-width`) なので CSS 変数レベルで衝突しない。
+
 ## [2.0.0] - 2026-06-14
 
 オーバーレイ三部作 (Popover / DropdownMenu / Tooltip) を中心とする新コンポーネント追加、`@floating-ui/dom` の初導入、AI 協業ハーネス・コントラスト / 参照 / 規約の検証ゲート整備、和文タイポ最適化を含む。新規追加が中心だが、**非機能だった `font-serif` Tailwind ユーティリティの削除 (silent break, §10-2)** を含むため §10-1 上 **MAJOR**。移行手順は下記「Removed (breaking, Tailwind utility)」を参照。

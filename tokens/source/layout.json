@@ -18,6 +18,14 @@
         "full":    { "value": "100%",   "type": "dimension", "description": "制約なし (Shell layout 内 main 等)" }
       }
     },
+    "content": {
+      "max-width": {
+        "form":      { "value": "28rem", "type": "dimension", "description": "単列フォーム幅 (448px 相当)。Login / Signup / 設定フォーム等。Center max=\"form\"" },
+        "reading":   { "value": "48rem", "type": "dimension", "description": "読み物幅 (768px 相当、1 行 ≒ 65〜75 字)。Article / FAQ / 規約等。Center max=\"reading\"" },
+        "wide":      { "value": "56rem", "type": "dimension", "description": "やや広い content 幅 (896px 相当)。Help / 内側に grid を持つ反復構造。Center max=\"wide\" (※ container.max-width.wide=1536px とは別軸)" },
+        "marketing": { "value": "64rem", "type": "dimension", "description": "marketing section 幅 (1024px 相当)。Landing hero / Card grid (max 3 col) 等。Center max=\"marketing\"" }
+      }
+    },
     "section": {
       "gap": {
         "sm": { "value": "24px", "type": "dimension", "description": "section 間の垂直余白 (狭め)" },

@@ -15,13 +15,13 @@ const meta: Meta<typeof Center> = {
   title: 'Primitives/Center',
   component: Center,
   argTypes: {
-    max: { control: 'radio', options: ['form', 'reading', 'wide', 'marketing'] },
+    max: { control: 'radio', options: ['sm', 'md', 'lg', 'xl'] },
     as: { control: 'radio', options: ['div', 'section', 'article', 'main'] },
     className: { control: false },
     children: { control: false },
   },
   args: {
-    max: 'reading',
+    max: 'md',
     as: 'div',
   },
 };
@@ -52,7 +52,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Controls の `max` を切り替えて、内側 box の最大幅が `form` (448) → `reading` (768) → `wide` (896) → `marketing` (1024) と段階的に広がるのを確認する。`as` は描画 HTML 要素 (semantic タグ) の切り替え、見た目には影響なし。',
+        story: 'Controls の `max` を切り替えて、内側 box の最大幅が `sm` (448) → `md` (768) → `lg` (896) → `xl` (1024) と段階的に広がるのを確認する。`as` は描画 HTML 要素 (semantic タグ) の切り替え、見た目には影響なし。',
       },
     },
   },
@@ -70,15 +70,15 @@ export const Variants: Story = {
   parameters: {
     docs: {
       description: {
-        story: '4 段階の max-width を縦に並べた比較。`form` は Login / 設定 form、`reading` は Article / FAQ、`wide` は Help / 反復 grid、`marketing` は Landing / Card grid という想定用途。',
+        story: '4 段階の max-width を縦に並べた比較。`sm` は Login / 設定 form、`md` は Article / FAQ (測度最適)、`lg` は Help / 反復 grid、`xl` は Landing / Card grid という想定用途。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-8">
-      <Caption text="max=form — 448px / Login form / Onboarding">
+      <Caption text="max=sm — 448px / Login form / Onboarding">
         <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
-          <Center max="form">
+          <Center max="sm">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               フォーム想定の単列コンテンツ
             </div>
@@ -86,9 +86,9 @@ export const Variants: Story = {
         </div>
       </Caption>
 
-      <Caption text="max=reading — 768px / Article 本文 / FAQ">
+      <Caption text="max=md — 768px / Article 本文 / FAQ (測度最適)">
         <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
-          <Center max="reading">
+          <Center max="md">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               本文として読みやすい幅 (1 行 65 文字前後)
             </div>
@@ -96,9 +96,9 @@ export const Variants: Story = {
         </div>
       </Caption>
 
-      <Caption text="max=wide — 896px / Help / 内側 grid">
+      <Caption text="max=lg — 896px / Help / 内側 grid">
         <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
-          <Center max="wide">
+          <Center max="lg">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               内側に 2 col grid 等を持つ反復構造
             </div>
@@ -106,9 +106,9 @@ export const Variants: Story = {
         </div>
       </Caption>
 
-      <Caption text="max=marketing — 1024px / Landing / Card grid">
+      <Caption text="max=xl — 1024px / Landing / Card grid">
         <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
-          <Center max="marketing">
+          <Center max="xl">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               Landing hero / 最大 3 col の card grid
             </div>
@@ -134,7 +134,7 @@ export const EdgeCases: Story = {
     <div className="flex flex-col gap-8">
       <Caption text="as='article' — Article 本文の semantic タグを保ったまま読みやすい幅に">
         <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
-          <Center as="article" max="reading" className="py-8">
+          <Center as="article" max="md" className="py-8">
             <h2 className="text-heading-md mb-4">記事タイトル</h2>
             <p className="text-body-md text-onSurface-soft">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -145,7 +145,7 @@ export const EdgeCases: Story = {
 
       <Caption text="vertical padding は Center 自身は持たない (className 経由で付ける)">
         <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle">
-          <Center max="form" className="py-12">
+          <Center max="sm" className="py-12">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               `py-12` を className で渡すと上下 48px の余白
             </div>
@@ -155,9 +155,9 @@ export const EdgeCases: Story = {
 
       <Caption text="親幅が max より狭い場合 — w-full で親に追従、max は頭打ちのみ">
         <div className="w-64 bg-surface-layer-2 border border-dashed border-border-subtle p-4 mx-auto">
-          <Center max="marketing">
+          <Center max="xl">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
-              親が 256px、Center max=marketing (1024) でも 256px に収まる
+              親が 256px、Center max=xl (1024) でも 256px に収まる
             </div>
           </Center>
         </div>

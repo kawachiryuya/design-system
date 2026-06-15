@@ -7,6 +7,48 @@
 
 ## [Unreleased]
 
+レイアウト系の総点検 (A〜G)。生グリッドクラス / 生 breakpoint / 用途名の幅スケールを排除し DS で一元管理する。複数の破壊的変更を含むため次回リリースは **MAJOR (3.0.0)**。
+
+### Added
+
+- **`<Section>` primitive 新設** (B, #47): ページの縦リズム専用。`<section>` 既定 + `as` + `padding` 必須 (`none/sm/md/lg` → `py-section-*`) + **横幅制約なし (full-width)**。将来 `background` を optional 追加するだけで full-bleed が成立する構造。
+- **`<Grid>` composite 新設** (F, #45): 反復 (`minItemWidth` auto-fit / `cols` 固定 N の排他 2 形) + placement (`layout="page"` + `<Grid.Item span start>`)。生 `grid-cols-*` を排除、gutter は `grid.gutter` トークン。
+- **AppShell `layout="full"`** (E, #44): contained 既定を維持しつつ full-bleed モードを追加 (consumer が `<Section>` + `<Center>` で組む)。「AppShell(shell枠) > Center(読み列)」2 層を明文化。
+- **semantic breakpoint `shell:` / `cols:`** (C-1, #48): `tokens/preset.cjs` の screens に breakpoint トークンから派生追加。consumer preset で override 可。
+- **`.gap-grid` / `.max-w-content-{sm,md,lg,xl}` utility** を追加 (preset)。
+
+### Changed
+
+- **Center `max` を size 名に** (G, #49): `form/reading/wide/marketing` → `sm/md/lg/xl` (値 448/768/896/1024 は不変)。`md` = プロース測度最適を docs に明記。
+- **TwoColumn を fr テンプレート + slot API に** (A+D, #46/#43): split `6/6|7/5|8/4|9/3` (既定 `8/4`)、positional children → `children`(main) + `sidebar` prop、gutter を `grid.gutter` 単一に (density `gap` prop 廃止)。
+- **SplitPane を slot API に** (D, #43): positional children → `list` prop + `children`(detail)。
+- **AppShell / TwoColumn / SplitPane の構造的 `lg:` を `shell:` / `cols:` に** (C-1)。
+
+### Removed
+
+- **Stack `gap="2xl"`** (B, #47): page section 分割は `<Section>` に委譲 (`xl`=24px は残置)。
+
+### ⚠ BREAKING CHANGES
+
+型で catch されない silent break (Tailwind utility / token / 構造) を含む。consumer は下記 Migration を参照。
+
+- **`Center` の `max`**: `form→sm` / `reading→md` / `wide→lg` / `marketing→xl`。token `layout.content.max-width.*` と utility `max-w-content-*` も同名でリネーム (silent break)。
+- **`TwoColumn`**: `split="7/3"` 廃止、`gap` prop 廃止、positional children 廃止 (`sidebar` prop へ)。
+- **`SplitPane`**: positional children 廃止 (`list` prop へ)。
+- **`Stack`**: `gap="2xl"` 削除。
+- **Tailwind utility (silent break)**: `max-w-content-{form,reading,wide,marketing}` 削除 → `{sm,md,lg,xl}`。
+
+#### Migration
+
+```sh
+# Center max リネーム (consumer の *.tsx)
+sed -i '' -E 's/max="form"/max="sm"/g; s/max="reading"/max="md"/g; s/max="wide"/max="lg"/g; s/max="marketing"/max="xl"/g' src/**/*.tsx
+```
+
+- **TwoColumn**: `<TwoColumn split="7/3"><Main/><Side/></TwoColumn>` → `<TwoColumn split="8/4" sidebar={<Side/>}><Main/></TwoColumn>`。`gap` prop は削除 (gutter は固定)。
+- **SplitPane**: `<SplitPane><List/><Detail/></SplitPane>` → `<SplitPane list={<List/>}><Detail/></SplitPane>`。
+- **Stack**: 段落間は `gap="xl"`、page section 分割は `<Section padding="md">` に置換。
+
 ## [2.1.0] - 2026-06-15
 
 ### Added

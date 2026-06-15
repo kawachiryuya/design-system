@@ -19,12 +19,12 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-**Master-detail layout** を提供する composite。固定幅 list pane + 流動 detail pane で、両 pane が独立スクロールする。
+**Master-detail layout** を提供する composite。固定幅 list pane + 流動 detail pane で、両 pane が独立スクロールする。**名前付き slot**: `list` prop が固定幅ペイン、`children` が detail。
 
-- **mobile (< lg)**: 縦積み (両 pane が full width で順に表示)
-- **PC (>= lg)**: grid `[listWidth]_1fr` で左右並び + 独立スクロール + 縦境界線 (optional)
+- **mobile (< cols)**: 縦積み (両 pane が full width で順に表示)
+- **PC (>= cols)**: grid `[listWidth]_1fr` で左右並び + 独立スクロール + 縦境界線 (optional)
 
-予約一覧 / メッセージ受信箱 / 通知センター / ファイラー等、**list を選んで右で詳細を見る** UX に最適。`Router` の `<Outlet />` を detail pane に渡す使い方が定番。
+予約一覧 / メッセージ受信箱 / 通知センター / ファイラー等、**list を選んで右で詳細を見る** UX に最適。`Router` の `<Outlet />` を `children` (detail) に渡す使い方が定番。
 
 ---
 
@@ -38,10 +38,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 | viewport | 配置 |
 |----------|------|
-| **`< lg` (mobile/tablet)** | block layout: list と detail が縦積み、それぞれ通常の document flow |
-| **`>= lg` (PC)** | `grid grid-cols-[listWidth_1fr]` + 固定高さ (`h-[height]`) + 両 pane `overflow-y-auto` |
+| **`< cols` (mobile/tablet)** | block layout: list と detail が縦積み、それぞれ通常の document flow |
+| **`>= cols` (PC)** | `grid grid-cols-[listWidth_1fr]` + 固定高さ (`h-[height]`) + 両 pane `overflow-y-auto` |
 
-`lg` breakpoint (1024px) は SplitPane 内部 hardcode。AppShell / TwoColumn と同じ判断。
+切替点は **semantic breakpoint `cols:`** (既定 = lg / 1024px、preset で override 可)。TwoColumn と同じ列切替軸。
 
 ---
 
@@ -49,15 +49,19 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ### 1. mobile での list / detail 表示制御
 
-SplitPane は mobile で **両 pane を縦積みで表示**する。実際の master-detail UX (list を選んで detail を見る) では consumer 側で router state に応じて片方を `hidden lg:block` で隠す:
+SplitPane は mobile で **両 pane を縦積みで表示**する。実際の master-detail UX (list を選んで detail を見る) では consumer 側で router state に応じて片方を `hidden cols:block` で隠す:
 
 ```tsx
 // list + detail レイアウトの典型 pattern
-<SplitPane listWidth="360px">
-  {/* detail 選択時は mobile で list を隠す */}
-  <div className="hidden lg:block">
-    <ReservationsPage selectedId={selectedId} />
-  </div>
+<SplitPane
+  listWidth="360px"
+  list={
+    /* detail 選択時は mobile で list を隠す */
+    <div className="hidden cols:block">
+      <ReservationsPage selectedId={selectedId} />
+    </div>
+  }
+>
   <div ref={rightRef} key={selectedId}>
     <Outlet />
   </div>
@@ -90,8 +94,7 @@ SplitPane の `height` は AppShell の main padding に応じて調整する:
 URL params 等で detail を切り替える時、内部 state を resets するため `key` で remount:
 
 ```tsx
-<SplitPane>
-  <List />
+<SplitPane list={<List />}>
   <div key={selectedId}>
     <Outlet />
   </div>
@@ -104,7 +107,7 @@ URL params 等で detail を切り替える時、内部 state を resets する�
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| 比率ベースの 2 列 (7/3 / 8/4 等) | `<TwoColumn>` | TwoColumn は比率 + col-span、SplitPane は固定幅 + 流動 (master-detail UX) |
+| 比率ベースの 2 列 (8/4 等) | `<TwoColumn>` | TwoColumn は比率 (fr テンプレート)、SplitPane は固定幅 + 流動 (master-detail UX) |
 | Drawer のような開閉式 sidebar | (DS 未提供 — consumer 実装) | SplitPane は常時表示、開閉式は別 |
 | ページ全体の app-level layout | `<AppShell>` | SplitPane は AppShell の main 内で使う想定の sub-layout |
 

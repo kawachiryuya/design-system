@@ -12,7 +12,7 @@
  * @see components/composites/   — 複数構造 or 状態管理 or 振る舞い（20 個）
  */
 
-// ── Primitives (16) ──
+// ── Primitives (17) ──
 export * from './primitives/Badge';
 export * from './primitives/Button';
 export * from './primitives/Center';
@@ -23,6 +23,7 @@ export * from './primitives/Image';
 export * from './primitives/Input';
 export * from './primitives/Label';
 export * from './primitives/Link';
+export * from './primitives/Section';
 export * from './primitives/Skeleton';
 export * from './primitives/Spinner';
 export * from './primitives/Stack';
@@ -30,7 +31,7 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (26) ──
+// ── Composites (27) ──
 export * from './composites/Accordion';
 export * from './composites/Alert';
 export * from './composites/AppShell';
@@ -41,6 +42,7 @@ export * from './composites/Checkbox';
 export * from './composites/DropdownMenu';
 export * from './composites/EmptyState';
 export * from './composites/FilterChip';
+export * from './composites/Grid';
 export * from './composites/Modal';
 export * from './composites/NumberInput';
 export * from './composites/Pagination';

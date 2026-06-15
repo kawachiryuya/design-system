@@ -21,6 +21,15 @@ try {
   );
 }
 
+// セマンティック breakpoint (C-1 / #48): 役割名を breakpoint トークンから派生する
+// (値の二重ハードコードを避ける)。
+// - shell = AppShell が mobile↔PC (sidebar) に切り替わる点
+// - cols  = 列レイアウト (TwoColumn 等) が stack↔grid に切り替わる点
+// 注: CSS カスタムプロパティは media query 条件部に書けないため、breakpoint の役割は
+//     本質的にビルド時管理 (dimension トークンと違い runtime :root override 不可)。
+// consumer は自前 preset でこの派生先 (例 shell: '1280px') を override 可能。
+const screens = { ...t.screens, shell: t.screens.lg, cols: t.screens.lg };
+
 // fontFamily は CSS では comma-separated string、Tailwind では array が望ましい。
 const splitFontFamily = (s) =>
   typeof s === 'string' ? s.split(/\s*,\s*/) : s;
@@ -99,7 +108,7 @@ module.exports = {
     // 利用側: `shadow` ≒ `shadow-md`、`rounded` ≒ `rounded-md` で動く。
     boxShadow:    { ...t.shadow, DEFAULT: t.shadow.md },
     borderRadius: { ...t.radius, DEFAULT: t.radius.md },
-    screens: t.screens,
+    screens,
     transitionDuration: t.duration,
     transitionTimingFunction: t.easing,
 
@@ -286,13 +295,13 @@ module.exports = {
         '.max-w-container-wide':   { maxWidth: 'var(--layout-container-max-width-wide)' },
         '.max-w-container-full':   { maxWidth: 'var(--layout-container-max-width-full)' },
 
-        // -- content.max-width: Center 用の content-level 幅 (form/reading/wide/marketing) --
+        // -- content.max-width: Center 用の content-level 幅 (sm/md/lg/xl) --
         // shell-level の max-w-container (px) とは別軸。content 側は rem 基準で
         // root font-size に追従し、本文 measure を保つ (a11y)。
-        '.max-w-content-form':      { maxWidth: 'var(--layout-content-max-width-form)' },
-        '.max-w-content-reading':   { maxWidth: 'var(--layout-content-max-width-reading)' },
-        '.max-w-content-wide':      { maxWidth: 'var(--layout-content-max-width-wide)' },
-        '.max-w-content-marketing': { maxWidth: 'var(--layout-content-max-width-marketing)' },
+        '.max-w-content-sm': { maxWidth: 'var(--layout-content-max-width-sm)' },
+        '.max-w-content-md': { maxWidth: 'var(--layout-content-max-width-md)' },
+        '.max-w-content-lg': { maxWidth: 'var(--layout-content-max-width-lg)' },
+        '.max-w-content-xl': { maxWidth: 'var(--layout-content-max-width-xl)' },
 
         // -- section: gap / padding-y の sm/md/lg density variant --
         '.gap-section-sm': { gap: 'var(--layout-section-gap-sm)' },
@@ -328,6 +337,15 @@ module.exports = {
             gridTemplateColumns: 'repeat(var(--layout-grid-columns-desktop), minmax(0, 1fr))',
             gap: 'var(--layout-grid-gutter-desktop)',
           },
+        },
+
+        // -- gap-grid: grid.gutter トークン由来の gap (breakpoint 内蔵 16/16/24) --
+        // .grid-base と同じ gutter を、12カラム格子に乗らない fr テンプレート
+        // (TwoColumn の 2fr_1fr 等) にも適用するための単独 gap utility。
+        '.gap-grid': {
+          gap: 'var(--layout-grid-gutter-mobile)',
+          '@media (min-width: 768px)': { gap: 'var(--layout-grid-gutter-tablet)' },
+          '@media (min-width: 1024px)': { gap: 'var(--layout-grid-gutter-desktop)' },
         },
       });
     }),

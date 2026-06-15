@@ -4,19 +4,21 @@ import { tv } from '../../_internal/tv';
 /**
  * Stack の gap 段階。
  *
- * Tailwind spacing scale に紐づく 6 段、consumer の inventory に基づき
- * 4 / 8 / 12 / 16 / 24 / 48 px を選定。`xs/sm/md/lg` は form / list 内部の
- * 日常用途、`xl/2xl` は段落間 / section 分割等の広めの余白に。
+ * Tailwind spacing scale に紐づく 5 段、consumer の inventory に基づき
+ * 4 / 8 / 12 / 16 / 24 px を選定。**グループ内**リズム専用。
  *
  * 段階ごとの想定用途:
- * - `xs`  (4px)  — タイトル+補足 / icon+label 等、密着気味
- * - `sm`  (8px)  — list item / form field 同士の標準ギャップ
- * - `md`  (12px) — card 連続表示の標準ギャップ
- * - `lg`  (16px) — form section の標準ギャップ
- * - `xl`  (24px) — heading と body / 大ブロック間
- * - `2xl` (48px) — page 内 section 分割 (Section primitive と棲み分け検討余地)
+ * - `xs` (4px)  — タイトル+補足 / icon+label 等、密着気味
+ * - `sm` (8px)  — list item / form field 同士の標準ギャップ
+ * - `md` (12px) — card 連続表示の標準ギャップ
+ * - `lg` (16px) — form section の標準ギャップ
+ * - `xl` (24px) — heading と body / 大ブロック間
+ *
+ * 注: page 内の **section 分割** (48px+) は Stack の責務ではなく `<Section>` (`py-section-*`)
+ *     で表現する。旧 `2xl`(48) は section 値が Stack gap に化けた重複だったため削除した。
+ *     Stack=グループ内リズム / Section=ページ構造、とスコープで責務分離する。
  */
-export type StackGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+export type StackGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
  * Stack が描画する HTML 要素。semantic な意味タグを保つために `as` で切り替える。
@@ -50,10 +52,10 @@ export type StackAlign = 'start' | 'center' | 'end' | 'stretch';
  *   </Stack>
  *
  * @example
- *   // page 内 section 分割 (2xl = 48px)
- *   <Stack gap="2xl">
- *     <section>...</section>
- *     <section>...</section>
+ *   // heading と本文ブロック間 (xl = 24px)
+ *   <Stack gap="xl">
+ *     <Typography variant="h2">...</Typography>
+ *     <p>...</p>
  *   </Stack>
  */
 export interface StackProps extends React.HTMLAttributes<HTMLElement> {
@@ -89,8 +91,7 @@ export interface StackProps extends React.HTMLAttributes<HTMLElement> {
  * Stack のスタイル定義 — `tailwind-variants` で gap × align を宣言的に保持。
  *
  * - base: `flex flex-col` (vertical stacking 固定)
- * - gap variant: Tailwind default `gap-{1,2,3,4,6,12}` を 6 段階にマップ
- *   (`gap-8` = 32px はあえて飛ばす、xl=24 から 2xl=48 に倍率ジャンプして用途差を出す)
+ * - gap variant: Tailwind default `gap-{1,2,3,4,6}` を 5 段階にマップ (xs..xl = 4..24px)
  * - align variant: `items-*` で cross-axis 配置
  *
  * 注: `space-y-*` ではなく `gap-*` を採用する理由:
@@ -101,12 +102,11 @@ const stackVariants = tv({
   base: 'flex flex-col',
   variants: {
     gap: {
-      xs:    'gap-1',   // 4px
-      sm:    'gap-2',   // 8px
-      md:    'gap-3',   // 12px
-      lg:    'gap-4',   // 16px
-      xl:    'gap-6',   // 24px
-      '2xl': 'gap-12',  // 48px
+      xs: 'gap-1',  // 4px
+      sm: 'gap-2',  // 8px
+      md: 'gap-3',  // 12px
+      lg: 'gap-4',  // 16px
+      xl: 'gap-6',  // 24px
     },
     align: {
       start:   'items-start',

@@ -21,6 +21,15 @@ try {
   );
 }
 
+// セマンティック breakpoint (C-1 / #48): 役割名を breakpoint トークンから派生する
+// (値の二重ハードコードを避ける)。
+// - shell = AppShell が mobile↔PC (sidebar) に切り替わる点
+// - cols  = 列レイアウト (TwoColumn 等) が stack↔grid に切り替わる点
+// 注: CSS カスタムプロパティは media query 条件部に書けないため、breakpoint の役割は
+//     本質的にビルド時管理 (dimension トークンと違い runtime :root override 不可)。
+// consumer は自前 preset でこの派生先 (例 shell: '1280px') を override 可能。
+const screens = { ...t.screens, shell: t.screens.lg, cols: t.screens.lg };
+
 // fontFamily は CSS では comma-separated string、Tailwind では array が望ましい。
 const splitFontFamily = (s) =>
   typeof s === 'string' ? s.split(/\s*,\s*/) : s;
@@ -99,7 +108,7 @@ module.exports = {
     // 利用側: `shadow` ≒ `shadow-md`、`rounded` ≒ `rounded-md` で動く。
     boxShadow:    { ...t.shadow, DEFAULT: t.shadow.md },
     borderRadius: { ...t.radius, DEFAULT: t.radius.md },
-    screens: t.screens,
+    screens,
     transitionDuration: t.duration,
     transitionTimingFunction: t.easing,
 

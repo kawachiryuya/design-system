@@ -31,6 +31,21 @@ Tailwind 標準と同じ 5 段階のレスポンシブ breakpoint。mobile-first
 
 ---
 
+## セマンティック breakpoint (`shell:` / `cols:`)
+
+レイアウト系コンポーネントは、生の `lg:` ではなく**役割名の breakpoint** を参照する。色の semantic 層 (`surface.primary = teal.700`) と同型で、「値 (lg=1024px)」直参照を「役割 → 値」のマップに変える。
+
+| 役割 | 既定値 | 意味 | 使う場所 |
+|---|---|---|---|
+| `shell:` | `lg` (1024px) | AppShell が mobile↔PC (sidebar) に切り替わる点 | AppShell の構造 (`flex-col shell:flex-row` / `shell:hidden` / `hidden shell:block`) |
+| `cols:` | `lg` (1024px) | 列レイアウトが stack↔grid に切り替わる点 | TwoColumn 等の列切替 |
+
+- **breakpoint トークンから派生** (`tokens/preset.cjs` で `shell: t.screens.lg` / `cols: t.screens.lg`)。値の二重ハードコードはしない。
+- **consumer は自前 preset で override 可能**: `theme.extend.screens.shell = '1280px'` のように役割名を直接書き換えれば AppShell の切替点だけを変えられる (`cols:` は据え置きのまま分離調整できる)。
+- **制約**: CSS カスタムプロパティは media query 条件部に書けないため、breakpoint の役割は**ビルド時管理** (dimension トークンと違い runtime `:root` override は不可)。
+
+---
+
 ## 関連
 
 - [Tailwind CSS Docs - Responsive Design](https://tailwindcss.com/docs/responsive-design) — utility 構文の公式リファレンス

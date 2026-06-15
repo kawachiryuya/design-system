@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { AppShell } from './AppShell';
+import { Section } from '../../primitives/Section';
+import { Center } from '../../primitives/Center';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
@@ -21,6 +23,7 @@ const meta: Meta<typeof AppShell> = {
   },
   argTypes: {
     contentMax: { control: 'radio', options: ['narrow', 'default', 'wide', 'full'] },
+    layout: { control: 'radio', options: ['contained', 'full'] },
     showBottomNav: { control: 'boolean' },
     header: { control: false },
     sidebar: { control: false },
@@ -30,6 +33,7 @@ const meta: Meta<typeof AppShell> = {
   },
   args: {
     contentMax: 'default',
+    layout: 'contained',
     showBottomNav: true,
   },
 };
@@ -187,12 +191,33 @@ export const EdgeCases: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'slot omit パターン (header only / 全 slot なし) と long content での scroll 挙動を確認。AppShell が slot を渡されない場合に degrade しても破綻しないことを示す。',
+        story: 'slot omit パターン (header only / 全 slot なし) / long content scroll / layout="full" の full-bleed を確認。AppShell が slot を渡されない場合に degrade しても破綻しないこと、full モードで背景が端まで届くことを示す。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6 p-4">
+      <Caption text='layout="full" — full-bleed 背景 (Section) + 中央読み列 (Center)。背景が main 端まで届く'>
+        <ShellPreview>
+          <AppShell sidebar={<MockSidebar />} layout="full">
+            <Section padding="md" className="bg-surface-secondary">
+              <Center max="md">
+                <div className="bg-surface border border-border-default rounded-md p-4 text-sm">
+                  背景 (Section) は main の端まで full-bleed、コンテンツ (Center max=md) は中央に絞られる。
+                </div>
+              </Center>
+            </Section>
+            <Section padding="md">
+              <Center max="md">
+                <div className="bg-surface border border-border-default rounded-md p-4 text-sm">
+                  2 つ目の section。`contained` と違い px+max-w の wrapper が無いので背景を端まで伸ばせる。
+                </div>
+              </Center>
+            </Section>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
+
       <Caption text='header のみ (sidebar / bottomNav なし) — mobile は Header のみ、PC は単純 main'>
         <ShellPreview>
           <AppShell header={<MockHeader />}>

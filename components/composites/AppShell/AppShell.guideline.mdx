@@ -51,10 +51,10 @@ Header / Sidebar / BottomNav / subBar の **中身** は consumer 提供 (slot)�
 
 | viewport | 配置 |
 |----------|------|
-| **`< lg` (mobile/tablet)** | 縦積み: header / subBar / main / bottomNav |
-| **`>= lg` (PC)** | 横並び: sidebar (left) + (subBar + main 縦並び) |
+| **`< shell` (mobile/tablet)** | 縦積み: header / subBar / main / bottomNav |
+| **`>= shell` (PC)** | 横並び: sidebar (left) + (subBar + main 縦並び) |
 
-`lg` breakpoint (1024px) は **AppShell 内部 hardcode**。multi-product でも同じ breakpoint を想定し、外部から override 不可。これにより consumer 側で breakpoint を意識しなくて済む。
+切替点は **semantic breakpoint `shell:`** (既定 = lg / 1024px)。breakpoint トークンから派生し、consumer は自前 preset で `screens.shell` を override 可能。列レイアウトの `cols:` (TwoColumn 等) とは別軸なので、shell 切替と列切替を独立に調整できる。
 
 **bottomNav 表示時の main クリアランス**:
 - mobile: `pb-20` (= h-16 nav + 16px gap)
@@ -110,17 +110,34 @@ const BottomNav = () => (
 );
 ```
 
-### 4. main 内の content-level max-width
+### 4. content 制約の 2 層 (`contentMax` = 枠 / Center = 読み列) と `layout`
 
-AppShell の `contentMax` は **shell-level max-width** (= ページ全体の左右余白)。
-**content-level** (form / reading 等) は内側に `<Center>` を入れ子で:
+AppShell が効かせるのは **shell フレーム幅** (`contentMax`、既定 1280px の cap) であって読み列ではない。
+本文の読み列は内側で `<Center>` を入れ子にして絞る — **「AppShell > Center」が本文系の推奨パターン**。
+`contentMax` の cap は **backstop** (= `<Center>` 忘れでも全画面には暴走しない安全網) であって、
+Center の代わりではない。
 
 ```tsx
-<AppShell contentMax="default"> {/* shell = 1280px */}
-  <Outlet />
-  {/* page 側で <Center max="form">...</Center> 等 */}
+// contained (既定・安全)。本文は中で Center を足す
+<AppShell contentMax="default"> {/* shell フレーム = 1280px cap */}
+  <Center max="md">...記事...</Center>  {/* 読み列 = 768px */}
 </AppShell>
 ```
+
+`layout="full"` で wrapper (px + max-w) を外すと **full-bleed** が可能になる。consumer が
+`<Section>` (full-width 背景) + `<Center>` (読み列) で組む。背景を画面端まで伸ばす Landing 等で使う。
+
+```tsx
+<AppShell layout="full">
+  <Section padding="lg" className="bg-surface-secondary">
+    <Center max="xl">...hero...</Center>
+  </Section>
+</AppShell>
+```
+
+**なぜ contained を既定に残すか**: full-width canvas を既定にすると 1280 cap が消え、`<Center>` 忘れが
+全ビューポート幅まで暴走する。それを防ぐ構造 lint は壊れやすく高コスト。contained 既定なら厳格 lint 不要
+(scaffold + 本 docs で十分)。
 
 ---
 
@@ -129,8 +146,9 @@ AppShell の `contentMax` は **shell-level max-width** (= ページ全体の左
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
 | 単列コンテンツの content max-width | `<Center>` | Center は content-level、AppShell は shell-level (= ページ全体) |
-| 2 col / 3 col grid layout | `<TwoColumn>` (Phase B 予定) / `grid grid-cols-*` | AppShell の中で grid を組む、AppShell 自体は単純 shell |
-| Master-detail (固定幅 list + 流動 detail) | `<SplitPane>` (Phase B 予定) | reservation 一覧の左 list / 右 detail 等の split は別 composite |
+| 2 col / 3 col grid layout | `<TwoColumn>` / `<Grid>` | AppShell の中で grid を組む、AppShell 自体は単純 shell |
+| Master-detail (固定幅 list + 流動 detail) | `<SplitPane>` | reservation 一覧の左 list / 右 detail 等の split は別 composite |
+| full-bleed 背景 + 中央読み列 | `layout="full"` + `<Section>` + `<Center>` | contained の px+max-w wrapper を外し、背景を端まで伸ばす |
 
 ---
 

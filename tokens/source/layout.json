@@ -20,10 +20,10 @@
     },
     "content": {
       "max-width": {
-        "form":      { "value": "28rem", "type": "dimension", "description": "単列フォーム幅 (448px 相当)。Login / Signup / 設定フォーム等。Center max=\"form\"" },
-        "reading":   { "value": "48rem", "type": "dimension", "description": "読み物幅 (768px 相当、1 行 ≒ 65〜75 字)。Article / FAQ / 規約等。Center max=\"reading\"" },
-        "wide":      { "value": "56rem", "type": "dimension", "description": "やや広い content 幅 (896px 相当)。Help / 内側に grid を持つ反復構造。Center max=\"wide\" (※ container.max-width.wide=1536px とは別軸)" },
-        "marketing": { "value": "64rem", "type": "dimension", "description": "marketing section 幅 (1024px 相当)。Landing hero / Card grid (max 3 col) 等。Center max=\"marketing\"" }
+        "sm": { "value": "28rem", "type": "dimension", "description": "content 幅 sm (448px 相当)。単列フォーム (Login / Signup / 設定等)。Center max=\"sm\"" },
+        "md": { "value": "48rem", "type": "dimension", "description": "content 幅 md (768px 相当、1 行 ≒ 65〜75 字)。プロース測度最適、記事・本文推奨。Center max=\"md\"" },
+        "lg": { "value": "56rem", "type": "dimension", "description": "content 幅 lg (896px 相当)。やや広い反復構造 (Help 等)。Center max=\"lg\"" },
+        "xl": { "value": "64rem", "type": "dimension", "description": "content 幅 xl (1024px 相当)。marketing section (Landing hero / Card grid 等)。Center max=\"xl\"" }
       }
     },
     "section": {

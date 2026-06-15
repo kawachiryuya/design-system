@@ -295,13 +295,13 @@ module.exports = {
         '.max-w-container-wide':   { maxWidth: 'var(--layout-container-max-width-wide)' },
         '.max-w-container-full':   { maxWidth: 'var(--layout-container-max-width-full)' },
 
-        // -- content.max-width: Center 用の content-level 幅 (form/reading/wide/marketing) --
+        // -- content.max-width: Center 用の content-level 幅 (sm/md/lg/xl) --
         // shell-level の max-w-container (px) とは別軸。content 側は rem 基準で
         // root font-size に追従し、本文 measure を保つ (a11y)。
-        '.max-w-content-form':      { maxWidth: 'var(--layout-content-max-width-form)' },
-        '.max-w-content-reading':   { maxWidth: 'var(--layout-content-max-width-reading)' },
-        '.max-w-content-wide':      { maxWidth: 'var(--layout-content-max-width-wide)' },
-        '.max-w-content-marketing': { maxWidth: 'var(--layout-content-max-width-marketing)' },
+        '.max-w-content-sm': { maxWidth: 'var(--layout-content-max-width-sm)' },
+        '.max-w-content-md': { maxWidth: 'var(--layout-content-max-width-md)' },
+        '.max-w-content-lg': { maxWidth: 'var(--layout-content-max-width-lg)' },
+        '.max-w-content-xl': { maxWidth: 'var(--layout-content-max-width-xl)' },
 
         // -- section: gap / padding-y の sm/md/lg density variant --
         '.gap-section-sm': { gap: 'var(--layout-section-gap-sm)' },

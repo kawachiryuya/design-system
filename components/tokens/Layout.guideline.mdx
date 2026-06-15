@@ -12,7 +12,7 @@ page-level / section-level / 12-col grid の **layout frame 専用 token**。Spa
 4 つのグループ:
 
 - **container** — 大外 page wrapper の padding (mobile/tablet/desktop で内蔵切替) + max-width 4 variant (shell-level、px)
-- **content** — 枠の中の単列幅 4 段 (form/reading/wide/marketing、content-level、rem)。`Center` primitive が参照
+- **content** — 枠の中の単列幅 4 段 (sm/md/lg/xl、content-level、rem)。`Center` primitive が参照
 - **section** — section 間 / section 内の垂直余白 (sm/md/lg density)
 - **grid** — 12-col 表記体系 (mobile 4 / tablet 8 / desktop 12 cols + gutter 内蔵)
 
@@ -21,7 +21,7 @@ page-level / section-level / 12-col grid の **layout frame 専用 token**。Spa
 ## カタログ
 
 - [Container](?path=/story/tokens-layout--container) — 大外 page wrapper の padding-x / padding-y / max-width (shell-level、px)
-- [Content](?path=/story/tokens-layout--content) — Center 用の content-level max-width 4 段 (form/reading/wide/marketing、rem)
+- [Content](?path=/story/tokens-layout--content) — Center 用の content-level max-width 4 段 (sm/md/lg/xl、rem)
 - [Section](?path=/story/tokens-layout--section) — section 間の gap / section 自体の padding-y
 - [Grid](?path=/story/tokens-layout--grid) — 12-col grid (responsive columns 内蔵)
 
@@ -69,7 +69,7 @@ page-level / section-level / 12-col grid の **layout frame 専用 token**。Spa
 ## 設計方針
 
 - **layout frame に限定**: `card.padding` / `modal.padding` 等の component 内部余白は別軌道。「page wrapper」「section」「grid frame」だけ semantic 化する
-- **shell (container) は px / content は rem の二軸**: container は「サイドバー＋本文の骨格幅」なので px 固定。content は「枠の中の読み列幅」なので rem 基準にし、ユーザーが基本文字サイズを上げると読み列も比例して広がり measure (1 行の文字数) が保たれる (a11y)。`Center` の `max` はこの content 側を参照する。`wide` は両軸に存在し値が異なる (content=896px / container=1536px) が、token group が別 (`content.max-width` / `container.max-width`) なので CSS 変数レベルで曖昧さはない
+- **shell (container) は px / content は rem の二軸**: container は「サイドバー＋本文の骨格幅」なので px 固定。content は「枠の中の読み列幅」なので rem 基準にし、ユーザーが基本文字サイズを上げると読み列も比例して広がり measure (1 行の文字数) が保たれる (a11y)。`Center` の `max` はこの content 側を参照する。content は size 名 (sm/md/lg/xl)、container は narrow/default/wide/full と語彙を分けており衝突しない
 - **breakpoint 内蔵 utility**: `px-container` / `grid-base` は単一 class で mobile/tablet/desktop の値を自動切替 (Tailwind の `container` plugin と同手法)。callsite で `sm:` / `lg:` prefix を書かなくて済む
 - **CSS 変数経由でランタイム override**: product 側は `:root { --layout-container-padding-x-desktop: 48px; }` のように個別 breakpoint 値を 1 行 override 可能
 - **density は sm / md / lg の 3 段**: section の上下余白を product 全体で compact / default / spacious に統一しやすく

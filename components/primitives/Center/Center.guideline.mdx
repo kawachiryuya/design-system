@@ -23,7 +23,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-単列コンテンツの水平センタリング (max-width + mx-auto) を担う layout primitive。`max` で 4 段階の最大幅 (`form` 448 / `reading` 768 / `wide` 896 / `marketing` 1024) を use-case 名で指定する。垂直 padding やセクション間 spacing は持たず、`className` 経由 (`py-12` 等) や Stack primitive で別途与える単機能設計。
+単列コンテンツの水平センタリング (max-width + mx-auto) を担う layout primitive。`max` で 4 段階の最大幅 (`sm` 448 / `md` 768 / `lg` 896 / `xl` 1024) を size 名で指定する。**本文・記事は `md` (768px = プロースの測度・1 行 ≤80字, WCAG 1.4.8) を推奨**。垂直 padding やセクション間 spacing は持たず、`className` 経由 (`py-12` 等) や Stack primitive で別途与える単機能設計。
 
 **AppShell の shell-level max-width (1280px) とは別軸**。AppShell が「ページ全体の左右余白を作る」のに対し、Center は「ページ内のコンテンツ自身を読みやすい幅に絞る」役割で、両者は入れ子で同時に効く。
 
@@ -42,7 +42,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 ## Do / Don't
 
 <DoDontExample
-  label="form は Login / Onboarding 等の単列入力に使う"
+  label="sm は Login / Onboarding 等の単列入力に使う"
   doExample={
     <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-3">
       <Center max="form" className="py-6">
@@ -54,7 +54,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       </Center>
     </div>
   }
-  doCaption="form (448) は input fields 1 列が快適に収まる幅。広い viewport で過度に input が伸びるのを防ぐ。"
+  doCaption="sm (448) は input fields 1 列が快適に収まる幅。広い viewport で過度に input が伸びるのを防ぐ。"
   dontExample={
     <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-3">
       <div className="bg-surface border border-border-default rounded-md p-4 text-sm space-y-2 w-full">
@@ -68,10 +68,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 />
 
 <DoDontExample
-  label="reading は記事本文・規約等の長文に使う"
+  label="md は記事本文・規約等の長文に使う (測度最適)"
   doExample={
     <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-      <Center as="article" max="reading" className="py-4">
+      <Center as="article" max="md" className="py-4">
         <div className="bg-surface border border-border-default rounded-md p-4 text-sm">
           <h3 className="font-semibold mb-2">記事タイトル</h3>
           <p className="text-onSurface-soft">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
@@ -79,10 +79,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       </Center>
     </div>
   }
-  doCaption="reading (768) は 1 行 ~65 文字の最適な reading line。Article / FAQ / 規約 etc. の長文に。as='article' で semantic タグも保つ。"
+  doCaption="md (768) は 1 行 ~65 文字の最適な reading line。Article / FAQ / 規約 etc. の長文に。as='article' で semantic タグも保つ。"
   dontExample={
     <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-      <Center max="marketing" className="py-4">
+      <Center max="xl" className="py-4">
         <div className="bg-surface border border-border-default rounded-md p-4 text-sm">
           <h3 className="font-semibold mb-2">記事タイトル</h3>
           <p className="text-onSurface-soft">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
@@ -90,14 +90,14 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       </Center>
     </div>
   }
-  dontCaption="marketing (1024) で記事本文を流すと 1 行が 100+ 文字になり読みづらい (reading は 65 文字程度が optimal)。"
+  dontCaption="xl (1024) で記事本文を流すと 1 行が 100+ 文字になり読みづらい (md は 65 文字程度が optimal)。"
 />
 
 <DoDontExample
   label="vertical padding は className で外から付ける"
   doExample={
     <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle">
-      <Center max="form" className="py-12">
+      <Center max="sm" className="py-12">
         <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
           Center は horizontal centering 専用。py は `className` 経由
         </div>
@@ -118,10 +118,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 />
 
 <DoDontExample
-  label="marketing は Landing hero / Card grid (max 3 col) に使う"
+  label="xl は Landing hero / Card grid (max 3 col) に使う"
   doExample={
     <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-      <Center max="marketing" className="py-4">
+      <Center max="xl" className="py-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center text-sm">
           <div className="bg-surface border border-border-default rounded-md p-3">Card 1</div>
           <div className="bg-surface border border-border-default rounded-md p-3">Card 2</div>
@@ -130,10 +130,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       </Center>
     </div>
   }
-  doCaption="marketing (1024) は 3 col card grid がちょうど収まる幅。Landing の hero text や記事一覧の card grid に。"
+  doCaption="xl (1024) は 3 col card grid がちょうど収まる幅。Landing の hero text や記事一覧の card grid に。"
   dontExample={
     <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-      <Center max="reading" className="py-4">
+      <Center max="md" className="py-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center text-sm">
           <div className="bg-surface border border-border-default rounded-md p-3">Card 1</div>
           <div className="bg-surface border border-border-default rounded-md p-3">Card 2</div>
@@ -142,7 +142,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       </Center>
     </div>
   }
-  dontCaption="reading (768) で 3 col card grid を組むと各 card が窮屈で読みづらい。card grid なら marketing を選ぶ。"
+  dontCaption="md (768) で 3 col card grid を組むと各 card が窮屈で読みづらい。card grid なら xl を選ぶ。"
 />
 
 ### 別コンポーネントの方が適切な場面
@@ -159,7 +159,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 ## アクセシビリティ
 
 - **semantic タグ**: `as` prop で `div / section / article / main` を切り替え。Article / FAQ 等は `as="article"` で SR / skip-link / browser reader-mode の認識を保つ
-- **max-width と reading**: `max="reading"` (768px) は **WCAG 1.4.8 (Visual Presentation)** が推奨する「1 行 80 文字以下」を自然に満たす。記事本文には必ず `reading` 以下を選ぶ
+- **max-width と測度**: `max="md"` (768px) は **WCAG 1.4.8 (Visual Presentation)** が推奨する「1 行 80 文字以下」を自然に満たす。記事本文には必ず `md` 以下を選ぶ
 - **`<main>` の重複**: `as="main"` を 1 ページに複数置くと SR の landmark navigation が壊れる。`<main>` は AppShell 配下で 1 つだけにする運用を consumer 側で担保する
 
 関連: [Tokens / Layout](?path=/docs/tokens-layout--guideline) / [Tokens / Typography (Semantic)](?path=/docs/tokens-typography-semantic--guideline)
@@ -175,7 +175,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 ### Center を内部で使う代表的なコンポーネント / 使い方
 
 - `<AppShell>` (Phase B) の main slot 内 — page-level の単列コンテンツに使う
-- Login / Signup / Settings — `max="form"` + `className="py-12"`
-- Article / FAQ / 規約 — `as="article"` + `max="reading"`
-- Help (内側 grid 反復) — `max="wide"` + 内側 `grid-cols-2`
-- Landing / Card grid (max 3 col) — `max="marketing"`
+- Login / Signup / Settings — `max="sm"` + `className="py-12"`
+- Article / FAQ / 規約 — `as="article"` + `max="md"`
+- Help (内側 grid 反復) — `max="lg"` + 内側 `grid-cols-2`
+- Landing / Card grid (max 3 col) — `max="xl"`

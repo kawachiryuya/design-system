@@ -7,7 +7,9 @@
 
 ## [Unreleased]
 
-レイアウト系の総点検 (A〜G)。生グリッドクラス / 生 breakpoint / 用途名の幅スケールを排除し DS で一元管理する。複数の破壊的変更を含むため次回リリースは **MAJOR (3.0.0)**。
+## [3.0.0] - 2026-06-15
+
+レイアウト系の総点検 (A〜G)。生グリッドクラス / 生 breakpoint / 用途名の幅スケールを排除し DS で一元管理する。複数の破壊的変更を含むため **MAJOR**。([#50](https://github.com/kawachiryuya/design-system/pull/50))
 
 ### Added
 
@@ -620,7 +622,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/kawachiryuya/design-system/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/kawachiryuya/design-system/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/kawachiryuya/design-system/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/kawachiryuya/design-system/compare/v1.0.0...v1.1.0

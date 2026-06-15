@@ -338,6 +338,15 @@ module.exports = {
             gap: 'var(--layout-grid-gutter-desktop)',
           },
         },
+
+        // -- gap-grid: grid.gutter トークン由来の gap (breakpoint 内蔵 16/16/24) --
+        // .grid-base と同じ gutter を、12カラム格子に乗らない fr テンプレート
+        // (TwoColumn の 2fr_1fr 等) にも適用するための単独 gap utility。
+        '.gap-grid': {
+          gap: 'var(--layout-grid-gutter-mobile)',
+          '@media (min-width: 768px)': { gap: 'var(--layout-grid-gutter-tablet)' },
+          '@media (min-width: 1024px)': { gap: 'var(--layout-grid-gutter-desktop)' },
+        },
       });
     }),
   ],

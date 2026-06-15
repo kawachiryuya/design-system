@@ -20,9 +20,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-2 列レイアウト (main + sidebar) を **mobile 縦積み → PC 横並び grid** で表現する composite。1 番目の子要素が main、2 番目が sidebar として render される positional 設計。
+2 列レイアウト (main + sidebar) を **mobile 縦積み → PC 横並び grid** で表現する composite。`children` が main、**名前付き `sidebar` prop** が副次領域 (AppShell と同じ slot 流儀)。位置依存 children を廃し、順序取り違えを原理的に防ぐ。`sidebar` 省略で単一カラム。
 
-`split` 比率 (`6/6` / `7/3` / `8/4`) は consumer の実態 (検索結果 / 座席 / Search 等) を吸収。`mobileReverse` で mobile 時の表示順を逆転させる SearchPage 系パターンに対応。
+`split` 比率 (`6/6` / `7/5` / `8/4` / `9/3`、既定 `8/4`) は **fr テンプレート** (`grid-cols-[2fr_1fr]` 等) に compile-down され、生の col-span は露出しない。gutter は `grid.gutter` トークン固定。`mobileReverse` で mobile 表示順を視覚反転 (DOM 順は不変)。
 
 ---
 
@@ -34,13 +34,14 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## split 比率と用途
 
-| split | grid base | main | sidebar | 想定用途 (consumer) |
-|-------|-----------|------|---------|---------------------|
-| `6/6` | `grid-cols-12` | col-span-6 | col-span-6 | Search (form + preview) |
-| `7/3` | `grid-cols-10` | col-span-7 | col-span-3 | Results (検索結果 + 条件 sidebar) |
-| `8/4` | `grid-cols-12` | col-span-8 | col-span-4 | Seat / SeatMap (座席 + 料金 sidebar) |
+| split | fr テンプレート | main / sidebar | 想定用途 (consumer) |
+|-------|-----------------|----------------|---------------------|
+| `6/6` | `1fr 1fr` | 50 / 50 | Search (form + preview) |
+| `7/5` | `7fr 5fr` | 58 / 42 | やや main 寄りの 2 領域 |
+| `8/4` | `2fr 1fr` | 66.7 / 33.3 | **既定**。Results / Seat / SeatMap (main + sidebar) |
+| `9/3` | `3fr 1fr` | 75 / 25 | 細い sidebar |
 
-**grid base が 10 vs 12 で異なる理由**: `7/3` を 12-col grid で表現すると 7/12 ≈ 58% / 3/12 = 25% で残りの 17% が gap になる。10-col grid なら 7/10 = 70% / 3/10 = 30% で gap 後の比率が綺麗に出る。**consumer の ResultsPage が 10-col grid を使っているのを踏襲**。
+**fr テンプレートに統一した理由**: 旧 `7/3` は 12-col grid に乗らず (10-col grid という異物だった)。`6/6`〜`9/3` を 12-col 整数比率の **fr テンプレート** (`grid-cols-[Xfr_Yfr]`) で表現することで、生 `grid-cols-N` / `col-span` が系から消え、SplitPane の `grid-cols-[var(--sp-cols)]` と作法が統一される。gutter を引いた後の比率も fr が自動調整する。
 
 ---
 
@@ -48,16 +49,16 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 | viewport | 配置 |
 |----------|------|
-| **`< lg` (mobile/tablet)** | `flex flex-col` で main → sidebar の縦積み (各 full width) |
-| **`>= lg` (PC)** | `grid grid-cols-{N}` で横並び、main 左 + sidebar 右 |
+| **`< cols` (mobile/tablet)** | `flex flex-col` で main → sidebar の縦積み (各 full width) |
+| **`>= cols` (PC)** | `grid` + fr テンプレートで横並び、main 左 + sidebar 右 |
 
-`lg` breakpoint (1024px) は TwoColumn 内部 hardcode。AppShell と同じ判断 (multi-product でも同 breakpoint 想定)。
+切替点は **semantic breakpoint `cols:`** (既定 = lg / 1024px、preset で override 可)。AppShell の `shell:` と分離されており、列切替点だけを別途調整できる。consumer の `cols:sticky` で「2 カラム化と sticky を同期」できる。
 
 ---
 
 ## mobileReverse の使い分け
 
-`mobileReverse=true` で 1 番目子要素 (main) と 2 番目子要素 (sidebar) の **mobile 表示順を入れ替え**:
+`mobileReverse=true` で main (`children`) と sidebar (`sidebar` prop) の **mobile 表示順を視覚反転** (DOM 順は main→sidebar 固定のまま、CSS `order` のみ):
 
 | mobileReverse | mobile | PC |
 |---------------|--------|----|
@@ -75,10 +76,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
 | 単列コンテンツの max-width | `<Center>` | Center は単列、TwoColumn は 2 col 構造 |
-| Master-detail (固定幅 list + 流動 detail) | `<SplitPane>` (Phase B 残り) | TwoColumn は比率ベース (grid-cols 上の col-span)、SplitPane は固定幅 + 流動の master-detail UX |
-| 3 col 以上の grid | plain `grid grid-cols-3` 等 | TwoColumn は 2 col 固定、3+ col は専用 layout |
-| ConfirmPage / CompletePage の grid 上中央寄せ | (Phase B で検討 — 現状は手書き grid 維持) | TwoColumn は split 2col 専用、`grid-cols-12 col-span-8 col-start-3` の centered pattern は別 |
-| sidebar を sticky 表示 | `<TwoColumn split="8/4">` + child の className で `lg:sticky lg:top-4` | sidebar 自体に sticky は **consumer 側で適用**、TwoColumn は配置のみ責務 |
+| Master-detail (固定幅 list + 流動 detail) | `<SplitPane>` | TwoColumn は比率ベース (fr テンプレート)、SplitPane は固定幅 + 流動の master-detail UX |
+| 反復カード / 3 col 以上の grid | `<Grid>` (minItemWidth / cols) | TwoColumn は 2 領域の比率専用、反復・N-up は Grid |
+| grid 上の中央寄せ単列 | `<Center max="md">` 等 | 揃える相手の共有 grid が無ければ centered は Center に畳む |
+| sidebar を sticky 表示 | `<TwoColumn split="8/4">` + sidebar の className で `cols:sticky cols:top-4` | sticky は **consumer 側で適用**、`cols:` で列切替と同期。TwoColumn は配置のみ責務 |
 
 ---
 
@@ -100,7 +101,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ### TwoColumn を内部で使う代表的なコンポーネント / 使い方
 
-- 検索結果 ページ (Results pattern) — `split="7/3"` で list + 条件 sidebar
-- 座席選択ページ (Seat pattern) — `split="8/4"` で seat picker + 料金 sidebar (`lg:sticky` で固定)
-- 予約検索ページ (Search pattern) — `split="6/6" mobileReverse` で form + preview
+- 検索結果 ページ (Results pattern) — `split="8/4" sidebar={<条件>}` で list + 条件 sidebar
+- 座席選択ページ (Seat pattern) — `split="8/4" sidebar={<料金>}` で seat picker + 料金 sidebar (`cols:sticky` で固定)
+- 予約検索ページ (Search pattern) — `split="6/6" mobileReverse sidebar={<preview>}` で form + preview
 - AppShell の main 内で TwoColumn を組合せる構成が典型 (`<AppShell><Outlet /></AppShell>` → 各 page で `<TwoColumn>...</TwoColumn>`)

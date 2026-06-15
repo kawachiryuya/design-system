@@ -31,7 +31,7 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (26) ──
+// ── Composites (27) ──
 export * from './composites/Accordion';
 export * from './composites/Alert';
 export * from './composites/AppShell';
@@ -42,6 +42,7 @@ export * from './composites/Checkbox';
 export * from './composites/DropdownMenu';
 export * from './composites/EmptyState';
 export * from './composites/FilterChip';
+export * from './composites/Grid';
 export * from './composites/Modal';
 export * from './composites/NumberInput';
 export * from './composites/Pagination';

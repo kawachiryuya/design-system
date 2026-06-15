@@ -1,0 +1,158 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as GridStories from './Grid.stories';
+import { Grid } from './Grid';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={GridStories} name="Guideline" />
+
+# Grid
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: '3 つのモード', href: '#3-つのモード' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: '別コンポーネントの方が適切な場面', href: '#別コンポーネントの方が適切な場面' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+反復 (カード集) と placement (非均等配置) を 1 コンポーネントで提供する layout composite。生の `grid grid-cols-*` を consumer 実装から排除する。gutter は `grid.gutter` トークン (16/16/24) 固定。
+
+- **反復 (auto-fit)** `minItemWidth` — 自分の幅で列数が決まる。**既定・推奨**のレスポンシブカードグリッド (breakpoint 不要)。
+- **反復 (固定 N)** `cols` — サイズに関わらず厳密に N 列。
+- **placement** `layout="page"` + `<Grid.Item span start>` — `.grid-base` (12 カラム) 上に配置。
+
+「ページ格子 (placement)」と「反復格子 (auto-fit / N-up)」を分離するのが設計の肝。中央寄せ単列は Grid ではなく [`<Center>`](?path=/docs/primitives-center--guideline) に畳む。
+
+---
+
+## Props
+
+<ArgTypes of={GridStories.Playground} />
+
+`minItemWidth` / `cols` / `layout` は**排他**。`<Grid.Item span start>` は placement モードの子。
+
+---
+
+## 3 つのモード
+
+| モード | prop | 挙動 | 使う場面 |
+|---|---|---|---|
+| 反復 auto-fit | `minItemWidth="16rem"` | `repeat(auto-fit, minmax(16rem, 1fr))`。幅で列数が自動決定 | **既定・推奨**。レスポンシブなカード集 |
+| 反復 固定 N | `cols={3}` | `repeat(3, minmax(0,1fr))`。常に N 列 | 2-up 比較 / 4-up スタット行等、厳密に N 列が要るとき |
+| placement | `layout="page"` | `.grid-base` (12 カラム) + `<Grid.Item span start>` | ダッシュボードの 3/6/3 等の非均等配置 |
+
+**`cols` を用意する理由**: 無いと consumer が `grid grid-cols-3` を手書きして系から逃げる。「レスポンシブにしたい」は `minItemWidth` の役割なので、`cols` はレスポンシブ object を持たない。
+
+**`<Grid.Item>` の responsive**: `span` / `start` は desktop (`cols` breakpoint 以上) の 12 カラム配置で、mobile では各 Item が full width (1 列 stack) になる。さらに細かいレスポンシブ配置が要る稀なケースは `.grid-base` utility を直接使い `col-span-* md:col-span-*` を書く (初手はこれを許容)。
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="レスポンシブなカード集は minItemWidth (auto-fit) を使う"
+  doExample={
+    <div className="p-2 bg-surface-layer-2">
+      <Grid minItemWidth="8rem">
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">A</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">B</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">C</div>
+      </Grid>
+    </div>
+  }
+  doCaption="minItemWidth は幅で列数が自動的に決まり breakpoint 不要。カードグリッドの第一候補。"
+  dontExample={
+    <div className="p-2 bg-surface-layer-2">
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">A</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">B</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">C</div>
+      </div>
+    </div>
+  }
+  dontCaption="生 grid grid-cols-3 を手書きすると、レスポンシブ調整も gutter も自前管理になり系から外れる。Grid に寄せる。"
+/>
+
+<DoDontExample
+  label="中央寄せの単列は Grid でなく Center に畳む"
+  doExample={
+    <div className="p-2 bg-surface-layer-2 border border-dashed border-border-subtle">
+      <div className="max-w-content-md mx-auto bg-surface border border-border-default rounded-md p-3 text-xs text-center">
+        Center max=md で中央寄せ
+      </div>
+    </div>
+  }
+  doCaption="揃える相手の共有グリッドが無い「中央寄せ単列」は Center の責務。max-width + mx-auto で十分。"
+  dontExample={
+    <div className="p-2 bg-surface-layer-2 border border-dashed border-border-subtle">
+      <div className="grid-base">
+        <div className="col-span-full cols:col-span-8 cols:col-start-3 bg-surface border border-border-default rounded-md p-3 text-xs text-center">
+          12 カラムの col-start-3 col-span-8 で中央寄せ
+        </div>
+      </div>
+    </div>
+  }
+  dontCaption="周囲に揃える共有 grid が無いのに col-start/col-span で中央を作ると意図が読みにくい。Center に畳む。"
+/>
+
+<DoDontExample
+  label="厳密に N 列が要るときだけ cols を使う"
+  doExample={
+    <div className="p-2 bg-surface-layer-2">
+      <Grid cols={2}>
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">プラン A</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">プラン B</div>
+      </Grid>
+    </div>
+  }
+  doCaption="2-up 比較のように「常に 2 列」が意味を持つときは cols={2}。サイズに関わらず崩さない。"
+  dontExample={
+    <div className="p-2 bg-surface-layer-2">
+      <Grid cols={4}>
+        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 1</div>
+        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 2</div>
+        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 3</div>
+        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 4</div>
+      </Grid>
+    </div>
+  }
+  dontCaption="記事カード集に cols={4} を使うと mobile でも 4 列のまま窮屈になる。レスポンシブが欲しいなら minItemWidth。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 中央寄せの単列 (読み列) | `<Center>` | 揃える共有 grid が無ければ centered は Center に畳む |
+| main + sidebar の 2 領域比率 | `<TwoColumn>` | 2 領域の比率は fr テンプレートの TwoColumn |
+| 固定幅 list + 流動 detail | `<SplitPane>` | master-detail は SplitPane |
+| 要素の縦並び / 横折返し | `<Stack>` / `<Cluster>` | 1 次元の並びは Grid ではない |
+
+---
+
+## アクセシビリティ
+
+- **視覚順 = DOM 順**: 反復モードは DOM 順そのままに流れるため reading order が一致する。placement で `start` を使い視覚順と DOM 順がずれる場合は、認知負荷を避けるため必要な場面のみに留める
+- **list semantics**: カード集が意味的にリストなら `as="ul"` で描画し子を `<li>` にする (SR が「N 項目」と読み上げる)
+- **最小タッチターゲット**: グリッド内の操作要素は 44×44px 以上、隣接間隔も確保する (`minItemWidth` を小さくしすぎない)
+
+関連: [Tokens / Layout](?path=/docs/tokens-layout--guideline)
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。Grid は `<div>` / `.grid-base` で構成される素のレイアウト composite (`<Grid.Item>` を内包)。
+
+### Grid と組合せる代表的なコンポーネント / 使い方
+
+- カード一覧 (記事 / 機能 / 商品) — `<Grid minItemWidth="16rem">` に `<Card>` を並べる
+- ダッシュボードの KPI 配置 — `<Grid layout="page">` + `<Grid.Item span>`
+- 比較レイアウト (プラン 2-up) — `<Grid cols={2}>`

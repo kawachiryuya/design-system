@@ -76,15 +76,14 @@ const PanePreview = ({ children }: { children: React.ReactNode }) => (
 
 export const Playground: Story = {
   render: (args) => (
-    <SplitPane {...args}>
-      <MockList />
+    <SplitPane {...args} list={<MockList />}>
       <MockDetail />
     </SplitPane>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Controls の `listWidth` / `divider` / `height` を切り替えて挙動確認。PC では左右 grid、両 pane が独立スクロール (各 pane 内を scroll しても他方は動かない)。Storybook を viewport switcher で mobile に切り替えると縦積みに。',
+        story: 'Controls の `listWidth` / `divider` / `height` を切り替えて挙動確認。PC (cols breakpoint) では左右 grid、両 pane が独立スクロール (各 pane 内を scroll しても他方は動かない)。Storybook を viewport switcher で mobile に切り替えると縦積みに。',
       },
     },
   },
@@ -110,8 +109,7 @@ export const Variants: Story = {
     <div className="flex flex-col gap-6 p-4">
       <Caption text='listWidth="280px" (狭め)'>
         <PanePreview>
-          <SplitPane listWidth="280px" height="500px">
-            <MockList count={10} />
+          <SplitPane listWidth="280px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
@@ -119,8 +117,7 @@ export const Variants: Story = {
 
       <Caption text='listWidth="360px" (default、consumer の標準採用値)'>
         <PanePreview>
-          <SplitPane listWidth="360px" height="500px">
-            <MockList count={10} />
+          <SplitPane listWidth="360px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
@@ -128,8 +125,7 @@ export const Variants: Story = {
 
       <Caption text='listWidth="480px" (広め)'>
         <PanePreview>
-          <SplitPane listWidth="480px" height="500px">
-            <MockList count={10} />
+          <SplitPane listWidth="480px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
@@ -137,8 +133,7 @@ export const Variants: Story = {
 
       <Caption text='divider={false} — 両 pane 間の縦境界線なし'>
         <PanePreview>
-          <SplitPane divider={false} height="500px">
-            <MockList count={10} />
+          <SplitPane divider={false} height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
@@ -154,35 +149,31 @@ export const EdgeCases: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'mobile で list 非表示 (consumer pattern) / children 1 つ (detail 未選択時) / custom height (AppShell 外で利用) を確認。consumer が SplitPane を別の文脈で使う時に守るべき挙動。',
+        story: 'mobile で list 非表示 (consumer pattern) / detail 未選択時の empty state / custom height (AppShell 外で利用) を確認。consumer が SplitPane を別の文脈で使う時に守るべき挙動。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6 p-4">
-      <Caption text='mobile で list 非表示 (consumer pattern) — consumer 側で hidden lg:block'>
+      <Caption text='mobile で list 非表示 (consumer pattern) — consumer 側で hidden cols:block'>
         <PanePreview>
-          <SplitPane height="500px">
-            <div className="hidden lg:block">
-              <MockList count={10} />
-            </div>
+          <SplitPane height="500px" list={<div className="hidden cols:block"><MockList count={10} /></div>}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
       </Caption>
 
-      <Caption text='children 1 つ (list のみ) — detail pane wrapper は描画されない'>
+      <Caption text='detail 未選択時 — children に empty state を渡す'>
         <PanePreview>
-          <SplitPane height="500px">
-            <MockList count={10} />
+          <SplitPane height="500px" list={<MockList count={10} />}>
+            <div className="p-6 text-sm text-onSurface-muted">左の一覧から項目を選択してください。</div>
           </SplitPane>
         </PanePreview>
       </Caption>
 
       <Caption text='height="600px" 固定 (AppShell の外で利用するケース)'>
         <div className="h-[600px]">
-          <SplitPane height="600px">
-            <MockList count={20} />
+          <SplitPane height="600px" list={<MockList count={20} />}>
             <MockDetail />
           </SplitPane>
         </div>

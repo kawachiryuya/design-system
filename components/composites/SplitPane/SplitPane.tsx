@@ -5,41 +5,40 @@ import React from 'react';
  *
  * **Master-detail layout** を提供する composite。固定幅 list pane + 流動 detail pane。
  *
- * - **mobile (< lg)**: 単純に縦積み (両 pane が full width で順に表示)。
- *   consumer 側で router state に応じて `list` か `detail` に `hidden lg:block` を当てて
- *   表示制御するのが典型 (list + detail レイアウトの典型 pattern)。
- * - **PC (>= lg)**: grid `[listWidth]_1fr` で左右並び。両 pane が **独立スクロール** (`overflow-y-auto`)、
- *   `divider` で境界線、高さは consumer 指定 (default `calc(100vh - 3rem)` = AppShell main padding 込み)。
+ * **名前付き slot**: `list` prop が固定幅ペイン (`listWidth` と対)、`children` が detail
+ * (残り幅 = fluid 1fr)。TwoColumn / AppShell と同じ「主コンテンツ=children + 名前付き prop」流儀で、
+ * 位置依存 children の順序取り違えを防ぐ。
  *
- * **positional children**: 1 番目が list pane、2 番目が detail pane。Router の `<Outlet />` を
- * detail pane に渡すのが定番。
+ * - **mobile (< `cols`)**: 単純に縦積み (両 pane が full width で順に表示)。
+ *   consumer 側で router state に応じて `list` か detail に `hidden cols:block` を当てて
+ *   表示制御するのが典型 (list + detail レイアウトの典型 pattern)。
+ * - **PC (>= `cols`)**: grid `[listWidth]_1fr` で左右並び。両 pane が **独立スクロール** (`overflow-y-auto`)、
+ *   `divider` で境界線、高さは consumer 指定 (default `calc(100vh - 4rem)` = AppShell main padding 込み)。
  *
  * @example
  *   // 標準 (list + detail レイアウトの典型 pattern)
- *   <SplitPane listWidth="360px">
- *     <div className="hidden lg:block">
- *       <ReservationsPage />
- *     </div>
- *     <div ref={rightRef} key={selectedId}>
- *       <Outlet />
- *     </div>
+ *   <SplitPane listWidth="360px" list={<ReservationsPage />}>
+ *     <Outlet />
  *   </SplitPane>
  *
  * @example
  *   // divider なし
- *   <SplitPane listWidth="320px" divider={false}>
- *     <List />
+ *   <SplitPane listWidth="320px" divider={false} list={<List />}>
  *     <Detail />
  *   </SplitPane>
  *
  * @example
  *   // custom height (AppShell の subBar 込みの場合等)
- *   <SplitPane listWidth="360px" height="calc(100vh - 5rem)">
- *     <List />
+ *   <SplitPane listWidth="360px" height="calc(100vh - 5rem)" list={<List />}>
  *     <Detail />
  *   </SplitPane>
  */
 export interface SplitPaneProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * 固定幅 list pane の中身 (名前付き slot)。`listWidth` で幅を指定する。
+   * mobile では detail の前 (上) に縦積みされる。
+   */
+  list: React.ReactNode;
   /**
    * List pane の固定幅。任意の CSS 値 (px / rem 等) を受け付ける。
    * @default '360px'
@@ -61,7 +60,7 @@ export interface SplitPaneProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default 'calc(100vh - 4rem)'
    */
   height?: string;
-  /** 子要素 (1 番目が list pane、2 番目が detail pane)。 */
+  /** detail pane の中身 (fluid 1fr)。Router の `<Outlet />` を渡すのが定番。 */
   children: React.ReactNode;
 }
 
@@ -69,15 +68,16 @@ export interface SplitPaneProps extends React.HTMLAttributes<HTMLDivElement> {
  * SplitPane — Atomic Design: Composite (Layout)
  *
  * 内部構造:
- * - 外側: `lg:grid lg:grid-cols-[var(--sp-cols)] lg:h-[var(--sp-height)]`
+ * - 外側: `cols:grid cols:grid-cols-[var(--sp-cols)] cols:h-[var(--sp-height)]`
  *   (mobile では block layout、CSS variable で動的値を渡す)
- * - list pane: `lg:pr-8 lg:overflow-y-auto` (右 padding + 独立スクロール)
- * - detail pane: `lg:pl-8 lg:overflow-y-auto` (左 padding + 独立スクロール)
- * - `divider` 時: `lg:divide-x lg:divide-border-subtle`
+ * - list pane: `cols:pr-8 cols:overflow-y-auto` (右 padding + 独立スクロール)
+ * - detail pane: `cols:pl-8 cols:overflow-y-auto` (左 padding + 独立スクロール)
+ * - `divider` 時: `cols:divide-x cols:divide-border-subtle`
  *
  * @see SplitPaneProps for usage examples.
  */
 export const SplitPane: React.FC<SplitPaneProps> = ({
+  list,
   listWidth = '360px',
   divider = true,
   height = 'calc(100vh - 4rem)',
@@ -86,12 +86,9 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
   style,
   ...rest
 }) => {
-  const childArray = React.Children.toArray(children);
-  const list = childArray[0];
-  const detail = childArray[1];
   const containerClass = [
-    'lg:grid lg:grid-cols-[var(--sp-cols)] lg:h-[var(--sp-height)]',
-    divider ? 'lg:divide-x lg:divide-border-subtle' : '',
+    'cols:grid cols:grid-cols-[var(--sp-cols)] cols:h-[var(--sp-height)]',
+    divider ? 'cols:divide-x cols:divide-border-subtle' : '',
     className,
   ].filter(Boolean).join(' ');
   const mergedStyle: React.CSSProperties = {
@@ -103,10 +100,8 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
     <div {...rest} className={containerClass} style={mergedStyle}>
       {/* 独立スクロールする pane はキーボードでもスクロールできるよう tabindex=0 を付与
           (WCAG 2.1.1 / axe scrollable-region-focusable)。 */}
-      <div tabIndex={0} className="lg:pr-8 lg:overflow-y-auto">{list}</div>
-      {detail !== undefined && (
-        <div tabIndex={0} className="lg:pl-8 lg:overflow-y-auto">{detail}</div>
-      )}
+      <div tabIndex={0} className="cols:pr-8 cols:overflow-y-auto">{list}</div>
+      <div tabIndex={0} className="cols:pl-8 cols:overflow-y-auto">{children}</div>
     </div>
   );
 };

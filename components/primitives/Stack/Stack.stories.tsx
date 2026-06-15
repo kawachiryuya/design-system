@@ -15,7 +15,7 @@ const meta: Meta<typeof Stack> = {
   title: 'Primitives/Stack',
   component: Stack,
   argTypes: {
-    gap: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] },
+    gap: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl'] },
     as: { control: 'radio', options: ['div', 'section', 'article', 'ul', 'ol', 'nav', 'form'] },
     align: { control: 'radio', options: ['start', 'center', 'end', 'stretch'] },
     className: { control: false },
@@ -70,19 +70,19 @@ export const Playground: Story = {
 };
 
 // ── 2. Variants ────────────────────────────────────────────────
-// 6 段階の gap を縦に並べて見比べ。"どれを使うか" の判断材料。
+// 5 段階の gap を縦に並べて見比べ。"どれを使うか" の判断材料。
 
 export const Variants: Story = {
   parameters: {
     docs: {
       description: {
-        story: '6 段階の gap を横並び比較。`xs/sm/md/lg` は form / list 内部の日常用途、`xl/2xl` は段落間 / section 分割等の広めの余白に。',
+        story: '5 段階の gap を横並び比較。`xs/sm/md/lg` は form / list 内部の日常用途、`xl` は段落間 / 大ブロック間に。page 内の section 分割は Stack ではなく <Section> (py-section) を使う。',
       },
     },
   },
   render: () => (
     <div className="flex flex-wrap gap-6">
-      {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const).map((g) => (
+      {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((g) => (
         <Caption key={g} text={`gap=${g}`}>
           <div className="w-56 bg-surface-layer-2 border border-dashed border-border-subtle p-3">
             <Stack gap={g}>

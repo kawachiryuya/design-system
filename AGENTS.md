@@ -783,6 +783,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 下記は **型で catch されない** ため、利用箇所を grep で機械的に洗い出せない:
 
 - Tailwind utility class (`text-onSurface-xxx` 等) — 文字列扱いのため TS は通る
+- 出荷 CSS クラス名 (`dist/styles.css` の `.bg-surface-primary` 等、A2 #57 で公開された配信面) — 消費側が import する静的 CSS のセレクタ。rename・削除は BREAKING (配信契約、§10-6 (c))
 - CSS 変数 (`var(--color-xxx)`) — CSS 内・style 属性
 - 出荷する `data-*` 属性名 (`data-state="open"` / `data-loading` 等、スタイリング3規律 2) — 消費側が属性セレクタで上書きしうる DOM 契約。rename・値変更は BREAKING
 - Storybook URL (`?path=/story/...--xxx`) — 外部ドキュメント・Slack 等に貼られる
@@ -800,6 +801,28 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 ### 10-4. 0.x 期の運用
 
 `0.x` の間は破壊的変更を MINOR (0.y bump) に含めて差し支えないが、CHANGELOG の **⚠ BREAKING CHANGES** には必ず明記する。1.0.0 以降は厳密に MAJOR bump とする。
+
+### 10-5. 非推奨ライフサイクルと窓 (#63)
+
+エンタープライズ/長寿命採用に向けた安定性のコミット。利用者向けの公開要約は [`SUPPORT.md`](./SUPPORT.md)、本節が SSoT。
+
+- **状態**: `experimental → stable → deprecated → removed`。
+  - `experimental` = 予告なく変更可 (opt-in 認識、semver 保護外) / `stable` = 完全 semver 保護、**予告なく消さない** / `deprecated` = 動くが代替あり / `removed` = **MAJOR でのみ**。
+- **削除の窓 (消費者の移行時間で決める)**: 非推奨は**公開から ≥3 ヶ月経過した最初の MAJOR**で削除する。「削除は MAJOR のみ」と「≥3 ヶ月の暦の予告」を両立 (次の MAJOR が早すぎたら時間床を満たす次の MAJOR まで待つ)。
+  - 窓は**リリースサイクル数でなく暦時間**で測る (MAJOR が速く出るほどサイクル基準だと暦の窓が縮み、目的と逆になる)。
+  - **M = 3 ヶ月** (気づく→自分のサイクルに組む→走らせる の計画レイテンシ。保守的・大規模採用者向けは 6 ヶ月)。
+- **信号 (3 点セット必須)**: dev 限定 `console.warn` ([`components/_internal/deprecate.ts`](./components/_internal/deprecate.ts)、本番 no-op・warn-once) + `@deprecated` JSDoc + CHANGELOG。
+- **非推奨ごとに codemod / 移行手順を必須**にする (短い窓を正当化しているのはこれ。codemod 無しなら窓を伸ばす)。
+
+### 10-6. 3 つの versioned 契約 (#63)
+
+DS は独立した 3 つの互換面を持ち、**どれか一つでも壊れたら package は MAJOR**。§10-1 の各破壊面はこの 3 契約のいずれかに属する。
+
+- **(a) コンポーネント / props API**: props の型・rename・削除、variant/size/color 値の削除、`primitives/` ↔ `composites/` の path 移動、Storybook story id の rename。
+- **(b) テーマトークン契約**: themeable な semantic トークンの集合 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)、層定義は §3 / #59)。**必須層**トークンの追加・rename・削除 = 全テーマ作者への破壊 = **MAJOR**、**任意層**の追加 = 既定継承で後方互換 = **MINOR**。成長は任意層で、必須層は小さく安定に保つ。
+- **(c) CSS + DOM 配信契約**: 出荷 CSS クラス名 (`dist/styles.css`)・`data-*` 属性・DOM 構造・CSS 変数名 (#56 / #57)。いずれも型では catch されない silent break (§10-2)。
+
+> A2 (#57) 後は「Tailwind utility が silent break 源」という面が消える代わりに、出荷 CSS クラス名・CSS 変数名 (=テーマ契約)・data 属性・DOM 構造がその源になる。
 
 ---
 

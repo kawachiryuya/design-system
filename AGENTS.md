@@ -203,7 +203,7 @@ surface.{role}   (各色)         brand / functional / state
 
 **`bg-surface` (DEFAULT alias)** は **layer-1** を指す (Tailwind の preset で alias 設定)。最頻利用なので簡潔記法を残す。
 
-**dark mode 視点**: 各 layer に dark 値を別途定義する想定。light で深い (深い = darker neutral) のと逆に、dark では深い = brighter neutral になる:
+**dark mode 視点**: 各 layer の dark 値は**同名 semantic 変数を `[data-mode=dark]` セレクタで再定義**して与える (軸別変数名は作らない、機構と命名規約は §3-9)。light で深い (深い = darker neutral) のと逆に、dark では深い = brighter neutral になる:
 - light: layer-1 white / layer-2 neutral.50 / layer-3 neutral.100
 - dark (将来): layer-1 neutral.900 / layer-2 neutral.800 / layer-3 neutral.700 (仮)
 
@@ -363,6 +363,27 @@ themeable トークンを 3 層に分け、機械可読な manifest [`tokens/the
 **テーマ契約 semver** (§10-6 (b)): **必須 (①) の追加 = 全テーマ作者への破壊 = MAJOR / 任意 (②) の追加 = 既定継承で後方互換 = MINOR**。① は小さく安定に保つ。
 
 > 本バッチ範囲外 (実需要待ち): 前景の自動導出 generator / テーマ完全性チェック CI / テーマ別 contrast 多テーマ行列 / `brand-surface` 実装。
+
+### 3-9. 軸の変数命名規約 — brand × mode × density (#60)
+
+テーマには 3 つの直交する軸がある。触る変数集合がほぼ disjoint なので合成が安全 (brand/mode = 色トークン `--color-*` / density = 寸法トークン spacing・control-height)。
+
+**規約: 軸は同名の semantic 変数を別セレクタで再定義する。軸別変数名を作らない。**
+
+```css
+/* ✅ OK — 同名変数をセレクタで再定義 */
+:root            { --color-surface-primary: …; --control-height-md: 48px; }
+[data-mode=dark] { --color-surface-primary: …; }   /* mode が色スライスだけ再定義 */
+[data-density=compact] { --control-height-md: 36px; } /* density が寸法スライスだけ再定義 */
+
+/* ❌ NG — 軸別変数名 (コンポーネントが軸を意識させられる) */
+:root { --color-surface-primary-dark: …; --control-height-md-compact: 36px; }
+```
+
+- コンポーネントは**単一の変数名 / utility** (`bg-surface-primary` / `--control-height-md`) を使い続け、brand × mode × density を一切意識しない。解決値はセレクタ (属性) が切り替える。
+- 合成は属性の重ね掛け: `[data-theme=acme][data-mode=dark][data-density=compact]`。各軸が自分の変数スライスだけ再定義する (直交)。
+- mode の dark 値は §3-4-2、density の値の持ち方は §「md = default / サイズスケール」を参照。
+- 本バッチは**命名規約 (構造) のみ**。dark / compact の実値・適用機構・検証行列は範囲外 (#60 / #61、実需要待ち)。
 
 ---
 

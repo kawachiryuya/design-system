@@ -16,7 +16,9 @@ export type BadgeAppearance = 'solid' | 'soft' | 'outline';
  *
  * 高さは `h-6` (24px) 1 段に統一 (業界標準寄り、用途差別化が薄い 2 サイズ運用を回避)。
  * 色は semantic token (`bg-surface-*` / `text-onSurface-*` / `border-border-*`) を参照し、
- * primitive 色 (`bg-blue-500` 等) は使わない (AGENTS.md §3)。
+ * primitive hue 直参照 (blue-500 等の `{hue}-{shade}`) は使わない (AGENTS.md §3)。
+ * 注: 反例にも完全な utility 名 (bg- + hue + shade) を書かない — 配信ビルドの content スキャンは
+ *     コメントも走査するため、書くと未themeable な hue utility が styles.css に焼き付く。
  */
 const badgeVariants = tv({
   base: [

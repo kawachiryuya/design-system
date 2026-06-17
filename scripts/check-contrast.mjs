@@ -9,18 +9,23 @@
  *    - step 差ルール: bg step ≤100 × text step ≥700 が全色相組合せで ≥4.5
  *    - L 正規化: chromatic の同一 step で OKLCH L 差が閾値内 (override 互換の保証)
  *    - bright-hue: yellow の塗り step (50〜600) + neutral-900 文字 ≥4.5
+ * 3. 知覚距離 ΔEOK (#58、warn レンズ、exit に影響しない): themeable 色が役割識別可能か
+ *    (primary↔status / status 総当たり / secondary↔status を solid 段で)。通常視のみ (CVD は次段)。
  *
- * WCAG 比 / OKLCH L は culori、APCA Lc は apca-w3 に委譲 (自前実装しない)。
+ * WCAG 比 / OKLCH L / ΔEOK は culori、APCA Lc は apca-w3 に委譲 (自前実装しない)。
  * テーマ切替 (将来ダークモード) のため vars/pairs/colors はオプション引数化。
  *   node scripts/check-contrast.mjs [--vars tokens/build/variables.css] [--pairs tokens/contrast-pairs.json] [--colors tokens/source/colors.json]
  */
 import fs from 'node:fs';
-import { parse, oklch, wcagContrast } from 'culori';
+import { parse, oklch, wcagContrast, differenceEuclidean } from 'culori';
 import { APCAcontrast, sRGBtoY } from 'apca-w3';
 
 // ── 設定 ──
 const BRIGHT_HUES = ['yellow']; // L 正規化・白文字アンカーの例外 (濃色文字前提、contrast-policy C-7=B)
 const L_NORM_MAX = 0.03;        // chromatic 同一 step の OKLCH L 差の上限 (実測 max 0.023 + 余裕)
+// ΔEOK (OKLab ユークリッド距離) の床 (#58、warn レンズ)。themeable 色の役割識別性を測る。
+// 既定パレット実測由来: gate 候補 (primary↔status / status 総当たり) の観測最小 0.096 (primary↔success) − 余裕。
+const DELTA_EOK_MIN = 0.08;
 const WHITE = '#ffffff';
 // APCA Lc 参考目標 (warn 基準、AGENTS §8-5)
 const LC_TARGET = { body: 75, 'large-text': 60, 'non-text': 45, decorative: 0 };
@@ -108,6 +113,26 @@ for (const h of BRIGHT_HUES) for (const s of ['50', '100', '200', '300', '400', 
 }
 inv.forEach((m) => fails.push(`[不変条件] ${m}`));
 
+// ── 3. 知覚距離 ΔEOK (warn レンズ、#58) ──
+// themeable な色が「意味的に識別可能」か (primary が error に見える等を防ぐ)。コントラスト不変条件が
+// 「読めるか」を、距離が「役割を取り違えないか」を守る。identity が最も強い solid 段 (surface.X) で測る。
+// 通常視のみ (CVD 距離は次段で追加 → gate 昇格)。warn = exit に影響しない。閾値は既定パレット実測由来。
+const deltaEOK = differenceEuclidean('oklab');
+const STATUS = ['success', 'error', 'warning', 'info'];
+const distPairs = [];
+for (const s of STATUS) distPairs.push(['surface-primary', `surface-${s}`, 'gate候補']); // primary↔status (4)
+for (let i = 0; i < STATUS.length; i++) for (let j = i + 1; j < STATUS.length; j++) distPairs.push([`surface-${STATUS[i]}`, `surface-${STATUS[j]}`, 'gate候補']); // status 総当たり (6)
+for (const s of STATUS) distPairs.push(['surface-secondary', `surface-${s}`, 'warn']); // secondary↔status (4、severity 低)
+const deltaWarns = [];
+let deltaMin = Infinity;
+for (const [a, b, tier] of distPairs) {
+  const ra = resolve(a), rb = resolve(b);
+  if (!ra.hex || !rb.hex) continue; // 未解決/dynamic はスキップ
+  const dd = deltaEOK(parse(ra.hex), parse(rb.hex));
+  if (dd < deltaMin) deltaMin = dd;
+  if (dd < DELTA_EOK_MIN) deltaWarns.push(`${a} ↔ ${b} (${tier}): ΔEOK ${dd.toFixed(3)} < ${DELTA_EOK_MIN} (役割を取り違えるリスク)`);
+}
+
 // ── レポート ──
 const pad = (s, n) => String(s).padEnd(n);
 console.log('\nペア / usage / WCAG / APCA / 判定');
@@ -121,6 +146,12 @@ console.log(`不変条件: アンカー / step差(min ${sdMin === Infinity ? '-'
 if (warns.length) {
   console.log(`\n⚠ APCA Lc 注意 (${warns.length}件、AA 適合・知覚レンズ、exit には影響しない):`);
   warns.forEach((w) => console.log(`  - ${w}`));
+}
+
+console.log(`\nΔEOK 知覚距離 (#58、solid 段、warn レンズ): ${distPairs.length}組 / 観測最小 ${deltaMin === Infinity ? '-' : deltaMin.toFixed(3)} (床 ${DELTA_EOK_MIN})`);
+if (deltaWarns.length) {
+  console.log(`⚠ ΔEOK 注意 (${deltaWarns.length}件、役割識別性・exit には影響しない):`);
+  deltaWarns.forEach((w) => console.log(`  - ${w}`));
 }
 
 if (fails.length) {

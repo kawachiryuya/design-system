@@ -52,6 +52,20 @@ export default tseslint.config(
           selector: 'TemplateElement[value.raw=/\\[(rgb|hsl)/]',
           message: 'rgb()/hsl() の任意値 bracket はテンプレートリテラル内でも禁止。semantic token を使う (AGENTS §3)。',
         },
+        // primitive hue 直参照 (`bg-teal-500` / `text-neutral-200` 等) 禁止 (AGENTS §3 / スタイリング3規律)。
+        // {utility}-{hue}-{shade} 形を検知。hue は preset が公開する 13 palette。semantic token を使う。
+        {
+          selector:
+            'Literal[value=/(bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(teal|neutral|green|red|orange|blue|yellow|lime|cyan|sky|violet|purple|pink)-[0-9]/]',
+          message:
+            'primitive hue 直参照 (bg-teal-500 / text-neutral-200 等) は禁止。semantic token (bg-surface-primary / text-onSurface-muted 等) を使う (AGENTS §3 / スタイリング3規律)。',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/(bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(teal|neutral|green|red|orange|blue|yellow|lime|cyan|sky|violet|purple|pink)-[0-9]/]',
+          message:
+            'primitive hue 直参照はテンプレートリテラル内でも禁止。semantic token を使う (AGENTS §3 / スタイリング3規律)。',
+        },
       ],
     },
   },

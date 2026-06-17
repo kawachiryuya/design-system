@@ -1,0 +1,19 @@
+/* 配信バンドル (dist/styles.css) のビルド入力。
+ *
+ * `npm run styles:build` が tailwind.dist.config.cjs でこれをコンパイルし、
+ * components/ の source をスキャンして「使用 utility のみ」の静的 CSS を生成する。
+ * これにより消費側は Tailwind 不要 (preset 継承・content スキャン不要) になる。
+ *
+ * 設計メモ:
+ * - CSS 変数 (--color-*) は同梱しない。消費側が別ファイル
+ *   `@kawachiryuya/design-system/tokens/variables.css` を import する (テーマ override 点)。
+ *   utility は var(--color-...) 参照のまま焼き込まれ、variables.css と組で機能する。
+ * - preflight (リセット) は tailwind.dist.config.cjs の corePlugins:{preflight:false} で無効。
+ *   ライブラリにリセット CSS を同梱すると消費側グローバルを壊すため (定番事故)。
+ * - @tailwind base は preflight off により reduced-motion (a11y) 等の addBase のみを出力する。 */
+
+/* 非 utility のコンポーネント CSS (Checkbox/Radio/keyframe)。Storybook と共有の SSoT。 */
+@import "./components.css";
+
+@tailwind base;
+@tailwind utilities;

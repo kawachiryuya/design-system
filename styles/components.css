@@ -1,0 +1,37 @@
+/* 出荷する非 utility のコンポーネント CSS (SSoT)。
+ *
+ * Storybook (.storybook/tailwind.css) と配信バンドル (styles/dist.css → dist/styles.css)
+ * の双方が @import する。ここを唯一の編集点にして二重管理を避ける (silent break 防止)。
+ *
+ * Tailwind の @layer は使わず素の CSS で書く: どちらのパイプライン (Vite / tailwindcss CLI)
+ * でも purge されず同一に出力されるため。これらは :checked / :indeterminate の擬似クラス駆動で
+ * utility と競合しない。 */
+
+/* ── Checkbox (.ds-checkbox) ── */
+.ds-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2.5-2.5a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.ds-checkbox:indeterminate {
+  background-color: var(--color-surface-primary);
+  border-color: var(--color-surface-primary);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='3' y='7' width='10' height='2' rx='1'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ── Radio (.ds-radio) ── */
+.ds-radio:checked {
+  box-shadow: inset 0 0 0 3px white;
+}
+
+/* ── ProgressBar indeterminate keyframe ── */
+/* ProgressBar が animate-[indeterminate_1.5s_ease-in-out_infinite] (arbitrary utility) で参照。
+ * Tailwind は animation プロパティは生成するが @keyframes 本体は生成しないので、ここで定義する。 */
+@keyframes indeterminate {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}

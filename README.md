@@ -63,7 +63,9 @@ design-system/
 | 用途 | 技術 |
 |---|---|
 | コンポーネント | React 18 + TypeScript 5 |
-| スタイル | Tailwind CSS 3 (tokens/preset.cjs 経由) |
+| スタイル (本リポ内部) | Tailwind CSS 3 (tokens/preset.cjs 経由) |
 | バンドラ | Vite 6 |
 | カタログ | Storybook 10 + @storybook/addon-a11y |
 | トークン | Style Dictionary 5 |
+
+> **消費側に Tailwind は不要** (v4.0.0〜)。`npm run build` がコンポーネント CSS をプリコンパイルして `dist/styles.css` に同梱する。消費側は `tokens/variables.css` + `styles.css` を import してコンポーネントを使うだけ。導入手順は Storybook の [Introduction](https://design-system-storybook-murex.vercel.app/?path=/docs/introduction--docs) 「Product 側で使う際の setup」を参照。Tailwind は本リポが**オーサリング時に内部で**使うだけで、preset (`tokens/preset.cjs`) は引き続き export している (utility を自由に書きたい消費側向けの任意経路)。

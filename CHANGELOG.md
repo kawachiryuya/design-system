@@ -7,10 +7,13 @@
 
 ## [Unreleased]
 
+> 次リリースは **4.0.0 (MAJOR)**。配信を Tailwind 非依存化する破壊的変更 (#57) を含む。下記 ⚠ BREAKING CHANGES と Migration を参照。
+
 ### Added
 
 - **スタイリング3規律を明文化** (#56): 色=semantic トークン経由 / 状態=`data-*` 属性駆動 / 動的値=CSS 変数。配信の Tailwind 非依存化 (A2) と将来の scoped CSS・WC 化への前提 (AGENTS.md §2「スタイリング3規律」/ §5-2 / §10-2)。
 - **primitive hue 直参照を lint で禁止** (#56): `bg-teal-500` / `text-neutral-200` 等の `{utility}-{hue}-{shade}` を `eslint.config.mjs` の `no-restricted-syntax` で error 化 (string / template literal)。semantic token を使う。
+- **プリコンパイル済み `styles.css` を同梱** (#57、A2): ビルド時に使用 utility のみを焼き込んだ静的 CSS を `dist/styles.css` として出荷。`@kawachiryuya/design-system/styles.css` で import。値は `var(--color-…)` 参照のままなのでテーマ override に追従。リセット (preflight) は非同梱。生成物の健全性は `npm run check:styles` (CI) が保証 (utility 焼込 / preflight・hue util 非混入)。
 
 ### Changed
 
@@ -18,6 +21,38 @@
   - `Switch`: track/thumb に `data-state="checked|unchecked"`、track に `data-disabled`。
   - `Accordion`: item wrapper / trigger に `data-state="open|closed"`。
   - 消費側が属性セレクタで上書きしていなければ影響なし。残りコンポーネントは後続で段階移行。
+
+### ⚠ BREAKING CHANGES
+
+- **消費側の Tailwind 依存を撤廃** (#57): `tailwindcss` を `peerDependencies` から削除。消費側は preset 継承・`content` スキャンが不要になり、代わりに 2 つの CSS (`tokens/variables.css` + `styles.css`) を import する方式へ。
+
+#### Migration (Tailwind setup → CSS import)
+
+```diff
+- // tailwind.config.js — DS の preset 継承と content スキャンを削除
+- presets: [require('@kawachiryuya/design-system/tokens/preset')],
+- content: ['./node_modules/@kawachiryuya/design-system/**/*.{js,mjs}', /* ... */],
+```
+
+```diff
+  /* アプリのエントリ CSS (globals.css 等) */
+  @import '@kawachiryuya/design-system/tokens/variables.css';
++ @import '@kawachiryuya/design-system/styles.css';
+- @tailwind base;
+- @tailwind utilities;
+```
+
+sed 例 (preset 行の除去 + styles.css 追記):
+
+```sh
+# tailwind.config.js から DS preset 行を削除
+sed -i '' "/@kawachiryuya\/design-system\/tokens\/preset/d" tailwind.config.js
+# エントリ CSS に styles.css の import を追加 (variables.css の直後)
+sed -i '' "/design-system\/tokens\/variables.css/a\\
+@import '@kawachiryuya/design-system/styles.css';" src/globals.css
+```
+
+**任意 (Tailwind を使い続ける場合)**: 自社マークアップで DS の utility class を自由に書きたいなら、preset は引き続き export されているので従来どおり継承してよい (この経路では `styles.css` は import 不要、`tailwindcss` は自社 devDependency)。詳細は Storybook Introduction「Product 側で使う際の setup」。
 
 ## [3.0.0] - 2026-06-15
 

@@ -286,6 +286,19 @@ borderRadius: { ...t.radius,  DEFAULT: t.radius.md  },
 - **`spacing`**: 0〜96 の数値スケールで size label でないため対象外
 - **その他 semantic ラベル系** (font-weight, line-height, letter-spacing, animation duration/easing, font-family, breakpoints, color palette): 用途ラベル / 数値スケールであり、`md = default` 規約は適用しない
 
+#### density は size 段と直交する大域モード (#61)
+
+`density` (comfortable / compact) は size 段 (`sm/md/lg`) と**直交する**。混同しない:
+
+- **size = インスタンス選択** — デザイナーが要素ごとに `<Button size="md">` を選ぶ。
+- **density = コンテキストの大域モード** — 画面/領域単位で comfortable ↔ compact を切り替える。compact の中の小ボタン、comfortable の中の大ボタンが両立する。
+
+したがって **compact を 4 つ目のサイズ段にしない**。compact は新スケール段でなく、**既存スケールの*値*を `[data-density=compact]` 下で再評価**したもの: `--control-height-md` が comfortable 48 / compact 36 と、同じ `md` トークンの別値を持つ (#60 §3-9 の「同名変数をセレクタで再定義」と一致)。コンポーネントは `md` を使い続け、density 属性が解決値を変える。
+
+値の持ち方は **per-density 明示値** (global multiplier `×0.8` は不可: タッチ最小ヒット域の床を割る / トークン種で圧縮率が非線形 / 読みのタイポは density で縮めない / グリッド `12×0.8=9.6` を外す)。
+
+> 本バッチは**構造規約のみ**。control-height 等の per-density 実値・pointer 適用機構・compact ヒット域検証は範囲外 (#61、実需要待ち)。
+
 ---
 
 ### 例外

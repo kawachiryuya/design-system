@@ -17,6 +17,7 @@
 - **安定性ポリシーを明文化** (#63): `SUPPORT.md` 新規 + AGENTS.md §10-5 (非推奨ライフサイクル `experimental→stable→deprecated→removed` と窓 = 公開から ≥3 ヶ月経過後の最初の MAJOR、暦時間基準) / §10-6 (3 つの versioned 契約: コンポーネント API / テーマトークン契約 / CSS+DOM 配信契約、一つでも壊れたら MAJOR)。§10-2 に出荷 CSS クラス名を silent-break 面として追記。dev 限定 warn-once の `deprecate()` ヘルパー (`components/_internal/deprecate.ts`、本番 no-op) を用意。React は最新2メジャー (`^18 || ^19`) を支持。
 - **テーマ契約の構造を定義** (#59、部分): マルチブランドのテーマ契約を semantic 層に置くことを公式化 (AGENTS.md §3-8)。themeable semantic トークンを三層 (必須 `surface.primary/secondary` / 任意 status・focus 等 / 固定 中性 substrate) に分け、機械可読な manifest `tokens/theme-contract.json` で定義。primitive hue 直接 override の案内は単一ブランド向けの generator 注記に降格 (§3-1)。契約 semver は §10-6 (b)。前景自動導出 generator・完全性 CI・多テーマ contrast は範囲外。
 - **軸の変数命名規約を明文化** (#60、部分): brand × mode × density の 3 軸は**同名 semantic 変数を別セレクタ (`[data-mode]` / `[data-density]`) で再定義**し、`--color-surface-primary-dark` / `--control-height-md-compact` のような軸別変数名を作らない (AGENTS.md §3-9、§3-4-2 dark メモを更新)。コンポーネントは単一の変数名/utility を使い続け軸を意識しない。dark/compact の実値・適用機構・検証行列は範囲外。
+- **density と size の直交を明文化** (#61、部分): density (comfortable/compact) は size 段 (sm/md/lg) と直交する大域モードで、**compact は 4 段目のサイズでなく既存スケール値を `[data-density=compact]` 下で再評価したもの** (AGENTS.md「md = default」節)。値は per-density 明示値で持つ (global multiplier 不可)。per-density 実値・適用機構・ヒット域検証は範囲外。
 
 - **Switch / Accordion を `data-*` 属性駆動へ移行** (#56、参照実装): 状態を class 条件付加でなく属性で表す。**見た目・API は不変**。新たに公開する DOM 属性 (silent-break 面、§10-2):
   - `Switch`: track/thumb に `data-state="checked|unchecked"`、track に `data-disabled`。

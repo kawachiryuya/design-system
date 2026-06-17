@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';

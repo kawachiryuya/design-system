@@ -50,9 +50,7 @@
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0",
-    "tailwind-merge": "^3.6.0",
-    "tailwind-variants": "^3.2.2"
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "scripts": {
     "tokens:build": "style-dictionary build --config style-dictionary.config.js",
@@ -104,8 +102,6 @@
     "storybook": "^10.3.3",
     "storybook-addon-pseudo-states": "^10.4.2",
     "style-dictionary": "^5.4.0",
-    "tailwind-merge": "^3.6.0",
-    "tailwind-variants": "^3.2.2",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.61.0",
@@ -113,6 +109,8 @@
     "wait-on": "^9.0.10"
   },
   "dependencies": {
-    "@floating-ui/dom": "^1.7.6"
+    "@floating-ui/dom": "^1.7.6",
+    "tailwind-merge": "^3.6.0",
+    "tailwind-variants": "^3.2.2"
   }
 }

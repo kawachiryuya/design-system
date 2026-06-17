@@ -412,6 +412,7 @@ Composite → components/composites/ComponentName/
 - **`forwardRef` で ref 透過**: primitive は必須 (単一 HTML 要素なので ref 先が自明)。composite は **ref を当てる対象要素が明確な場合のみ**実装する (例: `Modal`→`<dialog>`、`SearchBar`→`<input>`)。対象が曖昧な複合レイアウト系 (AppShell / TwoColumn 等) は無理に付けず `React.FC` のままでよい
 - **styling は `tailwind-variants` (`tv`)** で variant マップを宣言的に保持 (`Button.tsx` の `buttonVariants` 参照)。文字列配列の組立て・object lookup は避ける
 - **状態は `data-*` 属性 + variant で表す** (スタイリング3規律 2)。`open` / `loading` / `selected` / `checked` / `disabled` 等は要素に `data-state=...` / `data-loading` 等を付け、tv 側を `data-[state=open]:` / `data-[loading]:` の variant で当てる。class を条件付加 (`checked ? 'bg-x' : 'bg-y'`) しない。参照実装: `Switch` (toggle 系) / `Accordion` (open 系)
+- **SSR / RSC セーフを契約にする** (#62)。module / render スコープで `window` / `document` を触らない (browser API は `useEffect` / event handler 内に置く)。**`'use client'` をファイル先頭に付ける条件**: hook (`useState` / `useEffect` / `useRef` / `useId` 等) を使う、自前の event handler を host 要素に常時 attach する (例: `Link` / `Pagination`)、または Context Provider を持つ。**付けない**: hook を持たず consumer の `onClick` 等を `{...props}` で spread するだけの純表示 (Badge / Divider / Typography / Icon / レイアウト primitive / Button / Card 等) — Server Component として描けるよう「shared」のままにする。
 
 ### 5-3. `.stories.tsx` の規約 — 標準ストーリー構造 (固定順序)
 

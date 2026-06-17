@@ -7,7 +7,7 @@
 
 ## [Unreleased]
 
-> 次リリースは **4.0.0 (MAJOR)**。配信を Tailwind 非依存化する破壊的変更 (#57) を含む。下記 ⚠ BREAKING CHANGES と Migration を参照。
+> 次リリースは **4.0.0 (MAJOR)**。配信を Tailwind 非依存化する破壊的変更 (#57) と依存整理 (#62) を含む。下記 ⚠ BREAKING CHANGES と Migration を参照。
 
 ### Added
 
@@ -21,10 +21,16 @@
   - `Switch`: track/thumb に `data-state="checked|unchecked"`、track に `data-disabled`。
   - `Accordion`: item wrapper / trigger に `data-state="open|closed"`。
   - 消費側が属性セレクタで上書きしていなければ影響なし。残りコンポーネントは後続で段階移行。
+- **インタラクティブなコンポーネントに `'use client'` を付与** (#62): hook / 自前 event handler / Context Provider を持つ 20 コンポーネント (Modal / Popover / DropdownMenu / Tooltip / Toast / Tabs / Accordion / Switch / Checkbox / Radio / Select / SegmentedControl / NumberInput / SearchBar / Input / Textarea / Image / Avatar / Link / Pagination)。純表示は付けず Server Component として描ける (Next App Router / RSC 互換)。
+
+### Removed
+
+- **`tailwind-merge` / `tailwind-variants` を peerDependencies から削除** (#62): 内部実装詳細となったため通常 `dependencies` に降格 (消費側は直接依存不要)。
 
 ### ⚠ BREAKING CHANGES
 
 - **消費側の Tailwind 依存を撤廃** (#57): `tailwindcss` を `peerDependencies` から削除。消費側は preset 継承・`content` スキャンが不要になり、代わりに 2 つの CSS (`tokens/variables.css` + `styles.css`) を import する方式へ。
+- **`peerDependencies` は `react` / `react-dom` のみ** に整理 (#62)。`tailwind-merge` / `tailwind-variants` は `dependencies` へ降格。
 
 #### Migration (Tailwind setup → CSS import)
 
@@ -53,6 +59,11 @@ sed -i '' "/design-system\/tokens\/variables.css/a\\
 ```
 
 **任意 (Tailwind を使い続ける場合)**: 自社マークアップで DS の utility class を自由に書きたいなら、preset は引き続き export されているので従来どおり継承してよい (この経路では `styles.css` は import 不要、`tailwindcss` は自社 devDependency)。詳細は Storybook Introduction「Product 側で使う際の setup」。
+
+**その他 (#62)**:
+
+- `tailwind-merge` / `tailwind-variants` を直接 import していた場合は自社 `dependencies` に宣言する (本パッケージの peer からは外れた)。
+- Switch / Accordion を属性セレクタで上書きしていた場合は `data-state` / `data-disabled` に追従する (通常は影響なし)。
 
 ## [3.0.0] - 2026-06-15
 

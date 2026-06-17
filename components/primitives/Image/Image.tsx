@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { tv } from '../../_internal/tv';
 import { Icon } from '../Icon';

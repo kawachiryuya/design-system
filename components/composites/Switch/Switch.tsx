@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Label } from '../../primitives/Label/Label';
 import { FormDescription } from '../../_internal/FormDescription';

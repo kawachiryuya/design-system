@@ -14,8 +14,7 @@
 - **スタイリング3規律を明文化** (#56): 色=semantic トークン経由 / 状態=`data-*` 属性駆動 / 動的値=CSS 変数。配信の Tailwind 非依存化 (A2) と将来の scoped CSS・WC 化への前提 (AGENTS.md §2「スタイリング3規律」/ §5-2 / §10-2)。
 - **primitive hue 直参照を lint で禁止** (#56): `bg-teal-500` / `text-neutral-200` 等の `{utility}-{hue}-{shade}` を `eslint.config.mjs` の `no-restricted-syntax` で error 化 (string / template literal)。semantic token を使う。
 - **プリコンパイル済み `styles.css` を同梱** (#57、A2): ビルド時に使用 utility のみを焼き込んだ静的 CSS を `dist/styles.css` として出荷。`@kawachiryuya/design-system/styles.css` で import。値は `var(--color-…)` 参照のままなのでテーマ override に追従。リセット (preflight) は非同梱。生成物の健全性は `npm run check:styles` (CI) が保証 (utility 焼込 / preflight・hue util 非混入)。
-
-### Changed
+- **安定性ポリシーを明文化** (#63): `SUPPORT.md` 新規 + AGENTS.md §10-5 (非推奨ライフサイクル `experimental→stable→deprecated→removed` と窓 = 公開から ≥3 ヶ月経過後の最初の MAJOR、暦時間基準) / §10-6 (3 つの versioned 契約: コンポーネント API / テーマトークン契約 / CSS+DOM 配信契約、一つでも壊れたら MAJOR)。§10-2 に出荷 CSS クラス名を silent-break 面として追記。dev 限定 warn-once の `deprecate()` ヘルパー (`components/_internal/deprecate.ts`、本番 no-op) を用意。React は最新2メジャー (`^18 || ^19`) を支持。
 
 - **Switch / Accordion を `data-*` 属性駆動へ移行** (#56、参照実装): 状態を class 条件付加でなく属性で表す。**見た目・API は不変**。新たに公開する DOM 属性 (silent-break 面、§10-2):
   - `Switch`: track/thumb に `data-state="checked|unchecked"`、track に `data-disabled`。

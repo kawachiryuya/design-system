@@ -95,42 +95,20 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       }
     };
 
-    // Track 48×24, thumb 20×20, 片側 gap 2px (off→on: 26px 移動)
-    const trackClasses = [
-      'relative',
-      'inline-flex',
-      'flex-shrink-0',
-      'w-12',
-      'h-6',
-      'rounded-full',
-      'transition-colors',
-      'duration-normal',
-      'focus:outline-none',
-      'focus-visible:ring-focus',
-      'focus-visible:ring-offset-focus',
-      'focus-visible:ring-border-focus',
-      checked ? 'bg-surface-primary' : 'bg-surface-neutral',
-      disabled ? 'opacity-disabled cursor-not-allowed' : 'cursor-pointer',
-    ]
-      .filter(Boolean)
-      .join(' ');
+    // 状態は data-* 属性で駆動し、見た目は data-[state=...] / data-[disabled] variant で当てる
+    // (スタイリング3規律 2、AGENTS §5-2)。class の条件付加はしない。
+    const switchState = checked ? 'checked' : 'unchecked';
 
-    const thumbClasses = [
-      'pointer-events-none',
-      'inline-block',
-      'w-5',
-      'h-5',
-      'rounded-full',
-      'bg-surface',
-      'shadow',
-      'ring-0',
-      'transition-transform',
-      'duration-normal',
-      'self-center',
-      checked ? 'translate-x-[26px]' : 'translate-x-0.5',
-    ]
-      .filter(Boolean)
-      .join(' ');
+    // Track 48×24, thumb 20×20, 片側 gap 2px (off→on: 26px 移動)
+    const trackClasses =
+      'relative inline-flex flex-shrink-0 w-12 h-6 rounded-full transition-colors duration-normal cursor-pointer ' +
+      'focus:outline-none focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus ' +
+      'data-[state=checked]:bg-surface-primary data-[state=unchecked]:bg-surface-neutral ' +
+      'data-[disabled]:opacity-disabled data-[disabled]:cursor-not-allowed';
+
+    const thumbClasses =
+      'pointer-events-none inline-block w-5 h-5 rounded-full bg-surface shadow ring-0 transition-transform duration-normal self-center ' +
+      'data-[state=checked]:translate-x-[26px] data-[state=unchecked]:translate-x-0.5';
 
     const labelEl = (label || description) && (
       <div className="flex flex-col gap-[2px]">
@@ -166,12 +144,14 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           aria-checked={checked}
           aria-describedby={ariaDescribedBy}
           disabled={disabled}
+          data-state={switchState}
+          data-disabled={disabled || undefined}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           className={trackClasses}
           {...props}
         >
-          <span className={thumbClasses} />
+          <span data-state={switchState} className={thumbClasses} />
         </button>
         {labelPosition === 'right' && labelEl}
       </div>

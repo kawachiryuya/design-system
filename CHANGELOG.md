@@ -7,6 +7,18 @@
 
 ## [Unreleased]
 
+### Added
+
+- **スタイリング3規律を明文化** (#56): 色=semantic トークン経由 / 状態=`data-*` 属性駆動 / 動的値=CSS 変数。配信の Tailwind 非依存化 (A2) と将来の scoped CSS・WC 化への前提 (AGENTS.md §2「スタイリング3規律」/ §5-2 / §10-2)。
+- **primitive hue 直参照を lint で禁止** (#56): `bg-teal-500` / `text-neutral-200` 等の `{utility}-{hue}-{shade}` を `eslint.config.mjs` の `no-restricted-syntax` で error 化 (string / template literal)。semantic token を使う。
+
+### Changed
+
+- **Switch / Accordion を `data-*` 属性駆動へ移行** (#56、参照実装): 状態を class 条件付加でなく属性で表す。**見た目・API は不変**。新たに公開する DOM 属性 (silent-break 面、§10-2):
+  - `Switch`: track/thumb に `data-state="checked|unchecked"`、track に `data-disabled`。
+  - `Accordion`: item wrapper / trigger に `data-state="open|closed"`。
+  - 消費側が属性セレクタで上書きしていなければ影響なし。残りコンポーネントは後続で段階移行。
+
 ## [3.0.0] - 2026-06-15
 
 レイアウト系の総点検 (A〜G)。生グリッドクラス / 生 breakpoint / 用途名の幅スケールを排除し DS で一元管理する。複数の破壊的変更を含むため **MAJOR**。([#50](https://github.com/kawachiryuya/design-system/pull/50))

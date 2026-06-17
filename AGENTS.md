@@ -75,8 +75,18 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 
 - `<button>` 直接使用禁止 → 必ず `<Button>`
 - `<a>` 直接使用禁止 → 必ず `<Link>` (native `<a>` が必須な場面のみ例外)
-- 色の primitive 直接指定禁止: `bg-blue-500` / `bg-primary-600` → §3 の semantic 色を使う
+- 色の primitive 直接指定禁止: `bg-blue-500` / `bg-primary-600` / `bg-teal-500` (hue 直参照) → §3 の semantic 色を使う
 - インラインスタイルでの色指定禁止: `style={{ color: '#xxx' }}`
+
+### スタイリング3規律 (A2 配信 / 将来の scoped CSS・WC 化の前提)
+
+配信を Tailwind 非依存化 (A2) しても、将来の component-scoped CSS 生成 / Web Components 化を**ほぼゼロコストで「将来実行可能」に保つ**ための著者規律。属性駆動 + トークン経由にしておけば、将来 `tv` config → `data-*` キーの scoped CSS への変換が機械作業になり、変換後の値もすべて `var()` 参照 = themeable に保たれる。
+
+1. **色は必ず semantic トークン経由。** 生 hex・arbitrary 色 (`bg-[#...]`)、**primitive hue 直参照 (`bg-teal-500`)** も禁止 (§3 / §3-7 で lint 強制)。直値は生成 CSS に焼き付き、ブランド override に追従しない。
+2. **コンポーネント状態は `data-*` 属性で駆動。** `open` / `loading` / `selected` / `checked` / `disabled` 等は class を条件付加 (`checked ? 'bg-x' : 'bg-y'`) せず、要素に `data-state="open"` / `data-loading` 等を付け、`data-[state=open]:` / `data-[loading]:` の variant で当てる。DOM 契約が属性ベースになり、scoped CSS 生成・WC 化がほぼ機械作業になる (著者の手間は tv boolean variant とほぼ同じ)。
+3. **動的な値は inline style でなく CSS 変数で。** floating-ui の位置や progress の % は `style={{ '--progress': pct } as React.CSSProperties}` で渡し、CSS 側はトークン参照のままにする。themeable な部分を CSS に残せ、Shadow DOM にもそのまま移植できる。
+
+> 状態の「class 条件付加」検知の自動化は難しいため、規律 2 は当面**規約 + レビュー運用** (規律 1 は §3-7 lint で機械強制)。移行は §7 の手順で 1 コンポーネント = 1 PR で段階的に進める。出荷する `data-*` 属性名は silent-break 面 (§10-2)。
 
 ---
 
@@ -331,6 +341,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 [`eslint.config.mjs`](./eslint.config.mjs) で、これまでドキュメント任せだった規約の一部を機械強制する (CI の Lint ステップで違反 PR をブロック)。
 
 - **生 hex / 色 bracket 禁止** (§3): 出荷される component 実装 (`components/**/*.tsx`。stories / tokens カタログ / `.storybook` 設定は対象外) の `className` 等に `#xxxxxx` / `[#xxx]` / `[rgb(...)]` / `[hsl(...)]` を書くと error。semantic token を使う。**spacing/サイズ bracket (`w-[44px]`) は意図的利用のため対象外**
+- **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue/yellow/lime/cyan/sky/violet/purple/pink) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-muted` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
 - **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
 - **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
 - **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
@@ -400,6 +411,7 @@ Composite → components/composites/ComponentName/
 - コンポーネント本体に `@example` JSDoc を 2〜3 例
 - **`forwardRef` で ref 透過**: primitive は必須 (単一 HTML 要素なので ref 先が自明)。composite は **ref を当てる対象要素が明確な場合のみ**実装する (例: `Modal`→`<dialog>`、`SearchBar`→`<input>`)。対象が曖昧な複合レイアウト系 (AppShell / TwoColumn 等) は無理に付けず `React.FC` のままでよい
 - **styling は `tailwind-variants` (`tv`)** で variant マップを宣言的に保持 (`Button.tsx` の `buttonVariants` 参照)。文字列配列の組立て・object lookup は避ける
+- **状態は `data-*` 属性 + variant で表す** (スタイリング3規律 2)。`open` / `loading` / `selected` / `checked` / `disabled` 等は要素に `data-state=...` / `data-loading` 等を付け、tv 側を `data-[state=open]:` / `data-[loading]:` の variant で当てる。class を条件付加 (`checked ? 'bg-x' : 'bg-y'`) しない。参照実装: `Switch` (toggle 系) / `Accordion` (open 系)
 
 ### 5-3. `.stories.tsx` の規約 — 標準ストーリー構造 (固定順序)
 
@@ -771,6 +783,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 - Tailwind utility class (`text-onSurface-xxx` 等) — 文字列扱いのため TS は通る
 - CSS 変数 (`var(--color-xxx)`) — CSS 内・style 属性
+- 出荷する `data-*` 属性名 (`data-state="open"` / `data-loading` 等、スタイリング3規律 2) — 消費側が属性セレクタで上書きしうる DOM 契約。rename・値変更は BREAKING
 - Storybook URL (`?path=/story/...--xxx`) — 外部ドキュメント・Slack 等に貼られる
 - visual change (色相・余白の微調整) — テストではほぼ拾えない
 

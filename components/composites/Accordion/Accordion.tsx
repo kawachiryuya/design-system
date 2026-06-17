@@ -109,11 +109,19 @@ export const Accordion = ({
         const isOpen = openIds.includes(item.id);
         const contentId = `accordion-content-${item.id}`;
         const triggerId = `accordion-trigger-${item.id}`;
+        // 開閉状態は data-state="open|closed" で DOM 契約として公開 (スタイリング3規律 2)。
+        // aria-expanded は a11y 用に維持。将来の scoped CSS / WC 化は [data-state=open] で当てられる。
+        const itemState = isOpen ? 'open' : 'closed';
         return (
-          <div key={item.id} className="border border-border-subtle rounded-md overflow-hidden">
+          <div
+            key={item.id}
+            data-state={itemState}
+            className="border border-border-subtle rounded-md overflow-hidden"
+          >
             <button
               type="button"
               id={triggerId}
+              data-state={itemState}
               aria-expanded={isOpen}
               aria-controls={contentId}
               aria-disabled={item.disabled}

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { tv } from '../../_internal/tv';
 import { Label } from '../Label/Label';

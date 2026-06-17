@@ -49,6 +49,22 @@ const config: StorybookConfig = {
       ...(config.resolve.alias ?? {}),
       '@sb-blocks': path.resolve(__dirname, 'blocks'),
     };
+    // 出荷コンポーネントに付けた `'use client'` (#62 / SSR・RSC 互換) は、Storybook の
+    // SPA バンドル (Rollup) では無意味なため "Module level directives cause errors when
+    // bundled" 警告が大量に出る。ビルドは正常なので、この無害な警告だけ抑制する。
+    config.build = config.build ?? {};
+    config.build.rollupOptions = config.build.rollupOptions ?? {};
+    const prevOnwarn = config.build.rollupOptions.onwarn;
+    config.build.rollupOptions.onwarn = (warning, warn) => {
+      if (
+        warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+        /use client/.test(warning.message ?? '')
+      ) {
+        return;
+      }
+      if (typeof prevOnwarn === 'function') prevOnwarn(warning, warn);
+      else warn(warning);
+    };
     return config;
   },
 

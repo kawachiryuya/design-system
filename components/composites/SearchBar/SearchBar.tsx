@@ -1,3 +1,5 @@
+'use client';
+
 import React, { forwardRef, useCallback, useId, useRef } from 'react';
 import { Icon } from '../../primitives/Icon';
 

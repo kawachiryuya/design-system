@@ -152,6 +152,8 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
        --color-state-hover-primary 等が自動的に violet ベースに切り替わる */
 ```
 
+> **注: primitive override は generator 領域のショートカット**。上記の `--color-teal-700` 直接 override は「既定パレットと同じ幾何 (10 段・L 正規化・step→role アンカー) を流用してよい」単一ブランド向けの簡便法。真のマルチブランド・テーマ契約は **semantic 層 (§3-8 / #59)** に置く: ブランドは `--color-surface-primary` 等の semantic トークンを直接供給し、primitive ramp は契約でなく「種色から準拠 ramp を作る任意の generator」の領域に格下げする。
+
 **3-2. 透過オーバーレイは `color-mix()` で primitive と連動させる**
 
 primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、CSS `color-mix()` + Style Dictionary 参照で書く:
@@ -347,6 +349,20 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
 
 新しい規約を機械化したくなったら、まず本ルールに足せるか検討する (「ドキュメントで守らせる」< 「lint で弾く」)。
+
+### 3-8. テーマ契約 — 三層 themeable モデル (#59)
+
+マルチブランドの**テーマ契約は semantic 層に置く**。「正しいブランドテーマ = themeable な semantic トークンの完全な集合で、検証 (コントラスト + 距離 #58) を通るもの」と定義する。primitive ramp は契約でなく任意の generator の領域 (§3-1 注記)。適用機構は CSS 変数 override 一本 (A2 #57 で Tailwind 依存が外れ override に収斂、#56 の「色は semantic 経由」規律が前提)。
+
+themeable トークンを 3 層に分け、機械可読な manifest [`tokens/theme-contract.json`](./tokens/theme-contract.json) で定義する (将来の完全性チェック CI の入力。本バッチでは検証器は作らない):
+
+- **① 必須 themeable** — ブランドが必ず供給 (妥当な既定なし)。`surface.primary` (+ `surface.secondary`) の実質ブランド塗り 2 色。ペア前景 (`on.inverse` / `on.primary`) は固定の白でなく primary の明度から自動導出 + コントラスト検証する設計 (上書き可、導出 generator は別途)。
+- **② 任意 themeable** — 上書き可、未指定は既定継承、上書き時のみ不変条件で検証。status 一式 (success/error/warning/info の surface / -muted / on / border)・`border.focus`・brand 連動 overlay (`state.hover-primary` 等)・将来 accent。**成長は ② で行う**。
+- **③ 固定** — 上書き不可、保証の土台。中性 canvas (`surface.layer-1/2/3` / inset / overlay)・中性テキスト (`on.default/soft/muted`)・中性境界 (`border.default/subtle` 系)・中性 state overlay (`state.hover/active`)・disabled / skeleton。ブランド背景が要る場合は canvas を override させず、別ロール (`brand-surface` 等) を ② に足す。
+
+**テーマ契約 semver** (§10-6 (b)): **必須 (①) の追加 = 全テーマ作者への破壊 = MAJOR / 任意 (②) の追加 = 既定継承で後方互換 = MINOR**。① は小さく安定に保つ。
+
+> 本バッチ範囲外 (実需要待ち): 前景の自動導出 generator / テーマ完全性チェック CI / テーマ別 contrast 多テーマ行列 / `brand-surface` 実装。
 
 ---
 

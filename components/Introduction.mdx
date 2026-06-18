@@ -74,7 +74,7 @@ Composites    Primitives のみ import 可
 ## デザイントークン
 
 すべてのコンポーネントは `tokens/` ディレクトリの JSON ファイルを参照しています。
-消費側へは CSS 変数 (`tokens/variables.css`) と、それを参照するプリコンパイル済み CSS (`styles.css`) として供給されます (v4.0.0〜、Tailwind 非依存)。
+消費側へは CSS 変数 (`tokens/variables.css`) として供給され、消費モードに応じて Tailwind preset (`tokens/preset.cjs`) かプリコンパイル CSS (`styles.css`) のどちらかと組み合わせます (下記「Product 側で使う際の setup」の 2 モード)。
 
 - **Color** — Primitive (hue palette × 10 shades) + Semantic (surface / on / border / state)
 - **Typography** — Primitive (font-size / weight / line-height / family) + Semantic (heading / body / label / caption)
@@ -94,20 +94,19 @@ Composites    Primitives のみ import 可
 
 ## Product 側で使う際の setup
 
-別 product で本パッケージを依存として使うときの手順。**v4.0.0 以降、消費側に Tailwind は不要**です（コンポーネント CSS をプリコンパイル同梱）。
+別 product で本パッケージを依存として使うときの手順。**「自社で Tailwind を使うか」で 2 つの一級モードに分岐**する（v4.0.0〜）。**両モードの併用は不可**（理由は下記）。
 
-**1. 2 つの CSS を import**（アプリのエントリで一度だけ。`src/globals.css` や `app/layout.tsx` 等）
+### モード 1: Tailwind を使わない（CSS import）
+
+DS のために Tailwind を導入したくない場合。**2 つの CSS を import するだけ**でコンポーネントが使える:
 
 ```css
-/* トークンの CSS 変数（テーマ override の起点） */
-@import '@kawachiryuya/design-system/tokens/variables.css';
-/* コンポーネントのプリコンパイル済みスタイル（使用 utility のみ・リセット非同梱） */
-@import '@kawachiryuya/design-system/styles.css';
+/* アプリのエントリ CSS で一度だけ */
+@import '@kawachiryuya/design-system/tokens/variables.css';  /* token CSS 変数（テーマ override 起点） */
+@import '@kawachiryuya/design-system/styles.css';            /* コンポーネントのプリコンパイル CSS（リセット非同梱） */
 ```
 
-`variables.css` に `--color-surface-primary` 等の全 token CSS 変数、`styles.css` にコンポーネントが使う utility が入っている。**両方**を import する（片方だけでは壊れる）。順序は variables → styles。
-
-**2. コンポーネントを import して使う**
+`variables.css` の全 token 変数 + `styles.css` のコンポーネント utility を**両方** import（順序は variables → styles、片方では壊れる）。
 
 ```tsx
 import { Button, Card, Modal } from '@kawachiryuya/design-system';
@@ -115,9 +114,32 @@ import { Button, Card, Modal } from '@kawachiryuya/design-system';
 <Button variant="primary">保存</Button>
 ```
 
-> 旧来必要だった Tailwind の **preset 継承**・`content` スキャンは不要になりました。`tailwind.config.js` から本パッケージの preset 行と `node_modules/@kawachiryuya/...` への content glob を削除してください（移行手順は CHANGELOG `4.0.0` 参照）。
+### モード 2: Tailwind を使う（preset 継承・単一ビルド）
 
-> **自社コードで DS の utility class（`bg-surface-primary` / `text-onSurface-muted` 等）を書いていた場合**: 同梱 `styles.css` は DS コンポーネントが使う utility のみを含むため、それらは `var(--color-...)` の直参照に置き換えるか、自社が Tailwind を使うなら DS preset を継承して utility 語彙を残します（移行手順は CHANGELOG `4.0.0` の Migration を参照）。
+自社アプリでも Tailwind を使う、または**自社コードで DS の semantic utility（`bg-surface-primary` / `text-onSurface-muted` 等）を書く**場合。DS を**自社の単一 Tailwind ビルドに含める**（この経路では `styles.css` は import しない）:
+
+```js
+// tailwind.config.js
+module.exports = {
+  presets: [require('@kawachiryuya/design-system/tokens/preset')],
+  content: [
+    './src/**/*.{ts,tsx}',
+    './node_modules/@kawachiryuya/design-system/dist/**/*.js', // DS コンポーネントのクラスも生成
+  ],
+};
+```
+
+```css
+/* アプリのエントリ CSS */
+@import '@kawachiryuya/design-system/tokens/variables.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+自社の Tailwind が DS コンポーネントと自社コードの両方のクラスを 1 枚に生成するので、DS の utility をそのまま書ける。`tailwindcss` は自社 devDependency として持つ。
+
+> ⚠ **モード 1 と 2 の併用は不可**。`styles.css`（DS の precompiled Tailwind）と自社の Tailwind 出力を両方読み込むと、`.hidden` / `.shell:block` / `.lg:block` 等の base/responsive utility が 2 枚の間で source 順に衝突し（どちらを後ろに置いても一方の responsive が潰れる）、レイアウトが壊れる。**Tailwind を使うなら単一ビルド（モード 2）、使わないならモード 1** に統一する。
 
 ### SSR / RSC（Next.js App Router 等）
 

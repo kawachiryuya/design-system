@@ -68,4 +68,8 @@ design-system/
 | カタログ | Storybook 10 + @storybook/addon-a11y |
 | トークン | Style Dictionary 5 |
 
-> **消費側に Tailwind は不要** (v4.0.0〜)。`npm run build` がコンポーネント CSS をプリコンパイルして `dist/styles.css` に同梱する。消費側は `tokens/variables.css` + `styles.css` を import してコンポーネントを使うだけ。導入手順は Storybook の [Introduction](https://design-system-storybook-murex.vercel.app/?path=/docs/introduction--docs) 「Product 側で使う際の setup」を参照。Tailwind は本リポが**オーサリング時に内部で**使うだけ。自社コードで DS の semantic utility を書いていた場合は `var(--color-…)` 直参照に置き換えるか、自社が Tailwind を使うなら preset (`tokens/preset.cjs`、export 継続) を継承して utility 語彙を残す (CHANGELOG `4.0.0` Migration 参照)。
+> **消費は 2 つの一級モード** (v4.0.0〜、Tailwind は本リポの内部オーサリング専用)。「自社で Tailwind を使うか」で分岐し、**併用は不可**:
+> - **モード 1 (Tailwind 不使用)**: `tokens/variables.css` + `styles.css` (プリコンパイル CSS) を import するだけ。
+> - **モード 2 (Tailwind 使用)**: `tokens/preset.cjs` を継承し content に DS dist を含めた**単一 Tailwind ビルド** (`styles.css` は import しない)。自社コードで DS の semantic utility を書く場合はこちら。
+>
+> 両モード併用は base/responsive utility の source 順衝突で壊れる。導入手順は Storybook の [Introduction](https://design-system-storybook-murex.vercel.app/?path=/docs/introduction--docs)「Product 側で使う際の setup」/ CHANGELOG `4.0.0` Migration を参照。

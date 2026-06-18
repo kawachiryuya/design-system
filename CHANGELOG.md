@@ -33,39 +33,36 @@
 
 ### ⚠ BREAKING CHANGES
 
-- **消費側の Tailwind 依存を撤廃** (#57): `tailwindcss` を `peerDependencies` から削除。消費側は preset 継承・`content` スキャンが不要になり、代わりに 2 つの CSS (`tokens/variables.css` + `styles.css`) を import する方式へ。
+- **消費側の Tailwind 依存を撤廃** (#57): `tailwindcss` を `peerDependencies` から削除。消費は **2 つの一級モード**に分岐する (「自社で Tailwind を使うか」で選択、**併用は不可**):
+  - **モード 1 (Tailwind 不使用)**: `tokens/variables.css` + `styles.css` (プリコンパイル CSS) を import。
+  - **モード 2 (Tailwind 使用)**: `tokens/preset.cjs` を継承し `content` に DS dist を含めた**単一 Tailwind ビルド** (`styles.css` は import しない)。自社コードで DS の semantic utility を書く場合はこちら。
 - **`peerDependencies` は `react` / `react-dom` のみ** に整理 (#62)。`tailwind-merge` / `tailwind-variants` は `dependencies` へ降格。
 
-#### Migration (Tailwind setup → CSS import)
+#### Migration
+
+**自社で Tailwind を使うか**で移行先が決まる。
+
+**A. Tailwind を使わない → モード 1 へ** (preset/content を捨て、CSS import に):
 
 ```diff
-- // tailwind.config.js — DS の preset 継承と content スキャンを削除
+- // tailwind.config.js（DS のために入れていた Tailwind 設定はもう不要）
 - presets: [require('@kawachiryuya/design-system/tokens/preset')],
-- content: ['./node_modules/@kawachiryuya/design-system/**/*.{js,mjs}', /* ... */],
+- content: ['./node_modules/@kawachiryuya/design-system/dist/**/*.js', /* ... */],
 ```
 
 ```diff
-  /* アプリのエントリ CSS (globals.css 等) */
+  /* アプリのエントリ CSS */
   @import '@kawachiryuya/design-system/tokens/variables.css';
 + @import '@kawachiryuya/design-system/styles.css';
 - @tailwind base;
 - @tailwind utilities;
 ```
 
-sed 例 (preset 行の除去 + styles.css 追記):
+**B. Tailwind を使い続ける (自社コードで DS の semantic utility も書く) → モード 2 のまま**:
 
-```sh
-# tailwind.config.js から DS preset 行を削除
-sed -i '' "/@kawachiryuya\/design-system\/tokens\/preset/d" tailwind.config.js
-# エントリ CSS に styles.css の import を追加 (variables.css の直後)
-sed -i '' "/design-system\/tokens\/variables.css/a\\
-@import '@kawachiryuya/design-system/styles.css';" src/globals.css
-```
+設定変更は不要。**preset 継承も `content` の DS dist スキャンも維持し、`styles.css` は import しない**。`tailwindcss` を自社 devDependency に持ち (peer から外れたため)、依存を `^4.0.0` に上げるだけ。`tokens/preset` の export は 4.0.0 でも維持 (非破壊)。
 
-**消費側が DS の semantic utility を自前コードで使っていた場合**: A2 後 `styles.css` には **DS コンポーネントが実際に使う utility のみ**が含まれる。自前 JSX で書いた `bg-surface-primary` / `text-onSurface-muted` / `px-container` 等の DS utility は同梱されない可能性があるため、次のいずれかへ移行する:
-
-1. **`var(--color-...)` 直参照** (`variables.css` が供給): `style={{ backgroundColor: 'var(--color-surface-primary)' }}`、または自前 CSS で `background: var(--color-surface-primary)`。
-2. **自前ビルドで同等 utility を定義**: 消費側が Tailwind を使い続けるなら **DS preset を継承**すれば DS utility 語彙がそのまま使える (`presets: [require('@kawachiryuya/design-system/tokens/preset')]`、`styles.css` import と併用可)。preset の export は 4.0.0 でも維持 (非破壊)。例: rail-demo は自前 Tailwind と preset 継承を残したまま `styles.css` を足し、DS dist の content スキャンだけ外す。
+> ⚠ **モード 1 と 2 を混ぜない**: `styles.css` (DS の precompiled Tailwind) と自社の Tailwind 出力を両方読み込むと、`.hidden` / `.shell:block` / `.lg:block` 等の base/responsive utility が 2 枚の間で source 順衝突し (どちらを後ろに置いても一方の responsive が潰れ、例えば AppShell のサイドバーが消える)、レイアウトが壊れる。Tailwind を使うなら単一ビルド (モード 2) に統一する。検証消費アプリ rail-demo はモード 2 (preset 継続) で移行。
 
 **その他 (#62)**:
 

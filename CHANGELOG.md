@@ -7,7 +7,9 @@
 
 ## [Unreleased]
 
-> 次リリースは **4.0.0 (MAJOR)**。配信を Tailwind 非依存化する破壊的変更 (#57) と依存整理 (#62) を含む。下記 ⚠ BREAKING CHANGES と Migration を参照。
+## [4.0.0] - 2026-06-18
+
+**A2 配信 (Tailwind 非依存化)** の破壊的リリース。消費側は DS のために Tailwind (preset 継承・`content` スキャン) を必須としなくなり、代わりに `@kawachiryuya/design-system/styles.css` + `.../tokens/variables.css` を import する方式へ。`tailwindcss` は peerDependencies から外れた。同梱の安定性ポリシー (#63) / テーマ契約・軸・密度の構造 (#59/#60/#61) は非破壊。移行は下記 ⚠ BREAKING CHANGES / Migration を参照。
 
 ### Added
 
@@ -60,7 +62,10 @@ sed -i '' "/design-system\/tokens\/variables.css/a\\
 @import '@kawachiryuya/design-system/styles.css';" src/globals.css
 ```
 
-**任意 (Tailwind を使い続ける場合)**: 自社マークアップで DS の utility class を自由に書きたいなら、preset は引き続き export されているので従来どおり継承してよい (この経路では `styles.css` は import 不要、`tailwindcss` は自社 devDependency)。詳細は Storybook Introduction「Product 側で使う際の setup」。
+**消費側が DS の semantic utility を自前コードで使っていた場合**: A2 後 `styles.css` には **DS コンポーネントが実際に使う utility のみ**が含まれる。自前 JSX で書いた `bg-surface-primary` / `text-onSurface-muted` / `px-container` 等の DS utility は同梱されない可能性があるため、次のいずれかへ移行する:
+
+1. **`var(--color-...)` 直参照** (`variables.css` が供給): `style={{ backgroundColor: 'var(--color-surface-primary)' }}`、または自前 CSS で `background: var(--color-surface-primary)`。
+2. **自前ビルドで同等 utility を定義**: 消費側が Tailwind を使い続けるなら **DS preset を継承**すれば DS utility 語彙がそのまま使える (`presets: [require('@kawachiryuya/design-system/tokens/preset')]`、`styles.css` import と併用可)。preset の export は 4.0.0 でも維持 (非破壊)。例: rail-demo は自前 Tailwind と preset 継承を残したまま `styles.css` を足し、DS dist の content スキャンだけ外す。
 
 **その他 (#62)**:
 
@@ -682,7 +687,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/kawachiryuya/design-system/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/kawachiryuya/design-system/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/kawachiryuya/design-system/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/kawachiryuya/design-system/compare/v1.1.0...v2.0.0

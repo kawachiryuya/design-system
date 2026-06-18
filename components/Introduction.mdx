@@ -74,7 +74,7 @@ Composites    Primitives のみ import 可
 ## デザイントークン
 
 すべてのコンポーネントは `tokens/` ディレクトリの JSON ファイルを参照しています。
-Tailwind CSS の設定にも統合済みです。
+消費側へは CSS 変数 (`tokens/variables.css`) と、それを参照するプリコンパイル済み CSS (`styles.css`) として供給されます (v4.0.0〜、Tailwind 非依存)。
 
 - **Color** — Primitive (hue palette × 10 shades) + Semantic (surface / on / border / state)
 - **Typography** — Primitive (font-size / weight / line-height / family) + Semantic (heading / body / label / caption)
@@ -117,33 +117,7 @@ import { Button, Card, Modal } from '@kawachiryuya/design-system';
 
 > 旧来必要だった Tailwind の **preset 継承**・`content` スキャンは不要になりました。`tailwind.config.js` から本パッケージの preset 行と `node_modules/@kawachiryuya/...` への content glob を削除してください（移行手順は CHANGELOG `4.0.0` 参照）。
 
-### 自分のマークアップでも DS の utility class を書きたい場合（任意 / Tailwind）
-
-同梱の `styles.css` は **DS コンポーネントが実際に使う utility のみ** を含みます。自社アプリの JSX で `bg-surface-primary` / `px-container` / `grid-base` などの DS utility を**自由に**書きたい場合は、従来どおり Tailwind の preset を継承してください（この経路では `styles.css` は import 不要。`tailwindcss` は自社の devDependency として持つ）:
-
-```js
-// tailwind.config.js
-module.exports = {
-  presets: [require('@kawachiryuya/design-system/tokens/preset')],
-  content: ['./src/**/*.{tsx,ts}'],
-};
-```
-
-```css
-/* globals.css */
-@import '@kawachiryuya/design-system/tokens/variables.css';
-@tailwind base;
-@tailwind utilities;
-```
-
-```tsx
-// preset 経路なら DS utility を自由に組める
-<div className="px-container py-container max-w-container mx-auto">
-  <section className="space-y-section-md">
-    <button className="bg-surface-primary text-onSurface-inverse">Primary</button>
-  </section>
-</div>
-```
+> **自社コードで DS の utility class（`bg-surface-primary` / `text-onSurface-muted` 等）を書いていた場合**: 同梱 `styles.css` は DS コンポーネントが使う utility のみを含むため、それらは `var(--color-...)` の直参照に置き換えるか、自社が Tailwind を使うなら DS preset を継承して utility 語彙を残します（移行手順は CHANGELOG `4.0.0` の Migration を参照）。
 
 ### SSR / RSC（Next.js App Router 等）
 

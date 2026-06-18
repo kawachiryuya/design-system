@@ -1,6 +1,6 @@
 {
   "name": "@kawachiryuya/design-system",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Storybook を Single Source of Truth とする React コンポーネントライブラリ — Primitives / Composites の 2 層と semantic トークン",
   "type": "module",
   "license": "UNLICENSED",
@@ -41,6 +41,7 @@
     "tokens/build/variables.css",
     "tokens/build/tokens.json",
     "AGENTS.md",
+    "SUPPORT.md",
     "README.md",
     "CHANGELOG.md"
   ],

@@ -74,7 +74,8 @@
     "prestorybook": "npm run tokens:build",
     "prebuild-storybook": "npm run tokens:build",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build -o storybook-static"
+    "build-storybook": "storybook build -o storybook-static",
+    "chromatic": "chromatic --only-changed"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^10.3.3",
@@ -90,6 +91,7 @@
     "apca-w3": "^0.1.9",
     "autoprefixer": "^10.4.20",
     "axe-playwright": "^2.2.2",
+    "chromatic": "^17.5.0",
     "culori": "^4.0.2",
     "eslint": "^10.4.1",
     "eslint-plugin-react-hooks": "^7.1.1",

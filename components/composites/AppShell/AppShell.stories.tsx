@@ -20,6 +20,9 @@ const meta: Meta<typeof AppShell> = {
   component: AppShell,
   parameters: {
     layout: 'fullscreen',
+    // 視覚回帰 (Chromatic): mobile / desktop の 2 幅で撮影し breakpoint 駆動の表示崩れを検出する。
+    // 1280px は shell breakpoint (= lg = 1024px) を超え `hidden shell:block` のサイドバーが出る幅。
+    chromatic: { viewports: [375, 1280] },
   },
   argTypes: {
     contentMax: { control: 'radio', options: ['narrow', 'default', 'wide', 'full'] },

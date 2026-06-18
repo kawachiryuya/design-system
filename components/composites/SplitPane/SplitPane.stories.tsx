@@ -16,7 +16,12 @@ import { Caption } from '@sb-blocks/Caption';
 const meta: Meta<typeof SplitPane> = {
   title: 'Composites/SplitPane',
   component: SplitPane,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    // 視覚回帰 (Chromatic): mobile / desktop の 2 幅で撮影し、master-detail が
+    // 縦スタック ↔ 横分割に切り替わる breakpoint 挙動を捉える。
+    chromatic: { viewports: [375, 1280] },
+  },
   argTypes: {
     listWidth: { control: 'text' },
     divider: { control: 'boolean' },

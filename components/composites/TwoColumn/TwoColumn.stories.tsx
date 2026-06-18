@@ -13,6 +13,11 @@ import { Caption } from '@sb-blocks/Caption';
 const meta: Meta<typeof TwoColumn> = {
   title: 'Composites/TwoColumn',
   component: TwoColumn,
+  parameters: {
+    // 視覚回帰 (Chromatic): mobile / desktop の 2 幅で撮影。1280px は cols breakpoint (= 1024px)
+    // を超え、縦スタック → 2 カラム grid に切り替わった姿を捉える。
+    chromatic: { viewports: [375, 1280] },
+  },
   argTypes: {
     split: { control: 'radio', options: ['6/6', '7/5', '8/4', '9/3'] },
     mobileReverse: { control: 'boolean' },

@@ -136,72 +136,25 @@ export const Overview: Story = {
   ),
 };
 
-// ── 3. EdgeCases ───────────────────────────────────────────────
+// ── 3. EdgeCases (VR 対象) ─────────────────────────────────────
+// props だけでは作れない文脈依存: 親幅が狭いときの折返し (常に flex-wrap)。
+// ※ as=nav (semantic) / header・icon+label (usage 合成) / Fragment (堅牢性) は VR から除外。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'wrap (常に有効) / semantic タグ (nav / ul) / icon + text 等の典型 inline 構造 / Fragment 子要素を確認。',
+        story: 'wrap — 親幅が狭くなると折り返す (常に flex-wrap)。コンテナ幅依存の文脈ケース。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-6">
-      <Caption text="wrap — 親幅が狭くなると折り返す (常に flex-wrap)">
-        <div className="w-72 bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-          <Cluster gap="sm">
-            {Array.from({ length: 10 }, (_, i) => (
-              <Item key={i}>Item {i + 1}</Item>
-            ))}
-          </Cluster>
-        </div>
-      </Caption>
-
-      <Caption text="as='nav' — semantic navigation として描画">
-        <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-          <Cluster gap="md" as="nav" align="center">
-            <a href="#" className="text-sm hover:underline">ホーム</a>
-            <a href="#" className="text-sm hover:underline">予約一覧</a>
-            <a href="#" className="text-sm hover:underline">マイページ</a>
-            <a href="#" className="text-sm hover:underline">設定</a>
-          </Cluster>
-        </div>
-      </Caption>
-
-      <Caption text="header pattern — title 左 + action 右 (justify=between)">
-        <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-          <Cluster gap="md" justify="between">
-            <div className="text-base font-semibold">予約一覧</div>
-            <div className="flex gap-2">
-              <button className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">フィルタ</button>
-              <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button>
-            </div>
-          </Cluster>
-        </div>
-      </Caption>
-
-      <Caption text="icon + label pattern — gap=xs + align=center">
-        <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-          <Cluster gap="xs">
-            <span className="text-onSurface-muted">⏱</span>
-            <span className="text-sm text-onSurface-muted">5 分で読める</span>
-          </Cluster>
-        </div>
-      </Caption>
-
-      <Caption text="Fragment / 条件付き children — gap-* 実装なので壊れない">
-        <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-          <Cluster gap="sm">
-            <Item>常に</Item>
-            <>
-              <Item>Fragment A</Item>
-              <Item>Fragment B</Item>
-            </>
-            {true && <Item>条件付き</Item>}
-          </Cluster>
-        </div>
-      </Caption>
+    <div className="w-72 bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+      <Cluster gap="sm">
+        {Array.from({ length: 10 }, (_, i) => (
+          <Item key={i}>Item {i + 1}</Item>
+        ))}
+      </Cluster>
     </div>
   ),
 };

@@ -69,39 +69,28 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '5 種類のアスペクト比 (square 1:1 / video 16:9 / portrait 3:4 / wide 21:9 / auto = 比率固定なし) の比較。コンテンツの種類 (写真 / ロゴ / プロフィール / バナー / アイコン) で選ぶ。',
+        story: 'props で作れる内在軸を集約: aspectRatio (square / video / portrait / wide / auto) + objectFit (cover / contain / fill) + rounded (none〜full)。',
       },
     },
   },
   render: () => (
-    <div className="grid grid-cols-2 gap-4 w-96">
-      {(['square', 'video', 'portrait', 'wide'] as const).map((ratio) => (
-        <Caption key={ratio} text={ratio}>
-          <Image src={SAMPLE_IMG} alt="風景" aspectRatio={ratio} rounded="md" />
-        </Caption>
-      ))}
-      <Caption text="auto (固定なし)">
-        <Image src={PORTRAIT_IMG} alt="プロフィール" aspectRatio="auto" />
-      </Caption>
-    </div>
-  ),
-};
+    <div className="flex flex-col gap-6 w-96">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">aspectRatio (square / video / portrait / wide / auto)</div>
+        <div className="grid grid-cols-2 gap-4">
+          {(['square', 'video', 'portrait', 'wide'] as const).map((ratio) => (
+            <Caption key={ratio} text={ratio}>
+              <Image src={SAMPLE_IMG} alt="風景" aspectRatio={ratio} rounded="md" />
+            </Caption>
+          ))}
+          <Caption text="auto (固定なし)">
+            <Image src={PORTRAIT_IMG} alt="プロフィール" aspectRatio="auto" />
+          </Caption>
+        </div>
+      </div>
 
-// ── 3. EdgeCases ───────────────────────────────────────────────
-// objectFit (3 種) / rounded (5 段階) / 読み込みエラー fallback (default / custom) /
-// 装飾画像 (alt="" + role="presentation") など、視覚や a11y の境界条件を確認。
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'objectFit / rounded のサブ軸 / 読み込み失敗時の default フォールバック + custom フォールバック / alt="" の装飾画像扱いなど、Image の境界条件を一覧。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-8 w-96">
-      <Caption text="objectFit: cover (デフォルト) / contain (余白を許容) / fill (歪み、通常非推奨)">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">objectFit: cover (デフォルト) / contain (余白許容) / fill (歪み、通常非推奨)</div>
         <div className="grid grid-cols-3 gap-2">
           {(['cover', 'contain', 'fill'] as const).map((fit) => (
             <div key={fit} className="flex flex-col gap-1">
@@ -110,9 +99,10 @@ export const EdgeCases: Story = {
             </div>
           ))}
         </div>
-      </Caption>
+      </div>
 
-      <Caption text="rounded: 5 段階の角丸 (none / sm / md / lg / full)">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">rounded (none / sm / md / lg / full)</div>
         <div className="flex flex-wrap gap-3 items-end">
           {(['none', 'sm', 'md', 'lg', 'full'] as const).map((r) => (
             <div key={r} className="flex flex-col items-center gap-1">
@@ -121,8 +111,26 @@ export const EdgeCases: Story = {
             </div>
           ))}
         </div>
-      </Caption>
+      </div>
+    </div>
+  ),
+};
 
+// ── 3. EdgeCases (VR 対象) ─────────────────────────────────────
+// props だけでは作れない文脈依存: 読み込み失敗時の fallback UI (default / custom)。
+// ※ objectFit / rounded は内在軸として Overview に集約。
+// ※ 装飾画像 (alt="") は非視覚 (role 付与の差) なので VR から除外。
+
+export const EdgeCases: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '読み込み失敗時の fallback: default (onError で placeholder) / custom (fallback prop で JSX 差し替え)。src の失敗という文脈で初めて出る状態。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-8 w-96">
       <Caption text="読み込みエラー (デフォルト fallback) — onError で placeholder を表示">
         <div className="w-48">
           <Image src={BROKEN_IMG} alt="存在しない画像" aspectRatio="video" />
@@ -143,10 +151,6 @@ export const EdgeCases: Story = {
             }
           />
         </div>
-      </Caption>
-
-      <Caption text='装飾画像 — alt="" で role="presentation" が自動付与され SR から無視される'>
-        <Image src={SAMPLE_IMG} alt="" aspectRatio="wide" />
       </Caption>
     </div>
   ),

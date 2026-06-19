@@ -7,8 +7,8 @@ import { tv } from '../../_internal/tv';
  * h5 / h6 は h4 と視覚的差が小さく実利用も少ないため省略。
  * 階層がさらに深い場合は `as` で <h5>/<h6> タグを指定しつつ `variant="h4"` で見た目を共有する。
  */
-// 型スケール順 = font-size 大→小 / 同サイズは font-weight 太→細
-// (label 14px medium と body-sm 14px regular は同サイズなので太い label を先に置く)
+// 型スケール順 = font-size 大→小。同サイズ (body-sm 14reg / label 14med) は
+// 例外的に body グループ (body-lg/body/body-sm) をまとめる方針で body-sm → label の順。
 export type TypographyVariant =
   | 'display'
   | 'h1'
@@ -17,8 +17,8 @@ export type TypographyVariant =
   | 'h4'
   | 'body-lg'
   | 'body'
-  | 'label'
   | 'body-sm'
+  | 'label'
   | 'caption';
 
 /**
@@ -127,8 +127,8 @@ const defaultTag: Record<TypographyVariant, TypographyElement> = {
   h4:       'h4',
   'body-lg': 'p',
   body:      'p',
-  label:     'span',
   'body-sm': 'p',
+  label:     'span',
   caption:   'p',
 };
 
@@ -152,8 +152,8 @@ const typographyVariants = tv({
       h4:        'text-heading-sm font-semibold',
       'body-lg': 'text-body-lg font-normal',
       body:      'text-body-md font-normal',
-      label:     'text-label font-medium',
       'body-sm': 'text-body-sm font-normal',
+      label:     'text-label font-medium',
       caption:   'text-caption font-normal',
     },
     color: {

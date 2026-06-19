@@ -17,7 +17,7 @@ const meta: Meta<typeof Typography> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['display', 'h1', 'h2', 'h3', 'h4', 'body-lg', 'body', 'label', 'body-sm', 'caption'],
+      options: ['display', 'h1', 'h2', 'h3', 'h4', 'body-lg', 'body', 'body-sm', 'label', 'caption'],
     },
     as: {
       control: 'select',
@@ -73,7 +73,7 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'タイプスケール (display / h1〜h4 / body-lg / body / label / body-sm / caption、font-size 大→小・同サイズは太→細) と color / weight の軸を 1 枚に集約。h5/h6 は h4 との視覚差が小さいため variant には無く、`as="h5"` でタグだけ指定して `variant="h4"` を流用する。',
+        story: 'タイプスケール (display / h1〜h4 / body-lg / body / body-sm / label / caption、font-size 大→小。同サイズの body-sm/label は body グループをまとめる方針で body-sm→label) と color / weight の軸を 1 枚に集約。h5/h6 は h4 との視覚差が小さいため variant には無く、`as="h5"` でタグだけ指定して `variant="h4"` を流用する。',
       },
     },
   },
@@ -89,8 +89,8 @@ export const Overview: Story = {
         <hr className="border-border-subtle" />
         <Typography variant="body-lg">Body Large — 18px / リード文</Typography>
         <Typography variant="body">Body — 16px / 本文 (デフォルト)</Typography>
-        <Typography variant="label">Label — 14px medium / フォームラベル</Typography>
         <Typography variant="body-sm">Body Small — 14px / 補足</Typography>
+        <Typography variant="label">Label — 14px medium / フォームラベル</Typography>
         <Typography variant="caption">Caption — 12px / 注釈・著作権</Typography>
       </div>
 

@@ -94,46 +94,6 @@ export const Overview: Story = {
   ),
 };
 
-// ── 3. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'full-width 背景 + 内側 Center (将来 background prop でタダになる構造) / 隣接 section の padding 積み上がり / as 切替 を確認。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-8">
-      <Caption text='full-bleed 背景 + 中央コンテンツ — Section が full-width、Center が読み列を絞る'>
-        <div className="border border-dashed border-border-subtle">
-          <Section padding="md" className="bg-surface-secondary">
-            <Center max="md">
-              <Block label="背景は画面端まで、コンテンツは中央 md 幅" />
-            </Center>
-          </Section>
-        </div>
-      </Caption>
-
-      <Caption text='隣接 section — padding が積み上がり予測可能なリズム (collapse しない)'>
-        <div className="bg-surface-layer-2 border border-dashed border-border-subtle">
-          <Section padding="sm" aria-label="セクション 1">
-            <Center max="md"><Block label="Section 1 (padding=sm)" /></Center>
-          </Section>
-          <Section padding="sm" aria-label="セクション 2">
-            <Center max="md"><Block label="Section 2 (padding=sm)" /></Center>
-          </Section>
-        </div>
-      </Caption>
-
-      <Caption text='as="div" — landmark にしたくない場合は section 以外も選べる'>
-        <div className="bg-surface-layer-2 border border-dashed border-border-subtle">
-          <Section as="div" padding="sm">
-            <Center max="md"><Block label="as='div' で描画" /></Center>
-          </Section>
-        </div>
-      </Caption>
-    </div>
-  ),
-};
+// EdgeCases は省略 — props だけでは作れない文脈依存の崩れが無いため (§5-3)。
+// full-bleed 背景 + Center / 隣接 section の padding リズムは usage 合成 (guideline 向き)、
+// as=div は semantic で非視覚のため VR 対象外。

@@ -61,77 +61,32 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '4 種類の形状を比較。text は本文行、circular はアバター/アイコン、rectangular は画像/カード本体、rounded は角丸モダンカード。実際のコンテンツの形に合わせて選ぶ。',
+        story: '4 種類の形状 (text / circular / rectangular / rounded) と animated の有無を集約。形状は実際のコンテンツの形に合わせて選ぶ。',
       },
     },
   },
   render: () => (
-    <div className="grid grid-cols-2 gap-6 w-full">
-      <Caption text="text — 本文行 (lines=3、最終行 75% 幅)">
-        <Skeleton variant="text" lines={3} />
-      </Caption>
-      <Caption text="circular — アバター/アイコン">
-        <Skeleton variant="circular" width={48} height={48} />
-      </Caption>
-      <Caption text="rectangular — 画像/カード本体">
-        <Skeleton variant="rectangular" height={120} />
-      </Caption>
-      <Caption text="rounded — 角丸モダンカード">
-        <Skeleton variant="rounded" height={120} />
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 3. EdgeCases ───────────────────────────────────────────────
-// animated=false / カード統合 / リスト統合など、組合せパターンの監視。
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'animated=false (複数並べる場合のパフォーマンス対策) / カード統合 (画像+アバター+本文+ボタン) / リスト統合 (アバター+テキスト 2 行 + チップ) など、実際のレイアウトに重ねる組合せ。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-8 w-72">
-      <Caption text="animated=false — 大量並列描画でパフォーマンス優先">
+    <div className="flex flex-col gap-6 w-full">
+      <div className="grid grid-cols-2 gap-6">
+        <Caption text="text — 本文行 (lines=3、最終行 75% 幅)">
+          <Skeleton variant="text" lines={3} />
+        </Caption>
+        <Caption text="circular — アバター/アイコン">
+          <Skeleton variant="circular" width={48} height={48} />
+        </Caption>
+        <Caption text="rectangular — 画像/カード本体">
+          <Skeleton variant="rectangular" height={120} />
+        </Caption>
+        <Caption text="rounded — 角丸モダンカード">
+          <Skeleton variant="rounded" height={120} />
+        </Caption>
+      </div>
+      <Caption text="animated=false — アニメーション無効 (大量並列描画でパフォーマンス優先)">
         <Skeleton variant="text" lines={3} animated={false} />
       </Caption>
-
-      <Caption text="カードレイアウト統合 (画像 + アバター + 本文 + ボタン)">
-        <div className="p-4 border border-border-subtle rounded-lg space-y-4">
-          <Skeleton variant="rectangular" height={120} className="rounded-md" />
-          <div className="flex items-center gap-3">
-            <Skeleton variant="circular" width={36} height={36} />
-            <div className="flex-1 space-y-2">
-              <Skeleton variant="text" width="60%" />
-              <Skeleton variant="text" width="40%" />
-            </div>
-          </div>
-          <Skeleton variant="text" lines={2} />
-          <div className="flex gap-2">
-            <Skeleton variant="rounded" width={64} height={28} />
-            <Skeleton variant="rounded" width={64} height={28} />
-          </div>
-        </div>
-      </Caption>
-
-      <Caption text="ユーザーリスト統合 (4 行)">
-        <div className="divide-y divide-border-muted">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 py-3 px-1">
-              <Skeleton variant="circular" width={40} height={40} />
-              <div className="flex-1 space-y-2">
-                <Skeleton variant="text" width="50%" />
-                <Skeleton variant="text" width="70%" />
-              </div>
-              <Skeleton variant="rounded" width={56} height={24} />
-            </div>
-          ))}
-        </div>
-      </Caption>
     </div>
   ),
 };
+
+// EdgeCases は省略 — props だけでは作れない文脈依存の崩れが無いため (§5-3)。
+// animated は内在軸として Overview に集約。カード/リスト統合は usage 合成 (guideline 向き)。

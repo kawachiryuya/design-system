@@ -10,6 +10,7 @@
 ### ⚠ BREAKING CHANGES
 
 - **ストーリー構造を VR 集約モデルへ移行 (Button から、段階展開)** (story id 削除 = silent break §10-2): `.stories.tsx` を **Playground / Overview / EdgeCases の 3 節**に統一する規約に変更 (AGENTS.md §5-3)。視覚回帰 (Chromatic) は props で作れる内在パターンを 1 枚に凍結した **Overview** と、文脈依存の **EdgeCases** のみを撮影し、`Playground` は撮影外。旧カタログ (`Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription`) は Overview + guideline.mdx に集約し**削除**する。**Button が参照実装**として先行移行 — `Primitives/Button` の `Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription` story が**削除**された (これらの Storybook URL `?path=/story/primitives-button--variants` 等は無効になる)。残コンポーネントは 1 コンポーネント = 1 PR で順次移行 (§7)。`check:conventions` の `SECTION_ORDER` に `Overview` を追加。
+- **VR 集約モデル移行 (primitives バッチ 1): Badge / Spinner / Divider** (story id 削除 = silent break §10-2): 上記モデルに移行。各コンポーネントの `Variants` / `Sizes` story を削除し `Overview` に集約 (Badge: appearance×variant + dot + count / Spinner: size + color / Divider: orientation×weight + label)。`?path=/story/primitives-badge--variants`・`primitives-spinner--variants`・`primitives-spinner--sizes`・`primitives-divider--variants` 等の Storybook URL が無効になる。
 
 ### Changed
 

@@ -4,10 +4,11 @@ import { Divider } from './Divider';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Divider stories — 標準ストーリー構造に準拠
+ * Divider stories — VR 集約モデル (§5-3)
  *
- * 順序: Playground → Variants → EdgeCases
- * (Sizes は weight に内包、States は Divider に状態なし、WithIcon は icon prop なし、いずれも省略)
+ * 3 節構成: Playground / Overview / EdgeCases。
+ * Divider は状態を持たず icon prop も無い。size 概念は weight に内包。
+ * 単独では描画されないため各サンプルは最小の文脈 (コンテナ) で囲む。
  *
  * Docs (Guideline) は Divider.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -29,9 +30,8 @@ const meta: Meta<typeof Divider> = {
 export default meta;
 type Story = StoryObj<typeof Divider>;
 
-// ── 1. Playground ──────────────────────────────────────────────
-// args を全開放、Controls から props を探索する起点。
-// `role="separator"` 自動付与を play test で保証。
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
+// args 全開放、Controls から props を探索する起点。
 
 export const Playground: Story = {
   decorators: [
@@ -44,11 +44,11 @@ export const Playground: Story = {
     ),
   ],
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    // Controls 探索の起点 → 視覚回帰対象外 (Overview が VR 対象。§5-3)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`role="separator"` の自動付与を play test で保証。',
+        story: 'Controls から props を切り替えて挙動を確認する起点。`role="separator"` の自動付与を play test で保証。',
       },
     },
   },
@@ -59,94 +59,62 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
-// 主要な見た目パターン (horizontal / horizontal+label / vertical) を静的に並べる。
-// "どれを使うか" の判断材料。
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在パターンを 1 枚に: orientation × weight + label。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '3 パターンの代表的な使い方を比較。horizontal (デフォルト) はセクション区切り、horizontal+label は意味的区切り (「または」等)、vertical はインラインアイテムの区切り。',
+        story: '視覚回帰用の総覧。orientation (horizontal / vertical) × weight (thin 1px / normal 2px) と label 付きを集約。normal は強調的な区切り用。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-8 w-96">
-      <Caption text="horizontal — セクション区切り">
-        <div className="flex flex-col gap-2 w-full">
-          <span className="text-sm text-onSurface-muted">セクション 1</span>
-          <Divider />
-          <span className="text-sm text-onSurface-muted">セクション 2</span>
-        </div>
-      </Caption>
-
-      <Caption text="horizontal + label — 意味的区切り (「または」「以上」等)">
-        <div className="flex flex-col gap-2 w-full">
-          <span className="text-sm text-onSurface-muted">SNS でログイン</span>
+      <div className="flex flex-col gap-3">
+        <span className="text-xs text-onSurface-muted">horizontal × weight</span>
+        <Caption text="thin (1px)">
+          <Divider weight="thin" />
+        </Caption>
+        <Caption text="normal (2px)">
+          <Divider weight="normal" />
+        </Caption>
+        <Caption text="label 付き — 意味的区切り (「または」等)">
           <Divider label="または" />
-          <span className="text-sm text-onSurface-muted">メールでログイン</span>
-        </div>
-      </Caption>
+        </Caption>
+      </div>
 
-      <Caption text="vertical — インラインアイテム区切り">
+      <div className="flex flex-col gap-2">
+        <span className="text-xs text-onSurface-muted">vertical × weight (固定高さの flex 内)</span>
         <div className="flex items-center gap-4 h-8">
           <span className="text-sm text-onSurface-muted">利用規約</span>
-          <Divider orientation="vertical" />
-          <span className="text-sm text-onSurface-muted">プライバシーポリシー</span>
-          <Divider orientation="vertical" />
+          <Divider orientation="vertical" weight="thin" />
+          <span className="text-sm text-onSurface-muted">プライバシー</span>
+          <Divider orientation="vertical" weight="normal" />
           <span className="text-sm text-onSurface-muted">お問合せ</span>
         </div>
-      </Caption>
+      </div>
     </div>
   ),
 };
 
-// ── 3. EdgeCases ───────────────────────────────────────────────
-// weight (太さ) の見比べ / 実用統合 (フォーム内 / 設定パネル等) / horizontal+vertical 共存など、
-// 実装の境界条件を確認する。
+// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
+// props だけでは作れない文脈依存: vertical を高さ不定の flex 親で使い self-stretch で追従させる挙動。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '太さ (weight: thin/normal) の見比べ / フォーム内の OR 区切り統合例 / vertical を高さの不明な親で使った場合の挙動など。',
+        story: 'vertical を flex 親 (`items-stretch`) で使うと self-stretch で親の高さに追従する。高さがコンテナ依存になる文脈依存ケース。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-8 w-96">
-      <Caption text="weight: thin (1px) vs normal (2px) — normal は強調的な区切り用">
-        <div className="flex flex-col gap-4 w-full">
-          <Divider weight="thin" />
-          <Divider weight="normal" />
-        </div>
-      </Caption>
-
-      <Caption text="フォーム統合例 — SNS ログイン vs メールログインの OR 区切り">
-        <div className="flex flex-col gap-4 w-full">
-          <button
-            type="button"
-            className="w-full py-2 px-4 border border-border-default rounded text-sm hover:bg-state-hover transition-colors"
-          >
-            Google でログイン
-          </button>
-          <Divider label="または" />
-          <input
-            type="email"
-            placeholder="メールアドレス"
-            className="w-full px-3 py-2 border border-border-default rounded text-sm"
-          />
-        </div>
-      </Caption>
-
-      <Caption text="vertical を flex 親で使う — self-stretch で親の高さに追従">
-        <div className="flex items-stretch gap-4 h-24 border border-dashed border-border-subtle p-3 rounded">
-          <div className="flex-1 flex items-center justify-center bg-surface-layer-2 rounded text-sm text-onSurface-muted">左パネル</div>
-          <Divider orientation="vertical" weight="normal" />
-          <div className="flex-1 flex items-center justify-center bg-surface-layer-2 rounded text-sm text-onSurface-muted">右パネル</div>
-        </div>
-      </Caption>
+    <div className="flex items-stretch gap-4 h-24 w-96 border border-dashed border-border-subtle p-3 rounded">
+      <div className="flex-1 flex items-center justify-center bg-surface-layer-2 rounded text-sm text-onSurface-muted">左パネル</div>
+      <Divider orientation="vertical" weight="normal" />
+      <div className="flex-1 flex items-center justify-center bg-surface-layer-2 rounded text-sm text-onSurface-muted">右パネル</div>
     </div>
   ),
 };

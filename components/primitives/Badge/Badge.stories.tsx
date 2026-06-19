@@ -4,13 +4,10 @@ import { Badge } from './Badge';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Badge stories — 標準ストーリー構造に準拠
+ * Badge stories — VR 集約モデル (§5-3)
  *
- * 順序: Playground → Variants → EdgeCases
- * (States は Badge が非 interactive な `<span>` で hover/focus/active 等の状態を
- *  持たないため省略 — Skeleton / Spinner / Divider と同じ扱い。
- *  Sizes は size prop を廃止し h-6 (24px) 1 サイズに統一したため省略。
- *  WithIcon は icon prop が無いため省略。dot は EdgeCases で扱う)
+ * 3 節構成: Playground / Overview / EdgeCases。
+ * Badge は非 interactive な `<span>` で状態を持たず、size prop も無い (h-6 1 サイズ)。
  *
  * Docs (Guideline) は Badge.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -37,13 +34,15 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 type Story = StoryObj<typeof Badge>;
 
-// ── 1. Playground ──────────────────────────────────────────────
-// args を全開放、Controls から props を探索する起点。
-// `<span>` がレンダリングされ children テキストが反映されることを play test で保証。
+const VARIANTS = ['neutral', 'primary', 'success', 'error', 'warning', 'info'] as const;
+const APPEARANCES = ['solid', 'soft', 'outline'] as const;
+
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
+// args 全開放、Controls から props を探索する起点。
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    // Controls 探索の起点 → 視覚回帰対象外 (Overview が VR 対象。§5-3)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -58,104 +57,71 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
-// 6 つの semantic color × 3 つの appearance を静的にマトリックスで並べる。
-// 「どの context でどの組合せを選ぶか」の判断材料を一覧で見せる。
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在パターンを 1 枚に: appearance × variant マトリクス / dot / count。
 
-const VARIANTS = ['neutral', 'primary', 'success', 'error', 'warning', 'info'] as const;
-const APPEARANCES = ['solid', 'soft', 'outline'] as const;
-
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '6 つの variant (色の意味) を 3 つの appearance (強度) で組み合わせたマトリックス。solid は強調・カウント、soft はリスト内ステータス、outline は控えめなカテゴリラベル。',
+        story: '視覚回帰用の総覧。appearance × variant マトリクス + dot + count を 1 枚に集約。solid は強調・カウント、soft はリスト内ステータス、outline は控えめなカテゴリラベル。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6">
-      <Caption text="variant (color semantics) — default appearance = soft">
-        <div className="flex flex-wrap gap-2">
-          {VARIANTS.map((variant) => (
-            <Badge key={variant} variant={variant}>{variant}</Badge>
-          ))}
-        </div>
-      </Caption>
-
-      <Caption text="appearance × variant マトリックス">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">appearance × variant</div>
         <div className="flex flex-col gap-3">
           {APPEARANCES.map((appearance) => (
             <div key={appearance} className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-onSurface-muted w-14 shrink-0">{appearance}</span>
               {VARIANTS.map((variant) => (
-                <Badge key={variant} variant={variant} appearance={appearance}>
-                  {variant}
-                </Badge>
+                <Badge key={variant} variant={variant} appearance={appearance}>{variant}</Badge>
               ))}
             </div>
           ))}
         </div>
-      </Caption>
-    </div>
-  ),
-};
+      </div>
 
-// ── 3. EdgeCases ───────────────────────────────────────────────
-// dot 付き / 長文 / 数値カウント / 実践例ステータスリスト など、
-// 実際の組み合わせで起こる視覚バランスや崩れ方の確認用。
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'dot 付き (リアルタイム性) / 長文ラベル (whitespace-nowrap で 1 行固定) / 数値カウント / リスト内ステータス表示など、組合せで発生する視覚パターン。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-8">
-      <Caption text="dot — リアルタイム性 (処理中 / 接続中 / 新着等) を示唆">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">dot (リアルタイム性: 処理中 / 接続中 / 新着等)</div>
         <div className="flex flex-wrap gap-2">
           {VARIANTS.map((variant) => (
             <Badge key={variant} variant={variant} dot>{variant}</Badge>
           ))}
         </div>
-      </Caption>
+      </div>
 
-      <Caption text="長文ラベル — whitespace-nowrap で改行せず 1 行で表示 (折返ししたい場合は親側で wrap を許可)">
-        <div className="flex flex-wrap gap-2 max-w-md">
-          <Badge variant="primary" appearance="soft">とても長いラベルテキストが入る場合</Badge>
-          <Badge variant="success" dot>非常に長い説明文のあるバッジ</Badge>
-          <Badge variant="neutral" appearance="outline">Long English text badge example</Badge>
-        </div>
-      </Caption>
-
-      <Caption text="数値カウント — solid で通知バッジ風 (1〜3 桁を想定)">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">count (solid で通知バッジ風 / 1〜3 桁)</div>
         <div className="flex gap-2 items-center">
           <Badge variant="error" appearance="solid">1</Badge>
           <Badge variant="error" appearance="solid">12</Badge>
           <Badge variant="error" appearance="solid">99+</Badge>
           <Badge variant="primary" appearance="solid">NEW</Badge>
         </div>
-      </Caption>
+      </div>
+    </div>
+  ),
+};
 
-      <Caption text="実践例 — リスト内ステータス表示 (カードや行末に揃える定型パターン)">
-        <div className="flex flex-col gap-2 w-80">
-          {([
-            { label: '公開中', variant: 'success', appearance: 'soft', dot: true, item: '記事「公開中の設定」' },
-            { label: '下書き', variant: 'neutral', appearance: 'outline', dot: false, item: '記事「下書きの設定」' },
-            { label: '要レビュー', variant: 'warning', appearance: 'soft', dot: true, item: '記事「要レビューの設定」' },
-            { label: '非公開', variant: 'error', appearance: 'soft', dot: false, item: '記事「非公開の設定」' },
-            { label: 'NEW', variant: 'primary', appearance: 'solid', dot: false, item: 'プロ機能' },
-          ] as const).map(({ label, variant, appearance, dot, item }) => (
-            <div key={label} className="flex items-center justify-between px-3 py-2 rounded-sm border border-border-default">
-              <span className="text-sm text-onSurface">{item}</span>
-              <Badge variant={variant} appearance={appearance} dot={dot}>{label}</Badge>
-            </div>
-          ))}
-        </div>
-      </Caption>
+// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
+// props だけでは作れない文脈依存: 長文ラベルの whitespace-nowrap 挙動 (折返しは親側で許可)。
+
+export const EdgeCases: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '長文ラベル — `whitespace-nowrap` で改行せず 1 行で表示 (折返ししたい場合は親側で wrap を許可)。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-wrap gap-2 max-w-md">
+      <Badge variant="primary" appearance="soft">とても長いラベルテキストが入る場合</Badge>
+      <Badge variant="success" dot>非常に長い説明文のあるバッジ</Badge>
+      <Badge variant="neutral" appearance="outline">Long English text badge example</Badge>
     </div>
   ),
 };

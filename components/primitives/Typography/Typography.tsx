@@ -7,6 +7,8 @@ import { tv } from '../../_internal/tv';
  * h5 / h6 は h4 と視覚的差が小さく実利用も少ないため省略。
  * 階層がさらに深い場合は `as` で <h5>/<h6> タグを指定しつつ `variant="h4"` で見た目を共有する。
  */
+// 型スケール順 = font-size 大→小 / 同サイズは font-weight 太→細
+// (label 14px medium と body-sm 14px regular は同サイズなので太い label を先に置く)
 export type TypographyVariant =
   | 'display'
   | 'h1'
@@ -15,9 +17,9 @@ export type TypographyVariant =
   | 'h4'
   | 'body-lg'
   | 'body'
+  | 'label'
   | 'body-sm'
-  | 'caption'
-  | 'label';
+  | 'caption';
 
 /**
  * テキストカラー（semantic-colors.json の onSurface 系を反映）。
@@ -82,12 +84,12 @@ export type TypographyElement =
  */
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   /**
-   * タイポグラフィのバリアント（視覚スタイル）。
-   * - `display`: 最大級ヒーローテキスト
-   * - `h1`〜`h6`: 見出し（数字が大きいほど小さい）
-   * - `body-lg`/`body`/`body-sm`: 本文（3 段階）
-   * - `caption`: 補助テキスト（最小）
-   * - `label`: フォームラベル等
+   * タイポグラフィのバリアント（視覚スタイル）。font-size 大→小 / 同サイズは太→細の順。
+   * - `display`: 最大級ヒーローテキスト（48px bold）
+   * - `h1`〜`h4`: 見出し（数字が大きいほど小さい。h5/h6 は視覚差が小さいため variant には無く、`as="h5"` でタグだけ指定して `variant="h4"` を流用）
+   * - `body-lg`/`body`/`body-sm`: 本文（18/16/14px）
+   * - `label`: フォームラベル等（14px medium）
+   * - `caption`: 補助テキスト（12px、最小）
    * @default 'body'
    */
   variant?: TypographyVariant;
@@ -125,9 +127,9 @@ const defaultTag: Record<TypographyVariant, TypographyElement> = {
   h4:       'h4',
   'body-lg': 'p',
   body:      'p',
+  label:     'span',
   'body-sm': 'p',
   caption:   'p',
-  label:     'span',
 };
 
 /**
@@ -150,9 +152,9 @@ const typographyVariants = tv({
       h4:        'text-heading-sm font-semibold',
       'body-lg': 'text-body-lg font-normal',
       body:      'text-body-md font-normal',
+      label:     'text-label font-medium',
       'body-sm': 'text-body-sm font-normal',
       caption:   'text-caption font-normal',
-      label:     'text-label font-medium',
     },
     color: {
       default:  'text-onSurface',

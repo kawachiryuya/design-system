@@ -819,7 +819,9 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 全 story のスクリーンショットを baseline と比較する **additive な視覚回帰層**。型・lint・axe・play では拾えない**見た目の silent break** (色相・余白の微調整、`hidden shell:block` のような breakpoint 駆動の表示崩れ等、§10-2) を検出する。test-runner (play + axe、§8-4) とは**別レイヤーで共存**し、置き換えない。
 
-- 実行: GitHub Actions [`.github/workflows/chromatic.yml`](./.github/workflows/chromatic.yml) (`pull_request` / `push:main`)。公式 `chromaui/action` が `npm run build-storybook` (→ `prebuild-storybook` で `tokens:build`) でビルドし撮影する。ローカルは `npm run chromatic` (要 `CHROMATIC_PROJECT_TOKEN` env)。
+- 実行: GitHub Actions [`.github/workflows/chromatic.yml`](./.github/workflows/chromatic.yml) は **`push` ベース** (全ブランチ、tag 除く)。公式 `chromaui/action` が `npm run build-storybook` (→ `prebuild-storybook` で `tokens:build`) でビルドし撮影する。ローカルは `npm run chromatic` (要 `CHROMATIC_PROJECT_TOKEN` env)。
+  - **`pull_request` イベントは使わない** (公式推奨): GitHub が作る ephemeral な merge commit 上で走り baseline の系譜を見失う (PR で before が空になる現象の原因)。push でビルドした head SHA に GitHub App が `UI Tests` status を出すので required check は機能する。
+  - **`autoAcceptChanges: 'main'`**: main は baseline ブランチとして自動 accept。squash マージで git 系譜が切れても main の baseline が確定し、以降の PR が正しく比較できる。差分の人間レビューは PR 段階 (`UI Tests`) で行う前提。
 - **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。tokens / `tokens/preset.cjs` / global CSS / `.storybook/*` を変えると全 story 再撮影 (全コンポーネントに波及するため妥当)。
 - **複数 viewport はレイアウト系のみ**: `parameters.chromatic.viewports = [375, 1280]` を **AppShell / TwoColumn / SplitPane** の meta に設定し mobile / desktop を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
 - **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。token 値の変化は利用側コンポーネントの snapshot で捕捉されるため検知漏れにはならない。

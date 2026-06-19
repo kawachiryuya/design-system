@@ -5,10 +5,10 @@ import { Button } from '../Button/Button';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Spinner stories — 標準ストーリー構造に準拠
+ * Spinner stories — VR 集約モデル (§5-3)
  *
- * 順序: Playground → Variants → Sizes → EdgeCases
- * (States は Spinner が常に animating で静的状態なし、WithIcon は Spinner が icon そのもの、いずれも省略)
+ * 3 節構成: Playground / Overview / EdgeCases。
+ * Spinner は常に animating (静的状態なし) で icon そのものなので States / WithIcon は無い。
  *
  * Docs (Guideline) は Spinner.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -30,86 +30,81 @@ const meta: Meta<typeof Spinner> = {
 export default meta;
 type Story = StoryObj<typeof Spinner>;
 
-// ── 1. Playground ──────────────────────────────────────────────
-// args を全開放、Controls から props を探索する起点。
-// role="status" + aria-label + sr-only text の 3 重 a11y 装備を play test で保証。
+const SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
+
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
+// args 全開放、Controls から props を探索する起点。
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    // Controls 探索の起点 → 視覚回帰対象外 (Overview が VR 対象。§5-3)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`role="status"` + `aria-label` + `.sr-only` テキストの 3 重 a11y 装備を play test で保証。',
+        story: 'Controls から props を切り替えて挙動を確認する起点。`role="status"` + `aria-label` + `.sr-only` テキストの 3 重 a11y 装備を play test で保証。',
       },
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // role="status" + aria-label="読み込み中" の自動付与を検証
     const spinner = canvas.getByRole('status', { name: '読み込み中' });
     await expect(spinner).toBeInTheDocument();
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
-// 3 色のセマンティックカラーを静的に横並び。"どの context でどの color" の判断材料。
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在パターンを 1 枚に: size 6 段 + color 3 種 (white はダーク背景上)。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '3 色のカラーを比較。primary は CTA / 主要操作の待機、neutral はカード内 / 控えめ、white はダーク背景 / 色面ボタン内で背景に合わせて選ぶ。',
+        story: '視覚回帰用の総覧。size 6 段 (xs 12px 〜 2xl 64px) と color 3 種 (primary / neutral / white) を集約。white はダーク背景・色面ボタン用。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-wrap gap-8 items-center">
-      <Caption text="primary (CTA / 主要操作)">
-        <Spinner size="lg" color="primary" />
-      </Caption>
-      <Caption text="neutral (カード内 / 控えめ)">
-        <Spinner size="lg" color="neutral" />
-      </Caption>
-      <Caption text="white (ダーク背景 / 色面ボタン)">
-        <div className="bg-neutral-800 p-4 rounded">
-          <Spinner size="lg" color="white" />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (xs / sm / md / lg / xl / 2xl)</div>
+        <div className="flex flex-wrap gap-6 items-end">
+          {SIZES.map((size) => (
+            <Caption key={size} text={size}>
+              <Spinner size={size} color="primary" />
+            </Caption>
+          ))}
         </div>
-      </Caption>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">color (primary / neutral / white)</div>
+        <div className="flex flex-wrap gap-8 items-center">
+          <Caption text="primary (CTA / 主要操作)">
+            <Spinner size="lg" color="primary" />
+          </Caption>
+          <Caption text="neutral (カード内 / 控えめ)">
+            <Spinner size="lg" color="neutral" />
+          </Caption>
+          <Caption text="white (ダーク背景 / 色面ボタン)">
+            <div className="bg-neutral-800 p-4 rounded">
+              <Spinner size="lg" color="white" />
+            </div>
+          </Caption>
+        </div>
+      </div>
     </div>
   ),
 };
 
-// ── 3. Sizes ───────────────────────────────────────────────────
-
-export const Sizes: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'xs (12px) / sm (16px) / md (24px) / lg (32px) / xl (48px) / 2xl (64px) の見比べ。サイズ選定の指針はインライン=xs/sm、コンポーネント中央=md/lg、フルページ=xl/2xl。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-wrap gap-6 items-end">
-      {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const).map((size) => (
-        <Caption key={size} text={size}>
-          <Spinner size={size} color="primary" />
-        </Caption>
-      ))}
-    </div>
-  ),
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
-// インライン (テキスト隣) / ボタン内 / フルページ overlay など、
-// 実際の組み合わせで起こる視覚バランスや a11y の確認用。
+// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
+// props だけでは作れない文脈依存: 周囲レイアウトとの視覚バランス。
+// インライン (テキスト隣) / ボタン内 / フルページ overlay。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'インライン (テキスト隣) / ボタン内 isLoading 状態 / フルページ overlay の組合せパターン。Spinner は単独で完結しないため、parent との視覚バランスがキーになる。',
+        story: 'インライン (テキスト隣) / ボタン内 isLoading / フルページ overlay。Spinner は単独で完結せず parent との視覚バランスがキーになる文脈依存ケース。',
       },
     },
   },

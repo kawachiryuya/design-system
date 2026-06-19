@@ -483,6 +483,7 @@ Composite → components/composites/ComponentName/
 - `tags: ['autodocs']` は **付けない** (`.guideline.mdx` が `<Meta of>` で Docs を兼ねるため)
 - 各 story に `parameters.docs.description.story` で一行説明を必須
 - Variants / Sizes / States / WithIcon / EdgeCases は **args 非依存の静的 render** (視覚回帰の対象に)
+- **視覚回帰 (Chromatic) の撮影対象は静的カタログ** (Variants / Sizes / States 等)。**Playground は Controls 探索の起点なので撮影対象外** とし、`parameters.chromatic.disableSnapshot = true` を付ける (静的カタログと冗長なため。§9-4)。overlay / portal 系で「開いた状態」が重要なものは、トリガー裏に残さず**開状態を静的 story に持たせて撮る** (#78)
 - 色・余白はハードコードせず Tokens (semantic Tailwind ユーティリティ) を参照
 
 **節省略の判断**:
@@ -822,7 +823,8 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 - **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。tokens / `tokens/preset.cjs` / global CSS / `.storybook/*` を変えると全 story 再撮影 (全コンポーネントに波及するため妥当)。
 - **複数 viewport はレイアウト系のみ**: `parameters.chromatic.viewports = [375, 1280]` を **AppShell / TwoColumn / SplitPane** の meta に設定し mobile / desktop を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
 - **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。token 値の変化は利用側コンポーネントの snapshot で捕捉されるため検知漏れにはならない。
-- **撮影対象 story の選別方針は別途精査中** (Playground 除外 / overlay 系の開状態 story 化、issue 化済み)。現状は Playground 含む全 component story を撮影。
+- **Playground は撮影対象外**: 全 component story の `Playground` に `parameters.chromatic.disableSnapshot = true` を付ける (Controls 探索の起点で、静的カタログ Variants/Sizes/States と冗長なため。§5-3)。
+- **overlay / portal 系の開状態は #78 で対応中**: Modal / Popover / Tooltip / DropdownMenu / Toast は「開いた状態」が play 駆動 story にしか無い (Toast は未撮影)。開状態の静的 story を追加して撮るのは別 PR (#78) で進める。それまで該当 component の Playground は撮影対象に残す。
 - **人間ゲート (機械的に弾く §5-5-1 とは別レイヤー)**: 視覚差分の合否は人間が Chromatic UI でレビュー & accept する。`exitZeroOnChanges: true` のため Actions の `chromatic` job は視覚差分では赤にならず、PR の required check には Chromatic の **"UI Tests"** status を使う (branch protection)。初回 baseline の accept・token 登録 (`CHROMATIC_PROJECT_TOKEN` secret) も人間が行う。
 - semver: 視覚回帰の CI 追加は消費者向け契約 (§10-6) に影響せず **bump 不要**。ただし Chromatic が検出する**意図しない見た目変化**自体は visual break (§10-2) として CHANGELOG / semver の対象。
 

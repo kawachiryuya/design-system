@@ -53,6 +53,8 @@ export const Playground: Story = {
     </Section>
   ),
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls の `padding` を切り替えて上下余白 (py-section) の差を確認。Section は full-width、横幅は内側 Center が絞る。dashed の親が Section の領域 (= 画面端まで full-width)。',

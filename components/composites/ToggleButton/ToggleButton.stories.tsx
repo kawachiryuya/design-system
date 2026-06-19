@@ -34,6 +34,8 @@ type Story = StoryObj<typeof ToggleButton>;
 export const Playground: Story = {
   args: { onClick: fn() },
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から selected / disabled / children を切り替えて挙動を確認。クリックでも selected が toggle される (stateful wrapper、Controls 値を初期値として読み込む)。',

@@ -86,6 +86,8 @@ export const Playground: Story = {
     </SplitPane>
   ),
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls の `listWidth` / `divider` / `height` を切り替えて挙動確認。PC (cols breakpoint) では左右 grid、両 pane が独立スクロール (各 pane 内を scroll しても他方は動かない)。Storybook を viewport switcher で mobile に切り替えると縦積みに。',

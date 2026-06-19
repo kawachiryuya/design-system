@@ -50,6 +50,8 @@ export const Playground: Story = {
     </Center>
   ),
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls の `max` を切り替えて、内側 box の最大幅が `sm` (448) → `md` (768) → `lg` (896) → `xl` (1024) と段階的に広がるのを確認する。`as` は描画 HTML 要素 (semantic タグ) の切り替え、見た目には影響なし。',

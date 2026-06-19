@@ -42,6 +42,8 @@ type Story = StoryObj<typeof Alert>;
 export const Playground: Story = {
   args: { onClose: fn() },
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から variant / title / hideIcon 等を切り替えて挙動を確認する起点。閉じるボタン click で onClose が呼ばれることを play test で保証。',

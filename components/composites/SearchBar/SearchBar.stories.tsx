@@ -47,6 +47,8 @@ type Story = StoryObj<typeof SearchBar>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から size / fullWidth / isLoading / disabled / placeholder / value を切替。テキスト入力 → クリアボタン click で値が消えることを play test で保証。',

@@ -35,6 +35,8 @@ type Story = StoryObj<typeof Avatar>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から size / shape / status / src / name を切替。src 未指定時は name のイニシャル、それも無ければプレースホルダーアイコンへフォールバック。',

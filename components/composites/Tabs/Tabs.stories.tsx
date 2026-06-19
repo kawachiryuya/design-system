@@ -70,6 +70,8 @@ type Story = StoryObj<typeof Tabs>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から defaultActiveId / ariaLabel を切替。キーボード操作 (← → Home End) を play test で検証。',

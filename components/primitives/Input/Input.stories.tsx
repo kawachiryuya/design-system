@@ -50,6 +50,8 @@ type Story = StoryObj<typeof Input>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。label の自動付与 (htmlFor / id の連携) と type 属性の反映を play test で保証。',

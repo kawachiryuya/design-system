@@ -35,6 +35,8 @@ type Story = StoryObj<typeof FilterChip>;
 export const Playground: Story = {
   args: { onClick: fn() },
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls で active / disabled / children を切替。click で onClick が呼ばれることを play test で保証。',

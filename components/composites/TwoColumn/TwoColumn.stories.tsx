@@ -59,6 +59,8 @@ export const Playground: Story = {
     </div>
   ),
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls の `split` を切り替えて fr テンプレート (2fr_1fr 等) の比率変化を確認。`mobileReverse` を true にすると mobile で sidebar が上に来る。viewport switcher で mobile / PC (cols breakpoint) 切替推奨。',

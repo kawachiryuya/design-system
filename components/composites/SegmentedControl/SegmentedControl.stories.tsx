@@ -28,6 +28,8 @@ type Story = StoryObj<PlaygroundArgs>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'click / 矢印キーでセグメントが切り替わり onChange が呼ばれること、radiogroup の role/aria-checked を play test で保証。',

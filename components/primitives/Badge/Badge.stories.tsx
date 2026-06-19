@@ -43,6 +43,8 @@ type Story = StoryObj<typeof Badge>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から variant / appearance / dot を切り替えて見え方を確認する起点。Badge は非 interactive な `<span>` で、ARIA role は付かない (テキストそのものが意味を伝える前提)。',

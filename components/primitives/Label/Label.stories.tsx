@@ -39,6 +39,8 @@ type Story = StoryObj<typeof Label>;
 export const Playground: Story = {
   args: { required: true, htmlFor: 'playground-input' },
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。required=true 指定時に `*` マークが aria-label="必須" 付きで描画されることを play test で保証。',

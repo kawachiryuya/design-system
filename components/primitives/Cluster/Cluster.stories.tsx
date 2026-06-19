@@ -55,6 +55,8 @@ export const Playground: Story = {
     </Cluster>
   ),
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls の `gap` / `align` / `justify` を切り替えて配置の差を確認。親幅 (24rem = 384px) より長い場合は折り返す (常に flex-wrap)。',

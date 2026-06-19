@@ -36,6 +36,8 @@ type Story = StoryObj<typeof Spinner>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`role="status"` + `aria-label` + `.sr-only` テキストの 3 重 a11y 装備を play test で保証。',

@@ -44,6 +44,8 @@ type Story = StoryObj<typeof Icon>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。name="search" を指定すると registry の label "検索" が自動的に aria-label として付き role="img" になることを play test で保証。',

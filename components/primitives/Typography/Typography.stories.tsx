@@ -48,6 +48,8 @@ type Story = StoryObj<typeof Typography>;
 export const Playground: Story = {
   args: { variant: 'h2', as: 'h3', children: '見た目は h2、構造は h3' },
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`as` で指定した HTML 要素が実際にレンダリングされることを play test で保証 (この例では `<h3>` タグ + text-heading-lg スタイル)。',

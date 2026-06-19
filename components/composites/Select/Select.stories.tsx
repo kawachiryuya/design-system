@@ -48,6 +48,8 @@ type Story = StoryObj<typeof Select>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から size / required / disabled / error / fullWidth 等を切替。selectOptions で値が反映されることを play test で保証。',

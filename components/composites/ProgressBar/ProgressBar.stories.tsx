@@ -45,6 +45,8 @@ type Story = StoryObj<typeof ProgressBar>;
 
 export const Playground: Story = {
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls から value (slider) / color / size / showValue / indeterminate を切替。`role="progressbar"` + `aria-valuenow` で SR に進捗を伝達。',

@@ -56,6 +56,8 @@ export const Playground: Story = {
     </Stack>
   ),
   parameters: {
+    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'Controls の `gap` を切り替えて間隔の差を確認、`align` で cross-axis (横方向) 配置の切替を体験。`as` で描画 HTML 要素を変えても見た目は同じ (semantic タグだけ変わる)。',

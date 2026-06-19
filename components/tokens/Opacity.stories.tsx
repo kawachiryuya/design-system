@@ -2,7 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta = {
   title: 'Tokens/Opacity',
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    // Tokens/* は値の可視化であり UI ではない → 視覚回帰対象外 (§9-4 / test-runner の axe 除外と対)。
+    // token 値の変化は利用側コンポーネントの snapshot で捕捉される。
+    chromatic: { disableSnapshot: true },
+  },
 };
 export default meta;
 type Story = StoryObj;

@@ -814,6 +814,18 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 - CI ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) の `pull_request` / `push:main` で自動実行する。
 - 参照先のページ (story id) を rename / 削除したら、リンク側も同 PR で追従する。
 
+### 9-4. 視覚回帰 (Chromatic)
+
+全 story のスクリーンショットを baseline と比較する **additive な視覚回帰層**。型・lint・axe・play では拾えない**見た目の silent break** (色相・余白の微調整、`hidden shell:block` のような breakpoint 駆動の表示崩れ等、§10-2) を検出する。test-runner (play + axe、§8-4) とは**別レイヤーで共存**し、置き換えない。
+
+- 実行: GitHub Actions [`.github/workflows/chromatic.yml`](./.github/workflows/chromatic.yml) (`pull_request` / `push:main`)。公式 `chromaui/action` が `npm run build-storybook` (→ `prebuild-storybook` で `tokens:build`) でビルドし撮影する。ローカルは `npm run chromatic` (要 `CHROMATIC_PROJECT_TOKEN` env)。
+- **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。tokens / `tokens/preset.cjs` / global CSS / `.storybook/*` を変えると全 story 再撮影 (全コンポーネントに波及するため妥当)。
+- **複数 viewport はレイアウト系のみ**: `parameters.chromatic.viewports = [375, 1280]` を **AppShell / TwoColumn / SplitPane** の meta に設定し mobile / desktop を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
+- **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。token 値の変化は利用側コンポーネントの snapshot で捕捉されるため検知漏れにはならない。
+- **撮影対象 story の選別方針は別途精査中** (Playground 除外 / overlay 系の開状態 story 化、issue 化済み)。現状は Playground 含む全 component story を撮影。
+- **人間ゲート (機械的に弾く §5-5-1 とは別レイヤー)**: 視覚差分の合否は人間が Chromatic UI でレビュー & accept する。`exitZeroOnChanges: true` のため Actions の `chromatic` job は視覚差分では赤にならず、PR の required check には Chromatic の **"UI Tests"** status を使う (branch protection)。初回 baseline の accept・token 登録 (`CHROMATIC_PROJECT_TOKEN` secret) も人間が行う。
+- semver: 視覚回帰の CI 追加は消費者向け契約 (§10-6) に影響せず **bump 不要**。ただし Chromatic が検出する**意図しない見た目変化**自体は visual break (§10-2) として CHANGELOG / semver の対象。
+
 ---
 
 ## 10. Semver 規約

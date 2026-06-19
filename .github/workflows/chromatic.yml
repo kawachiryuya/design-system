@@ -1,0 +1,49 @@
+name: Chromatic
+
+# 視覚回帰 (Chromatic) — 既存 CI (ci.yml の verify) に対し additive。
+# 全 story のスクリーンショットを baseline と比較する。差分の合否判断は
+# Chromatic UI で人間が行うため、本 job 自体は視覚差分では fail させない
+# (exitZeroOnChanges: true)。required check は Chromatic の "UI Tests" status を使う。
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # TurboSnap が baseline を git 履歴で辿るため全履歴が必要
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@kawachiryuya'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build-storybook # prebuild-storybook フックで tokens:build も走る
+          onlyChanged: true # TurboSnap: 変更 story (と依存先) だけ再撮影
+          exitZeroOnChanges: true # 視覚差分で Actions job を赤にしない (差分は Chromatic UI でレビュー)

@@ -77,8 +77,8 @@ interface ButtonRegularProps extends ButtonBaseProps {
    * 例: 「購入する / ¥1,200」「予約する / 残り3席」のように、主アクションに付随する
    * 数値・補足情報を 1 つの押下対象に集約したい時に使う。
    *
-   * - `text-xs`(md) / `text-sm`(lg) で主ラベルより一段小さく、階層化は font-size のみで作る (opacity は当てない — 価格・残数など読ませたい情報なのでフル不透明)
-   * - **`size="sm"` 時は描画されない**（タッチターゲット内で 2 行は潰れるため）
+   * - `text-xs`(sm/md) / `text-sm`(lg) で主ラベルより一段小さく、階層化は font-size のみで作る (opacity は当てない — 価格・残数など読ませたい情報なのでフル不透明)
+   * - 全 size で描画される（`min-h` は最小値なので、2 行になると縦に伸びるだけで潰れない）
    * - icon と共存可。アイコンは 2 行ブロック全体の左右に配置される
    */
   description?: React.ReactNode;
@@ -116,7 +116,7 @@ interface ButtonRegularProps extends ButtonBaseProps {
  *   <Button iconOnly icon={<Icon name="close" />} aria-label="閉じる" />
  *
  * @example
- *   // 2 行 CTA（主ラベル + サブ情報）。`size="sm"` では description は描画されない。
+ *   // 2 行 CTA（主ラベル + サブ情報）。全 size で描画される。
  *   <Button variant="primary" size="lg" description="¥1,200">
  *     購入する
  *   </Button>
@@ -347,11 +347,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <span className="flex-shrink-0 inline-flex items-center">{icon}</span>
     );
 
-    // 2 行 CTA: size="sm" では描画しない (タッチターゲット内で潰れる)。
-    // 主ラベル + description を縦並びにまとめて、icon/spinner と横並びにする。
-    const showDescription = Boolean(description) && size !== 'sm';
+    // 2 行 CTA: 主ラベル + description を縦並びにまとめて、icon/spinner と横並びにする。
+    // 全 size で描画する (min-h は最小値なので、2 行で縦に伸びるだけで潰れない)。
+    // 主ラベルと description の間は gap-0.5 (2px) で詰まりすぎないようにする。
+    const showDescription = Boolean(description);
     const labelBlock = showDescription ? (
-      <span className="inline-flex flex-col items-center leading-tight">
+      <span className="inline-flex flex-col items-center leading-tight gap-0.5">
         <span>{children}</span>
         <span className={size === 'lg' ? 'text-sm' : 'text-xs'}>{description}</span>
       </span>

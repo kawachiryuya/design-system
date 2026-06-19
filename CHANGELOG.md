@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **Primitives/Button: `description` を全 size で描画 + 行間を調整** (視覚変化、silent break §10-2): 従来 `size="sm"` では `description` を描画していなかったが、全 size で描画するよう変更 (`min-h` は最小値なので 2 行で縦に伸びるだけ、潰れない)。あわせて主ラベルと `description` の間に `gap-0.5` (2px) を追加し、詰まって見える問題を解消。既存の `<Button size="sm" description="…">` は 1 行 → 2 行表示に変わり縦に伸びる。[`Button.tsx`](./components/primitives/Button/Button.tsx)
+
 ## [4.0.0] - 2026-06-18
 
 **A2 配信 (Tailwind 非依存化)** の破壊的リリース。消費側は DS のために Tailwind (preset 継承・`content` スキャン) を必須としなくなり、代わりに `@kawachiryuya/design-system/styles.css` + `.../tokens/variables.css` を import する方式へ。`tailwindcss` は peerDependencies から外れた。同梱の安定性ポリシー (#63) / テーマ契約・軸・密度の構造 (#59/#60/#61) は非破壊。移行は下記 ⚠ BREAKING CHANGES / Migration を参照。

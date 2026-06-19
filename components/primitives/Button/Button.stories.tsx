@@ -173,13 +173,13 @@ export const WithIcon: Story = {
 
 // ── 6. WithDescription ─────────────────────────────────────────
 // 2 行 CTA (主ラベル + サブ情報)。モバイル CTA で価格・残数などを 1 押下対象に集約する用途。
-// size="sm" では description は描画されない (タッチターゲット内で潰れるため)。
+// 全 size で描画される (min-h は最小値なので 2 行で縦に伸びるだけ)。
 
 export const WithDescription: Story = {
   parameters: {
     docs: {
       description: {
-        story: '主ラベル下に description を並べる 2 行 CTA。価格・残数などのサブ情報を主アクションと同じ押下対象に集約する想定。`size="sm"` では description は描画されない (タッチターゲット内で潰れるため、最下段で挙動確認)。',
+        story: '主ラベル下に description を並べる 2 行 CTA。価格・残数などのサブ情報を主アクションと同じ押下対象に集約する想定。`size="sm"` でも描画される (min-h は最小値なので 2 行で縦に伸びるだけ、最下段で挙動確認)。',
       },
     },
   },
@@ -209,7 +209,7 @@ export const WithDescription: Story = {
           <Button variant="destructive" description="この操作は取り消せません">削除する</Button>
         </div>
       </Caption>
-      <Caption text="size='sm' は description を無視 (1 行のまま)">
+      <Caption text="sm (text-sm + text-xs) — sm でも 2 行描画される">
         <Button size="sm" description="¥1,200">購入</Button>
       </Caption>
     </div>

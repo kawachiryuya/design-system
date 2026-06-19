@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### ⚠ BREAKING CHANGES
+
+- **ストーリー構造を VR 集約モデルへ移行 (Button から、段階展開)** (story id 削除 = silent break §10-2): `.stories.tsx` を **Playground / Overview / EdgeCases の 3 節**に統一する規約に変更 (AGENTS.md §5-3)。視覚回帰 (Chromatic) は props で作れる内在パターンを 1 枚に凍結した **Overview** と、文脈依存の **EdgeCases** のみを撮影し、`Playground` は撮影外。旧カタログ (`Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription`) は Overview + guideline.mdx に集約し**削除**する。**Button が参照実装**として先行移行 — `Primitives/Button` の `Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription` story が**削除**された (これらの Storybook URL `?path=/story/primitives-button--variants` 等は無効になる)。残コンポーネントは 1 コンポーネント = 1 PR で順次移行 (§7)。`check:conventions` の `SECTION_ORDER` に `Overview` を追加。
+
 ### Changed
 
 - **Primitives/Button: `description` を全 size で描画 + 行間を調整** (視覚変化、silent break §10-2): 従来 `size="sm"` では `description` を描画していなかったが、全 size で描画するよう変更 (`min-h` は最小値なので 2 行で縦に伸びるだけ、潰れない)。あわせて主ラベルと `description` の間に `gap-0.5` (2px) を追加し、詰まって見える問題を解消。既存の `<Button size="sm" description="…">` は 1 行 → 2 行表示に変わり縦に伸びる。[`Button.tsx`](./components/primitives/Button/Button.tsx)

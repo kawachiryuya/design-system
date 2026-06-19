@@ -464,38 +464,33 @@ Composite → components/composites/ComponentName/
 - **状態は `data-*` 属性 + variant で表す** (スタイリング3規律 2)。`open` / `loading` / `selected` / `checked` / `disabled` 等は要素に `data-state=...` / `data-loading` 等を付け、tv 側を `data-[state=open]:` / `data-[loading]:` の variant で当てる。class を条件付加 (`checked ? 'bg-x' : 'bg-y'`) しない。参照実装: `Switch` (toggle 系) / `Accordion` (open 系)
 - **SSR / RSC セーフを契約にする** (#62)。module / render スコープで `window` / `document` を触らない (browser API は `useEffect` / event handler 内に置く)。**`'use client'` をファイル先頭に付ける条件**: hook (`useState` / `useEffect` / `useRef` / `useId` 等) を使う、自前の event handler を host 要素に常時 attach する (例: `Link` / `Pagination`)、または Context Provider を持つ。**付けない**: hook を持たず consumer の `onClick` 等を `{...props}` で spread するだけの純表示 (Badge / Divider / Typography / Icon / レイアウト primitive / Button / Card 等) — Server Component として描けるよう「shared」のままにする。
 
-### 5-3. `.stories.tsx` の規約 — 標準ストーリー構造 (固定順序)
+### 5-3. `.stories.tsx` の規約 — VR 集約モデル (固定 3 節)
 
-**全コンポーネントで節の命名と順序を統一する**。デザイナー以外の読者が「次のコンポーネントを見ても並びが同じ」状態を作るのが目的。
+**全コンポーネントで 3 節に統一する**。関心事を「対話探索 / 視覚リファレンス / 文脈ストレス」に分け、視覚回帰 (Chromatic) の撮影単位をコンポーネントごとに揃える (1 コンポーネント ≒ 1〜2 枚) のが目的。
 
-| 順 | 節名 | 役割 | 必須 | 備考 |
+| 順 | 節名 | 役割 | VR (Chromatic) | 必須 |
 |---|---|---|---|---|
-| 1 | (Docs) | autodocs の Docs ページ。本リポでは `.guideline.mdx` が `<Meta of={...} />` で兼ねる | 必須 | サイドバーで「Guideline」と表示される |
-| 2 | **Playground** | `args` を全開放、Controls で props を探索する起点 | 必須 | play test (`onClick: fn()` 等) もここに置く |
-| 3 | **Variants** | 種類違いを **静的に横並び** (`primary` / `secondary` / `tertiary` 等) | 任意 | 該当する prop が無ければ省略 |
-| 4 | **Sizes** | サイズ違いを静的に横並び (`small` / `medium` / `large` 等) | 任意 | 該当する prop が無ければ省略 |
-| 5 | **States** | Default / Hover / Focus-visible / Active / Disabled / Loading を **単独で並べる** | 状態を持つ component で必須 | Hover/Focus/Active は `storybook-addon-pseudo-states` で強制表示 (`parameters.pseudo`)。非 interactive (Badge / Skeleton / Spinner / Divider / VisuallyHidden) は省略可、理由を冒頭 docstring に明記 |
-| 6 | **WithIcon** | `icon` / `leadingIcon` / `trailingIcon` / `iconOnly` などの ReactNode prop パターン | 任意 | icon 系 prop が無ければ省略 |
-| 7 | **EdgeCases** | `fullWidth` / 長文ラベル / truncate / 空文字など壊れやすいケースの監視 | 任意 | コンポーネント固有のリスクケースを並べる |
+| 1 | (Docs) | autodocs の Docs ページ。`.guideline.mdx` が `<Meta of={...} />` で兼ねる | — | 必須 |
+| 2 | **Playground** | `args` 全開放、Controls で**任意の 1 状態**を探索する起点。play test もここ | **対象外** (`disableSnapshot`) | 必須 |
+| 3 | **Overview** | **props で作れる内在的パターンを 1 枚に凍結した総覧グリッド** (variant × state / size / icon / description 等)。Controls で再現できるものは原則ここに集約 | **対象** | 必須 |
+| 4 | **EdgeCases** | **props だけでは作れない文脈依存の崩れやすさ** (`fullWidth`・制約幅での長文折返し・inner-span の `truncate` 等) | **対象** | 任意 (該当が無ければ省略) |
+
+**Overview / EdgeCases の境界 = 「内在的 vs 文脈的」**:
+- **内在的** (props だけで決まる) → **Overview**。variant / size / state (Hover/Focus/Active は `storybook-addon-pseudo-states` の `parameters.pseudo` で列ごとに強制表示) / icon (左右 / iconOnly) / loading / disabled / description 等。
+- **文脈的** (周囲のコンテナ幅・特殊マークアップで初めて起きる) → **EdgeCases**。props では作れないものだけを残す。
+- **非視覚** (SR 専用の aria-label 長文など) は **VR に撮らない** (axe (test-runner §8-4) + guideline で担保)。
 
 **書き方ルール**:
-- CSF3 (`Meta` + 名前付き `export`)
-- `tags: ['autodocs']` は **付けない** (`.guideline.mdx` が `<Meta of>` で Docs を兼ねるため)
+- CSF3 (`Meta` + 名前付き `export`)。`tags: ['autodocs']` は付けない (`.guideline.mdx` が Docs を兼ねる)
 - 各 story に `parameters.docs.description.story` で一行説明を必須
-- Variants / Sizes / States / WithIcon / EdgeCases は **args 非依存の静的 render** (視覚回帰の対象に)
-- **視覚回帰 (Chromatic) の撮影対象は静的カタログ** (Variants / Sizes / States 等)。**Playground は Controls 探索の起点なので撮影対象外** とし、`parameters.chromatic.disableSnapshot = true` を付ける (静的カタログと冗長なため。§9-4)。overlay / portal 系で「開いた状態」が重要なものは、トリガー裏に残さず**開状態を静的 story に持たせて撮る** (#78)
+- **Playground は `parameters.chromatic.disableSnapshot = true`** (Controls 探索用で Overview と冗長。§9-4)
+- **Overview / EdgeCases は args 非依存の静的 render** (視覚回帰の対象)
+- **ReactNode prop (`icon` 等) は `argTypes` の `mapping` で Controls 化** (ラベル → 実要素)。`control: false` で逃げず、Playground で全パターンを再現可能にする (参照: Button の `icon` mapping)
 - 色・余白はハードコードせず Tokens (semantic Tailwind ユーティリティ) を参照
 
-**節省略の判断**:
+**節省略の判断**: Playground / Overview は**絶対省略しない**。EdgeCases は文脈依存の崩れが無ければ省略可。
 
-| 節 | 省略してよい場合 |
-|---|---|
-| Variants | variant 概念がない (Skeleton, Spinner 等) |
-| Sizes | サイズ違いがない |
-| States | 非 interactive で hover/focus/active 等の状態がない (Badge / Skeleton / Spinner / Divider / VisuallyHidden) |
-| WithIcon | icon prop がない |
-| EdgeCases | 視覚的に壊れやすいケースがない (極小コンポーネント) |
-| Playground | **絶対省略しない** |
+> **移行中の旧構造**: 旧モデルは Variants / Sizes / States / WithIcon / WithDescription のカタログ群を個別 VR していた。これらは Overview (視覚) + guideline.mdx (設計根拠の散文) に集約されるため**段階的に削除**する (1 コンポーネント = 1 PR、§7)。story id の削除は silent break (§10-2) なので CHANGELOG に明記。`check:conventions` は移行中の両構造を許容する。
 
 参考実装: [`components/primitives/Button/Button.stories.tsx`](./components/primitives/Button/Button.stories.tsx)
 

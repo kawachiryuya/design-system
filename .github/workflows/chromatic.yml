@@ -1,15 +1,20 @@
 name: Chromatic
 
 # 視覚回帰 (Chromatic) — 既存 CI (ci.yml の verify) に対し additive。
-# 全 story のスクリーンショットを baseline と比較する。差分の合否判断は
-# Chromatic UI で人間が行うため、本 job 自体は視覚差分では fail させない
-# (exitZeroOnChanges: true)。required check は Chromatic の "UI Tests" status を使う。
+#
+# push ベースで実行する (Chromatic 公式推奨)。pull_request イベントは GitHub が作る
+# ephemeral な merge commit 上で走り、baseline の系譜を見失う (PR で before が空になる)
+# ため使わない。PR には push でビルドした head SHA に対し Chromatic GitHub App が
+# "UI Tests" status を出すので、required check は従来どおり機能する。
+#
+# 差分の合否は Chromatic UI で人間がレビュー & accept する (exitZeroOnChanges: true)。
+# main は baseline ブランチとして自動 accept する (autoAcceptChanges) — squash マージで
+# 系譜が切れても main の baseline が確定し、以降の PR が正しく比較できる。
 
 on:
   push:
     branches:
-      - main
-  pull_request:
+      - '**' # 全ブランチ (tag は対象外 = release.yml と分離)
 
 concurrency:
   group: chromatic-${{ github.ref }}
@@ -25,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # TurboSnap が baseline を git 履歴で辿るため全履歴が必要
+          fetch-depth: 0 # TurboSnap / baseline 検出に全履歴が必要
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,3 +52,4 @@ jobs:
           buildScriptName: build-storybook # prebuild-storybook フックで tokens:build も走る
           onlyChanged: true # TurboSnap: 変更 story (と依存先) だけ再撮影
           exitZeroOnChanges: true # 視覚差分で Actions job を赤にしない (差分は Chromatic UI でレビュー)
+          autoAcceptChanges: 'main' # main は baseline ブランチとして自動 accept (squash マージでの baseline 消失を防ぐ)

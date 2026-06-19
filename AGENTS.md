@@ -708,6 +708,24 @@ http://localhost:6006 で目視確認:
 | Props 表の Default 列が消えない | sbdocs の CSS 上書きが効いていない → `.storybook/tailwind.css` の `.docblock-argstable` ルールを確認 |
 | `truncate` が効かない (ellipsis 出ない) | flex 子に `min-width: 0` がない → `<ComponentName><span className="min-w-0 truncate">long text</span></ComponentName>` の inner span パターンを使う |
 
+### 7-10. VR 集約モデルへの移行手順 (Playground / Overview / EdgeCases)
+
+旧カタログ構造 (§7-2〜7-9 で移行したもの) を **VR 集約モデル (§5-3)** へ移す手順。**1 コンポーネント = 1 PR**、primitives → composites の順。参照実装は [`components/primitives/Button/`](./components/primitives/Button/) 一式 (先行移行済み)。
+
+**手順 (1 コンポーネント分)**:
+
+1. **監査**: prop 空間を把握する (variant / size / state / icon / description / loading / fullWidth など、Controls で表せる軸を洗い出す)。
+2. **Playground を完全 Controls 化**: `args` を全開放し、**ReactNode prop (`icon` 等) は `argTypes` の `mapping`** (ラベル → 実要素) で選択可能にする。`control: false` を残さない (例: Button の `icon` mapping)。`chromatic.disableSnapshot: true` を付ける (VR 対象外)。play test はここ。
+3. **Overview を作る (VR 対象)**: props で作れる**内在的パターンを 1 枚に凍結**する。基本構成は **variant (行) × state (列) マトリクス** + size + icon + その他 prop 別セクション。Hover/Focus/Active は `parameters.pseudo` で列ごとに id 指定して強制表示。
+4. **EdgeCases を純化 (VR 対象)**: **props だけでは作れない文脈依存ケースだけ**残す (制約幅での長文折返し / inner-span `truncate` / `fullWidth` 等)。**非視覚 (SR 専用 aria-label 長文など) は削除** — axe (§8-4) + guideline で担保する。文脈依存ケースが無ければ EdgeCases 自体を省略。
+5. **旧カタログを削除**: `Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription` を削除。各 story の設計根拠 (例: size と WCAG タッチターゲット) は **guideline.mdx の Do/Don't・アクセシビリティ節に既出か確認**し、無ければ移設する (散文の方が適切)。
+6. **guideline.mdx のリンク追従**: 削除した story を `?path=` で参照していないか確認 (`check:links` が CI で検出)。`<ArgTypes of={Stories.Playground} />` は維持。
+7. **overlay / portal 系の特例** (Modal / Popover / Tooltip / DropdownMenu / Toast): 「開いた状態」が play 駆動 story にしか無い盲点があるため、**Overview に `open` / `defaultOpen` 直指定で開状態を静的に持たせて撮る** (トリガー裏に残さない)。`<dialog>` 系で同時に 1 つしか開けない等は、状態ごとに Overview 内のサブ snapshot か別 story で分ける。
+8. **CHANGELOG**: 削除した story id を `[Unreleased]` の **⚠ BREAKING CHANGES** に明記 (Storybook URL 無効化 = silent break §10-2)。
+9. **検証 → PR → accept**: `npm run verify` (check:conventions / check:links) + `npm run build-storybook` 緑。PR を出し、Chromatic (UI Tests) で Overview / EdgeCases の差分をレビュー & accept してからマージ。
+
+**レイアウト系の注意**: `AppShell` / `TwoColumn` / `SplitPane` は Overview の meta に `chromatic.viewports = [375, 1280]` を維持する (§9-4)。
+
 ---
 
 ## 8. アクセシビリティ前提

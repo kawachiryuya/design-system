@@ -6,7 +6,7 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Cluster stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → EdgeCases
+ * 順序: Playground → Overview → EdgeCases
  */
 const meta: Meta<typeof Cluster> = {
   title: 'Primitives/Cluster',
@@ -70,9 +70,9 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (VR 対象) ────────────────────────────────────────────────
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {

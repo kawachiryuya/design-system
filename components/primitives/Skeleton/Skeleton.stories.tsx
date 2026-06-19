@@ -6,7 +6,7 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Skeleton stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → EdgeCases
+ * 順序: Playground → Overview → EdgeCases
  * (Sizes は width/height が連続値で discrete サイズなし、States は Skeleton が常に
  *  読み込み中の単一状態、WithIcon は該当なし、いずれも省略)
  *
@@ -54,10 +54,10 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (VR 対象) ────────────────────────────────────────────────
 // 4 種類の形状を静的に横並び。"どの実コンテンツを置く予定か" で選ぶ判断材料。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {

@@ -6,7 +6,7 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Typography stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → EdgeCases
+ * 順序: Playground → Overview → EdgeCases
  * (Sizes は variant に内包、States は Typography に状態なし、WithIcon は icon prop なし、すべて省略)
  *
  * Docs (Guideline) は Typography.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
@@ -65,11 +65,11 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (VR 対象) ────────────────────────────────────────────────
 // 12 種類の variant を縦に積んでタイプスケールを示す。
 // 「どのサイズ・装飾でどの variant を使うか」の判断材料。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {

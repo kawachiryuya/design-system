@@ -6,7 +6,7 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Center stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → EdgeCases
+ * 順序: Playground → Overview → EdgeCases
  * (Sizes は max prop に内包、States は Center に状態なし、WithIcon は icon prop なし、いずれも省略)
  *
  * Docs (Guideline) は Center.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
@@ -65,10 +65,10 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (VR 対象) ────────────────────────────────────────────────
 // 4 段階の max-width を縦に並べて見比べ。"どれを使うか" の判断材料。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {

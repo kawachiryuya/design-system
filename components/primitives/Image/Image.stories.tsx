@@ -10,7 +10,7 @@ const BROKEN_IMG = 'https://invalid-url.example.com/image.jpg';
 /**
  * Image stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → EdgeCases
+ * 順序: Playground → Overview → EdgeCases
  * (Sizes は width/height 連続値で discrete サイズなし、States は Image が静的、
  *  WithIcon は icon prop なし、いずれも省略)
  *
@@ -62,10 +62,10 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (VR 対象) ────────────────────────────────────────────────
 // 5 種類のアスペクト比を静的に並べる。"どの比率の枠で見せるか" の判断材料。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {

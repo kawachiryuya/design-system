@@ -2,6 +2,7 @@ import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
 import * as CardStories from './Card.stories';
 import { Card } from './Card';
 import { Button } from '../../primitives/Button/Button';
+import { Badge } from '../../primitives/Badge/Badge';
 import { DoDontExample } from '@sb-blocks/DoDontExample';
 import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
@@ -131,6 +132,48 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | **画面内のお知らせ** | `<Alert>` | 状態色 + アイコン、SR に `role="alert"` |
 | **データなしの代替表示** | `<EmptyState>` | icon + 説明 + アクションへの誘導に最適化 |
 | **タブの中身** | `<Tabs>` の panel として | Tabs の compound として組み込み |
+
+---
+
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**お知らせカード（header に Badge、href でリンク化）**
+
+<div className="w-80">
+  <Card href="#">
+    <Card.Header divider={false}>
+      <div className="flex items-center justify-between">
+        <span>メンテナンスのお知らせ</span>
+        <Badge variant="warning" appearance="soft">重要</Badge>
+      </div>
+    </Card.Header>
+    <Card.Body>
+      <p className="text-sm text-onSurface-muted">3 月 10 日 02:00〜06:00 にサーバーメンテナンスを実施します。</p>
+      <p className="text-xs text-onSurface-muted mt-2">2026.03.04</p>
+    </Card.Body>
+  </Card>
+</div>
+
+**統計カード（grid、padding=md、compound 不使用）**
+
+<div className="grid grid-cols-2 gap-3 w-80">
+  {[
+    { label: '総ユーザー数', value: '12,480', change: '+8.2%', up: true },
+    { label: '月間収益', value: '¥2.4M', change: '+12.5%', up: true },
+    { label: '解約率', value: '2.1%', change: '-0.3%', up: false },
+    { label: '平均セッション', value: '8m 32s', change: '+1m 12s', up: true },
+  ].map(({ label, value, change, up }) => (
+    <Card key={label} padding="md">
+      <p className="text-xs text-onSurface-muted">{label}</p>
+      <p className="text-xl font-bold text-onSurface mt-1">{value}</p>
+      <p className={`text-xs mt-1 ${up ? 'text-onSurface-success' : 'text-onSurface-error'}`}>{change}</p>
+    </Card>
+  ))}
+</div>
+
+> Dashboard KPI のレスポンシブ card grid (`grid-base` + `col-span-*`) の例は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
 
 ---
 

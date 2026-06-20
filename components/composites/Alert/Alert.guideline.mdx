@@ -133,6 +133,46 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**フォームエラー一覧（リスト付き）**
+
+<div className="w-96">
+  <Alert variant="error" title="3 件のエラーがあります">
+    <ul className="list-disc list-inside space-y-1 mt-1">
+      <li>メールアドレスの形式が正しくありません</li>
+      <li>パスワードは 8 文字以上にしてください</li>
+      <li>生年月日を入力してください</li>
+    </ul>
+  </Alert>
+</div>
+
+**内部に Action buttons**
+
+<div className="w-96">
+  <Alert variant="warning" title="メールアドレスが未確認です">
+    <p>アカウントのすべての機能を使うにはメールアドレスの確認が必要です。</p>
+    <div className="mt-3 flex gap-2">
+      <Button size="sm">確認メールを再送</Button>
+      <Button size="sm" variant="tertiary">後で行う</Button>
+    </div>
+  </Alert>
+</div>
+
+**本文に Link 埋込**
+
+<div className="w-96">
+  <Alert variant="info" title="新機能">
+    ベータ版を公開しました。<Link href="#" underline="always">詳細を見る</Link>
+  </Alert>
+</div>
+
+> ページ上部の通知エリア (`max-w-container-narrow` + `space-y-section-sm` で Alert を縦に並べる) の例は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`role="alert"`**: コンテナに自動付与され、SR が即座に内容を読み上げる (live region)。`error` variant は特にこの挙動が重要

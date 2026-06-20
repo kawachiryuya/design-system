@@ -1,15 +1,13 @@
-import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { Textarea } from './Textarea';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Textarea stories — 標準ストーリー構造に準拠
+ * Textarea stories — VR 集約モデル (§5-3)
  *
- * 順序: Playground → States → EdgeCases
- * (Variants は省略: visual variant 軸なし。Sizes は省略: size prop なし、高さは
- *  rows 属性で連続制御。WithIcon は省略: icon prop なし。)
+ * 3 節構成: Playground / Overview。
+ * size prop なし (高さは rows)、visual variant 軸なし。文脈依存の崩れも無いため EdgeCases は省略。
  *
  * Docs (Guideline) は Textarea.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -34,7 +32,6 @@ const meta: Meta<typeof Textarea> = {
     placeholder: 'ご質問・ご要望をご記入ください',
     rows: 4,
   },
-  // 全 story を w-96 でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
   decorators: [(Story, ctx) =>
     ctx.parameters.noWrap ? <Story /> : <div className="w-96"><Story /></div>,
   ],
@@ -43,17 +40,14 @@ const meta: Meta<typeof Textarea> = {
 export default meta;
 type Story = StoryObj<typeof Textarea>;
 
-// ── 1. Playground ──────────────────────────────────────────────
-// args を全開放、Controls から props を探索する起点。
-// label 自動付与 (htmlFor 連携) を play test で保証。
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。label の自動付与 (htmlFor / id の連携) を play test で保証。',
+        story: 'Controls から props を切り替えて挙動を確認する起点。label の自動付与 (htmlFor / id 連携) を play test で保証。',
       },
     },
   },
@@ -65,15 +59,16 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. States ──────────────────────────────────────────────────
-// Default / Hover / Focus-visible / Filled / Error / Disabled を単独表示。
-// Hover/Focus は storybook-addon-pseudo-states で擬似状態を強制適用。
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在軸を集約: state / 文字数カウンター (maxLength) / resize。
+// Hover/Focus は pseudo-states で強制表示。
 
-export const States: Story = {
+export const Overview: Story = {
   parameters: {
+    noWrap: true,
     docs: {
       description: {
-        story: 'Default / Hover / Focus / Filled / Error / Disabled を一覧。Hover/Focus は pseudo-states で強制表示しているのでマウス操作なしで見える。Error は errorMessage が必須 (型レベル)。',
+        story: '視覚回帰用の総覧。state (Default/Hover/Focus/Filled/Error/Disabled) / 文字数カウンター (近接・上限) / resize (4 種) を 1 枚に集約。',
       },
     },
     pseudo: {
@@ -81,134 +76,49 @@ export const States: Story = {
       focusVisible: ['#textarea-focus'],
     },
   },
-  // Textarea は rows={3} の高さに加え Error は errorMessage が下に伸びる。
-  // gap-x-6 (24px) / gap-y-8 (32px) で隣接セルとの干渉を防ぐ。
-  // Caption wrapper を w-full にして子要素 (Textarea) の fullWidth が
-  // grid セル幅に追従するようにする (Caption は items-start で width が
-  // shrink-to-fit になっていたため textarea natural width が cell からはみ出していた)。
   render: () => (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full">
-      <Caption text="Default">
-        <Textarea label="Default" placeholder="入力してください" rows={3} fullWidth />
-      </Caption>
-      <Caption text="Hover">
-        <Textarea id="textarea-hover" label="Hover" placeholder="入力してください" rows={3} fullWidth />
-      </Caption>
-      <Caption text="Focus-visible">
-        <Textarea id="textarea-focus" label="Focus" placeholder="入力してください" rows={3} fullWidth />
-      </Caption>
-      <Caption text="Filled (入力済み)">
-        <Textarea label="Filled" defaultValue="これは入力済みのテキストです。複数行の本文をここに記述します。" rows={3} fullWidth />
-      </Caption>
-      <Caption text="Error">
-        <Textarea label="Error" error errorMessage="内容を入力してください" defaultValue="ab" rows={3} fullWidth />
-      </Caption>
-      <Caption text="Disabled">
-        <Textarea label="Disabled" disabled defaultValue="受付番号: 20260221-001" rows={3} fullWidth />
-      </Caption>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">state (Default / Hover / Focus / Filled / Error / Disabled)</div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full w-[44rem] max-w-full">
+          <Caption text="Default">
+            <Textarea label="Default" placeholder="入力してください" rows={3} fullWidth />
+          </Caption>
+          <Caption text="Hover">
+            <Textarea id="textarea-hover" label="Hover" placeholder="入力してください" rows={3} fullWidth />
+          </Caption>
+          <Caption text="Focus-visible">
+            <Textarea id="textarea-focus" label="Focus" placeholder="入力してください" rows={3} fullWidth />
+          </Caption>
+          <Caption text="Filled (入力済み)">
+            <Textarea label="Filled" defaultValue="これは入力済みのテキストです。複数行の本文をここに記述します。" rows={3} fullWidth />
+          </Caption>
+          <Caption text="Error">
+            <Textarea label="Error" error errorMessage="内容を入力してください" defaultValue="ab" rows={3} fullWidth />
+          </Caption>
+          <Caption text="Disabled">
+            <Textarea label="Disabled" disabled defaultValue="受付番号: 20260221-001" rows={3} fullWidth />
+          </Caption>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">文字数カウンター — 近接 (185/200) / 上限到達は赤+太字 (200/200)</div>
+        <div className="flex flex-col gap-4 w-96">
+          <Textarea label="自己紹介 (近接)" maxLength={200} currentLength={185} value={'A'.repeat(185)} onChange={() => {}} rows={3} fullWidth />
+          <Textarea label="自己紹介 (上限)" maxLength={200} currentLength={200} value={'A'.repeat(200)} onChange={() => {}} rows={3} fullWidth />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">resize (none / vertical / horizontal / both)</div>
+        <div className="grid grid-cols-2 gap-3 w-[44rem] max-w-full">
+          <Textarea label="none (固定)" resize="none" placeholder="サイズ固定" rows={3} fullWidth />
+          <Textarea label="vertical (デフォルト)" resize="vertical" placeholder="縦のみ" rows={3} fullWidth />
+          <Textarea label="horizontal" resize="horizontal" placeholder="横のみ" rows={3} fullWidth />
+          <Textarea label="both" resize="both" placeholder="両方向" rows={3} fullWidth />
+        </div>
+      </div>
     </div>
   ),
-};
-
-// ── 3. EdgeCases ───────────────────────────────────────────────
-// 文字数カウンター / resize 4 種 / フォーム統合など、Textarea 固有の境界条件を確認。
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '文字数カウンターの近接/超過挙動 / resize の 4 パターン (none / vertical / horizontal / both) / お問い合わせフォーム統合 (fullWidth + counter + helpText) / Layout token 適用 (大外コンテナ全幅) など、Textarea の境界条件を一覧。',
-      },
-    },
-    // 最後の Layout token 例を全幅表示するため meta の w-96 decorator を解除
-    noWrap: true,
-  },
-  render: () => {
-    const NearLimitText = 'A'.repeat(185);
-    const AtLimitText = 'A'.repeat(200);
-    const ContactFormDemo: React.FC = () => {
-      const [value, setValue] = useState('');
-      return (
-        <Textarea
-          label="お問い合わせ内容"
-          required
-          fullWidth
-          placeholder="ご質問・ご要望をご記入ください"
-          rows={5}
-          maxLength={500}
-          currentLength={value.length}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          helpText="担当者より 2 営業日以内にご返信します"
-        />
-      );
-    };
-
-    return (
-      <div className="flex flex-col gap-8">
-        <div className="w-96 flex flex-col gap-8">
-        <Caption text="文字数カウンター — maxLength 近接 (185/200) はカウンターのみ、上限到達でカウンターが赤+太字">
-          <div className="flex flex-col gap-4">
-            <Textarea
-              label="自己紹介 (近接)"
-              maxLength={200}
-              currentLength={NearLimitText.length}
-              value={NearLimitText}
-              onChange={() => {}}
-              rows={3}
-            />
-            <Textarea
-              label="自己紹介 (上限)"
-              maxLength={200}
-              currentLength={AtLimitText.length}
-              value={AtLimitText}
-              onChange={() => {}}
-              rows={3}
-            />
-          </div>
-        </Caption>
-
-        <Caption text="resize: 4 パターン — 右下のドラッグハンドルの挙動が異なる">
-          <div className="grid grid-cols-2 gap-3">
-            <Textarea label="none (固定)" resize="none" placeholder="サイズ固定" rows={3} />
-            <Textarea label="vertical (デフォルト)" resize="vertical" placeholder="縦のみ" rows={3} />
-            <Textarea label="horizontal" resize="horizontal" placeholder="横のみ" rows={3} />
-            <Textarea label="both" resize="both" placeholder="両方向" rows={3} />
-          </div>
-        </Caption>
-
-        <Caption text="お問い合わせフォーム統合 — fullWidth + counter + helpText の組合せ">
-          <ContactFormDemo />
-        </Caption>
-        </div>
-
-        <Caption text="Layout token 適用 (px-container / py-container / max-w-container-narrow / space-y-section-sm)">
-          <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
-            <div className="space-y-section-sm">
-              <h3 className="text-heading-sm text-onSurface m-0">お問い合わせ</h3>
-              <div className="flex flex-col gap-4">
-                <Textarea
-                  label="件名"
-                  required
-                  fullWidth
-                  rows={2}
-                  placeholder="お問い合わせの概要"
-                />
-                <Textarea
-                  label="本文"
-                  required
-                  fullWidth
-                  rows={6}
-                  maxLength={500}
-                  currentLength={0}
-                  helpText="500 文字以内で具体的にご記入ください"
-                  placeholder="お問い合わせ内容を詳しくご記入ください"
-                />
-              </div>
-            </div>
-          </form>
-        </Caption>
-      </div>
-    );
-  },
 };

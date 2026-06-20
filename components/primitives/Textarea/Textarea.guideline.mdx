@@ -109,6 +109,30 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**お問い合わせフォーム統合 — fullWidth + counter + helpText**
+
+<div className="w-96">
+  <Textarea label="お問い合わせ内容" required fullWidth rows={5} maxLength={500} currentLength={0} helpText="担当者より 2 営業日以内にご返信します" placeholder="ご質問・ご要望をご記入ください" />
+</div>
+
+**Layout token 適用（`px-container` / `max-w-container-narrow` / `space-y-section-sm`）**
+
+<form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+  <div className="space-y-section-sm">
+    <h3 className="text-heading-sm text-onSurface m-0">お問い合わせ</h3>
+    <div className="flex flex-col gap-4">
+      <Textarea label="件名" required fullWidth rows={2} placeholder="お問い合わせの概要" />
+      <Textarea label="本文" required fullWidth rows={6} maxLength={500} currentLength={0} helpText="500 文字以内で具体的にご記入ください" placeholder="お問い合わせ内容を詳しくご記入ください" />
+    </div>
+  </div>
+</form>
+
+---
+
 ## アクセシビリティ
 
 - **`<label htmlFor>` 自動連携**: `label` prop 指定で自動。クリックでフォーカス、SR がラベルを読む

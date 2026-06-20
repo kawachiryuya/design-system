@@ -77,11 +77,15 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="lines は実テキストに近い行数にする"
   doExample={
-    <Skeleton variant="text" lines={3} />
+    <div className="w-64">
+      <Skeleton variant="text" lines={3} />
+    </div>
   }
   doCaption="本文の予想行数 (3〜5 行程度) を指定。読み込み後のコンテンツ高さと近くなり、レイアウトシフトが小さくなる。"
   dontExample={
-    <Skeleton variant="text" lines={10} />
+    <div className="w-64">
+      <Skeleton variant="text" lines={10} />
+    </div>
   }
   dontCaption="過剰な行数は画面の主役になりノイズに。3〜5 行で「ここに本文が来る」を伝えるだけで十分。"
 />
@@ -114,6 +118,45 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | 進捗 % が分かる処理 | `<ProgressBar>` | 推定残り時間と完了を伝えられる |
 | データなしの空状態 | `<EmptyState>` | 読み込みではなく「ない」を伝えるなら専用 |
 | エラー状態 | `<Alert>` | 読み込み失敗の通知は Alert |
+
+---
+
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases にあった実レイアウト統合例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**カードレイアウト統合（画像 + アバター + 本文 + ボタン）**
+
+<div className="w-72 p-4 border border-border-subtle rounded-lg space-y-4">
+  <Skeleton variant="rectangular" height={120} className="rounded-md" />
+  <div className="flex items-center gap-3">
+    <Skeleton variant="circular" width={36} height={36} />
+    <div className="flex-1 space-y-2">
+      <Skeleton variant="text" width="60%" />
+      <Skeleton variant="text" width="40%" />
+    </div>
+  </div>
+  <Skeleton variant="text" lines={2} />
+  <div className="flex gap-2">
+    <Skeleton variant="rounded" width={64} height={28} />
+    <Skeleton variant="rounded" width={64} height={28} />
+  </div>
+</div>
+
+**ユーザーリスト統合（4 行）**
+
+<div className="w-72 divide-y divide-border-muted">
+  {[0, 1, 2, 3].map((i) => (
+    <div key={i} className="flex items-center gap-3 py-3 px-1">
+      <Skeleton variant="circular" width={40} height={40} />
+      <div className="flex-1 space-y-2">
+        <Skeleton variant="text" width="50%" />
+        <Skeleton variant="text" width="70%" />
+      </div>
+      <Skeleton variant="rounded" width={56} height={24} />
+    </div>
+  ))}
+</div>
 
 ---
 

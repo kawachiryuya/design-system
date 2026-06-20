@@ -6,7 +6,7 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Typography stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → EdgeCases
+ * 順序: Playground → Overview → EdgeCases
  * (Sizes は variant に内包、States は Typography に状態なし、WithIcon は icon prop なし、すべて省略)
  *
  * Docs (Guideline) は Typography.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
@@ -17,7 +17,7 @@ const meta: Meta<typeof Typography> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['display', 'h1', 'h2', 'h3', 'h4', 'body-lg', 'body', 'body-sm', 'caption', 'label'],
+      options: ['display', 'h1', 'h2', 'h3', 'h4', 'body-lg', 'body', 'body-sm', 'label', 'caption'],
     },
     as: {
       control: 'select',
@@ -25,7 +25,7 @@ const meta: Meta<typeof Typography> = {
     },
     color: {
       control: 'select',
-      options: ['default', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info', 'inherit'],
+      options: ['default', 'subdued', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info', 'inherit'],
     },
     weight: { control: 'select', options: [undefined, 'normal', 'medium', 'semibold', 'bold'] },
     truncate: { control: 'boolean' },
@@ -65,63 +65,71 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (VR 対象) ────────────────────────────────────────────────
 // 12 種類の variant を縦に積んでタイプスケールを示す。
 // 「どのサイズ・装飾でどの variant を使うか」の判断材料。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'display / h1〜h4 / body-lg / body / body-sm / caption / label の 10 種類のタイプスケール。`variant` は font-size + line-height + デフォルト font-weight を一括で決める。h5/h6 は h4 との視覚差が小さいため API からは除外 (深い階層は `as="h5"` でタグだけ指定して `variant="h4"` を流用)。',
+        story: 'タイプスケール (display / h1〜h4 / body-lg / body / body-sm / label / caption、font-size 大→小。同サイズの body-sm/label は body グループをまとめる方針で body-sm→label) と color / weight の軸を 1 枚に集約。h5/h6 は h4 との視覚差が小さいため variant には無く、`as="h5"` でタグだけ指定して `variant="h4"` を流用する。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-4">
-      <Typography variant="display">Display — 64px / ヒーロー</Typography>
-      <Typography variant="h1">H1 — ページタイトル</Typography>
-      <Typography variant="h2">H2 — セクション見出し</Typography>
-      <Typography variant="h3">H3 — サブセクション</Typography>
-      <Typography variant="h4">H4 — カードタイトル / 小見出し</Typography>
-      <hr className="border-border-subtle" />
-      <Typography variant="body-lg">Body Large — 18px / リード文</Typography>
-      <Typography variant="body">Body — 16px / 本文 (デフォルト)</Typography>
-      <Typography variant="body-sm">Body Small — 14px / 補足</Typography>
-      <Typography variant="caption">Caption — 12px / 注釈・著作権</Typography>
-      <Typography variant="label">Label — 14px / フォームラベル</Typography>
+    <div className="flex flex-col gap-8">
+      {/* タイプスケール — font-size 大→小 / 同サイズは太→細 */}
+      <div className="flex flex-col gap-4">
+        <Typography variant="display">Display — 48px / ヒーロー</Typography>
+        <Typography variant="h1">H1 — ページタイトル</Typography>
+        <Typography variant="h2">H2 — セクション見出し</Typography>
+        <Typography variant="h3">H3 — サブセクション</Typography>
+        <Typography variant="h4">H4 — カードタイトル / 小見出し</Typography>
+        <hr className="border-border-subtle" />
+        <Typography variant="body-lg">Body Large — 18px / リード文</Typography>
+        <Typography variant="body">Body — 16px / 本文 (デフォルト)</Typography>
+        <Typography variant="body-sm">Body Small — 14px / 補足</Typography>
+        <Typography variant="label">Label — 14px medium / フォームラベル</Typography>
+        <Typography variant="caption">Caption — 12px / 注釈・著作権</Typography>
+      </div>
+
+      {/* color — semantic 軸 */}
+      <div className="flex flex-col gap-1">
+        <div className="text-xs text-onSurface-muted">color</div>
+        {(['default', 'subdued', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info'] as const).map((color) => (
+          <Typography key={color} variant="body" color={color}>{color} — テキストカラーのサンプル</Typography>
+        ))}
+      </div>
+
+      {/* weight — variant デフォルトの上書き */}
+      <div className="flex flex-col gap-1">
+        <div className="text-xs text-onSurface-muted">weight (variant デフォルトを上書き)</div>
+        <div className="flex flex-wrap gap-4 items-baseline">
+          {(['normal', 'medium', 'semibold', 'bold'] as const).map((weight) => (
+            <Typography key={weight} variant="h4" weight={weight}>{weight}</Typography>
+          ))}
+        </div>
+      </div>
     </div>
   ),
 };
 
-// ── 3. EdgeCases ───────────────────────────────────────────────
-// 色 / polymorphic / truncate / 長文折返し / weight 上書き など、
-// variant の主軸とは別の dimension や視覚的に壊れやすいケースの監視用。
+// ── 3. EdgeCases (VR 対象) ─────────────────────────────────────
+// props だけでは作れない文脈依存: truncate (親 width 依存) / 長文の折返し。
+// ※ color / weight は prop = 内在軸なので Overview に集約。
+// ※ polymorphic (variant vs as) は見た目に出ない (semantic だけの差) ため VR からは外す。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '色のセマンティック軸 / variant と as の分離 (polymorphic) / truncate (1 行省略) / 長文折返し / weight 上書きなど、variant 主軸の外側で確認すべきケース。',
+        story: 'props だけでは作れない文脈依存: truncate (1 行省略は親 width 依存) / 長文の折返し。color / weight は Overview を参照。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-8 max-w-prose">
-      <Caption text="全 color — semantic 軸 (default/muted/disabled/primary/success/error/warning/info)">
-        <div className="flex flex-col gap-1">
-          {(['default', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info'] as const).map((color) => (
-            <Typography key={color} variant="body" color={color}>
-              {color} — テキストカラーのサンプル
-            </Typography>
-          ))}
-        </div>
-      </Caption>
-
-      <Caption text="polymorphic — visual=h2 / semantic=h3 (見た目と意味を分離)">
-        <Typography variant="h2" as="h3">サイドバーの見出し (h2 の見た目で h3 タグ)</Typography>
-      </Caption>
-
       <Caption text="truncate — 1 行省略 (...) は親の width で機能">
         <div className="w-64 border border-dashed border-border-subtle p-2">
           <Typography variant="h4" truncate>
@@ -135,10 +143,6 @@ export const EdgeCases: Story = {
           デザインシステムは、デザインとエンジニアリングのチーム間で共有される単一の真実を提供する基盤。
           一貫した語彙とコンポーネントを共有することで、コラボレーションが円滑になり、品質が安定する。
         </Typography>
-      </Caption>
-
-      <Caption text="weight 上書き — variant=h2 (デフォルト bold) に weight=normal で軽量化">
-        <Typography variant="h2" weight="normal">軽量化された見出し</Typography>
       </Caption>
     </div>
   ),

@@ -6,7 +6,7 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Center stories — 標準ストーリー構造に準拠
  *
- * 順序: Playground → Variants → EdgeCases
+ * 順序: Playground → Overview → EdgeCases
  * (Sizes は max prop に内包、States は Center に状態なし、WithIcon は icon prop なし、いずれも省略)
  *
  * Docs (Guideline) は Center.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
@@ -65,10 +65,10 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (VR 対象) ────────────────────────────────────────────────
 // 4 段階の max-width を縦に並べて見比べ。"どれを使うか" の判断材料。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
@@ -121,49 +121,25 @@ export const Variants: Story = {
   ),
 };
 
-// ── 3. EdgeCases ───────────────────────────────────────────────
-// semantic タグの切替 / vertical padding は consumer 責務 / 親に何もない時の挙動など。
+// ── 3. EdgeCases (VR 対象) ─────────────────────────────────────
+// props だけでは作れない文脈依存: 親幅が max より狭いとき w-full で親に追従する挙動。
+// ※ as (semantic タグ切替) は非視覚、vertical padding は consumer 責務の usage なので VR から除外。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '`as` で描画タグ切替 (article / section)、Center は vertical padding を持たないので consumer 側で `className="py-12"` 等を付ける運用、親幅が max より狭い場合は親に追従する挙動 (`w-full`)、を確認。',
+        story: '親幅が max より狭い場合 — `w-full` で親に追従し、max は頭打ちのみ。コンテナ幅依存の文脈ケース。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-8">
-      <Caption text="as='article' — Article 本文の semantic タグを保ったまま読みやすい幅に">
-        <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
-          <Center as="article" max="md" className="py-8">
-            <h2 className="text-heading-md mb-4">記事タイトル</h2>
-            <p className="text-body-md text-onSurface-soft">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-          </Center>
+    <div className="w-64 bg-surface-layer-2 border border-dashed border-border-subtle p-4 mx-auto">
+      <Center max="xl">
+        <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
+          親が 256px、Center max=xl (1024) でも 256px に収まる
         </div>
-      </Caption>
-
-      <Caption text="vertical padding は Center 自身は持たない (className 経由で付ける)">
-        <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle">
-          <Center max="sm" className="py-12">
-            <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
-              `py-12` を className で渡すと上下 48px の余白
-            </div>
-          </Center>
-        </div>
-      </Caption>
-
-      <Caption text="親幅が max より狭い場合 — w-full で親に追従、max は頭打ちのみ">
-        <div className="w-64 bg-surface-layer-2 border border-dashed border-border-subtle p-4 mx-auto">
-          <Center max="xl">
-            <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
-              親が 256px、Center max=xl (1024) でも 256px に収まる
-            </div>
-          </Center>
-        </div>
-      </Caption>
+      </Center>
     </div>
   ),
 };

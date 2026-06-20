@@ -77,11 +77,15 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="lines は実テキストに近い行数にする"
   doExample={
-    <Skeleton variant="text" lines={3} />
+    <div className="w-64">
+      <Skeleton variant="text" lines={3} />
+    </div>
   }
   doCaption="本文の予想行数 (3〜5 行程度) を指定。読み込み後のコンテンツ高さと近くなり、レイアウトシフトが小さくなる。"
   dontExample={
-    <Skeleton variant="text" lines={10} />
+    <div className="w-64">
+      <Skeleton variant="text" lines={10} />
+    </div>
   }
   dontCaption="過剰な行数は画面の主役になりノイズに。3〜5 行で「ここに本文が来る」を伝えるだけで十分。"
 />

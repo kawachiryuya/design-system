@@ -77,15 +77,19 @@ export const Overview: Story = {
     <div className="flex flex-col gap-6 w-96">
       <div className="flex flex-col gap-2">
         <div className="text-xs text-onSurface-muted">aspectRatio (square / video / portrait / wide / auto)</div>
+        {/* Caption (items-start) だと絶対配置 img の比率ボックスが幅0に潰れるため、
+            stretch する flex-col セルで囲んで幅を与える。 */}
         <div className="grid grid-cols-2 gap-4">
           {(['square', 'video', 'portrait', 'wide'] as const).map((ratio) => (
-            <Caption key={ratio} text={ratio}>
+            <div key={ratio} className="flex flex-col gap-1">
               <Image src={SAMPLE_IMG} alt="風景" aspectRatio={ratio} rounded="md" />
-            </Caption>
+              <span className="text-xs text-onSurface-muted">{ratio}</span>
+            </div>
           ))}
-          <Caption text="auto (固定なし)">
+          <div className="flex flex-col gap-1">
             <Image src={PORTRAIT_IMG} alt="プロフィール" aspectRatio="auto" />
-          </Caption>
+            <span className="text-xs text-onSurface-muted">auto (固定なし)</span>
+          </div>
         </div>
       </div>
 

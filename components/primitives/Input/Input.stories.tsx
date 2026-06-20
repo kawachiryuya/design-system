@@ -5,10 +5,10 @@ import { Icon } from '../Icon';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Input stories — 標準ストーリー構造に準拠
+ * Input stories — VR 集約モデル (§5-3)
  *
- * 順序: Playground → Sizes → States → WithIcon → EdgeCases
- * (Variants は省略: `type` は behavior 軸 [mobile keyboard 切替等] で視覚差が小さい)
+ * 3 節構成: Playground / Overview / EdgeCases。
+ * `type` は behavior 軸 (mobile keyboard 等) で視覚差が小さいため Overview には含めない。
  *
  * Docs (Guideline) は Input.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -35,7 +35,6 @@ const meta: Meta<typeof Input> = {
     type: 'email',
     size: 'md',
   },
-  // 全 story を w-80 でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
   decorators: [(Story, ctx) =>
     ctx.parameters.noWrap ? <Story /> : <div className="w-80"><Story /></div>,
   ],
@@ -44,17 +43,14 @@ const meta: Meta<typeof Input> = {
 export default meta;
 type Story = StoryObj<typeof Input>;
 
-// ── 1. Playground ──────────────────────────────────────────────
-// args を全開放、Controls から props を探索する起点。
-// label 自動付与 (htmlFor 連携) を play test で保証。
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。label の自動付与 (htmlFor / id の連携) と type 属性の反映を play test で保証。',
+        story: 'Controls から props を切り替えて挙動を確認する起点。label の自動付与 (htmlFor / id 連携) と type 属性の反映を play test で保証。',
       },
     },
   },
@@ -66,34 +62,16 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在軸を集約: size / state / icon / required・helpText。
+// Hover/Focus は pseudo-states で強制表示。
 
-export const Sizes: Story = {
+export const Overview: Story = {
   parameters: {
+    noWrap: true,
     docs: {
       description: {
-        story: 'small (40px) / medium (48px、デフォルト) / large (56px) の見比べ。全 step +8 等差で grid 整合 (Material 3 max と同等)。medium 以上で WCAG 2.5.5 (44x44px) のタッチターゲット要件を満たす。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Input label="Small (40px)" size="sm" placeholder="密集 UI 用" />
-      <Input label="Medium (48px) — デフォルト" size="md" placeholder="標準フォーム" />
-      <Input label="Large (56px)" size="lg" placeholder="モバイル CTA" />
-    </div>
-  ),
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-// Default / Hover / Focus-visible / Filled / Error / Disabled を単独表示。
-// Hover/Focus は storybook-addon-pseudo-states で擬似状態を強制適用。
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Default / Hover / Focus / Filled / Error / Disabled を一覧。Hover/Focus は pseudo-states で強制表示しているのでマウス操作なしで見える。Error は errorMessage が必須 (型レベル)。',
+        story: '視覚回帰用の総覧。size (sm/md/lg) / state (Default/Hover/Focus/Filled/Error/Disabled) / icon (leading/trailing/both) / required・helpText を 1 枚に集約。',
       },
     },
     pseudo: {
@@ -101,127 +79,79 @@ export const States: Story = {
       focusVisible: ['#input-focus'],
     },
   },
-  // Error 状態は errorMessage が下に伸びる分セルが高くなる。
-  // gap-x-6 (24px) / gap-y-8 (32px) で隣接セルとの干渉を防ぐ。
-  // Caption の wrapper を w-full にして子要素 (Input) の fullWidth が
-  // grid セル幅に追従するようにする (Caption は items-start で width が
-  // shrink-to-fit になっていたため input natural width が cell からはみ出していた)。
   render: () => (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full">
-      <Caption text="Default">
-        <Input label="Default" placeholder="入力してください" fullWidth />
-      </Caption>
-      <Caption text="Hover">
-        <Input id="input-hover" label="Hover" placeholder="入力してください" fullWidth />
-      </Caption>
-      <Caption text="Focus-visible">
-        <Input id="input-focus" label="Focus" placeholder="入力してください" fullWidth />
-      </Caption>
-      <Caption text="Filled (入力済み)">
-        <Input label="Filled" defaultValue="user@example.com" fullWidth />
-      </Caption>
-      <Caption text="Error">
-        <Input label="Error" error errorMessage="8 文字以上で入力してください" defaultValue="abc" type="password" fullWidth />
-      </Caption>
-      <Caption text="Disabled">
-        <Input label="Disabled" disabled defaultValue="変更不可" fullWidth />
-      </Caption>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (sm / md / lg)</div>
+        <div className="flex flex-col gap-4 w-80">
+          <Input label="Small (40px)" size="sm" placeholder="密集 UI 用" fullWidth />
+          <Input label="Medium (48px)" size="md" placeholder="標準フォーム" fullWidth />
+          <Input label="Large (56px)" size="lg" placeholder="モバイル CTA" fullWidth />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">state (Default / Hover / Focus / Filled / Error / Disabled)</div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full w-[40rem] max-w-full">
+          <Caption text="Default">
+            <Input label="Default" placeholder="入力してください" fullWidth />
+          </Caption>
+          <Caption text="Hover">
+            <Input id="input-hover" label="Hover" placeholder="入力してください" fullWidth />
+          </Caption>
+          <Caption text="Focus-visible">
+            <Input id="input-focus" label="Focus" placeholder="入力してください" fullWidth />
+          </Caption>
+          <Caption text="Filled (入力済み)">
+            <Input label="Filled" defaultValue="user@example.com" fullWidth />
+          </Caption>
+          <Caption text="Error">
+            <Input label="Error" error errorMessage="8 文字以上で入力してください" defaultValue="abc" type="password" fullWidth />
+          </Caption>
+          <Caption text="Disabled">
+            <Input label="Disabled" disabled defaultValue="変更不可" fullWidth />
+          </Caption>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">icon (leading / trailing / both)</div>
+        <div className="flex flex-col gap-4 w-80">
+          <Input label="検索 (leading)" type="search" placeholder="キーワード" leadingIcon={<Icon name="search" />} fullWidth />
+          <Input label="メール (trailing)" type="email" placeholder="example@email.com" trailingIcon={<Icon name="info" />} fullWidth />
+          <Input label="検索 (両方)" type="search" placeholder="キーワード" leadingIcon={<Icon name="search" />} trailingIcon={<Icon name="close" />} fullWidth />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">required (* 自動付与) / helpText</div>
+        <div className="w-80">
+          <Input label="ユーザー名" required helpText="3〜16 文字の英数字" placeholder="例: alice123" fullWidth />
+        </div>
+      </div>
     </div>
   ),
 };
 
-// ── 4. WithIcon ────────────────────────────────────────────────
-// leadingIcon / trailingIcon は ReactNode のため Controls から設定しづらい。
-// 主要 3 パターン (leading / trailing / 両方) をカタログ化。
-
-export const WithIcon: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'leadingIcon (検索・通貨記号等の冒頭装飾) / trailingIcon (info アイコン・クリアボタン等) / 両方併用の 3 パターン。アイコンは pointer-events-none で input クリックを邪魔しない。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Caption text="leadingIcon — 検索ボックス">
-        <Input label="検索" type="search" placeholder="キーワード" leadingIcon={<Icon name="search" />} />
-      </Caption>
-      <Caption text="trailingIcon — info / クリア等">
-        <Input label="メール" type="email" placeholder="example@email.com" trailingIcon={<Icon name="info" />} />
-      </Caption>
-      <Caption text="両方 — leading=検索 + trailing=close">
-        <Input label="検索 (with クリア)" type="search" placeholder="キーワード" leadingIcon={<Icon name="search" />} trailingIcon={<Icon name="close" />} />
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 5. EdgeCases ───────────────────────────────────────────────
-// fullWidth / 長文 placeholder / required + helpText の組合せ / 多言語 / form 統合など、
-// 壊れやすい / 仕様確認的に押さえたいケース。
+// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
+// props だけでは作れない文脈依存: fullWidth + 長文 placeholder の overflow:hidden + ellipsis。
+// ※ ログインフォーム / Layout token 統合などの usage 合成は guideline の「使用例」へ移設。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'fullWidth + 長文 placeholder / required + helpText の組合せ / 多言語 (絵文字含む input value) / フォーム統合 (複数 Input + error + 必須) / Layout token 適用 (大外コンテナ全幅) など、Input の境界条件を一覧。',
+        story: 'fullWidth + 長文 placeholder — placeholder が overflow:hidden + ellipsis で省略される、幅依存の文脈ケース。',
       },
     },
-    // 最後の Layout token 例を全幅表示するため meta の w-80 decorator を解除
-    noWrap: true,
   },
   render: () => (
-    <div className="flex flex-col gap-6">
-      <div className="w-96 flex flex-col gap-6">
-      <Caption text="fullWidth + 長文 placeholder — placeholder は overflow:hidden + ellipsis">
-        <Input
-          label="長い placeholder"
-          fullWidth
-          placeholder="このフォームは非常に長い placeholder テキストを受け付ける挙動の確認用"
-        />
-      </Caption>
-
-      <Caption text="required + helpText — `*` 自動付与、helpText は input 下に表示">
-        <Input
-          label="ユーザー名"
-          required
-          helpText="3〜16 文字の英数字"
-          placeholder="例: alice123"
-        />
-      </Caption>
-
-      <Caption text="絵文字含む input value — 多言語 / Unicode 想定">
-        <Input label="お名前" defaultValue="山田 花子 🌸" />
-      </Caption>
-
-      <Caption text="ログインフォーム統合 — 複数 Input + error の組合せ">
-        <div className="flex flex-col gap-4">
-          <Input label="メールアドレス" type="email" required fullWidth placeholder="example@email.com" />
-          <Input
-            label="パスワード"
-            type="password"
-            required
-            fullWidth
-            error
-            errorMessage="パスワードが正しくありません"
-          />
-        </div>
-      </Caption>
-      </div>
-
-      <Caption text="Layout token 適用 (px-container / py-container / max-w-container-narrow / space-y-section-sm)">
-        <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
-          <div className="space-y-section-sm">
-            <h3 className="text-heading-sm text-onSurface m-0">アカウント情報</h3>
-            <div className="flex flex-col gap-4">
-              <Input label="氏名" required fullWidth placeholder="山田 太郎" />
-              <Input label="メールアドレス" type="email" required fullWidth placeholder="example@email.com" />
-              <Input label="電話番号" type="tel" fullWidth placeholder="090-1234-5678" helpText="ハイフンありで入力" />
-            </div>
-          </div>
-        </form>
-      </Caption>
+    <div className="w-96">
+      <Input
+        label="長い placeholder"
+        fullWidth
+        placeholder="このフォームは非常に長い placeholder テキストを受け付ける挙動の確認用"
+      />
     </div>
   ),
 };

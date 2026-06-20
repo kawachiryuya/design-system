@@ -120,6 +120,32 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**ログインフォーム統合 — 複数 Input + error の組合せ**
+
+<div className="w-80 flex flex-col gap-4">
+  <Input label="メールアドレス" type="email" required fullWidth placeholder="example@email.com" />
+  <Input label="パスワード" type="password" required fullWidth error errorMessage="パスワードが正しくありません" />
+</div>
+
+**Layout token 適用（`px-container` / `max-w-container-narrow` / `space-y-section-sm`）**
+
+<form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+  <div className="space-y-section-sm">
+    <h3 className="text-heading-sm text-onSurface m-0">アカウント情報</h3>
+    <div className="flex flex-col gap-4">
+      <Input label="氏名" required fullWidth placeholder="山田 太郎" />
+      <Input label="メールアドレス" type="email" required fullWidth placeholder="example@email.com" />
+      <Input label="電話番号" type="tel" fullWidth placeholder="090-1234-5678" helpText="ハイフンありで入力" />
+    </div>
+  </div>
+</form>
+
+---
+
 ## アクセシビリティ
 
 - **`<label htmlFor>` 自動連携**: `label` prop 指定で自動。クリックでフォーカス、SR がラベルを読む

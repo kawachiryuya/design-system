@@ -8,6 +8,8 @@ import { Caption } from '@sb-blocks/Caption';
  *
  * 3 節構成: Playground / Overview / EdgeCases。
  * 状態を持たない layout composite (size/icon prop なし)。
+ * Grid は列数が**コンテナ幅で決まる**ため、全デモを **幅 680px に固定**して挙動を判別可能にし、
+ * VR の決定性も担保する (画面幅依存でスナップショットが揺れないように)。
  *
  * Docs (Guideline) は Grid.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -40,7 +42,7 @@ const cards = (n: number, prefix = 'Card') =>
 
 export const Playground: Story = {
   render: (args) => (
-    <div className="p-4 bg-surface-layer-2">
+    <div className="w-[680px] max-w-full p-4 bg-surface-layer-2">
       <Grid {...args}>{cards(6)}</Grid>
     </div>
   ),
@@ -73,19 +75,19 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <Caption text='minItemWidth="12rem" (auto-fit, 推奨) — 幅で列数が自動決定'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
           <Grid minItemWidth="12rem">{cards(5)}</Grid>
         </div>
       </Caption>
 
       <Caption text='cols={3} (固定 N) — サイズに関わらず厳密に 3 列'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
           <Grid cols={3}>{cards(3)}</Grid>
         </div>
       </Caption>
 
       <Caption text='layout="page" + Grid.Item span (placement) — 12 カラム上に 3/6/3 配置'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
           <Grid layout="page">
             <Grid.Item span={3}><Card label="aside (span 3)" /></Grid.Item>
             <Grid.Item span={6}><Card label="main (span 6)" /></Grid.Item>
@@ -111,13 +113,13 @@ export const EdgeCases: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <Caption text='minItemWidth でアイテム 2 つ — 余った列は空き (1fr で伸びる)'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
           <Grid minItemWidth="12rem">{cards(2)}</Grid>
         </div>
       </Caption>
 
       <Caption text='layout="page" + start — span 4 を 5 列目から開始 (中央寄せ的配置)'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
           <Grid layout="page">
             <Grid.Item span={4} start={5}><Card label="span 4 / start 5" /></Grid.Item>
           </Grid>

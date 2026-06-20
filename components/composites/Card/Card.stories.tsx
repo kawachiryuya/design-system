@@ -6,8 +6,9 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Card stories — VR 集約モデル (§5-3)
  *
- * 3 節構成: Playground / Overview / EdgeCases。
- * Card は size/icon prop を持たない。
+ * 構成: Playground / Overview。
+ * Card は size/icon prop を持たない。長文/長単語の折返しは Playground/Overview で十分
+ * (Playground で再現可) のため EdgeCases は持たない。usage 合成は guideline 参照。
  *
  * Docs (Guideline) は Card.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -129,35 +130,6 @@ export const Overview: Story = {
           </Caption>
         </div>
       </div>
-    </div>
-  ),
-};
-
-// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
-// props だけでは作れない文脈依存: 長文の折返し / 折返しなし長単語の break-words。
-// ※ お知らせカード / 統計カード grid / Layout token grid などの usage 合成は guideline の「使用例」へ移設。
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '長文の自然折返し / 折返しなし長単語 (overflow-wrap で破断)。実利用の card grid 等の usage 合成は guideline 参照。',
-      },
-    },
-  },
-  render: () => (
-    <div className="w-80">
-      <Card>
-        <Card.Header>長いコンテンツ</Card.Header>
-        <Card.Body>
-          <p className="text-sm text-onSurface-muted">
-            デザインシステムは、チーム全体が共有できる単一の真実を提供します。Atomic Design に基づき、Atoms / Molecules / Organisms と段階的に積み上げることで再利用性と一貫性を両立します。
-          </p>
-          <p className="text-sm text-onSurface-muted mt-3 break-words">
-            長単語: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-          </p>
-        </Card.Body>
-      </Card>
     </div>
   ),
 };

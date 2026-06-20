@@ -6,8 +6,9 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Alert stories — VR 集約モデル (§5-3)
  *
- * 3 節構成: Playground / Overview / EdgeCases。
- * Alert は size/icon prop を持たない。
+ * 構成: Playground / Overview。
+ * Alert は size/icon prop を持たない。長文折返しは Playground (title/children の Controls) で
+ * 再現できるため EdgeCases は持たない。リッチな children / 通知エリアの usage は guideline 参照。
  *
  * Docs (Guideline) は Alert.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -110,28 +111,6 @@ export const Overview: Story = {
           </Caption>
         </div>
       </div>
-    </div>
-  ),
-};
-
-// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
-// props だけでは作れない文脈依存: 長文本文の自然折返し。
-// ※ リスト / Action buttons / Link 埋込 / Layout token 通知エリアなどの usage 合成は
-//    guideline の「使用例」へ移設。
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '長文本文の自然折返し (幅依存)。リッチな children (リスト / ボタン / Link) や通知エリアの usage 合成は guideline 参照。',
-      },
-    },
-  },
-  render: () => (
-    <div className="w-96">
-      <Alert variant="info" title="プライバシーポリシー更新">
-        2026 年 1 月 1 日からプライバシーポリシーが変更されます。お客様の個人情報の取り扱いに関する新しい規約をご確認ください。詳細は設定画面からご覧いただけます。
-      </Alert>
     </div>
   ),
 };

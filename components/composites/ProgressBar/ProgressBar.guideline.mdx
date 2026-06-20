@@ -103,6 +103,34 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**アップロード進捗（アニメーション + 完了で色変化）** — `value` を時間で更新し、100% で `color="primary" → "success"` に切り替える。静的には determinate バー（色は Overview で網羅）。実挙動は Playground の `value` slider で確認。
+
+**ステップ進捗バー（4 ステップ）** — `value = (current-1)/(steps-1)*100` でステップ位置を `size="sm"` のバーで示し、下にステップラベルを並べる。
+
+<div className="w-80 space-y-4">
+  <p className="text-body-sm text-onSurface-muted">ステップ 2/4: <strong>プラン選択</strong></p>
+  <ProgressBar value={33.3} size="sm" color="primary" />
+  <div className="flex justify-between">
+    {['基本情報','プラン選択','支払い','確認'].map((s, i) => (
+      <span key={s} className={`text-caption font-medium ${i + 1 <= 2 ? 'text-onSurface-primary' : 'text-onSurface-muted'}`}>{s}</span>
+    ))}
+  </div>
+</div>
+
+**バイト数ベース（`max` を動的に）** — `value` / `max` に実バイト数を渡し、`label` に整形済み文字列を渡す。表示は割合バーと同じ。
+
+<div className="w-80">
+  <ProgressBar value={2457600} max={5242880} label="2.3 MB / 5.0 MB" />
+</div>
+
+> オンボーディング wizard（`size="sm"` バー + ステップ見出し + フォーム枠を `max-w-container-narrow` + `space-y-section-sm` に組む例）は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`role="progressbar"`**: 自動付与、SR が「プログレスバー」として認識

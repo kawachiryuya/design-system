@@ -11,8 +11,15 @@
 
 - **ストーリー構造を VR 集約モデルへ移行 (Button から、段階展開)** (story id 削除 = silent break §10-2): `.stories.tsx` を **Playground / Overview / EdgeCases の 3 節**に統一する規約に変更 (AGENTS.md §5-3)。視覚回帰 (Chromatic) は props で作れる内在パターンを 1 枚に凍結した **Overview** と、文脈依存の **EdgeCases** のみを撮影し、`Playground` は撮影外。旧カタログ (`Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription`) は Overview + guideline.mdx に集約し**削除**する。**Button が参照実装**として先行移行 — `Primitives/Button` の `Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription` story が**削除**された (これらの Storybook URL `?path=/story/primitives-button--variants` 等は無効になる)。残コンポーネントは 1 コンポーネント = 1 PR で順次移行 (§7)。`check:conventions` の `SECTION_ORDER` に `Overview` を追加。
 - **VR 集約モデル移行 (primitives バッチ 1): Badge / Spinner / Divider** (story id 削除 = silent break §10-2): 上記モデルに移行。各コンポーネントの `Variants` / `Sizes` story を削除し `Overview` に集約 (Badge: appearance×variant + dot + count / Spinner: size + color / Divider: orientation×weight + label)。`?path=/story/primitives-badge--variants`・`primitives-spinner--variants`・`primitives-spinner--sizes`・`primitives-divider--variants` 等の Storybook URL が無効になる。
+- **VR 集約モデル移行 (primitives バッチ 2): Center / Cluster / Stack / Section / Typography / Skeleton / Image** (story id 削除 = silent break §10-2): 各コンポーネントの `Variants` story を `Overview` に統合し、内在軸 (Stack `align` / Skeleton `animated` / Image `objectFit`・`rounded`) を Overview に集約。文脈依存の崩れが無い Stack / Section / Skeleton は `EdgeCases` も削除。`?path=/story/primitives-*--variants`・`primitives-stack--edgecases` 等の Storybook URL が無効になる。削除した usage 合成 (Cluster header / Skeleton カード・リスト統合) は各 guideline の「使用例」節に保持。
 
 ### Changed
+
+- **Primitives/Typography: 型スケールの並び順を統一** (declaration 順のみ、視覚/API 変化なし): `TypographyVariant` と Overview / Controls options を **font-size 大→小** (display→h1〜h4→body-lg→body→body-sm→label→caption) で統一。caption (12px、最小) を末尾に。variant の値・見た目・型は不変。
+
+### Fixed
+
+- **Primitives/Skeleton: multi-line text の幅潰れを修正** (視覚バグ): `variant="text"` + `lines>1` の外側 div が `width` 未指定時にデフォルト幅を持たず、shrink 文脈 (`flex items-start` 等) で幅 0 に潰れ各行が消えていた。単一行 text と揃えて **既定 100%** を補完。[`Skeleton.tsx`](./components/primitives/Skeleton/Skeleton.tsx)
 
 - **Primitives/Button: `description` を全 size で描画 + 行間を調整** (視覚変化、silent break §10-2): 従来 `size="sm"` では `description` を描画していなかったが、全 size で描画するよう変更 (`min-h` は最小値なので 2 行で縦に伸びるだけ、潰れない)。あわせて主ラベルと `description` の間に `gap-0.5` (2px) を追加し、詰まって見える問題を解消。既存の `<Button size="sm" description="…">` は 1 行 → 2 行表示に変わり縦に伸びる。[`Button.tsx`](./components/primitives/Button/Button.tsx)
 

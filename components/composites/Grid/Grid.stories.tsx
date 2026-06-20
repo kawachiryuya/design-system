@@ -39,18 +39,42 @@ const cards = (n: number, prefix = 'Card') =>
   Array.from({ length: n }, (_, i) => <Card key={i} label={`${prefix} ${i + 1}`} />);
 
 // ── 1. Playground (視覚回帰対象外) ──────────────────────────────
+// Grid は 3 モードが型レベルで排他 (minItemWidth / cols / layout は互いに `?: never`)。
+// 1 つの Grid に複数モードは渡せないので、story 専用の `mode` arg で切り替えて探索する。
+// 関連 Controls は `if` で当該モードの時だけ表示する。
 
-export const Playground: Story = {
-  render: (args) => (
-    <div className="w-[680px] max-w-full p-4 bg-surface-layer-2">
-      <Grid {...args}>{cards(6)}</Grid>
-    </div>
-  ),
+type GridMode = 'auto-fit' | 'cols' | 'page';
+
+export const Playground: StoryObj = {
+  args: { mode: 'auto-fit', minItemWidth: '12rem', cols: 3 },
+  argTypes: {
+    mode: { control: 'radio', options: ['auto-fit', 'cols', 'page'], name: 'mode (story 用)' },
+    minItemWidth: { control: 'text', if: { arg: 'mode', eq: 'auto-fit' } },
+    cols: { control: { type: 'number', min: 1, max: 12 }, if: { arg: 'mode', eq: 'cols' } },
+  },
+  render: (args) => {
+    const { mode, minItemWidth, cols } = args as { mode: GridMode; minItemWidth: string; cols: number };
+    return (
+      <div className="w-[680px] max-w-full p-4 bg-surface-layer-2">
+        {mode === 'page' ? (
+          <Grid layout="page">
+            <Grid.Item span={3}><Card label="aside (span 3)" /></Grid.Item>
+            <Grid.Item span={6}><Card label="main (span 6)" /></Grid.Item>
+            <Grid.Item span={3}><Card label="aside (span 3)" /></Grid.Item>
+          </Grid>
+        ) : mode === 'cols' ? (
+          <Grid cols={cols}>{cards(6)}</Grid>
+        ) : (
+          <Grid minItemWidth={minItemWidth}>{cards(6)}</Grid>
+        )}
+      </div>
+    );
+  },
   parameters: {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: '推奨の反復モード (`minItemWidth`)。Controls で `minItemWidth` を変える / Storybook の幅を変えると列数が自動で決まる (breakpoint 不要)。gutter は grid.gutter トークン固定。',
+        story: '`mode` で 3 排他モードを切替: auto-fit (`minItemWidth`、自分の幅で列数自動・推奨) / cols (固定 N 列) / page (`layout="page"` の 12 カラム + `Grid.Item span`)。コンテナは 680px 固定。gutter は grid.gutter トークン。',
       },
     },
   },

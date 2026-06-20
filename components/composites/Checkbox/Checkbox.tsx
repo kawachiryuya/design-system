@@ -92,6 +92,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       error: errorProp,
       errorMessage,
       indeterminate = false,
+      required = false,
       disabled,
       id,
       className = '',
@@ -157,6 +158,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             type="checkbox"
             id={inputId}
             disabled={disabled}
+            required={required}
             aria-invalid={error || undefined}
             aria-describedby={ariaDescribedBy}
             className={inputClasses}
@@ -168,6 +170,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 <Label
                   htmlFor={inputId}
                   size="md"
+                  required={required}
                   disabled={disabled}
                 >
                   {label}

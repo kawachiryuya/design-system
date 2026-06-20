@@ -180,6 +180,22 @@ SegmentedControl はジェネリック (`<T extends string | number>`) で値型
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**数値 value（号車選択）**
+
+<SegmentedControl items={[1, 2, 3, 4, 5].map((n) => ({ value: n, label: `${n}号車` }))} value={1} onChange={() => {}} aria-label="号車選択" />
+
+**2 択切替（最小ケース）**
+
+<SegmentedControl items={[{ value: 'list', label: 'リスト' }, { value: 'grid', label: 'グリッド' }]} value="list" onChange={() => {}} aria-label="表示切替" />
+
+> ダッシュボードの期間切替（`max-w-container` + `space-y-section-sm` + KPI grid に SegmentedControl を組む）は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`role="radiogroup"` + `aria-label`**: 外側の `<div>` がラジオグループ、各セグメントは `role="radio"` の `<button>`。「複数候補から 1 つを選ぶ排他選択」であることが SR に正しく伝わる (`aria-pressed` のトグルボタン群だと「独立した ON/OFF の集まり」と誤解される)

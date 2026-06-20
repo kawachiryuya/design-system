@@ -126,6 +126,27 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**予約フォーム（複数 NumberInput を Layout 枠に）**
+
+<form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+  <div className="space-y-section-sm">
+    <h3 className="text-heading-sm text-onSurface m-0">予約内容</h3>
+    <div className="flex flex-wrap gap-6">
+      <NumberInput value={2} onChange={() => {}} min={1} max={9} label="大人" decrementLabel="大人の人数を減らす" incrementLabel="大人の人数を増やす" />
+      <NumberInput value={0} onChange={() => {}} min={0} max={9} label="小人" decrementLabel="小人の人数を減らす" incrementLabel="小人の人数を増やす" />
+      <NumberInput value={1} onChange={() => {}} min={1} max={5} label="部屋数" decrementLabel="部屋数を減らす" incrementLabel="部屋数を増やす" />
+    </div>
+  </div>
+</form>
+
+> 大人 / 小人で `decrementLabel` / `incrementLabel` に文脈付き aria-label を渡すと SR が「大人の人数を増やす」のように読める（非視覚なので VR 対象外）。Layout token は [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`+` / `−` の aria-label**: デフォルトは「増やす」「減らす」。複数 NumberInput が並ぶ場合は文脈を入れた個別ラベルに (`decrementLabel` / `incrementLabel`)

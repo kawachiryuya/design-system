@@ -134,6 +134,34 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**ヘッダー検索（候補ドロップダウン）** — fullWidth SearchBar の下に候補リストを絶対配置。
+
+<div className="relative w-96">
+  <SearchBar value="デザ" onChange={() => {}} fullWidth placeholder="記事を検索..." />
+  <ul className="absolute top-full mt-1 w-full bg-surface border border-border-subtle rounded-sm shadow-sm z-dropdown overflow-hidden">
+    <li><button type="button" className="w-full text-left px-3 py-2 text-sm text-onSurface hover:bg-state-hover transition-colors">デザインシステム</button></li>
+    <li><button type="button" className="w-full text-left px-3 py-2 text-sm text-onSurface hover:bg-state-hover transition-colors">デザイントークン</button></li>
+  </ul>
+</div>
+
+**テーブルフィルタ（sm、リアルタイム絞り込み）**
+
+<div className="w-80 space-y-3">
+  <SearchBar value="" onChange={() => {}} size="sm" fullWidth placeholder="ユーザーを検索..." />
+  <ul className="divide-y divide-border-subtle border border-border-subtle rounded-sm">
+    <li className="px-3 py-2 text-sm text-onSurface">田中 太郎</li>
+    <li className="px-3 py-2 text-sm text-onSurface">鈴木 花子</li>
+  </ul>
+</div>
+
+> `onSearch`（Enter で検索実行）/ 入力に応じた候補の動的更新は Storybook の Playground 参照。アプリヘッダー（`max-w-container` + 中央 SearchBar を `flex-1` で伸縮）は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`role="searchbox"`**: `<input type='search'>` で自動付与

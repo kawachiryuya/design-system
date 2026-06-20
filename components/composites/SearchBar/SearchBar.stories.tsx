@@ -5,11 +5,14 @@ import { SearchBar } from './SearchBar';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * SearchBar stories — 標準ストーリー構造に準拠
+ * SearchBar stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Sizes → States → EdgeCases
- *
- * SearchBar は variant prop を持たないため Variants は省略。Icon は内部実装で WithIcon も省略 (§5-3)。
+ * 2 節構成: Playground / Overview。
+ * size (sm/md/lg) と states (empty/値あり/disabled/focus) を Overview に集約。
+ * onSearch / ヘッダー検索 (候補表示) / テーブルフィルタ等の usage 合成は guideline の「使用例」へ移設。
+ * fullWidth は親幅追従で固定幅では差が出ないため Overview には並べない (Playground / guideline で確認)。
+ * isLoading は spinner アニメで VR が毎フレーム差分扱いになり揺れるため Overview に入れない
+ *   (Playground のトグルで確認、spinner 自体は Spinner primitive の Overview で VR 済み)。
  */
 const meta: Meta<typeof SearchBar> = {
   title: 'Composites/SearchBar',
@@ -34,7 +37,7 @@ const meta: Meta<typeof SearchBar> = {
     }
     return <Demo />;
   },
-  // 全 story を w-80 でラップする (parameters.noWrap=true で個別に解除可能)
+  // 全 story を w-80 でラップ (parameters.noWrap=true で個別解除)
   decorators: [(Story, ctx) =>
     ctx.parameters.noWrap ? <Story /> : <div className="w-80"><Story /></div>,
   ],
@@ -43,11 +46,10 @@ const meta: Meta<typeof SearchBar> = {
 export default meta;
 type Story = StoryObj<typeof SearchBar>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -68,191 +70,51 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// size (sm/md/lg) と states。value は controlled なので静的値 + no-op onChange で凍結。
 
-export const Sizes: Story = {
+export const Overview: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: 'sm (32px、テーブルフィルタ) / md (40px、標準) / lg (48px、ヘッダー検索) の 3 段階。',
-      },
-    },
-  },
-  render: () => {
-    function Demo() {
-      const [q1, setQ1] = useState('');
-      const [q2, setQ2] = useState('');
-      const [q3, setQ3] = useState('');
-      return (
-        <div className="flex flex-col gap-3 w-80">
-          <SearchBar size="sm" value={q1} onChange={setQ1} placeholder="sm" />
-          <SearchBar size="md" value={q2} onChange={setQ2} placeholder="md (デフォルト)" />
-          <SearchBar size="lg" value={q3} onChange={setQ3} placeholder="lg" />
-        </div>
-      );
-    }
-    return <Demo />;
-  },
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Empty / With value (クリアボタン表示) / Loading (spinner) / Disabled / Focus-visible / FullWidth の構成パターン.',
-      },
-    },
+    noWrap: true,
     pseudo: {
       focusVisible: ['#sb-focus input'],
     },
+    docs: {
+      description: {
+        story: '視覚回帰用の総覧。size (sm 32px / md 40px / lg 48px) と states (empty / 値あり=クリアボタン / disabled / focus-visible) を集約。loading=spinner はアニメで VR が揺れるため除外 (Playground で確認)。',
+      },
+    },
   },
-  render: () => {
-    function Demo() {
-      const [empty, setEmpty] = useState('');
-      const [val, setVal] = useState('入力済み');
-      const [loadV, setLoadV] = useState('検索中...');
-      const [focusV, setFocusV] = useState('');
-      const [fullV, setFullV] = useState('');
-      return (
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (sm テーブルフィルタ / md 標準 / lg ヘッダー検索)</div>
+        <div className="flex flex-col gap-3 w-80">
+          <SearchBar size="sm" value="" onChange={() => {}} placeholder="sm" />
+          <SearchBar size="md" value="" onChange={() => {}} placeholder="md (デフォルト)" />
+          <SearchBar size="lg" value="" onChange={() => {}} placeholder="lg" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">states</div>
         <div className="flex flex-col gap-3 w-96">
-          <Caption text="Empty (placeholder のみ表示)">
-            <SearchBar value={empty} onChange={setEmpty} placeholder="検索..." />
+          <Caption text="Empty (placeholder のみ)">
+            <SearchBar value="" onChange={() => {}} placeholder="検索..." />
           </Caption>
-          <Caption text="With value (クリアボタン表示)">
-            <SearchBar value={val} onChange={setVal} placeholder="検索..." />
-          </Caption>
-          <Caption text="Loading (spinner 表示、クリアボタンは隠れる)">
-            <SearchBar value={loadV} onChange={setLoadV} isLoading placeholder="検索..." />
+          <Caption text="値あり (クリアボタン表示)">
+            <SearchBar value="入力済み" onChange={() => {}} placeholder="検索..." />
           </Caption>
           <Caption text="Disabled">
             <SearchBar value="" onChange={() => {}} disabled placeholder="検索..." />
           </Caption>
-          <Caption text="Focus-visible (pseudo-states 強制)">
+          <Caption text="Focus-visible (pseudo 強制)">
             <div id="sb-focus">
-              <SearchBar value={focusV} onChange={setFocusV} placeholder="検索..." />
+              <SearchBar value="" onChange={() => {}} placeholder="検索..." />
             </div>
           </Caption>
-          <Caption text="fullWidth (親要素幅に追従)">
-            <SearchBar value={fullV} onChange={setFullV} fullWidth placeholder="記事・タグ・著者で検索..." />
-          </Caption>
         </div>
-      );
-    }
-    return <Demo />;
-  },
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '実利用例: onSearch (Enter で実行) / ヘッダー検索 (候補表示) / テーブルフィルタ (sm、リアルタイム絞り込み) / Layout token 適用 (アプリヘッダー frame).',
-      },
-    },
-    // meta 側の w-80 decorator を解除 (AppShellDemo は max-w-container で表示するため幅 320px 制約を外す。
-    // 3 つの SearchBar 例は render 内で `<div className="w-80">` で内部的に幅を絞り直す)
-    noWrap: true,
-  },
-  render: () => {
-    function SearchCallbackDemo() {
-      const [value, setValue] = useState('');
-      const [result, setResult] = useState<string | null>(null);
-      return (
-        <div className="space-y-3">
-          <SearchBar value={value} onChange={setValue} onSearch={(v) => setResult(v)} placeholder="Enter で検索実行..." />
-          {result !== null && (
-            <p className="text-sm text-onSurface-muted">検索クエリ: <strong>{result || '(空)'}</strong></p>
-          )}
-        </div>
-      );
-    }
-    function HeaderSearchDemo() {
-      const [value, setValue] = useState('');
-      const [results, setResults] = useState<string[]>([]);
-      const [isLoading, setIsLoading] = useState(false);
-      const suggestions = ['デザインシステム', 'Tailwind CSS', 'React Hooks', 'TypeScript', 'Storybook'];
-      const handleChange = (v: string) => {
-        setValue(v);
-        if (!v) { setResults([]); return; }
-        setIsLoading(true);
-        setTimeout(() => {
-          setResults(suggestions.filter((s) => s.toLowerCase().includes(v.toLowerCase())));
-          setIsLoading(false);
-        }, 300);
-      };
-      return (
-        <div className="relative">
-          <SearchBar value={value} onChange={handleChange} isLoading={isLoading} fullWidth placeholder="記事を検索..." />
-          {results.length > 0 && (
-            <ul className="absolute top-full mt-1 w-full bg-surface border border-border-subtle rounded-sm shadow-sm z-dropdown overflow-hidden">
-              {results.map((r) => (
-                <li key={r}>
-                  <button type="button" onClick={() => { setValue(r); setResults([]); }}
-                    className="w-full text-left px-3 py-2 text-sm text-onSurface hover:bg-state-hover transition-colors">
-                    {r}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      );
-    }
-    function TableFilterDemo() {
-      const data = ['田中 太郎', '鈴木 花子', '佐藤 一郎', '山田 次郎', '木村 三郎'];
-      const [query, setQuery] = useState('');
-      const filtered = data.filter((name) => name.includes(query));
-      return (
-        <div className="space-y-3">
-          <SearchBar value={query} onChange={setQuery} size="sm" fullWidth placeholder="ユーザーを検索..." />
-          <ul className="divide-y divide-border-subtle border border-border-subtle rounded-sm">
-            {filtered.length > 0
-              ? filtered.map((name) => (<li key={name} className="px-3 py-2 text-sm text-onSurface">{name}</li>))
-              : <li className="px-3 py-4 text-sm text-onSurface-muted text-center">見つかりませんでした</li>}
-          </ul>
-        </div>
-      );
-    }
-    function AppShellDemo() {
-      const [query, setQuery] = useState('');
-      return (
-        <header className="w-full px-container py-container max-w-container mx-auto bg-surface border border-border-subtle rounded-md">
-          <div className="flex items-center gap-6">
-            <h2 className="text-heading-sm text-onSurface m-0 flex-shrink-0">プロダクト名</h2>
-            {/* SearchBar を flex-1 でラップして中央スペースを伸縮させる
-                (SearchBar の fullWidth は w-full、flex 子要素では grow しないため) */}
-            <div className="flex-1 min-w-0">
-              <SearchBar
-                value={query}
-                onChange={setQuery}
-                size="md"
-                fullWidth
-                placeholder="記事・タグ・著者で検索..."
-              />
-            </div>
-            <button type="button"
-              className="flex-shrink-0 px-4 py-2 rounded-md bg-surface-primary text-onSurface-inverse text-sm">
-              ログイン
-            </button>
-          </div>
-        </header>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="w-80 flex flex-col gap-6">
-          <Caption text="onSearch (Enter で検索実行)"><SearchCallbackDemo /></Caption>
-          <Caption text="ヘッダー検索 (候補表示、isLoading 連動)"><HeaderSearchDemo /></Caption>
-          <Caption text="テーブルフィルタ (sm、リアルタイム絞り込み)"><TableFilterDemo /></Caption>
-        </div>
-        <Caption text="Layout token 適用 (アプリヘッダー、px-container + max-w-container + 中央 SearchBar)">
-          <AppShellDemo />
-        </Caption>
       </div>
-    );
-  },
+    </div>
+  ),
 };

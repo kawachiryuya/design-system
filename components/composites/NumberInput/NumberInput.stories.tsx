@@ -5,11 +5,12 @@ import { NumberInput } from './NumberInput';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * NumberInput stories — 標準ストーリー構造に準拠
+ * NumberInput stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Sizes → States → EdgeCases
- *
- * NumberInput は variant / icon prop を持たないため Variants / WithIcon は省略 (§5-3)。
+ * 2 節構成: Playground / Overview。
+ * size (sm/md) と states (default/at-min/at-max/disabled/no-label/3桁) を Overview に集約。
+ * 予約フォーム等の usage 合成・カスタム aria-label (非視覚) は guideline の「使用例」へ移設。
+ * variant / icon prop は無し。
  */
 const meta: Meta<typeof NumberInput> = {
   title: 'Composites/NumberInput',
@@ -33,12 +34,11 @@ const meta: Meta<typeof NumberInput> = {
 export default meta;
 type Story = StoryObj<typeof NumberInput>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   args: { onChange: fn() },
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -67,152 +67,39 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// size (sm/md) と states。value は controlled なので静的値 + no-op onChange で凍結。
+// 3 桁は display 領域 (w-10 固定) が桁増でも崩れないことの確認。
 
-export const Sizes: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'sm (40px) / md (48px) の 2 段階。md 以上で WCAG 2.5.5 タッチターゲット要件 (44×44px) を満たす。',
+        story: '視覚回帰用の総覧。size (sm 40px / md 48px) と states (default / at-min で − disabled / at-max で + disabled / disabled / label なし / 3 桁) を集約。',
       },
     },
   },
-  render: () => {
-    function SizeDemo({ size }: { size: 'sm' | 'md' }) {
-      const [v, setV] = useState(3);
-      return <NumberInput value={v} onChange={setV} size={size} min={1} max={9} label={`サイズ ${size}`} />;
-    }
-    return (
-      <div className="flex flex-col gap-4 items-start">
-        <Caption text="sm (40px)"><SizeDemo size="sm" /></Caption>
-        <Caption text="md (48px)"><SizeDemo size="md" /></Caption>
-      </div>
-    );
-  },
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Default / At min (−が disabled) / At max (+が disabled) / Disabled / Without label の 5 状態。',
-      },
-    },
-  },
-  render: () => {
-    function Default() {
-      const [v, setV] = useState(3);
-      return <NumberInput value={v} onChange={setV} min={1} max={5} label="数量" />;
-    }
-    function AtMin() {
-      const [v, setV] = useState(1);
-      return <NumberInput value={v} onChange={setV} min={1} max={5} label="最小値" />;
-    }
-    function AtMax() {
-      const [v, setV] = useState(5);
-      return <NumberInput value={v} onChange={setV} min={1} max={5} label="最大値" />;
-    }
-    function Disabled() {
-      const [v, setV] = useState(2);
-      return <NumberInput value={v} onChange={setV} min={1} max={5} label="無効" disabled />;
-    }
-    function NoLabel() {
-      const [v, setV] = useState(1);
-      return <NumberInput value={v} onChange={setV} min={1} max={9} />;
-    }
-    return (
-      <div className="grid grid-cols-2 gap-4 items-end">
-        <Caption text="Default"><Default /></Caption>
-        <Caption text="At min (− disabled)"><AtMin /></Caption>
-        <Caption text="At max (+ disabled)"><AtMax /></Caption>
-        <Caption text="Disabled (両方)"><Disabled /></Caption>
-        <Caption text="Without label"><NoLabel /></Caption>
-      </div>
-    );
-  },
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'カスタム aria-label (大人/小人で別 NumberInput) / 大きな桁 (3 桁表示) / 1 個ずつではない上限。',
-      },
-    },
-  },
-  render: () => {
-    function CustomLabel() {
-      const [adults, setAdults] = useState(2);
-      const [kids, setKids] = useState(0);
-      return (
-        <div className="flex gap-4 items-start">
-          <NumberInput
-            value={adults}
-            onChange={setAdults}
-            min={1}
-            max={9}
-            label="大人"
-            decrementLabel="大人の人数を減らす"
-            incrementLabel="大人の人数を増やす"
-          />
-          <NumberInput
-            value={kids}
-            onChange={setKids}
-            min={0}
-            max={9}
-            label="小人"
-            decrementLabel="小人の人数を減らす"
-            incrementLabel="小人の人数を増やす"
-          />
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (sm 40px / md 48px、md 以上で WCAG 2.5.5 タッチターゲット達成)</div>
+        <div className="flex flex-col gap-4 items-start">
+          <Caption text="sm (40px)"><NumberInput value={3} onChange={() => {}} size="sm" min={1} max={9} label="サイズ sm" /></Caption>
+          <Caption text="md (48px)"><NumberInput value={3} onChange={() => {}} size="md" min={1} max={9} label="サイズ md" /></Caption>
         </div>
-      );
-    }
-    function LargeValue() {
-      const [v, setV] = useState(99);
-      return <NumberInput value={v} onChange={setV} min={1} max={999} label="3 桁" />;
-    }
-    function BookingForm() {
-      const [adults, setAdults] = useState(2);
-      const [children, setChildren] = useState(0);
-      const [rooms, setRooms] = useState(1);
-      return (
-        <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
-          <div className="space-y-section-sm">
-            <h3 className="text-heading-sm text-onSurface m-0">予約内容</h3>
-            <div className="flex flex-wrap gap-6">
-              <NumberInput value={adults} onChange={setAdults} min={1} max={9}
-                label="大人"
-                decrementLabel="大人の人数を減らす"
-                incrementLabel="大人の人数を増やす" />
-              <NumberInput value={children} onChange={setChildren} min={0} max={9}
-                label="小人"
-                decrementLabel="小人の人数を減らす"
-                incrementLabel="小人の人数を増やす" />
-              <NumberInput value={rooms} onChange={setRooms} min={1} max={5}
-                label="部屋数"
-                decrementLabel="部屋数を減らす"
-                incrementLabel="部屋数を増やす" />
-            </div>
-          </div>
-        </form>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-6">
-        <Caption text="カスタム aria-label (大人/小人で SR が文脈を読める)">
-          <CustomLabel />
-        </Caption>
-        <Caption text="3 桁の値 (display 領域は w-10 で固定、桁が増えてもレイアウト崩れない)">
-          <LargeValue />
-        </Caption>
-        <Caption text="Layout token 適用 (予約フォーム frame、複数 NumberInput を並べる)">
-          <BookingForm />
-        </Caption>
       </div>
-    );
-  },
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">states</div>
+        <div className="grid grid-cols-2 gap-4 items-end">
+          <Caption text="Default"><NumberInput value={3} onChange={() => {}} min={1} max={5} label="数量" /></Caption>
+          <Caption text="At min (− disabled)"><NumberInput value={1} onChange={() => {}} min={1} max={5} label="最小値" /></Caption>
+          <Caption text="At max (+ disabled)"><NumberInput value={5} onChange={() => {}} min={1} max={5} label="最大値" /></Caption>
+          <Caption text="Disabled (両方)"><NumberInput value={2} onChange={() => {}} min={1} max={5} label="無効" disabled /></Caption>
+          <Caption text="Without label"><NumberInput value={1} onChange={() => {}} min={1} max={9} /></Caption>
+          <Caption text="3 桁 (display は w-10 固定で崩れない)"><NumberInput value={99} onChange={() => {}} min={1} max={999} label="3 桁" /></Caption>
+        </div>
+      </div>
+    </div>
+  ),
 };

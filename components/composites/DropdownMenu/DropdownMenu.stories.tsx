@@ -1,18 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
 import { expect, userEvent, within, screen, waitFor, fn } from 'storybook/test';
 import { DropdownMenu } from './DropdownMenu';
 import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';
-import { Caption } from '@sb-blocks/Caption';
 
 /**
- * DropdownMenu stories — 標準ストーリー構造に準拠
+ * DropdownMenu stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
- * 順序固定: Playground → WithIcons → States → Controlled
- *
- * variant / size prop なしのため Variants / Sizes は省略 (§5-3)。
- * メニューは native `popover` で top-layer に出るため、各 story はトリガーを押して確認する。
+ * 構成: Playground / Overview。
+ * top-layer の menu は同時に 1 つしか開けないため、Overview は代表 1 枚 (icon / disabled / destructive /
+ * 通常項目を 1 パネルに集約) を `open` 固定で凍結する。placement / roving フォーカス / typeahead /
+ * controlled API は Playground (撮影外) + guideline で確認。
+ * variant / size prop は無し。
  */
 type PlaygroundArgs = {
   onDuplicate: () => void;
@@ -27,10 +26,11 @@ const meta: Meta<PlaygroundArgs> = {
 export default meta;
 type Story = StoryObj<PlaygroundArgs>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story: 'トリガーで開き、矢印キーで項目移動 → Enter で選択 → 閉じる。menu/menuitem の role、roving フォーカス、Enter 選択を play test で保証。',
@@ -75,84 +75,32 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. WithIcons ───────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) — open 固定の代表 1 枚 ────────────
+// 1 パネルに icon / 通常 / disabled / destructive を集約し menu の視覚バリエーションを一度に撮る。
 
-export const WithIcons: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'アイコン付き + 破壊的項目 (destructive で赤系)。アカウントメニュー等の典型構成。',
+        story: '視覚回帰用の開状態。icon 付き / 通常 / disabled (準備中) / destructive (赤系) 項目を 1 パネルに集約し `open` 固定で凍結する。',
       },
     },
   },
   render: () => (
-    <DropdownMenu
-      trigger={<Button variant="secondary">操作</Button>}
-      placement="bottom-end"
-      aria-label="操作メニュー"
-      items={[
-        { label: 'お気に入りに追加', icon: <Icon name="favorite" size="sm" />, onSelect: () => {} },
-        { label: '新しいタブで開く', icon: <Icon name="open_in_new" size="sm" />, onSelect: () => {} },
-        { label: '削除', icon: <Icon name="remove" size="sm" />, destructive: true, onSelect: () => {} },
-      ]}
-    />
+    <div className="p-8 pb-56 flex justify-center">
+      <DropdownMenu
+        trigger={<Button variant="secondary">操作</Button>}
+        placement="bottom"
+        open
+        onOpenChange={() => {}}
+        aria-label="操作メニュー"
+        items={[
+          { label: 'お気に入りに追加', icon: <Icon name="favorite" size="sm" />, onSelect: () => {} },
+          { label: '新しいタブで開く', icon: <Icon name="open_in_new" size="sm" />, onSelect: () => {} },
+          { label: 'カラム表示 (準備中)', disabled: true, onSelect: () => {} },
+          { label: '削除', icon: <Icon name="remove" size="sm" />, destructive: true, onSelect: () => {} },
+        ]}
+      />
+    </div>
   ),
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '無効項目 (disabled) はキーボード移動でスキップされ、typeahead (項目名の先頭文字入力でジャンプ) も効く。',
-      },
-    },
-  },
-  render: () => (
-    <DropdownMenu
-      trigger={<Button>表示</Button>}
-      aria-label="表示メニュー"
-      items={[
-        { label: 'リスト表示', onSelect: () => {} },
-        { label: 'グリッド表示', onSelect: () => {} },
-        { label: 'カラム表示 (準備中)', disabled: true, onSelect: () => {} },
-        { label: 'コンパクト表示', onSelect: () => {} },
-      ]}
-    />
-  ),
-};
-
-// ── 4. Controlled ──────────────────────────────────────────────
-
-export const Controlled: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'open / onOpenChange で外部 state から開閉を制御。選択 / Esc / 外側クリックも onOpenChange に伝わる。',
-      },
-    },
-  },
-  render: () => {
-    function Demo() {
-      const [open, setOpen] = useState(false);
-      return (
-        <div className="flex items-center gap-3">
-          <DropdownMenu
-            trigger={<Button>並び替え</Button>}
-            open={open}
-            onOpenChange={setOpen}
-            aria-label="並び替え"
-            items={[
-              { label: '新着順', onSelect: () => {} },
-              { label: '人気順', onSelect: () => {} },
-              { label: '価格が安い順', onSelect: () => {} },
-            ]}
-          />
-          <Caption text={`open: ${String(open)}`}><span /></Caption>
-        </div>
-      );
-    }
-    return <Demo />;
-  },
 };

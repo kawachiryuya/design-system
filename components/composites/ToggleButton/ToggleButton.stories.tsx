@@ -5,11 +5,12 @@ import { ToggleButton } from './ToggleButton';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * ToggleButton stories — 標準ストーリー構造に準拠
+ * ToggleButton stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → States → EdgeCases
- *
- * ToggleButton は variant / size / icon prop を持たないため Variants / Sizes / WithIcon は省略 (§5-3)。
+ * 2 節構成: Playground / Overview。
+ * default/selected/disabled × hover/focus-visible (pseudo 強制) を Overview に集約。`aria-pressed` で選択状態を SR へ。
+ * 座席グリッド / 曜日セレクター等の複数インスタンス usage は guideline の「使用例」へ移設。
+ * variant / size / icon prop は無し。
  */
 const meta: Meta<typeof ToggleButton> = {
   title: 'Composites/ToggleButton',
@@ -29,16 +30,15 @@ const meta: Meta<typeof ToggleButton> = {
 export default meta;
 type Story = StoryObj<typeof ToggleButton>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   args: { onClick: fn() },
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から selected / disabled / children を切り替えて挙動を確認。クリックでも selected が toggle される (stateful wrapper、Controls 値を初期値として読み込む)。',
+        story: 'Controls から selected / disabled / children を切替。クリックでも selected が toggle される (stateful wrapper、Controls 値を初期値として読み込む)。',
       },
     },
   },
@@ -69,19 +69,19 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. States ──────────────────────────────────────────────────
-// Default / Selected / Disabled + 各状態の Hover / Focus-visible (pseudo-states 強制)
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// default / selected / disabled × hover / focus-visible (pseudo 強制) のマトリクス。
 
-export const States: Story = {
+export const Overview: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: 'Default / Selected / Disabled の 3 状態と、Default / Selected それぞれの Hover / Focus-visible (pseudo-states で強制表示)。`aria-pressed` で選択状態を SR に伝達。',
-      },
-    },
     pseudo: {
       hover: ['#tb-default-hover', '#tb-selected-hover'],
       focusVisible: ['#tb-default-focus', '#tb-selected-focus'],
+    },
+    docs: {
+      description: {
+        story: '視覚回帰用の総覧。default / selected / disabled の 3 状態と、default / selected それぞれの hover / focus-visible (pseudo 強制) をマトリクスで集約。',
+      },
     },
   },
   render: () => (
@@ -97,100 +97,3 @@ export const States: Story = {
     </div>
   ),
 };
-
-// ── 3. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '実利用に近い「座席グリッド」例 (occupied = 予約済み = disabled、selected トグル可能) / 長めラベル / Layout token 適用 (曜日セレクター in page context).',
-      },
-    },
-  },
-  render: () => {
-    function SeatGrid() {
-      const [selected, setSelected] = useState<string[]>([]);
-      const occupied = ['1B', '2A', '3C'];
-      const rows = [1, 2, 3, 4, 5];
-      const cols = ['A', 'B', 'C'];
-
-      const toggle = (id: string) => {
-        setSelected((prev) =>
-          prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
-        );
-      };
-
-      return (
-        <div className="space-y-1">
-          {rows.map((row) => (
-            <div key={row} className="flex gap-1">
-              {cols.map((col) => {
-                const id = `${row}${col}`;
-                const isOccupied = occupied.includes(id);
-                return (
-                  <ToggleButton
-                    key={id}
-                    selected={selected.includes(id)}
-                    disabled={isOccupied}
-                    onClick={() => toggle(id)}
-                    aria-label={`座席 ${id}${isOccupied ? ' 予約済み' : ''}`}
-                  >
-                    {row}
-                  </ToggleButton>
-                );
-              })}
-            </div>
-          ))}
-          {selected.length > 0 && (
-            <p className="text-body-sm text-onSurface-muted mt-2">
-              選択中: {selected.join(', ')}
-            </p>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div className="flex flex-col gap-6">
-        <Caption text="座席グリッド (実利用例)">
-          <SeatGrid />
-        </Caption>
-        <Caption text="複数文字ラベル">
-          <div className="flex gap-2">
-            <ToggleButton>10</ToggleButton>
-            <ToggleButton selected>21</ToggleButton>
-            <ToggleButton>99</ToggleButton>
-          </div>
-        </Caption>
-        <Caption text="Layout token 適用 (max-w-container-narrow + 曜日セレクター、設定画面の典型構成)">
-          <WeekdaySelectorDemo />
-        </Caption>
-      </div>
-    );
-  },
-};
-
-function WeekdaySelectorDemo() {
-  const [selected, setSelected] = useState<string[]>(['月', '水', '金']);
-  const days = ['月', '火', '水', '木', '金', '土', '日'];
-  const toggle = (d: string) =>
-    setSelected((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
-  return (
-    <div className="w-full px-container py-container max-w-container-narrow mx-auto">
-      <div className="space-y-section-sm">
-        <div>
-          <p className="text-label text-onSurface mb-2">通知を受け取る曜日</p>
-          <div className="flex gap-2 flex-wrap">
-            {days.map((d) => (
-              <ToggleButton key={d} selected={selected.includes(d)} onClick={() => toggle(d)} aria-label={`${d}曜日`}>
-                {d}
-              </ToggleButton>
-            ))}
-          </div>
-        </div>
-        <p className="text-body-sm text-onSurface-muted">選択中: {selected.length}日間</p>
-      </div>
-    </div>
-  );
-}

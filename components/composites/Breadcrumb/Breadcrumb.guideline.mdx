@@ -99,6 +99,30 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**EC サイトのカテゴリナビ**
+
+<div className="flex flex-col gap-3">
+  <Breadcrumb separator="chevron" items={[
+    { label: 'トップ', href: '/' },
+    { label: 'ファッション', href: '/fashion' },
+    { label: 'メンズ', href: '/fashion/mens' },
+    { label: 'Tシャツ' },
+  ]} />
+  <Breadcrumb separator="slash" items={[
+    { label: 'トップ', href: '/' },
+    { label: 'デジタル', href: '/digital' },
+    { label: 'スマートフォン' },
+  ]} />
+</div>
+
+> page header に Breadcrumb + ページタイトルを置く例 (`max-w-container` + `space-y-2`) は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`<nav aria-label>`**: 外側 `<nav>` に `aria-label="パンくずリスト"` (デフォルト)。SR でランドマークとして識別される

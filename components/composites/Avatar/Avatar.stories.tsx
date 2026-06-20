@@ -3,12 +3,11 @@ import { Avatar } from './Avatar';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Avatar stories — 標準ストーリー構造に準拠
+ * Avatar stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Variants (shape) → Sizes → States → EdgeCases
- *
- * Avatar は icon prop を持たないため WithIcon は省略 (§5-3)。
- * Variants 軸は shape (circle / square) として扱う。
+ * 構成: Playground / Overview。
+ * content(image→initials→placeholder) / size / shape / status は内在軸で Overview に集約。
+ * ユーザーカード / アバターグループ / メンバーリスト等の usage 合成は guideline 参照。
  */
 const meta: Meta<typeof Avatar> = {
   title: 'Composites/Avatar',
@@ -31,11 +30,12 @@ const meta: Meta<typeof Avatar> = {
 export default meta;
 type Story = StoryObj<typeof Avatar>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+const IMG = 'https://i.pravatar.cc/150?img=7';
+
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -45,153 +45,59 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants (shape) ────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在軸を集約: content fallback / size / shape / status (定義的な軸から順に)。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'shape の 2 種: circle (個人アカウント慣習) / square (チーム・組織)。',
+        story: '視覚回帰用の総覧。shape (circle/square) / size (xs〜xl) / content (image → initials → placeholder の 3 段フォールバック) / status (online/offline/busy/away) を 1 枚に集約。読込失敗時は initials に落ちる (結果は initials と同じ見た目)。',
       },
     },
   },
   render: () => (
-    <div className="flex gap-6 items-center">
-      <Caption text="circle (個人)">
-        <Avatar shape="circle" size="lg" name="田中 太郎" src="https://i.pravatar.cc/150?img=7" />
-      </Caption>
-      <Caption text="square (チーム・組織)">
-        <Avatar shape="square" size="lg" name="チーム A" src="https://i.pravatar.cc/150?img=7" />
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 3. Sizes ───────────────────────────────────────────────────
-
-export const Sizes: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'xs (24px、サイドバー / コメント) → xl (64px、プロフィールヒーロー) の 5 段階。container は全 step +8 等差 (24/32/40/48/64) で Material 3 / Carbon と整合。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex items-end gap-4">
-      {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
-        <div key={size} className="flex flex-col items-center gap-2">
-          <Avatar size={size} name="田中 太郎" src="https://i.pravatar.cc/150?img=5" />
-          <span className="text-caption text-onSurface-muted font-mono">{size}</span>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">content fallback (image → initials → placeholder)</div>
+        <div className="flex flex-wrap gap-4 items-center">
+          <Caption text="Image (src 指定)"><Avatar src={IMG} name="田中 太郎" /></Caption>
+          <Caption text="Initials (src なし)"><Avatar name="田中 太郎" /></Caption>
+          <Caption text="placeholder (src/name なし)"><Avatar /></Caption>
         </div>
-      ))}
-    </div>
-  ),
-};
+      </div>
 
-// ── 4. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Image / Initials (src なし) / Image error → Initials / No src+no name (placeholder) + status (online/offline/busy/away) の状態。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-5">
-      <Caption text="Image (src 指定)">
-        <Avatar src="https://i.pravatar.cc/150?img=3" name="田中 太郎" />
-      </Caption>
-      <Caption text="Initials (src なし、name から自動生成)">
-        <div className="flex gap-3 items-center">
-          <Avatar name="田中 太郎" />
-          <Avatar name="Yamada Hanako" />
-          <Avatar name="佐藤" />
-          <Avatar name="John Smith" />
-          <Avatar name="木村" />
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (xs 24 / sm 32 / md 40 / lg 48 / xl 64)</div>
+        <div className="flex items-end gap-4">
+          {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+            <div key={size} className="flex flex-col items-center gap-2">
+              <Avatar size={size} name="田中 太郎" src={IMG} />
+              <span className="text-caption text-onSurface-muted font-mono">{size}</span>
+            </div>
+          ))}
         </div>
-      </Caption>
-      <Caption text="Image error → Initials fallback (invalid URL)">
-        <Avatar src="https://invalid.example.com/x.jpg" name="田中 太郎" />
-      </Caption>
-      <Caption text="No src + no name (placeholder icon)">
-        <Avatar />
-      </Caption>
-      <Caption text="Status dot (online / offline / busy / away)">
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">shape (circle 個人 / square チーム・組織) — 角丸のみ比較するためイニシャルで統一</div>
+        <div className="flex gap-6 items-center">
+          <Caption text="circle"><Avatar shape="circle" size="lg" name="田中 太郎" /></Caption>
+          <Caption text="square"><Avatar shape="square" size="lg" name="チーム A" /></Caption>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">status (online / offline / busy / away)</div>
         <div className="flex gap-6 items-center">
           {(['online', 'offline', 'busy', 'away'] as const).map((status) => (
             <div key={status} className="flex flex-col items-center gap-1">
-              <Avatar size="lg" name="田中 太郎" status={status} src="https://i.pravatar.cc/150?img=8" />
+              <Avatar size="lg" name="田中 太郎" status={status} src={IMG} />
               <span className="text-caption text-onSurface-muted font-mono">{status}</span>
             </div>
           ))}
         </div>
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 5. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '実利用例: ユーザーカード (avatar + name + email) / アバターグループ (重なり + +N counter)。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-6">
-      <Caption text="ユーザーカード (avatar + name + email + status)">
-        <div className="flex items-center gap-3 p-4 rounded-md border border-border-subtle w-64">
-          <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="md" status="online" />
-          <div className="min-w-0">
-            <p className="text-label text-onSurface truncate">鈴木 花子</p>
-            <p className="text-caption text-onSurface-muted truncate">suzuki@example.com</p>
-          </div>
-        </div>
-      </Caption>
-      <Caption text="アバターグループ (重なり -space-x-3 + ring-surface + 残り表示)">
-        <div className="flex -space-x-3">
-          {[
-            { src: 'https://i.pravatar.cc/150?img=1', name: 'Alice' },
-            { src: 'https://i.pravatar.cc/150?img=2', name: 'Bob' },
-            { src: 'https://i.pravatar.cc/150?img=3', name: 'Carol' },
-            { name: 'Dave' },
-          ].map(({ src, name }) => (
-            <Avatar key={name} src={src} name={name} size="sm" className="ring-2 ring-surface" />
-          ))}
-          <span className="w-8 h-8 rounded-full bg-surface-disabled ring-2 ring-surface
-            flex items-center justify-center text-caption text-onSurface font-medium flex-shrink-0">
-            +5
-          </span>
-        </div>
-      </Caption>
-      <Caption text="Layout token 適用 (grid-base + col-span でレスポンシブメンバーリスト、Team page 典型例)">
-        <div className="w-full">
-          <div className="grid-base">
-            {[
-              { name: '田中 太郎', role: 'デザイナー', img: 1 },
-              { name: '鈴木 花子', role: 'エンジニア', img: 2 },
-              { name: '佐藤 一郎', role: 'PM', img: 3 },
-              { name: '山田 次郎', role: 'エンジニア', img: 4 },
-              { name: '木村 三郎', role: 'デザイナー', img: 5 },
-              { name: '高橋 美咲', role: 'エンジニア', img: 6 },
-            ].map(({ name, role, img }) => (
-              <div key={name} className="col-span-4 md:col-span-4 lg:col-span-4 flex items-center gap-3 p-3 rounded-md border border-border-subtle">
-                <Avatar src={`https://i.pravatar.cc/150?img=${img}`} name={name} size="md" status="online" />
-                <div className="min-w-0">
-                  <p className="text-label text-onSurface truncate">{name}</p>
-                  <p className="text-caption text-onSurface-muted truncate">{role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Caption>
+      </div>
     </div>
   ),
 };

@@ -6,16 +6,25 @@ import { Icon } from '../../primitives/Icon';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Tooltip stories — 標準ストーリー構造に準拠
+ * Tooltip stories — VR 集約モデル (§5-3) 移行は一部保留
  *
- * 順序固定: Playground → Placements → OnIconButton → LongText
- *
- * variant / size prop なしのため Variants / Sizes は省略 (§5-3)。
- * hover / focus で表示されるため、各 story はトリガーに hover か Tab focus して確認する。
+ * Tooltip は `open`/`defaultOpen` prop が無く hover/focus でのみ表示されるため、開状態を安定して
+ * 静的に VR できない。開状態の Overview 追加は #90 (defaultOpen API) で対応予定。それまでは
+ * §9-4 のスタンスに従い Playground を撮影対象に残す (closed trigger の撮影 = 退行検知の最低限)。
+ * 各 story はトリガーに hover か Tab focus して開状態を確認する。
  */
 const meta: Meta<typeof Tooltip> = {
   title: 'Composites/Tooltip',
   component: Tooltip,
+  argTypes: {
+    content: { control: 'text' },
+    placement: { control: 'radio', options: ['top', 'right', 'bottom', 'left'] },
+    delay: { control: { type: 'number' } },
+  },
+  args: {
+    content: 'クリックで詳細を表示します',
+    placement: 'top',
+  },
 };
 
 export default meta;
@@ -31,8 +40,8 @@ export const Playground: Story = {
       },
     },
   },
-  render: () => (
-    <Tooltip content="クリックで詳細を表示します">
+  render: (args) => (
+    <Tooltip {...args}>
       <Button variant="secondary">ヘルプ</Button>
     </Tooltip>
   ),

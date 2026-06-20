@@ -106,6 +106,38 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**ユーザーカード（avatar + name + email + status）**
+
+<div className="flex items-center gap-3 p-4 rounded-md border border-border-subtle w-64">
+  <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="md" status="online" />
+  <div className="min-w-0">
+    <p className="text-label text-onSurface truncate">鈴木 花子</p>
+    <p className="text-caption text-onSurface-muted truncate">suzuki@example.com</p>
+  </div>
+</div>
+
+**アバターグループ（重なり -space-x-3 + ring-surface + 残り +N）**
+
+<div className="flex -space-x-3">
+  {[
+    { src: 'https://i.pravatar.cc/150?img=1', name: 'Alice' },
+    { src: 'https://i.pravatar.cc/150?img=2', name: 'Bob' },
+    { src: 'https://i.pravatar.cc/150?img=3', name: 'Carol' },
+    { name: 'Dave' },
+  ].map(({ src, name }) => (
+    <Avatar key={name} src={src} name={name} size="sm" className="ring-2 ring-surface" />
+  ))}
+  <span className="w-8 h-8 rounded-full bg-surface-disabled ring-2 ring-surface flex items-center justify-center text-caption text-onSurface font-medium flex-shrink-0">+5</span>
+</div>
+
+> Team page のレスポンシブメンバーリスト (`grid-base` + `col-span-*`) の例は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`role="img"` + `aria-label`**: 自動付与、SR に「ユーザー名 (status)」を読み上げる

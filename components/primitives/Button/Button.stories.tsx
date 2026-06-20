@@ -158,31 +158,26 @@ export const Overview: Story = {
 };
 
 // ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
-// props だけでは作れない「文脈依存の崩れやすさ」だけをここに残す:
-//   fullWidth (親幅に追従) / 長文の折返し / inner-span による truncate。
+// Controls では再現できない構造ケースのみ: 内側 span による truncate (children に
+// min-w-0 truncate の span を挟む特殊マークアップ)。
+// ※ fullWidth / 長文折返しは boolean・text Control で再現できるため Playground の役目 (§5-3)。
 // ※ 内在状態 (variant/size/state/icon/description) は Overview が持つ。
-// ※ iconOnly + 長文 aria-label は非視覚 (SR 専用) なので VR からは外し、
-//    axe (test-runner) + guideline で担保する。
+// ※ iconOnly + 長文 aria-label は非視覚 (SR 専用) なので axe + guideline で担保。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'props では作れない文脈依存ケースのみ: fullWidth (親幅追従) / 長文の標準折返し / 内側 span による truncate。内在状態は Overview を参照。',
+        story: 'Controls では作れない構造ケースのみ: inner-span による truncate。fullWidth / 長文折返しは Playground (Controls) の役目、内在状態は Overview を参照。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6 w-80">
-      <Caption text="fullWidth (親要素幅に追従)">
-        <Button fullWidth>fullWidth で広がる</Button>
-      </Caption>
-      <Caption text="fullWidth + 長文 — 標準 (折返す)">
-        <Button fullWidth>ここに非常に長いラベルテキストが入って折返しを確認する</Button>
-      </Caption>
-      <Caption text="fullWidth + 長文 — truncate (1行で省略...)">
+      <Caption text="fullWidth + 長文 — inner-span truncate (1 行で省略...)">
         {/* Button は inline-flex なので truncate を直接当てても効かない (テキストノードが収縮しない)。
-            ellipsis を出すには内側に min-w-0 truncate を持つ span を挟むのが Tailwind/Flexbox の定石。 */}
+            ellipsis を出すには内側に min-w-0 truncate を持つ span を挟むのが Tailwind/Flexbox の定石。
+            children に span を挟む特殊マークアップで、Controls (children=text) では再現できない構造ケース。 */}
         <Button fullWidth>
           <span className="min-w-0 truncate">ここに非常に長いラベルテキストが入って折返しを確認する</span>
         </Button>

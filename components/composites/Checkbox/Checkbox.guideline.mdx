@@ -1,6 +1,8 @@
 import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
 import * as CheckboxStories from './Checkbox.stories';
 import { Checkbox, CheckboxGroup } from './Checkbox';
+import { Radio, RadioGroup } from '../Radio/Radio';
+import { Button } from '../../primitives/Button/Button';
 import { DoDontExample } from '@sb-blocks/DoDontExample';
 import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
@@ -111,6 +113,36 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | **複数選択肢から 1 つ排他** | `<Radio>` | 排他制御、Checkbox は複数選択用 |
 | **多数の選択肢から 1 つ** (6 個以上) | `<Select>` | 一覧性ではなく省スペース |
 | **トグルボタン的な選択** (テキスト + active 状態) | `<ToggleButton>` / `<FilterChip>` | 視覚的なボタン UI |
+
+---
+
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**会員登録フォーム（RadioGroup + CheckboxGroup + 同意チェック）** — `max-w-container-narrow` + `space-y-section-sm` のフォーム枠に、性別 (Radio inline) / 興味カテゴリ (CheckboxGroup) / 利用規約同意 (required CheckboxGroup) を積む。送信時に未同意なら Group の `error` を Context で全子に伝播させ、赤枠 + errorMessage を出す（動的 validation の実挙動は Storybook の Playground 系で確認）。
+
+<form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+  <div className="space-y-section-sm">
+    <h3 className="text-heading-sm text-onSurface m-0">会員登録</h3>
+    <RadioGroup legend="性別" inline>
+      <Radio name="ex-gender" value="male" label="男性" defaultChecked />
+      <Radio name="ex-gender" value="female" label="女性" />
+      <Radio name="ex-gender" value="other" label="その他" />
+    </RadioGroup>
+    <CheckboxGroup legend="興味のあるカテゴリ" helpText="複数選択できます">
+      <Checkbox label="テクノロジー" />
+      <Checkbox label="デザイン" />
+      <Checkbox label="ビジネス" />
+    </CheckboxGroup>
+    <CheckboxGroup legend="利用規約への同意" required error errorMessage="続けるには利用規約への同意が必要です">
+      <Checkbox label="利用規約とプライバシーポリシーに同意する" />
+    </CheckboxGroup>
+    <Button type="submit" fullWidth>登録する</Button>
+  </div>
+</form>
+
+> Layout token (`px-container` / `space-y-section-sm` 等) の使い方は [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
 
 ---
 

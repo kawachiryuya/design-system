@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { Accordion, type AccordionItem } from './Accordion';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Accordion stories — 標準ストーリー構造に準拠
+ * Accordion stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Variants (type) → States → EdgeCases
- *
- * Accordion は size / icon prop を持たないため Sizes / WithIcon は省略 (§5-3)。
+ * 2 節構成: Playground / Overview。
+ * type (single/multiple) と states (collapsed/expanded/disabled/hover/focus) を Overview に集約。
+ * Controlled / 長文コンテンツ / FAQ ページ等の usage 合成は guideline の「使用例」へ移設。
+ * size / icon prop は無し。
  */
 const sampleFaq: AccordionItem[] = [
   { id: 'q1', title: '予約のキャンセルはいつまで可能ですか？', content: '出発時刻の 1 時間前までキャンセル可能です。' },
@@ -32,11 +32,10 @@ const meta: Meta<typeof Accordion> = {
 export default meta;
 type Story = StoryObj<typeof Accordion>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -53,40 +52,19 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants (type) ─────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// type (single 1つ開く / multiple 複数開く) + states。defaultOpenIds で開状態を静的に凍結。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: '`type="single"` (1 つだけ開く、FAQ 等) と `type="multiple"` (複数同時開く、設定セクション等) の比較。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-6">
-      <Caption text='type="single" (FAQ 等、1 つだけ開く)'>
-        <Accordion items={sampleFaq} defaultOpenIds={['q1']} />
-      </Caption>
-      <Caption text='type="multiple" (設定セクション等、複数同時)'>
-        <Accordion items={sampleFaq} type="multiple" defaultOpenIds={['q1', 'q2']} />
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Collapsed / Expanded / Disabled / Hover / Focus-visible の 5 状態。trigger は `aria-expanded` で状態を SR に伝達。',
-      },
-    },
     pseudo: {
       hover: ['#ac-hover button'],
       focusVisible: ['#ac-focus button'],
+    },
+    docs: {
+      description: {
+        story: '視覚回帰用の総覧。collapsed / expanded (defaultOpenIds) / disabled / type="multiple" (複数開く) と、trigger の hover / focus-visible (pseudo 強制) を集約。',
+      },
     },
   },
   render: () => (
@@ -104,87 +82,19 @@ export const States: Story = {
           { id: 'c', title: '通常', content: '開閉可' },
         ]} />
       </Caption>
-      <Caption text="Trigger Hover (pseudo-states 強制)">
+      <Caption text='type="multiple" (複数同時に開く、設定セクション等)'>
+        <Accordion items={sampleFaq} type="multiple" defaultOpenIds={['q1', 'q2']} />
+      </Caption>
+      <Caption text="Trigger Hover (pseudo 強制)">
         <div id="ac-hover">
           <Accordion items={[{ id: 'a', title: 'Hover 中の trigger', content: '中身' }]} />
         </div>
       </Caption>
-      <Caption text="Trigger Focus-visible (pseudo-states 強制)">
+      <Caption text="Trigger Focus-visible (pseudo 強制)">
         <div id="ac-focus">
           <Accordion items={[{ id: 'a', title: 'Focus 中の trigger', content: '中身' }]} />
         </div>
       </Caption>
     </div>
   ),
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Controlled (URL クエリ同期想定) / 長文コンテンツ / 1 項目だけ / Layout token 適用 (FAQ page、max-w-container-narrow).',
-      },
-    },
-  },
-  render: () => {
-    function ControlledDemo() {
-      const [openIds, setOpenIds] = useState<string[]>(['q2']);
-      return (
-        <div>
-          <p className="text-body-sm text-onSurface-muted mb-3">
-            現在開いている: {openIds.length > 0 ? openIds.join(', ') : 'なし'}
-          </p>
-          <Accordion items={sampleFaq} openIds={openIds} onChange={setOpenIds} />
-        </div>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-6">
-        <Caption text="Controlled (外部から openIds 制御)">
-          <ControlledDemo />
-        </Caption>
-        <Caption text="長文コンテンツ (折返し挙動の確認)">
-          <Accordion
-            type="multiple"
-            defaultOpenIds={['long']}
-            items={[
-              {
-                id: 'long',
-                title: 'プライバシーポリシーについて教えてください',
-                content: (
-                  <p className="text-body-sm leading-relaxed">
-                    当社では、ユーザーから収集した個人情報を厳重に管理し、サービス品質の向上、本人確認、お問い合わせへの返信、新機能や重要なお知らせの通知のために利用します。第三者への提供は、法令に基づく場合や本人の同意を得た場合に限られます。
-                  </p>
-                ),
-              },
-            ]}
-          />
-        </Caption>
-        <Caption text="1 項目だけ (1 個でもうまく見える)">
-          <Accordion items={[{ id: 'only', title: '唯一の項目', content: '中身' }]} />
-        </Caption>
-        <Caption text="Layout token 適用 (FAQ page、max-w-container-narrow + space-y-section-sm)">
-          <div className="w-full px-container py-container max-w-container-narrow mx-auto">
-            <div className="space-y-section-sm">
-              <div>
-                <h1 className="text-heading-lg text-onSurface">よくあるご質問</h1>
-                <p className="text-body-md text-onSurface-muted mt-1">サービス利用について多く寄せられるご質問にお答えします。</p>
-              </div>
-              <Accordion
-                type="multiple"
-                items={[
-                  { id: 'p1', title: '予約のキャンセルはいつまで可能ですか？', content: <p className="text-body-sm">出発時刻の 1 時間前までキャンセル可能です。それ以降はキャンセル料が発生します。</p> },
-                  { id: 'p2', title: '会員登録は無料ですか？', content: <p className="text-body-sm">はい、完全に無料でご利用いただけます。クレジットカード登録も不要です。</p> },
-                  { id: 'p3', title: '予約確認メールが届きません', content: <p className="text-body-sm">迷惑メールフォルダをご確認ください。それでも見つからない場合はサポートまでご連絡ください。</p> },
-                  { id: 'p4', title: '支払い方法は何が使えますか？', content: <p className="text-body-sm">主要クレジットカード、デビットカード、QR コード決済、コンビニ決済に対応しています。</p> },
-                ]}
-              />
-            </div>
-          </div>
-        </Caption>
-      </div>
-    );
-  },
 };

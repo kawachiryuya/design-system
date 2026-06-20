@@ -99,6 +99,28 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**記事一覧ページ（件数表示 + Pagination + showEdges）** — リストの上に件数、下に中央寄せの Pagination を置く定番構成。
+
+<div className="w-96 space-y-4">
+  <p className="text-body-sm text-onSurface-muted">全 47 件中 1〜5 件を表示</p>
+  <ul className="divide-y divide-border-subtle border border-border-subtle rounded-md">
+    {['記事タイトル #1','記事タイトル #2','記事タイトル #3'].map((title) => (
+      <li key={title} className="px-4 py-3 text-body-sm text-onSurface">{title}</li>
+    ))}
+  </ul>
+  <div className="flex justify-center">
+    <Pagination currentPage={1} totalPages={10} onPageChange={() => {}} showEdges />
+  </div>
+</div>
+
+> `totalPages = 1` のときは **何も描画されない**（1 ページしかないときに pagination は不要）。記事一覧 page 全体（`max-w-container-narrow` + `space-y-section-sm`）の構成は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`<nav aria-label="ページネーション">`**: 外側 nav にランドマーク + ラベル

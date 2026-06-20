@@ -6,12 +6,13 @@ import { Icon } from '../../primitives/Icon';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * SegmentedControl stories — 標準ストーリー構造に準拠
+ * SegmentedControl stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → States → WithIcon → EdgeCases
- *
- * variant prop なしのため Variants 省略 (§5-3)。size prop は 40px (h-10) 1 サイズ統一で
- * 廃止済 (Pagination と同じ pattern)、Sizes story も削除。
+ * 3 節構成: Playground / Overview / EdgeCases。
+ * 状態 (selected/unselected) × interaction (hover/focus は pseudo 強制) + icon ラベルを Overview に集約。
+ * 多数セグメントの固定幅オーバーフローは width 依存の構造ケースなので EdgeCases。
+ * 号車選択 / 2 択 / ダッシュボード期間切替等の usage は guideline の「使用例」へ移設。
+ * variant / size prop は無し (40px 1 サイズ統一)。
  */
 type PlaygroundArgs = {
   onChange: (v: string) => void;
@@ -24,11 +25,10 @@ const meta: Meta<PlaygroundArgs> = {
 export default meta;
 type Story = StoryObj<PlaygroundArgs>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -70,168 +70,78 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. States ──────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// selected/unselected (1 つの control が両方を内包) + hover/focus (pseudo 強制) + icon ラベル。
+// value は controlled なので静的値 + no-op onChange で凍結。
 
-export const States: Story = {
+export const Overview: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: 'Selected / Unselected の状態と、各状態の Hover / Focus-visible (pseudo-states で強制表示)。',
-      },
-    },
-    // pseudo-states は button 要素自体に :hover / :focus-visible を強制する必要がある
-    // (div に強制しても Tailwind の hover:/focus-visible: は反応しない)
     pseudo: {
       hover: ['#sc-hover button'],
       focusVisible: ['#sc-focus button'],
     },
-  },
-  render: () => {
-    function StaticDemo({ id }: { id?: string }) {
-      const [v, setV] = useState('a');
-      return (
-        <div id={id}>
-          <SegmentedControl
-            items={[
-              { value: 'a', label: 'A (selected)' },
-              { value: 'b', label: 'B' },
-            ]}
-            value={v}
-            onChange={setV}
-            aria-label="states demo"
-          />
-        </div>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-4 items-start">
-        <Caption text="Default (Selected + Unselected 並列)"><StaticDemo /></Caption>
-        <Caption text="Hover (pseudo-states 強制)"><StaticDemo id="sc-hover" /></Caption>
-        <Caption text="Focus-visible (pseudo-states 強制)"><StaticDemo id="sc-focus" /></Caption>
-      </div>
-    );
-  },
-};
-
-// ── 3. WithIcon ────────────────────────────────────────────────
-
-export const WithIcon: Story = {
-  parameters: {
     docs: {
       description: {
-        story: 'ラベルに `<Icon>` を含めて視覚的な意味を補強するパターン (表示モード / ソート方向 等)。',
+        story: '視覚回帰用の総覧。selected + unselected を内包した control と、hover / focus-visible (pseudo 強制)、icon ラベル (表示モード等) を集約。',
       },
     },
   },
-  render: () => {
-    function IconDemo() {
-      const [view, setView] = useState<'list' | 'grid'>('list');
-      return (
+  render: () => (
+    <div className="flex flex-col gap-4 items-start">
+      <Caption text="Default (selected + unselected 並列)">
+        <SegmentedControl
+          items={[{ value: 'a', label: 'A (selected)' }, { value: 'b', label: 'B' }]}
+          value="a" onChange={() => {}} aria-label="states demo"
+        />
+      </Caption>
+      <Caption text="Hover (pseudo 強制)">
+        <div id="sc-hover">
+          <SegmentedControl
+            items={[{ value: 'a', label: 'A (selected)' }, { value: 'b', label: 'B' }]}
+            value="a" onChange={() => {}} aria-label="hover demo"
+          />
+        </div>
+      </Caption>
+      <Caption text="Focus-visible (pseudo 強制)">
+        <div id="sc-focus">
+          <SegmentedControl
+            items={[{ value: 'a', label: 'A (selected)' }, { value: 'b', label: 'B' }]}
+            value="a" onChange={() => {}} aria-label="focus demo"
+          />
+        </div>
+      </Caption>
+      <Caption text="icon ラベル (表示モード: リスト / グリッド)">
         <SegmentedControl
           items={[
             { value: 'list', label: <span className="inline-flex items-center gap-1"><Icon name="list" size="sm" color="inherit" /> リスト</span> },
             { value: 'grid', label: <span className="inline-flex items-center gap-1"><Icon name="grid_view" size="sm" color="inherit" /> グリッド</span> },
           ]}
-          value={view}
-          onChange={setView}
-          aria-label="表示モード"
+          value="list" onChange={() => {}} aria-label="表示モード"
         />
-      );
-    }
-    return <IconDemo />;
-  },
+      </Caption>
+    </div>
+  ),
 };
 
-// ── 4. EdgeCases ───────────────────────────────────────────────
+// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
+// 多数セグメントを固定幅 (w-80) に入れた時のはみ出し挙動 = width + item 数依存の構造ケース。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '数値 value (号車選択等) / 多数のセグメント (横スクロール) / 2 択切替の最小ケース / Layout token 適用 (ダッシュボード期間切替で max-w-container + space-y-section-sm).',
+        story: '多数セグメント (10 件) を固定幅 w-80 に収めた時のはみ出し挙動 — コンテナ幅 + item 数依存の構造ケース。号車選択 / 2 択 / ダッシュボード期間切替の usage は guideline 使用例へ移設。',
       },
     },
   },
-  render: () => {
-    function NumberDemo() {
-      const [car, setCar] = useState(1);
-      return (
+  render: () => (
+    <Caption text="多数セグメント (10 件、固定幅 w-80 ではみ出し挙動を確認)">
+      <div className="w-80">
         <SegmentedControl
-          items={[1, 2, 3, 4, 5].map((n) => ({ value: n, label: `${n}号車` }))}
-          value={car}
-          onChange={setCar}
-          aria-label="号車選択"
+          items={Array.from({ length: 10 }, (_, i) => ({ value: i, label: `Day ${i + 1}` }))}
+          value={0} onChange={() => {}} aria-label="日付"
         />
-      );
-    }
-    function ManyDemo() {
-      const [v, setV] = useState(0);
-      return (
-        <div className="w-80">
-          <SegmentedControl
-            items={Array.from({ length: 10 }, (_, i) => ({ value: i, label: `Day ${i + 1}` }))}
-            value={v}
-            onChange={setV}
-            aria-label="日付"
-          />
-        </div>
-      );
-    }
-    function TwoDemo() {
-      const [v, setV] = useState('list');
-      return (
-        <SegmentedControl
-          items={[
-            { value: 'list', label: 'リスト' },
-            { value: 'grid', label: 'グリッド' },
-          ]}
-          value={v}
-          onChange={setV}
-          aria-label="表示切替"
-        />
-      );
-    }
-    function DashboardDemo() {
-      const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('30d');
-      return (
-        <div className="w-full px-container py-container max-w-container mx-auto">
-          <div className="space-y-section-sm">
-            <div className="flex items-center justify-between">
-              <h2 className="text-heading-md text-onSurface">アクティビティ</h2>
-              <SegmentedControl
-                items={[
-                  { value: '7d', label: '7 日' },
-                  { value: '30d', label: '30 日' },
-                  { value: '90d', label: '90 日' },
-                ]}
-                value={period}
-                onChange={setPeriod}
-                aria-label="期間"
-              />
-            </div>
-            <div className="grid-base">
-              {[
-                { label: '訪問者数', value: '12,480' },
-                { label: 'CV 率', value: '3.2%' },
-                { label: '直帰率', value: '38%' },
-              ].map(({ label, value }) => (
-                <div key={label} className="col-span-4 md:col-span-4 lg:col-span-4 p-4 border border-border-subtle rounded-md">
-                  <p className="text-caption text-onSurface-muted">{label} (直近 {period})</p>
-                  <p className="text-heading-md text-onSurface mt-1">{value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-6 items-start">
-        <Caption text="数値 value (号車選択)"><NumberDemo /></Caption>
-        <Caption text="多数のセグメント (横スクロール、width 制約あり)"><ManyDemo /></Caption>
-        <Caption text="2 択切替 (最小ケース)"><TwoDemo /></Caption>
-        <Caption text="Layout token 適用 (ダッシュボード期間切替、max-w-container + space-y-section-sm + grid-base KPI)"><DashboardDemo /></Caption>
       </div>
-    );
-  },
+    </Caption>
+  ),
 };

@@ -724,7 +724,7 @@ http://localhost:6006 で目視確認:
 8. **CHANGELOG**: 削除した story id を `[Unreleased]` の **⚠ BREAKING CHANGES** に明記 (Storybook URL 無効化 = silent break §10-2)。
 9. **検証 → PR → accept**: `npm run verify` (check:conventions / check:links) + `npm run build-storybook` 緑。PR を出し、Chromatic (UI Tests) で Overview / EdgeCases の差分をレビュー & accept してからマージ。
 
-**レイアウト系の注意**: `AppShell` / `TwoColumn` / `SplitPane` は Overview の meta に `chromatic.viewports = [375, 1280]` を維持する (§9-4)。
+**レイアウト系の注意**: `AppShell` / `TwoColumn` / `SplitPane` は **EdgeCases を `[375, 1280]`、Overview を `[1280]` のみ**で撮る (§9-4)。Overview の prop カタログ (contentMax / split / listWidth) は **cols/shell breakpoint (≥1024px) でのみ効く desktop 機能**で、mobile では全て縦積みに潰れて差が出ず重複ショットになるため。mobile↔desktop の構造切替 (サイドバー出し分け / mobileReverse / mobile で list 非表示等) は **mobile 固有挙動を持つ EdgeCases** で `[375, 1280]` 撮影して検証する。
 
 ---
 
@@ -836,7 +836,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
   - **`pull_request` イベントは使わない** (公式推奨): GitHub が作る ephemeral な merge commit 上で走り baseline の系譜を見失う (PR で before が空になる現象の原因)。push でビルドした head SHA に GitHub App が `UI Tests` status を出すので required check は機能する。
   - **`autoAcceptChanges: 'main'`**: main は baseline ブランチとして自動 accept。squash マージで git 系譜が切れても main の baseline が確定し、以降の PR が正しく比較できる。差分の人間レビューは PR 段階 (`UI Tests`) で行う前提。
 - **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。tokens / `tokens/preset.cjs` / global CSS / `.storybook/*` を変えると全 story 再撮影 (全コンポーネントに波及するため妥当)。
-- **複数 viewport はレイアウト系のみ**: `parameters.chromatic.viewports = [375, 1280]` を **AppShell / TwoColumn / SplitPane** の meta に設定し mobile / desktop を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
+- **複数 viewport はレイアウト系の EdgeCases のみ**: **AppShell / TwoColumn / SplitPane** の **EdgeCases** に `parameters.chromatic.viewports = [375, 1280]` を設定し mobile / desktop の構造切替を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。これら 3 つの **Overview は `[1280]` のみ** — prop カタログ (contentMax / split / listWidth) は desktop 機能で mobile では縦積みに潰れて重複ショットになるため (§7-10 のレイアウト系注意)。meta に `[375,1280]` を置き Overview で `[1280]` に override すると最小記述。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
 - **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。token 値の変化は利用側コンポーネントの snapshot で捕捉されるため検知漏れにはならない。
 - **Playground は撮影対象外**: 全 component story の `Playground` に `parameters.chromatic.disableSnapshot = true` を付ける (Controls 探索の起点で、静的カタログ Variants/Sizes/States と冗長なため。§5-3)。
 - **overlay / portal 系の開状態は #78 で対応中**: Modal / Popover / Tooltip / DropdownMenu / Toast は「開いた状態」が play 駆動 story にしか無い (Toast は未撮影)。開状態の静的 story を追加して撮るのは別 PR (#78) で進める。それまで該当 component の Playground は撮影対象に残す。

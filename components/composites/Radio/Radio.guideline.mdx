@@ -119,6 +119,40 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**多数の選択肢（5+ は縦並び、6+ なら Select 検討）** — 縦並びで一覧性を確保。選択肢が増えるほど Select の方が省スペース。
+
+<RadioGroup legend="都道府県 (関東)" helpText="多数の選択肢では Select も検討">
+  <Radio name="ex-pref" value="東京都" label="東京都" />
+  <Radio name="ex-pref" value="神奈川県" label="神奈川県" />
+  <Radio name="ex-pref" value="埼玉県" label="埼玉県" />
+  <Radio name="ex-pref" value="千葉県" label="千葉県" />
+  <Radio name="ex-pref" value="茨城県" label="茨城県" />
+</RadioGroup>
+
+**注文フォーム（お支払い + 配送方法を Layout 枠に）** — `max-w-container-narrow` + `space-y-section-sm` に description 付き RadioGroup を 2 つ積む。
+
+<form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
+  <div className="space-y-section-sm">
+    <h3 className="text-heading-sm text-onSurface m-0">注文フォーム</h3>
+    <RadioGroup legend="お支払い方法" required>
+      <Radio name="ex-pay" value="card" label="クレジットカード" description="Visa / Mastercard / AMEX" defaultChecked />
+      <Radio name="ex-pay" value="bank" label="銀行振込" description="振込確認後にサービス有効化" />
+    </RadioGroup>
+    <RadioGroup legend="配送方法" required>
+      <Radio name="ex-ship" value="standard" label="標準配送 (3〜5 日)" defaultChecked />
+      <Radio name="ex-ship" value="express" label="速達 (翌日)" />
+    </RadioGroup>
+  </div>
+</form>
+
+> controlled (外部 state 同期) / 送信時の動的 error 伝播 (Group→子 Radio) の実挙動は Storybook の Playground で確認。Layout token は [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`<fieldset>` + `<legend>`**: RadioGroup が自動生成、SR はグループ + legend を読み上げ

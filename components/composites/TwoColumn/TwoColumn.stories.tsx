@@ -4,11 +4,12 @@ import { TwoColumn } from './TwoColumn';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * TwoColumn stories — 標準ストーリー構造に準拠 (Playground / Variants / EdgeCases)
+ * TwoColumn stories — VR 集約モデル (§5-3): Playground / Overview / EdgeCases
  *
- * - States 省略: 状態を持たない layout primitive のため (AGENTS.md §5-3 注)
- * - Sizes 省略: size prop なし (`split` 比率は Variants で扱う)
- * - WithIcon 省略: icon prop なし
+ * - Overview = props で作れる内在パターン (`split` 比率 4 種)。
+ * - EdgeCases = mobileReverse / sidebar 省略 / cols:sticky 等、prop・className 駆動の構造ケース。
+ * - 状態を持たない layout primitive のため States は無し。size/icon prop も無し。
+ * - 視覚回帰は meta の `chromatic.viewports=[375,1280]` で縦スタック↔2カラム grid の breakpoint 挙動を撮る。
  */
 const meta: Meta<typeof TwoColumn> = {
   title: 'Composites/TwoColumn',
@@ -52,7 +53,8 @@ const Sidebar = () => (
 
 export const Playground: Story = {
   render: (args) => (
-    <div className="p-4 bg-surface-layer-2">
+    // split 切替時に総幅を一定に保ち、比率変化だけを感じられるよう max-w 枠で固定
+    <div className="p-4 bg-surface-layer-2 max-w-[960px]">
       <TwoColumn {...args} sidebar={<Sidebar />}>
         <Main />
       </TwoColumn>
@@ -74,26 +76,34 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在パターン: split 比率 4 種。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
+    // split 比率は cols breakpoint (>= 1024px) でのみ効き、mobile では全て縦積みで同一になるため
+    // Overview は desktop (1280) のみ撮る。mobile の縦積み / mobileReverse 等は EdgeCases ([375,1280]) で検証。
+    chromatic: { viewports: [1280] },
     docs: {
       description: {
-        story: '`split` 4 種 (6/6 / 7/5 / 8/4 / 9/3) を縦に並べて比較。`cols` breakpoint (>= 1024px) で grid 化、mobile では縦積みになる挙動が見える。gutter は grid.gutter トークン (16/16/24) 固定。',
+        story: '視覚回帰用の総覧。`split` 4 種 (6/6 / 7/5 / 8/4 / 9/3) を desktop 幅で比較。比率は cols breakpoint (>= 1024px) でのみ効くため Overview は 1280 のみ撮る (mobile では全て縦積みで同一)。mobile の breakpoint 挙動は EdgeCases ([375,1280]) で検証。gutter は grid.gutter トークン (16/16/24) 固定。',
       },
     },
   },
+  // 比率の違いを正しく比較するため全 split を同じ横幅に揃える。
+  // Caption (items-start で shrink) だと grid が max-content に縮み比率ごとに総幅が変わるため使わず、
+  // 共通の max-w 枠 + stretch ラベルにする (mobile は max-w で viewport 幅に収まり縦積み)。
   render: () => (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 max-w-[960px]">
       {(['6/6', '7/5', '8/4', '9/3'] as const).map((s) => (
-        <Caption key={s} text={`split="${s}"`}>
-          <div className="p-3 bg-surface-layer-2">
+        <div key={s} className="flex flex-col gap-1.5">
+          <span className="text-caption text-onSurface-muted font-mono">split=&quot;{s}&quot;</span>
+          <div className="p-3 bg-surface-layer-2 rounded-md">
             <TwoColumn split={s} sidebar={<Sidebar />}>
               <Main />
             </TwoColumn>
           </div>
-        </Caption>
+        </div>
       ))}
     </div>
   ),

@@ -67,7 +67,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="description は補足説明、ラベル本体に詰め込まない"
   doExample={
-    <Switch label="メール通知" description="キャンペーン・お知らせをメールで受け取る" defaultChecked />
+    <Switch label="メール通知" description="キャンペーン・お知らせをメールで受け取る" checked />
   }
   doCaption="ラベルは「何の設定か」、description は「何が起きるか」と役割分担。SR は label のみ読み上げる (description は補助情報)。"
   dontExample={
@@ -81,7 +81,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="w-72 divide-y divide-border-subtle">
       <div className="py-3">
-        <Switch label="メール通知" labelPosition="left" defaultChecked className="w-full justify-between" />
+        <Switch label="メール通知" labelPosition="left" checked className="w-full justify-between" />
       </div>
       <div className="py-3">
         <Switch label="プッシュ通知" labelPosition="left" className="w-full justify-between" />
@@ -91,7 +91,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doCaption="設定一覧では label を左 + switch を右に寄せる (`justify-between`) と全幅を使い切り、視線が安定する。"
   dontExample={
     <div className="w-72 flex flex-col gap-3">
-      <Switch label="メール通知" defaultChecked />
+      <Switch label="メール通知" checked />
       <Switch label="プッシュ通知" />
     </div>
   }
@@ -106,6 +106,28 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | **複数選択肢から 1 つ** | `<Radio>` / `<SegmentedControl>` | Switch は ON/OFF 2 値、選択肢が 3 つ以上には使わない |
 | **アクション実行** (押すと処理発火) | `<Button>` | Switch は状態切替、アクションは Button |
 | **数値の有効/無効** (0/1) | (用途次第で Switch でも Checkbox でも) | bool 値で「即座反映」なら Switch |
+
+---
+
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**設定パネル（left label + `justify-between` で全幅活用）** — `labelPosition="left"` + `className="w-full justify-between"` でラベルを左、トグルを右端に寄せ、`divide-y` で区切る。アプリ設定の定番レイアウト。
+
+<div className="w-80 divide-y divide-border-subtle">
+  <div className="py-4 first:pt-0">
+    <Switch label="メール通知" description="ログイン・購入などの重要なお知らせ" labelPosition="left" checked className="w-full justify-between" />
+  </div>
+  <div className="py-4">
+    <Switch label="プッシュ通知" description="ブラウザの通知を受け取る" labelPosition="left" className="w-full justify-between" />
+  </div>
+  <div className="py-4 last:pb-0">
+    <Switch label="ニュースレター" description="週 1 回の最新情報" labelPosition="left" checked className="w-full justify-between" />
+  </div>
+</div>
+
+> `max-w-container-narrow` + `space-y-section-sm` でアプリ設定画面の frame に組む例は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。実際の ON/OFF 反映は controlled state で行う（Storybook の Playground 参照）。
 
 ---
 

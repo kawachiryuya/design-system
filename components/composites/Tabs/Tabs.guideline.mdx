@@ -151,6 +151,33 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**プロフィールページ（badge 文字列 + Layered surface）** — ヘッダー（layer-2）の下に Tabs を置き、badge に件数（`48` / `1.2k` 等の文字列も可）を表示。
+
+<div className="border border-border-subtle rounded-md overflow-hidden">
+  <div className="p-4 bg-surface-layer-2 border-b border-border-subtle">
+    <h2 className="font-semibold text-onSurface m-0">田中 太郎</h2>
+    <p className="text-sm text-onSurface-muted">UI デザイナー</p>
+  </div>
+  <div className="px-4">
+    <Tabs
+      defaultActiveId="posts"
+      tabs={[
+        { id: 'posts', label: '記事', badge: 48, content: <p className="text-sm text-onSurface-muted py-2">記事一覧</p> },
+        { id: 'followers', label: 'フォロワー', badge: '1.2k', content: <p className="text-sm text-onSurface-muted py-2">フォロワー一覧</p> },
+        { id: 'following', label: 'フォロー中', badge: 320, content: <p className="text-sm text-onSurface-muted py-2">フォロー中一覧</p> },
+      ]}
+    />
+  </div>
+</div>
+
+> Controlled（`activeId` / `onChange` で URL クエリ等と同期）の実挙動は Storybook の Playground / ManualActivation 参照。ページ全体（`max-w-container` + タブ内 `grid-base`）の構成は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`role="tablist"` / `role="tab"` / `role="tabpanel"`**: 自動付与、WAI-ARIA 1.2 標準

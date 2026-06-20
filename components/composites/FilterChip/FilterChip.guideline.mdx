@@ -110,6 +110,35 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**フィルターバー（横スクロール、Modal 起動 + Toggle 混在）**
+
+<div className="flex gap-2 overflow-x-auto pb-2">
+  <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} aria-label="すべての条件で絞り込み" />
+  <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />} active>並び順: 出発時刻順</FilterChip>
+  <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>種別: すべて</FilterChip>
+  <FilterChip>満席を非表示</FilterChip>
+</div>
+
+**長文ラベル（whitespace-nowrap で 1 行固定）**
+
+<FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>並び順: ある駅からある駅へ向かう出発時刻が早い順</FilterChip>
+
+**複数 active が並ぶ（フィルタ条件が複数有効）**
+
+<div className="flex gap-2 flex-wrap">
+  <FilterChip active>並び順: 出発時刻順</FilterChip>
+  <FilterChip active>種別: のぞみ</FilterChip>
+  <FilterChip active>満席を非表示</FilterChip>
+</div>
+
+> 検索結果ページ全体（`max-w-container` + filter bar + 結果グリッド）の構成は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`aria-pressed`**: `active` prop の値が `aria-pressed` 属性として反映。SR は「並び順: 出発時刻順 押下」のように選択状態を読み上げる

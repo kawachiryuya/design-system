@@ -120,29 +120,26 @@ export const Overview: Story = {
 };
 
 // ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
-// props だけでは作れない文脈依存: 制約幅での折返し / 段落中インライン / external + 長文での外部アイコン位置。
+// Controls では再現できない構造ケースのみ: 段落中インライン (周辺テキストが必須で、
+// children=text の Control だけでは作れない。下線・色が周辺と分離して見えるか)。
+// ※ 長文折返し / external + 長文 は children(text)・external(bool) の Control で再現できるため
+//    Playground の役目 (§5-3 の尖らせた基準)。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: '長文の折返し / 段落中インライン (text-decoration が周辺テキストと分離) / external + 長文 (外部アイコンが行末に正しく来るか) など、周辺テキスト・幅に依存する文脈ケース。',
+        story: 'Controls では作れない構造ケースのみ: 段落中インライン (周辺テキストに対し下線・色が分離して見えるか)。長文折返し / external + 長文 は Playground (Controls) の役目。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6 w-80">
-      <Caption text="長文 — 折返し挙動">
-        <Link href="#">ここに非常に長いリンクテキストが入って折返しがどう動くかを確認する</Link>
-      </Caption>
       <Caption text="段落中インライン (text-decoration が周辺と分離)">
         <p className="text-base leading-relaxed">
           このサービスをご利用の際は、<Link href="#">利用規約</Link>および
           <Link href="#">プライバシーポリシー</Link>に同意したものとみなします。
         </p>
-      </Caption>
-      <Caption text="external + 長文 — 外部アイコンの位置">
-        <Link href="https://example.com" external>非常に長い外部リンクテキスト ここに external プロパティ付きで折返し挙動を確認する</Link>
       </Caption>
     </div>
   ),

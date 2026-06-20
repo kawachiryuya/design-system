@@ -172,6 +172,16 @@ import React from 'react';
 
 ---
 
+## バリエーションと使用例（旧 story から移設・要精査）
+
+> top-layer は同時に 1 つしか開けないため、VR (Overview) は代表 1 枚のみ。以下の差は Playground で開いて確認するか、ここをドキュメントとして参照する。
+
+- **size**: `sm` (24rem、確認ダイアログ) / `md` (32rem、標準) / `lg` (42rem、フォーム) / `full` (90vw、大コンテンツ)。本文が長くなれば Body だけスクロールし header / footer は固定。
+- **state オプション**: `hideCloseButton` (× を消し Body に独自ヘッダ) / `closeOnEsc={false}` + `closeOnOverlayClick={false}` (破壊的操作の誤操作防止) / `Modal.Footer justify="between"` (キャンセル左・確定右) / `initialFocusRef` (開いた直後の focus 先指定、Overview の挙動は InitialFocus story の play で検証)。
+- **usage**: フォーム (`Input` + `autoFocus` + 送信ボタンを valid まで disabled) / 長文本文 (Body スクロール) / `size="full"` + 内部 `grid-base` でレスポンシブ多項目フォーム。これらは Layout token の使い方を含むため [Tokens / Layout](?path=/docs/tokens-layout--guideline) も参照。
+
+---
+
 ## アクセシビリティ
 
 - **ネイティブ `<dialog>` + `showModal()`**: focus trap / inert / Esc キー close / `::backdrop` overlay をブラウザ標準に委ねる (自前実装より堅牢)

@@ -1,17 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { ReactNode } from 'react';
 import { EmptyState } from './EmptyState';
-import { SearchBar } from '../SearchBar/SearchBar';
-import { useState } from 'react';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * EmptyState stories — 標準ストーリー構造に準拠
+ * EmptyState stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Sizes → States → EdgeCases
- *
- * EmptyState は variant prop を持たないため Variants は省略 (§5-3)。
- * Icon (custom SVG) は WithIcon ではなく Variants 的な意味で EdgeCases に統合。
+ * 2 節構成: Playground / Overview。
+ * size / composition (title / description / action / secondaryAction の有無) を内在軸で Overview に集約。
+ * 検索結果なし / エラー / 空フォルダ / フルページ等の usage 合成は custom icon + action で再現でき
+ * 構造的でないため guideline の「使用例」へ移設 (Layout token デモは Tokens/Layout 参照)。
  */
+
+// Playground の icon mapping 用 (custom SVG を Controls から選べるように §5-3)
 const SearchIcon = () => (
   <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5"
     strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-onSurface-disabled" aria-hidden="true">
@@ -45,13 +46,19 @@ const meta: Meta<typeof EmptyState> = {
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     title: { control: 'text' },
     description: { control: 'text' },
+    // ReactNode prop は mapping で Controls 化 (default = 内蔵アイコン)
+    icon: {
+      control: 'select',
+      options: ['default', 'search', 'error', 'folder'],
+      mapping: { default: undefined, search: <SearchIcon />, error: <ErrorIcon />, folder: <FolderIcon /> },
+    },
   },
   args: {
     title: 'データがありません',
     description: 'まだアイテムが登録されていません。',
     size: 'md',
   },
-  // 全 story を w-96 + border でラップする (parameters.noWrap=true で個別に解除可能、memory: storybook-decorator-inheritance)
+  // 全 story を w-96 + border でラップ (parameters.noWrap=true で個別解除、memory: storybook-decorator-inheritance)
   decorators: [(Story, ctx) =>
     ctx.parameters.noWrap ? <Story /> : <div className="w-96 border border-border-subtle rounded-md"><Story /></div>,
   ],
@@ -60,15 +67,14 @@ const meta: Meta<typeof EmptyState> = {
 export default meta;
 type Story = StoryObj<typeof EmptyState>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から size / title / description を切替。action / secondaryAction はオブジェクトなので JSX で別途指定。',
+        story: 'Controls から size / title / description / icon (default/search/error/folder) を切替。action / secondaryAction はオブジェクトなので args で指定。',
       },
     },
   },
@@ -77,138 +83,62 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在軸: size (比例スケール) / composition (要素の有無で変わるレイアウト)。
+// custom icon は glyph 差のみで固有シグナルを足さないため Overview には並べない (Playground mapping で探索)。
 
-export const Sizes: Story = {
+const Box = ({ children }: { children: ReactNode }) => (
+  <div className="w-80 border border-border-subtle rounded-md">{children}</div>
+);
+
+export const Overview: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: 'sm (サイドバー / カード内) / md (標準) / lg (ヒーロー / オンボーディング) の 3 段。icon / title / description / Button が比例的に大きくなる。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col divide-y divide-border-subtle w-96 border border-border-subtle rounded-md">
-      <EmptyState size="sm" title="Small" description="コンパクトな表示" action={{ label: '追加' }} />
-      <EmptyState size="md" title="Medium (デフォルト)" description="標準サイズ" action={{ label: '追加' }} />
-      <EmptyState size="lg" title="Large" description="フルページ向け" action={{ label: '追加' }} />
-    </div>
-  ),
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Description なし / Action なし / Primary action のみ / Primary + Secondary action の構成パターン。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Caption text="Title のみ (description / action なし)">
-        <div className="w-96 border border-border-subtle rounded-md">
-          <EmptyState title="通知なし" />
-        </div>
-      </Caption>
-      <Caption text="Title + description (action なし、純粋な情報表示)">
-        <div className="w-96 border border-border-subtle rounded-md">
-          <EmptyState title="データがありません" description="まだアイテムが登録されていません。" />
-        </div>
-      </Caption>
-      <Caption text="Primary action のみ">
-        <div className="w-96 border border-border-subtle rounded-md">
-          <EmptyState
-            title="データがありません"
-            description="まだアイテムが登録されていません。"
-            action={{ label: '新規作成' }}
-          />
-        </div>
-      </Caption>
-      <Caption text="Primary + Secondary action (補助選択肢併記)">
-        <div className="w-96 border border-border-subtle rounded-md">
-          <EmptyState
-            title="プロジェクトがまだありません"
-            description="最初のプロジェクトを作成しましょう。"
-            action={{ label: '新規作成' }}
-            secondaryAction={{ label: 'テンプレートから作成' }}
-          />
-        </div>
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '実利用例: 検索結果なし (SearchBar 連動) / エラー状態 / 空のフォルダ / Layout token 適用 (page 全体 max-w-container でフルページ EmptyState)。カスタム icon (custom SVG) を渡す例も含む。',
-      },
-    },
-    // 最後の Layout token 例を全幅表示するため meta の w-96 decorator を解除
     noWrap: true,
+    docs: {
+      description: {
+        story: '視覚回帰用の総覧。size (sm/md/lg の比例スケール) と composition (title のみ → +description → +action → +secondaryAction の有無レイアウト) を集約。',
+      },
+    },
   },
-  render: () => {
-    function NoResults() {
-      const [query, setQuery] = useState('xxxxxx');
-      return (
-        <div className="w-96 space-y-3">
-          <SearchBar value={query} onChange={setQuery} fullWidth placeholder="検索..." />
-          <div className="border border-border-subtle rounded-md">
-            <EmptyState
-              icon={<SearchIcon />}
-              title={`「${query}」に一致する結果がありません`}
-              description="別のキーワードで試してみてください"
-              action={{ label: 'クリア', onClick: () => setQuery(''), variant: 'tertiary' }}
-            />
-          </div>
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (sm サイドバー/カード内 · md 標準 · lg ヒーロー) — icon/title/description/Button が比例</div>
+        <div className="flex flex-col gap-4">
+          {(['sm', 'md', 'lg'] as const).map((size) => (
+            <Caption key={size} text={size}>
+              <Box>
+                <EmptyState size={size} title="データがありません" description="まだアイテムが登録されていません。" action={{ label: '新規作成' }} />
+              </Box>
+            </Caption>
+          ))}
         </div>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-6">
-        <Caption text="検索結果なし (SearchBar 連動、クリアで戻る)">
-          <NoResults />
-        </Caption>
-        <Caption text="エラー状態 (再試行 + 戻る)">
-          <div className="w-96 border border-border-subtle rounded-md">
-            <EmptyState
-              icon={<ErrorIcon />}
-              title="読み込みに失敗しました"
-              description="ネットワーク接続を確認してもう一度お試しください。"
-              action={{ label: '再試行' }}
-              secondaryAction={{ label: 'ホームへ戻る', variant: 'tertiary' }}
-            />
-          </div>
-        </Caption>
-        <Caption text="空のフォルダ (ファイルアップロード CTA)">
-          <div className="w-96 border border-border-subtle rounded-md">
-            <EmptyState
-              icon={<FolderIcon />}
-              title="フォルダは空です"
-              description="ファイルをドラッグ＆ドロップするか、アップロードボタンから追加できます。"
-              action={{ label: 'ファイルをアップロード' }}
-            />
-          </div>
-        </Caption>
-        <Caption text="Layout token 適用 (page 全体 max-w-container + size=lg、フルページ EmptyState 典型例)">
-          <div className="w-full px-container py-container max-w-container mx-auto">
-            <EmptyState
-              icon={<FolderIcon />}
-              size="lg"
-              title="ようこそ！"
-              description="最初のプロジェクトを作成して始めましょう。"
-              action={{ label: 'プロジェクトを作成' }}
-              secondaryAction={{ label: 'チュートリアルを見る' }}
-            />
-          </div>
-        </Caption>
       </div>
-    );
-  },
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">composition (要素の有無、size=md)</div>
+        <div className="flex flex-col gap-4">
+          <Caption text="title のみ">
+            <Box><EmptyState title="通知なし" /></Box>
+          </Caption>
+          <Caption text="+ description">
+            <Box><EmptyState title="データがありません" description="まだアイテムが登録されていません。" /></Box>
+          </Caption>
+          <Caption text="+ action (primary)">
+            <Box><EmptyState title="データがありません" description="まだアイテムが登録されていません。" action={{ label: '新規作成' }} /></Box>
+          </Caption>
+          <Caption text="+ secondaryAction (primary + tertiary)">
+            <Box>
+              <EmptyState
+                title="プロジェクトがありません"
+                description="最初のプロジェクトを作成しましょう。"
+                action={{ label: '新規作成' }}
+                secondaryAction={{ label: 'テンプレートから', variant: 'tertiary' }}
+              />
+            </Box>
+          </Caption>
+        </div>
+      </div>
+    </div>
+  ),
 };

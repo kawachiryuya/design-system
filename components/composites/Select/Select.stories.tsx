@@ -4,11 +4,14 @@ import { Select } from './Select';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Select stories — 標準ストーリー構造に準拠
+ * Select stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Sizes → States → EdgeCases
- *
- * Select は variant / icon prop を持たないため Variants / WithIcon は省略 (§5-3)。
+ * 2 節構成: Playground / Overview。
+ * size (sm/md/lg) と states (default/required/helpText/error/disabled/focus) を Overview に集約。
+ * 住所フォーム等の usage は guideline の「使用例」へ移設。
+ * optgroup / 長い options は native ドロップダウンを開いた時のみ見え、閉じた静的状態では撮れない
+ *   (VR 非対象) → guideline に注記。
+ * variant / icon prop は無し。
  */
 const prefectures = [
   { value: 'tokyo', label: '東京都' },
@@ -44,11 +47,10 @@ const meta: Meta<typeof Select> = {
 export default meta;
 type Story = StoryObj<typeof Select>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -66,139 +68,77 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Sizes ───────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// size (sm/md/lg) と states (default/required=*/helpText/error/disabled/focus)。
+// optgroup / 長い options は native ドロップダウン内部で静的に撮れないため Overview に並べない。
 
-export const Sizes: Story = {
+export const Overview: Story = {
   parameters: {
-    docs: {
-      description: {
-        story: 'sm (40px) / md (48px) / lg (56px) の 3 段階。全 step +8 等差で grid 整合 (Material 3 max と同等)。WCAG 2.5.5 タッチターゲット (44×44px) は md 以上で達成 (sm は dense UI 用)。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-4 w-64">
-      <Select size="sm" label="sm (40px)" placeholder="選択...">
-        {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-      </Select>
-      <Select size="md" label="md (48px) — デフォルト" placeholder="選択...">
-        {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-      </Select>
-      <Select size="lg" label="lg (56px)" placeholder="選択...">
-        {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-      </Select>
-    </div>
-  ),
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Default / Required / WithHelpText / Error (errorMessage 必須) / Disabled / FullWidth の構成パターン + Focus-visible.',
-      },
-    },
+    // Select は focus-visible でなく focus: で ring を出す (Input.tsx と同方式) → pseudo は focus を強制
     pseudo: {
-      focusVisible: ['#sel-focus select'],
+      focus: ['#sel-focus select'],
     },
-  },
-  render: () => (
-    <div className="flex flex-col gap-4 w-64">
-      <Caption text="Default">
-        <Select label="都道府県" placeholder="選択...">
-          {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-        </Select>
-      </Caption>
-      <Caption text="Required (label の右に *)">
-        <Select label="都道府県" required placeholder="選択...">
-          {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-        </Select>
-      </Caption>
-      <Caption text="With help text">
-        <Select label="プラン" helpText="後から変更可能" placeholder="選択...">
-          <option value="free">Free</option>
-          <option value="pro">Pro</option>
-        </Select>
-      </Caption>
-      <Caption text="Error (errorMessage 必須、aria-invalid 自動付与)">
-        <Select label="支払い方法" error errorMessage="支払い方法を選択してください" required placeholder="選択...">
-          <option value="card">クレジットカード</option>
-        </Select>
-      </Caption>
-      <Caption text="Disabled">
-        <Select label="国 (変更不可)" disabled placeholder="日本">
-          <option value="jp">日本</option>
-        </Select>
-      </Caption>
-      <Caption text="Focus-visible (pseudo-states 強制)">
-        <div id="sel-focus">
-          <Select label="フォーカス中" placeholder="選択...">
-            {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-          </Select>
-        </div>
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
     docs: {
       description: {
-        story: '実利用例: 住所フォーム (fullWidth で並べる) と、optgroup を使った階層構造 / 多数の options (long list)。',
+        story: '視覚回帰用の総覧。size (sm 40px / md 48px / lg 56px) と states (default / required=label に * / helpText / error=赤枠+errorMessage / disabled / focus) を集約。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6">
-      <Caption text="住所フォーム (Layout token: px-container / max-w-container / space-y-section-sm + fullWidth)">
-        <form className="w-full px-container py-container max-w-container mx-auto bg-surface border border-border-subtle rounded-md">
-          <div className="space-y-section-sm">
-            <h3 className="text-heading-sm text-onSurface m-0">配送情報</h3>
-            <div className="flex flex-col gap-4">
-              <Select label="都道府県" required placeholder="都道府県を選択" fullWidth>
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (sm 40px / md 48px / lg 56px、md 以上で WCAG 2.5.5 達成)</div>
+        <div className="flex flex-col gap-4 w-64">
+          <Select size="sm" label="sm (40px)" placeholder="選択...">
+            {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+          </Select>
+          <Select size="md" label="md (48px) — デフォルト" placeholder="選択...">
+            {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+          </Select>
+          <Select size="lg" label="lg (56px)" placeholder="選択...">
+            {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">states</div>
+        <div className="flex flex-col gap-4 w-64">
+          <Caption text="Default">
+            <Select label="都道府県" placeholder="選択...">
+              {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </Select>
+          </Caption>
+          <Caption text="Required (label の右に *)">
+            <Select label="都道府県" required placeholder="選択...">
+              {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </Select>
+          </Caption>
+          <Caption text="With help text">
+            <Select label="プラン" helpText="後から変更可能" placeholder="選択...">
+              <option value="free">Free</option>
+              <option value="pro">Pro</option>
+            </Select>
+          </Caption>
+          <Caption text="Error (errorMessage 必須、aria-invalid 自動付与)">
+            <Select label="支払い方法" error errorMessage="支払い方法を選択してください" required placeholder="選択...">
+              <option value="card">クレジットカード</option>
+            </Select>
+          </Caption>
+          <Caption text="Disabled">
+            <Select label="国 (変更不可)" disabled placeholder="日本">
+              <option value="jp">日本</option>
+            </Select>
+          </Caption>
+          <Caption text="Focus (pseudo 強制、focus: で border + inset ring)">
+            <div id="sel-focus">
+              <Select label="フォーカス中" placeholder="選択...">
                 {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
               </Select>
-              <Select label="配送希望時間" placeholder="指定なし" fullWidth>
-                {['午前中', '14〜16 時', '16〜18 時', '18〜20 時', '20〜21 時'].map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </Select>
             </div>
-          </div>
-        </form>
-      </Caption>
-      <Caption text="optgroup を使った階層 (都道府県 → 地方カテゴリ)">
-        <Select label="都道府県" placeholder="選択..." fullWidth>
-          <optgroup label="関東">
-            <option value="tokyo">東京都</option>
-            <option value="kanagawa">神奈川県</option>
-            <option value="saitama">埼玉県</option>
-          </optgroup>
-          <optgroup label="関西">
-            <option value="osaka">大阪府</option>
-            <option value="kyoto">京都府</option>
-            <option value="hyogo">兵庫県</option>
-          </optgroup>
-        </Select>
-      </Caption>
-      <Caption text="長い options (47 都道府県全部、スクロール想定)">
-        <Select label="都道府県 (47 件)" placeholder="選択..." fullWidth>
-          {[
-            '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
-            '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
-            '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県',
-            '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県',
-            '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県',
-            '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県',
-            '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県',
-          ].map((name, i) => <option key={i} value={name}>{name}</option>)}
-        </Select>
-      </Caption>
+          </Caption>
+        </div>
+      </div>
     </div>
   ),
 };

@@ -19,8 +19,13 @@ import { Caption } from '@sb-blocks/Caption';
 const meta: Meta<typeof Grid> = {
   title: 'Composites/Grid',
   component: Grid,
+  // Grid は layout component なので全幅で見せる (global の layout='centered' だと中身幅に
+  // shrink して auto-fit の幅可変が確認できない)。
+  parameters: { layout: 'fullscreen' },
   argTypes: {
     minItemWidth: { control: 'text' },
+    cols: { control: false },
+    layout: { control: false },
     className: { control: false },
     children: { control: false },
   },
@@ -53,37 +58,20 @@ const PageRow = ({ spans }: { spans: number[] }) => (
 );
 
 // ── 1. Playground (視覚回帰対象外・幅可変) ──────────────────────
-// 3 モードは型レベルで排他のため story 専用 `mode` arg で切り替える。
-// 撮影外なので幅は固定せず、auto-fit が canvas 幅で列数を変える様子を確認できる。
+// 推奨の反復 auto-fit モードを探索する。撮影外なので幅は固定せず、Storybook の幅を
+// 変えると列数が自動で変わる様子を確認できる。cols / placement は Overview を参照。
 
-type GridMode = 'auto-fit' | 'cols' | 'page';
-
-export const Playground: StoryObj = {
-  args: { mode: 'auto-fit', minItemWidth: '12rem', cols: 3 },
-  argTypes: {
-    mode: { control: 'radio', options: ['auto-fit', 'cols', 'page'], name: 'mode (story 用)' },
-    minItemWidth: { control: 'text', if: { arg: 'mode', eq: 'auto-fit' } },
-    cols: { control: { type: 'number', min: 1, max: 12 }, if: { arg: 'mode', eq: 'cols' } },
-  },
-  render: (args) => {
-    const { mode, minItemWidth, cols } = args as { mode: GridMode; minItemWidth: string; cols: number };
-    return (
-      <div className="p-4 bg-surface-layer-2">
-        {mode === 'page' ? (
-          <PageRow spans={[3, 6, 3]} />
-        ) : mode === 'cols' ? (
-          <Grid cols={cols}>{cards(6)}</Grid>
-        ) : (
-          <Grid minItemWidth={minItemWidth}>{cards(6)}</Grid>
-        )}
-      </div>
-    );
-  },
+export const Playground: Story = {
+  render: (args) => (
+    <div className="p-4 bg-surface-layer-2">
+      <Grid minItemWidth={args.minItemWidth ?? '12rem'}>{cards(6)}</Grid>
+    </div>
+  ),
   parameters: {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: '`mode` で 3 モード切替。**auto-fit は Storybook の幅 (ブラウザ / viewport addon) を変えると列数が自動で変わる** — 固定幅にしていないので実際に確認できる。cols は固定 N 列、page は 12 カラムに `Grid.Item span` 配置 (placement)。',
+        story: '反復 auto-fit (推奨): `minItemWidth` で列数が自動。**Storybook の幅 (ブラウザ / viewport addon) を縮めると列数が自動で減る**のを確認できる (撮影外なので幅を固定していない)。固定 N 列 (`cols`) と placement (`layout="page"`) は Overview を参照。',
       },
     },
   },

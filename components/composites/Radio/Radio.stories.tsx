@@ -1,17 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { useState } from 'react';
 import { Radio, RadioGroup } from './Radio';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Radio stories — 標準ストーリー構造に準拠
+ * Radio stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → States → EdgeCases
- *
- * Radio (個別) は variant / icon prop を持たないため Variants / WithIcon は省略 (§5-3)。
- * Sizes は size prop を廃止し 20×20 (md) 1 サイズに統一したため省略 (Checkbox と整合)。
- * Story の Subject は RadioGroup (Radio はその子として使う)。
+ * 2 節構成: Playground / Overview。
+ * Subject は RadioGroup (Radio はその子)。RadioGroup の構成軸 (縦/inline/description/helpText/
+ * error/disabled) + radio の focus-visible を Overview に集約。
+ * controlled / 多数の選択肢 / 動的 error 伝播 / Layout フォーム等 usage は guideline の「使用例」へ移設。
+ * size / variant prop は無し (20×20 md 1 サイズ統一、Checkbox と整合)。
  */
 const meta: Meta<typeof RadioGroup> = {
   title: 'Composites/Radio',
@@ -32,11 +31,10 @@ const meta: Meta<typeof RadioGroup> = {
 export default meta;
 type Story = StoryObj<typeof RadioGroup>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -62,13 +60,17 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. States ──────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// RadioGroup の構成軸: 縦 / inline / description / helpText / error / disabled + radio の focus-visible。
 
-export const States: Story = {
+export const Overview: Story = {
   parameters: {
+    pseudo: {
+      focusVisible: ['#radio-focus input'],
+    },
     docs: {
       description: {
-        story: 'Default / With description (詳細補足) / Inline (横並び) / WithHelpText / Error (errorMessage 必須) / Disabled の構成パターン。',
+        story: '視覚回帰用の総覧。RadioGroup の構成 (縦並び / inline / description 付き / helpText / error / disabled) と radio の focus-visible を集約。',
       },
     },
   },
@@ -111,111 +113,13 @@ export const States: Story = {
           <Radio name="s-dis" value="weekly" label="毎週" disabled />
         </RadioGroup>
       </Caption>
+      <Caption text="Focus-visible (pseudo 強制)">
+        <div id="radio-focus">
+          <RadioGroup legend="フォーカス">
+            <Radio name="s-focus" value="a" label="Focus 中" defaultChecked />
+          </RadioGroup>
+        </div>
+      </Caption>
     </div>
   ),
-};
-
-// ── 3. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Controlled (state 同期) / 多数の選択肢 / 動的 error 伝播 (Group→子 Radio 自動) / Layout token を使ったフォーム配置例.',
-      },
-    },
-  },
-  render: () => {
-    function ControlledDemo() {
-      const [plan, setPlan] = useState('free');
-      return (
-        <div className="space-y-3">
-          <RadioGroup legend="プランを選択" required>
-            {['free', 'pro', 'enterprise'].map((v) => (
-              <Radio key={v} name="plan-ctrl" value={v}
-                label={{ free: 'フリー', pro: 'プロ', enterprise: 'エンタープライズ' }[v]!}
-                checked={plan === v}
-                onChange={(e) => setPlan(e.target.value)} />
-            ))}
-          </RadioGroup>
-          <p className="text-sm text-onSurface-muted">選択中: <strong>{plan}</strong></p>
-        </div>
-      );
-    }
-    function ManyDemo() {
-      return (
-        <RadioGroup legend="都道府県 (関東)" helpText="多数の選択肢では Select も検討">
-          {['東京都', '神奈川県', '埼玉県', '千葉県', '茨城県', '栃木県', '群馬県'].map((p) => (
-            <Radio key={p} name="pref-many" value={p} label={p} />
-          ))}
-        </RadioGroup>
-      );
-    }
-    function ErrorPropagationDemo() {
-      const [selected, setSelected] = useState('');
-      const [submitted, setSubmitted] = useState(false);
-      const hasError = submitted && !selected;
-      return (
-        <div className="space-y-3">
-          <RadioGroup
-            legend="プラン"
-            required
-            error={hasError}
-            errorMessage="プランを選択してください"
-          >
-            {['free', 'pro'].map((v) => (
-              <Radio key={v} name="plan-err" value={v}
-                label={v === 'free' ? 'Free' : 'Pro'}
-                checked={selected === v}
-                onChange={(e) => setSelected(e.target.value)} />
-            ))}
-          </RadioGroup>
-          <button type="button" onClick={() => setSubmitted(true)}
-            className="px-4 py-2 bg-surface-primary text-onSurface-inverse rounded-md text-sm">
-            送信
-          </button>
-          <p className="text-xs text-onSurface-muted">
-            ↑ 未選択で送信すると Group の error が Context で全 Radio に伝播し、赤枠 + errorMessage 表示
-          </p>
-        </div>
-      );
-    }
-    function LayoutFormDemo() {
-      const [pay, setPay] = useState('card');
-      const [ship, setShip] = useState('standard');
-      return (
-        <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
-          <div className="space-y-section-sm">
-            <h3 className="text-heading-sm text-onSurface m-0">注文フォーム</h3>
-            <RadioGroup legend="お支払い方法" required>
-              <Radio name="lay-pay" value="card" label="クレジットカード"
-                description="Visa / Mastercard / AMEX"
-                checked={pay === 'card'} onChange={(e) => setPay(e.target.value)} />
-              <Radio name="lay-pay" value="bank" label="銀行振込"
-                description="振込確認後にサービス有効化"
-                checked={pay === 'bank'} onChange={(e) => setPay(e.target.value)} />
-            </RadioGroup>
-            <RadioGroup legend="配送方法" required>
-              <Radio name="lay-ship" value="standard" label="標準配送 (3〜5 日)"
-                checked={ship === 'standard'} onChange={(e) => setShip(e.target.value)} />
-              <Radio name="lay-ship" value="express" label="速達 (翌日)"
-                checked={ship === 'express'} onChange={(e) => setShip(e.target.value)} />
-            </RadioGroup>
-          </div>
-        </form>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-8">
-        <Caption text="Controlled (外部 state 同期)"><ControlledDemo /></Caption>
-        <Caption text="多数の選択肢 (5+ で縦並びがベター、6+ なら Select 検討)"><ManyDemo /></Caption>
-        <Caption text="Error 伝播 (RadioGroup の error が Context で全子 Radio に自動伝播)">
-          <ErrorPropagationDemo />
-        </Caption>
-        <Caption text="Layout token 適用 (px-container / space-y-section-sm でフォーム frame)">
-          <LayoutFormDemo />
-        </Caption>
-      </div>
-    );
-  },
 };

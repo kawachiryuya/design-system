@@ -102,6 +102,41 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**座席グリッド（occupied = 予約済み = disabled、selected はトグル可能）** — 行 × 列に ToggleButton を敷き、予約済みは `disabled`、選択中は `selected`。複数インスタンスを格子に並べる用途。
+
+<div className="space-y-1">
+  <div className="flex gap-1">
+    <ToggleButton aria-label="座席 1A">1</ToggleButton>
+    <ToggleButton disabled aria-label="座席 1B 予約済み">1</ToggleButton>
+    <ToggleButton selected aria-label="座席 1C">1</ToggleButton>
+  </div>
+  <div className="flex gap-1">
+    <ToggleButton disabled aria-label="座席 2A 予約済み">2</ToggleButton>
+    <ToggleButton aria-label="座席 2B">2</ToggleButton>
+    <ToggleButton aria-label="座席 2C">2</ToggleButton>
+  </div>
+</div>
+
+**曜日セレクター（複数選択トグル）** — `flex gap-2 flex-wrap` で曜日を並べ、選択中を `selected`。通知曜日の設定等。
+
+<div className="flex gap-2 flex-wrap">
+  <ToggleButton selected aria-label="月曜日">月</ToggleButton>
+  <ToggleButton aria-label="火曜日">火</ToggleButton>
+  <ToggleButton selected aria-label="水曜日">水</ToggleButton>
+  <ToggleButton aria-label="木曜日">木</ToggleButton>
+  <ToggleButton selected aria-label="金曜日">金</ToggleButton>
+  <ToggleButton aria-label="土曜日">土</ToggleButton>
+  <ToggleButton aria-label="日曜日">日</ToggleButton>
+</div>
+
+> `max-w-container-narrow` + `space-y-section-sm` で設定画面に組む例は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。実際の選択トグルは controlled state で行う（Storybook の Playground 参照）。
+
+---
+
 ## アクセシビリティ
 
 - **`aria-pressed`**: `selected` prop の値が `aria-pressed` 属性として反映。SR は「2 を押下」のように選択状態を読み上げる

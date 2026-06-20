@@ -5,11 +5,11 @@ import { Button } from '../../primitives/Button';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Toast stories — 標準ストーリー構造に準拠
+ * Toast stories — VR 集約モデル (§5-3) 移行は一部保留
  *
- * 順序固定: Playground → Variants → States → EdgeCases
- *
- * Toast は size / icon prop を持たないため Sizes / WithIcon は省略 (§5-3)。
+ * Toast は `position: fixed` + 入場アニメーションがあり、開状態を安定して静的に VR できない
+ * (毎ビルド差分で揺れるリスク)。開状態の Overview 追加は #90 (アニメ無効 API) で対応予定。
+ * それまでは §9-4 のスタンスに従い Playground を撮影対象に残す。
  * 単発 controlled / Provider+useToast の 2 つの利用形態を持つ。
  */
 const meta: Meta<typeof Toast> = {

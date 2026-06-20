@@ -23,8 +23,8 @@ const meta: Meta<typeof Grid> = {
   // shrink して auto-fit の幅可変が確認できない)。
   parameters: { layout: 'fullscreen' },
   argTypes: {
-    minItemWidth: { control: 'text' },
-    cols: { control: false },
+    // minItemWidth / cols は Playground.argTypes で `mode` の後に宣言し、Controls の並びを
+    // 「mode → 当該モードの値」の順に制御する (meta で宣言すると mode より上に来てしまう)。
     layout: { control: false },
     className: { control: false },
     children: { control: false },
@@ -58,20 +58,30 @@ const PageRow = ({ spans }: { spans: number[] }) => (
 );
 
 // ── 1. Playground (視覚回帰対象外・幅可変) ──────────────────────
-// 推奨の反復 auto-fit モードを探索する。撮影外なので幅は固定せず、Storybook の幅を
-// 変えると列数が自動で変わる様子を確認できる。cols / placement は Overview を参照。
+// 反復モード (auto-fit / cols) を story 専用 `mode` arg で切替えて探索する。
+// layout=fullscreen で全幅 + 撮影外なので幅可変 → auto-fit が幅で列数を変える様子を確認できる。
+// placement (layout="page") は Overview を参照。
 
-export const Playground: Story = {
-  render: (args) => (
-    <div className="p-4 bg-surface-layer-2">
-      <Grid minItemWidth={args.minItemWidth ?? '12rem'}>{cards(6)}</Grid>
-    </div>
-  ),
+export const Playground: StoryObj = {
+  args: { mode: 'auto-fit', minItemWidth: '12rem', cols: 3 },
+  argTypes: {
+    mode: { control: 'radio', options: ['auto-fit', 'cols'], name: 'mode (story 用)' },
+    minItemWidth: { control: 'text', if: { arg: 'mode', eq: 'auto-fit' } },
+    cols: { control: { type: 'number', min: 1, max: 12 }, if: { arg: 'mode', eq: 'cols' } },
+  },
+  render: (args) => {
+    const { mode, minItemWidth, cols } = args as { mode: 'auto-fit' | 'cols'; minItemWidth: string; cols: number };
+    return (
+      <div className="p-4 bg-surface-layer-2">
+        {mode === 'cols' ? <Grid cols={cols}>{cards(6)}</Grid> : <Grid minItemWidth={minItemWidth}>{cards(6)}</Grid>}
+      </div>
+    );
+  },
   parameters: {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: '反復 auto-fit (推奨): `minItemWidth` で列数が自動。**Storybook の幅 (ブラウザ / viewport addon) を縮めると列数が自動で減る**のを確認できる (撮影外なので幅を固定していない)。固定 N 列 (`cols`) と placement (`layout="page"`) は Overview を参照。',
+        story: '反復モードを `mode` で切替: **auto-fit** (`minItemWidth`, 推奨) — Storybook の幅を縮めると列数が自動で減る / **cols** (固定 N 列)。当該モードの Controls だけ表示する。placement (`layout="page"`) は Overview を参照。',
       },
     },
   },

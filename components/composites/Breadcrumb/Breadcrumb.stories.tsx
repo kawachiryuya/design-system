@@ -3,12 +3,14 @@ import { Breadcrumb } from './Breadcrumb';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Breadcrumb stories — 標準ストーリー構造に準拠
+ * Breadcrumb stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Variants (separator) → States → EdgeCases
- *
- * Breadcrumb は size / icon prop を持たないため Sizes / WithIcon は省略 (§5-3)。
- * 「Variants」軸は separator (chevron / slash / dot) として扱う。
+ * 2 節構成: Playground / Overview。
+ * Overview は Breadcrumb 唯一の視覚軸 separator (3 種) のみを凍結する。
+ * 以下は Playground (Controls) で再現でき固有の視覚シグナルも足さないため VR では撮らない:
+ *   - 階層数 / 単一階層: items を増減すれば見える。separator 行が最後の項目の見た目を兼ねる
+ *   - 長文ラベルの truncate: ラベルを伸ばせば内蔵 `max-w-[200px]` + 省略が見える (長文は Playground の役目)
+ *   - link hover/focus: interaction 状態。focus-ring は Button/Link 側で VR 済み
  */
 const sampleItems = [
   { label: 'ホーム', href: '/' },
@@ -33,11 +35,10 @@ const meta: Meta<typeof Breadcrumb> = {
 export default meta;
 type Story = StoryObj<typeof Breadcrumb>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -47,121 +48,25 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants (separator) ────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// Breadcrumb 唯一の視覚軸 separator (3 種・多段で代表) のみを凍結。
+// 階層数 / 長文 truncate / link hover-focus は Controls で再現でき固有シグナルも足さないため撮らない (冒頭コメント参照)。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'separator の 3 種類 (chevron / slash / dot) を縦並び比較。chevron が標準 (視認性高)、slash は密集 UI、dot はミニマル。',
+        story: '視覚回帰用の総覧。Breadcrumb 唯一の視覚軸 separator (chevron/slash/dot、多段で代表) を凍結する。階層数・長文 truncate・link hover/focus は Controls で再現できるため撮らない。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3">
       {(['chevron', 'slash', 'dot'] as const).map((sep) => (
         <Caption key={sep} text={`separator="${sep}"`}>
           <Breadcrumb items={sampleItems} separator={sep} />
         </Caption>
       ))}
-    </div>
-  ),
-};
-
-// ── 3. States ──────────────────────────────────────────────────
-
-export const States: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '段数違い (1 段 / 2 段 / 多段) と、link の hover / focus-visible 状態。',
-      },
-    },
-    pseudo: {
-      hover: ['#bc-hover a'],
-      focusVisible: ['#bc-focus a'],
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-5">
-      <Caption text="単一階層 (現在ページのみ)">
-        <Breadcrumb items={[{ label: 'ダッシュボード' }]} />
-      </Caption>
-      <Caption text="2 階層">
-        <Breadcrumb items={[{ label: 'ホーム', href: '/' }, { label: '設定' }]} />
-      </Caption>
-      <Caption text="多階層 (4 段)">
-        <Breadcrumb items={sampleItems} />
-      </Caption>
-      <Caption text="リンク Hover (pseudo-states 強制)">
-        <div id="bc-hover">
-          <Breadcrumb items={sampleItems} />
-        </div>
-      </Caption>
-      <Caption text="リンク Focus-visible (pseudo-states 強制)">
-        <div id="bc-focus">
-          <Breadcrumb items={sampleItems} />
-        </div>
-      </Caption>
-    </div>
-  ),
-};
-
-// ── 4. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '長文ラベル (max-w-[200px] で truncate) / 全項目に href がある / EC カテゴリナビ / Layout token 適用 (page header に Breadcrumb + ページタイトル).',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-col gap-5">
-      <Caption text="長文ラベル (max-w-[200px] で truncate)">
-        <Breadcrumb items={[
-          { label: 'ホーム', href: '/' },
-          { label: 'カテゴリ', href: '/cat' },
-          { label: 'とても長いページタイトルが入ることもある複数行に折り返す可能性のあるラベル' },
-        ]} />
-      </Caption>
-      <Caption text="全項目に href (最後の項目も link 扱い、まだ詳細ページ移動可)">
-        <Breadcrumb items={[
-          { label: 'ホーム', href: '/' },
-          { label: 'プロジェクト', href: '/projects' },
-          { label: 'design-system', href: '/projects/ds' },
-        ]} />
-      </Caption>
-      <Caption text="EC サイトのカテゴリナビ (実利用例)">
-        <div className="flex flex-col gap-3">
-          <Breadcrumb separator="chevron" items={[
-            { label: 'トップ', href: '/' },
-            { label: 'ファッション', href: '/fashion' },
-            { label: 'メンズ', href: '/fashion/mens' },
-            { label: 'Tシャツ' },
-          ]} />
-          <Breadcrumb separator="slash" items={[
-            { label: 'トップ', href: '/' },
-            { label: 'デジタル', href: '/digital' },
-            { label: 'スマートフォン' },
-          ]} />
-        </div>
-      </Caption>
-      <Caption text="Layout token 適用 (page header に Breadcrumb + ページタイトル、max-w-container + space-y-2)">
-        <div className="w-full px-container py-container max-w-container mx-auto">
-          <div className="space-y-2">
-            <Breadcrumb items={[
-              { label: 'ホーム', href: '/' },
-              { label: '製品', href: '/products' },
-              { label: 'デザインシステム', href: '/products/design-system' },
-              { label: 'コンポーネント一覧' },
-            ]} />
-            <h1 className="text-heading-lg text-onSurface">コンポーネント一覧</h1>
-            <p className="text-body-md text-onSurface-muted">デザインシステムで提供する全コンポーネントの一覧です。</p>
-          </div>
-        </div>
-      </Caption>
     </div>
   ),
 };

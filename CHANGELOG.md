@@ -13,10 +13,12 @@
 - **VR 集約モデル移行 (primitives バッチ 1): Badge / Spinner / Divider** (story id 削除 = silent break §10-2): 上記モデルに移行。各コンポーネントの `Variants` / `Sizes` story を削除し `Overview` に集約 (Badge: appearance×variant + dot + count / Spinner: size + color / Divider: orientation×weight + label)。`?path=/story/primitives-badge--variants`・`primitives-spinner--variants`・`primitives-spinner--sizes`・`primitives-divider--variants` 等の Storybook URL が無効になる。
 - **VR 集約モデル移行 (primitives バッチ 2): Center / Cluster / Stack / Section / Typography / Skeleton / Image** (story id 削除 = silent break §10-2): 各コンポーネントの `Variants` story を `Overview` に統合し、内在軸 (Stack `align` / Skeleton `animated` / Image `objectFit`・`rounded`) を Overview に集約。文脈依存の崩れが無い Stack / Section / Skeleton は `EdgeCases` も削除。`?path=/story/primitives-*--variants`・`primitives-stack--edgecases` 等の Storybook URL が無効になる。削除した usage 合成 (Cluster header / Skeleton カード・リスト統合) は各 guideline の「使用例」節に保持。
 - **VR 集約モデル移行 (primitives バッチ 3、完): Input / Textarea / Label / Link / Icon / VisuallyHidden** (story id 削除 = silent break §10-2): 残り primitives を移行し **Primitives 17/17 完了**。`Sizes`/`States`/`WithIcon`/`Variants` を `Overview` に統合 (form 系は size×state マトリクス + counter/resize 等)。form/layout 統合などの usage 合成は各 guideline の「使用例」へ移設。Icon は `Library` (icon セット総覧) を VR 対象として維持しつつ Variants/Sizes を Overview へ。VisuallyHidden は不可視のため VR 対象を持たず Playground のみ。`?path=/story/primitives-input--sizes`・`primitives-link--variants` 等の Storybook URL が無効になる。
+- **VR 集約モデル移行 (composites バッチ 1): Alert / Grid / Card** (story id 削除 = silent break §10-2): `Variants`/`States` を `Overview` に統合。Alert/Card は EdgeCases を持たず (長文等は Playground で再現可)、usage 合成 (Alert: list/buttons/link / Card: notice/stat-grid) は各 guideline の「使用例」へ移設。Grid は反復 (auto-fit/cols) / placement (page の span 比率) を Overview に集約 (列数がコンテナ幅依存のため幅 680px 固定で VR を決定的に)、Playground は `mode` (auto-fit/cols) 切替 + 幅可変。`?path=/story/composites-alert--variants`・`composites-card--states`・`composites-grid--variants` 等の Storybook URL が無効になる。
 
 ### Changed
 
 - **Primitives/Typography: 型スケールの並び順を統一** (declaration 順のみ、視覚/API 変化なし): `TypographyVariant` と Overview / Controls options を **font-size 大→小** (display→h1〜h4→body-lg→body→body-sm→label→caption) で統一。caption (12px、最小) を末尾に。variant の値・見た目・型は不変。
+- **EdgeCases の基準を明確化** (規約のみ、AGENTS.md §5-3 / §7-10): VR の `EdgeCases` は **Playground (Controls) で再現できない構造的ケースだけ** (inner-span `truncate` 等の特殊マークアップ / コンテナ幅依存は固定幅で / 複数インスタンス・item 数依存の配置)。長文折返し・`fullWidth` 等 Controls で出せるものは入れない。
 
 ### Fixed
 

@@ -473,11 +473,11 @@ Composite → components/composites/ComponentName/
 | 1 | (Docs) | autodocs の Docs ページ。`.guideline.mdx` が `<Meta of={...} />` で兼ねる | — | 必須 |
 | 2 | **Playground** | `args` 全開放、Controls で**任意の 1 状態**を探索する起点。play test もここ | **対象外** (`disableSnapshot`) | 必須 |
 | 3 | **Overview** | **props で作れる内在的パターンを 1 枚に凍結した総覧グリッド** (variant × state / size / icon / description 等)。Controls で再現できるものは原則ここに集約 | **対象** | 必須 |
-| 4 | **EdgeCases** | **props だけでは作れない文脈依存の崩れやすさ** (`fullWidth`・制約幅での長文折返し・inner-span の `truncate` 等) | **対象** | 任意 (該当が無ければ省略) |
+| 4 | **EdgeCases** | **Playground (Controls) では再現できない構造的なケース** (inner-span `truncate` 等の特殊マークアップ / コンテナ幅依存を固定幅で見せる / 複数インスタンス・item 数依存の配置 / 段落内 inline 等) | **対象** | 任意 (該当が無ければ省略) |
 
 **Overview / EdgeCases の境界 = 「内在的 vs 文脈的」**:
 - **内在的** (props だけで決まる) → **Overview**。variant / size / state (Hover/Focus/Active は `storybook-addon-pseudo-states` の `parameters.pseudo` で列ごとに強制表示) / icon (左右 / iconOnly) / loading / disabled / description 等。
-- **文脈的** (周囲のコンテナ幅・特殊マークアップで初めて起きる) → **EdgeCases**。props では作れないものだけを残す。
+- **文脈的** (特殊マークアップ・コンテナ幅・複数インスタンスで初めて起きる) → **EdgeCases**。**ただし Playground の Controls で再現できるもの (長文折返し・`fullWidth` 等、text/boolean prop を変えるだけのもの) は入れない** — それは Playground の役目で、VR は静的な Overview + 真の構造ケースに絞る。コンテナ幅に依存する場合は**固定幅**で見せて VR を決定的にする (例: Grid を `w-[680px]` で固定)。
 - **非視覚** (SR 専用の aria-label 長文など) は **VR に撮らない** (axe (test-runner §8-4) + guideline で担保)。
 
 **書き方ルール**:
@@ -717,7 +717,7 @@ http://localhost:6006 で目視確認:
 1. **監査**: prop 空間を把握する (variant / size / state / icon / description / loading / fullWidth など、Controls で表せる軸を洗い出す)。
 2. **Playground を完全 Controls 化**: `args` を全開放し、**ReactNode prop (`icon` 等) は `argTypes` の `mapping`** (ラベル → 実要素) で選択可能にする。`control: false` を残さない (例: Button の `icon` mapping)。`chromatic.disableSnapshot: true` を付ける (VR 対象外)。play test はここ。
 3. **Overview を作る (VR 対象)**: props で作れる**内在的パターンを 1 枚に凍結**する。基本構成は **variant (行) × state (列) マトリクス** + size + icon + その他 prop 別セクション。Hover/Focus/Active は `parameters.pseudo` で列ごとに id 指定して強制表示。
-4. **EdgeCases を純化 (VR 対象)**: **props だけでは作れない文脈依存ケースだけ**残す (制約幅での長文折返し / inner-span `truncate` / `fullWidth` 等)。**非視覚 (SR 専用 aria-label 長文など) は削除** — axe (§8-4) + guideline で担保する。文脈依存ケースが無ければ EdgeCases 自体を省略。
+4. **EdgeCases を純化 (VR 対象)**: **Playground (Controls) で再現できない構造的ケースだけ**残す (inner-span `truncate` 等の特殊マークアップ / コンテナ幅依存は**固定幅**で見せる / 複数インスタンス・item 数依存の配置 / 段落内 inline 等)。**長文折返し・`fullWidth` 等 Controls で出せるものは入れない** (Playground の役目)。**非視覚 (SR 専用 aria-label 長文など) も削除** — axe (§8-4) + guideline で担保。該当ケースが無ければ EdgeCases 自体を省略。
 5. **旧カタログを削除**: `Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription` を削除。各 story の設計根拠 (例: size と WCAG タッチターゲット) は **guideline.mdx の Do/Don't・アクセシビリティ節に既出か確認**し、無ければ移設する (散文の方が適切)。
 6. **guideline.mdx のリンク追従**: 削除した story を `?path=` で参照していないか確認 (`check:links` が CI で検出)。`<ArgTypes of={Stories.Playground} />` は維持。
 7. **overlay / portal 系の特例** (Modal / Popover / Tooltip / DropdownMenu / Toast): 「開いた状態」が play 駆動 story にしか無い盲点があるため、**Overview に `open` / `defaultOpen` 直指定で開状態を静的に持たせて撮る** (トリガー裏に残さない)。`<dialog>` 系で同時に 1 つしか開けない等は、状態ごとに Overview 内のサブ snapshot か別 story で分ける。

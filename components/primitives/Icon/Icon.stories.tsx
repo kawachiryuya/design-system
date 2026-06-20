@@ -88,7 +88,7 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '視覚回帰用の総覧。color (8 semantic) / size (sm 20 / md 24 / lg 32 / xl 48) / variant (default / fill / stroke) を 1 枚に集約。inherit は親の text color を継承。',
+        story: '視覚回帰用の総覧。color (8 semantic) / size (sm 20 / md 24 / lg 32 / xl 48) を 1 枚に集約。inherit は親の text color を継承。※ `variant` (fill/stroke) は registry アイコンでは registry の mode が優先され無効 — custom SVG (children) 専用なので EdgeCases で扱う。',
       },
     },
   },
@@ -113,15 +113,6 @@ export const Overview: Story = {
               <Icon name="search" size={size} color="neutral" />
             </Caption>
           ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">variant (default / fill / stroke)</div>
-        <div className="flex flex-wrap gap-6 items-center">
-          <Caption text="default"><Icon name="favorite" size="lg" color="neutral" /></Caption>
-          <Caption text="fill"><Icon name="favorite" size="lg" color="neutral" variant="fill" /></Caption>
-          <Caption text="stroke"><Icon name="favorite" size="lg" color="neutral" variant="stroke" /></Caption>
         </div>
       </div>
     </div>

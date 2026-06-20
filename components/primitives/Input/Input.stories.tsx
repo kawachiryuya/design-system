@@ -7,8 +7,10 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Input stories — VR 集約モデル (§5-3)
  *
- * 3 節構成: Playground / Overview / EdgeCases。
+ * 2 節構成: Playground / Overview。
  * `type` は behavior 軸 (mobile keyboard 等) で視覚差が小さいため Overview には含めない。
+ * EdgeCases は無し: 旧「fullWidth + 長文 placeholder の ellipsis」は内蔵挙動で fullWidth(bool) +
+ * placeholder(text) の Control で再現できるため Playground の役目 (§5-3 の尖らせた基準)。
  *
  * Docs (Guideline) は Input.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -129,29 +131,6 @@ export const Overview: Story = {
           <Input label="ユーザー名" required helpText="3〜16 文字の英数字" placeholder="例: alice123" fullWidth />
         </div>
       </div>
-    </div>
-  ),
-};
-
-// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
-// props だけでは作れない文脈依存: fullWidth + 長文 placeholder の overflow:hidden + ellipsis。
-// ※ ログインフォーム / Layout token 統合などの usage 合成は guideline の「使用例」へ移設。
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'fullWidth + 長文 placeholder — placeholder が overflow:hidden + ellipsis で省略される、幅依存の文脈ケース。',
-      },
-    },
-  },
-  render: () => (
-    <div className="w-96">
-      <Input
-        label="長い placeholder"
-        fullWidth
-        placeholder="このフォームは非常に長い placeholder テキストを受け付ける挙動の確認用"
-      />
     </div>
   ),
 };

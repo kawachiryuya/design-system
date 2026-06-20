@@ -115,6 +115,34 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ---
 
+## 使用例（旧 story から移設・要精査）
+
+> 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
+
+**FAQ ページ（`type="multiple"` で複数同時に開ける）** — 見出し + リード文の下に Accordion を並べる定番構成。
+
+<div className="w-full max-w-container-narrow">
+  <div className="space-y-section-sm">
+    <div>
+      <h2 className="text-heading-lg text-onSurface m-0">よくあるご質問</h2>
+      <p className="text-body-md text-onSurface-muted mt-1">サービス利用について多く寄せられるご質問にお答えします。</p>
+    </div>
+    <Accordion
+      type="multiple"
+      defaultOpenIds={['p1']}
+      items={[
+        { id: 'p1', title: '予約のキャンセルはいつまで可能ですか？', content: <p className="text-body-sm leading-relaxed">出発時刻の 1 時間前までキャンセル可能です。それ以降はキャンセル料が発生します。長文コンテンツも panel 内で自然に折り返します。</p> },
+        { id: 'p2', title: '会員登録は無料ですか？', content: <p className="text-body-sm">はい、完全に無料でご利用いただけます。</p> },
+        { id: 'p3', title: '予約確認メールが届きません', content: <p className="text-body-sm">迷惑メールフォルダをご確認ください。</p> },
+      ]}
+    />
+  </div>
+</div>
+
+> Controlled（`openIds` / `onChange` で外部 state・URL クエリと同期）の実挙動は Storybook の Playground 参照。長文コンテンツの折返しは上記 p1 で確認できる（panel 内の通常テキスト折返しなので構造ケースではない）。Layout token は [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。
+
+---
+
 ## アクセシビリティ
 
 - **`<button aria-expanded aria-controls>`**: 各 trigger は button 要素。開閉状態を `aria-expanded` で SR に伝達

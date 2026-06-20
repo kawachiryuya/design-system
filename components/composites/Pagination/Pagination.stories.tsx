@@ -5,11 +5,13 @@ import { Pagination } from './Pagination';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Pagination stories — 標準ストーリー構造に準拠
+ * Pagination stories — VR 集約モデル (§5-3)
  *
- * 順序固定: Playground → Sizes → States → EdgeCases
- *
- * Pagination は variant prop を持たないため Variants は省略。Icon は内部実装で WithIcon も省略 (§5-3)。
+ * 2 節構成: Playground / Overview。
+ * first/last/few/many(ellipsis)/showEdges の構造バリエーションを Overview に集約。
+ * 記事一覧ページ等の usage 合成は guideline の「使用例」へ移設。
+ * totalPages=1 は何も描画しない (VR 対象外、guideline に注記)。
+ * variant / size prop は無し。
  */
 const meta: Meta<typeof Pagination> = {
   title: 'Composites/Pagination',
@@ -33,11 +35,10 @@ const meta: Meta<typeof Pagination> = {
 export default meta;
 type Story = StoryObj<typeof Pagination>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
@@ -55,123 +56,35 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. States ──────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// 構造バリエーション: 端の disabled / ellipsis の有無 / showEdges。
+// currentPage は controlled なので静的値 + no-op onPageChange で凍結。
 
-export const States: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'First / Middle / Last の各位置と、Few pages (1〜5) / Many pages (ellipsis 表示) / showEdges (« » 付き) のパターン。',
+        story: '視覚回帰用の総覧。first (前 disabled) / last (次 disabled) / few (ellipsis なし) / many (ellipsis 表示) / showEdges (« » 付き) の構造バリエーションを集約。',
       },
     },
   },
-  render: () => {
-    function Demo() {
-      const [p1, setP1] = useState(1);
-      const [p2, setP2] = useState(20);
-      const [p3, setP3] = useState(2);
-      const [p4, setP4] = useState(50);
-      const [p5, setP5] = useState(5);
-      return (
-        <div className="flex flex-col gap-4">
-          <Caption text="First page (1/20、前ボタン disabled)">
-            <Pagination currentPage={p1} totalPages={20} onPageChange={setP1} />
-          </Caption>
-          <Caption text="Last page (20/20、次ボタン disabled)">
-            <Pagination currentPage={p2} totalPages={20} onPageChange={setP2} />
-          </Caption>
-          <Caption text="Few pages (totalPages <= maxVisible、ellipsis なし)">
-            <Pagination currentPage={p3} totalPages={4} onPageChange={setP3} />
-          </Caption>
-          <Caption text="Many pages (ellipsis 表示)">
-            <Pagination currentPage={p4} totalPages={100} onPageChange={setP4} />
-          </Caption>
-          <Caption text="showEdges (« » の最初/最後ジャンプ)">
-            <Pagination currentPage={p5} totalPages={50} onPageChange={setP5} showEdges />
-          </Caption>
-        </div>
-      );
-    }
-    return <Demo />;
-  },
-};
-
-// ── 3. EdgeCases ───────────────────────────────────────────────
-
-export const EdgeCases: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '実利用例: 記事一覧ページ (件数表示 + Pagination + showEdges) / totalPages=1 (描画されない検証)。',
-      },
-    },
-  },
-  render: () => {
-    function ArticleList() {
-      const [page, setPage] = useState(1);
-      const perPage = 5;
-      const total = 47;
-      const totalPages = Math.ceil(total / perPage);
-      const items = Array.from({ length: perPage }, (_, i) => {
-        const num = (page - 1) * perPage + i + 1;
-        return num <= total ? `記事タイトル #${num}` : null;
-      }).filter(Boolean) as string[];
-      return (
-        <div className="w-96 space-y-4">
-          <p className="text-body-sm text-onSurface-muted">
-            全 {total} 件中 {(page - 1) * perPage + 1}〜{Math.min(page * perPage, total)} 件を表示
-          </p>
-          <ul className="divide-y divide-border-subtle border border-border-subtle rounded-md">
-            {items.map((title) => (
-              <li key={title} className="px-4 py-3 text-body-sm text-onSurface">{title}</li>
-            ))}
-          </ul>
-          <div className="flex justify-center">
-            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} showEdges />
-          </div>
-        </div>
-      );
-    }
-    function PageDemo() {
-      const [page, setPage] = useState(1);
-      const perPage = 8;
-      const total = 95;
-      const totalPages = Math.ceil(total / perPage);
-      return (
-        <div className="w-full px-container py-container max-w-container-narrow mx-auto">
-          <div className="space-y-section-sm">
-            <div className="flex items-baseline justify-between">
-              <h2 className="text-heading-md text-onSurface">記事一覧</h2>
-              <p className="text-body-sm text-onSurface-muted">
-                全 {total} 件中 {(page - 1) * perPage + 1}〜{Math.min(page * perPage, total)} 件
-              </p>
-            </div>
-            <ul className="divide-y divide-border-subtle border border-border-subtle rounded-md">
-              {Array.from({ length: Math.min(perPage, total - (page - 1) * perPage) }).map((_, i) => {
-                const num = (page - 1) * perPage + i + 1;
-                return <li key={num} className="px-4 py-3 text-body-sm text-onSurface">記事タイトル #{num}</li>;
-              })}
-            </ul>
-            <div className="flex justify-center">
-              <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} showEdges />
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-8">
-        <Caption text="記事一覧ページ (件数 + Pagination + showEdges)">
-          <ArticleList />
-        </Caption>
-        <Caption text="totalPages = 1 (描画されない、null 返す)">
-          <Pagination currentPage={1} totalPages={1} onPageChange={() => {}} />
-          <p className="text-caption text-onSurface-muted mt-2">↑ 何も描画されない (1 ページしかないときに pagination は不要)</p>
-        </Caption>
-        <Caption text="Layout token 適用 (記事一覧 page、max-w-container-narrow + space-y-section-sm)">
-          <PageDemo />
-        </Caption>
-      </div>
-    );
-  },
+  render: () => (
+    <div className="flex flex-col gap-4 items-start">
+      <Caption text="First page (1/20、前ボタン disabled)">
+        <Pagination currentPage={1} totalPages={20} onPageChange={() => {}} />
+      </Caption>
+      <Caption text="Last page (20/20、次ボタン disabled)">
+        <Pagination currentPage={20} totalPages={20} onPageChange={() => {}} />
+      </Caption>
+      <Caption text="Few pages (totalPages <= maxVisible、ellipsis なし)">
+        <Pagination currentPage={2} totalPages={4} onPageChange={() => {}} />
+      </Caption>
+      <Caption text="Many pages (ellipsis 表示)">
+        <Pagination currentPage={50} totalPages={100} onPageChange={() => {}} />
+      </Caption>
+      <Caption text="showEdges (« » の最初/最後ジャンプ)">
+        <Pagination currentPage={5} totalPages={50} onPageChange={() => {}} showEdges />
+      </Caption>
+    </div>
+  ),
 };

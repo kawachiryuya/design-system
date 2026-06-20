@@ -147,20 +147,24 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 **header pattern — title 左 + action 右 (`justify="between"`)**
 
-<Cluster gap="md" justify="between">
-  <div className="text-base font-semibold">予約一覧</div>
-  <div className="flex gap-2">
-    <button className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">フィルタ</button>
-    <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button>
-  </div>
-</Cluster>
+<div className="max-w-md p-3 border border-border-subtle rounded-lg">
+  <Cluster gap="md" justify="between" align="center">
+    <span className="text-base font-semibold">予約一覧</span>
+    <Cluster gap="sm">
+      <button className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">フィルタ</button>
+      <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button>
+    </Cluster>
+  </Cluster>
+</div>
 
 **icon + label pattern (`gap="xs"`)**
 
-<Cluster gap="xs">
-  <span className="text-onSurface-muted">⏱</span>
-  <span className="text-sm text-onSurface-muted">5 分で読める</span>
-</Cluster>
+<div className="max-w-md p-3 border border-border-subtle rounded-lg">
+  <Cluster gap="xs" align="center">
+    <span className="text-onSurface-muted">⏱</span>
+    <span className="text-sm text-onSurface-muted">5 分で読める</span>
+  </Cluster>
+</div>
 
 > 旧 story の Fragment / 条件付き children 対応 (gap- 実装なので壊れない) は堅牢性デモのため移設せず削除した。
 

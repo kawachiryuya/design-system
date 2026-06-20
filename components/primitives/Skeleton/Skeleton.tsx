@@ -109,7 +109,9 @@ export const Skeleton: React.FC<SkeletonProps> = ({
         aria-label="読み込み中"
         aria-busy="true"
         className={['flex flex-col gap-2', className].filter(Boolean).join(' ')}
-        style={{ width: toCssSize(width) }}
+        // width 未指定時は 100% (単一行 text の defaultWidths と揃える)。これが無いと
+        // shrink 文脈 (flex items-start 等) で外側が幅0に潰れ、各行 (width:100%) も消える。
+        style={{ width: toCssSize(width) ?? '100%' }}
       >
         {Array.from({ length: lines }).map((_, i) => (
           <div

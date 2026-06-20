@@ -5,12 +5,11 @@ import { getIconNames } from './iconRegistry';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Icon stories — 標準ストーリー構造に準拠
+ * Icon stories — VR 集約モデル (§5-3) + Icon 固有の Library 節
  *
- * 順序: Playground → Library → Variants → Sizes → EdgeCases
- * (States は Icon に hover/focus 状態がないため省略、WithIcon は Icon が icon そのものなので省略)
- * Library は Icon 固有の追加節 — iconRegistry 全アイコンを一覧表示する catalog story。
- * 「どの name が使えるか」を最初に見せたいので Playground の直後に配置する。
+ * 構成: Playground / Library / Overview / EdgeCases。
+ * Library は iconRegistry 全アイコンの catalog で、icon セット全体の視覚回帰も兼ねる
+ * Icon 固有の追加節 (「どの name が使えるか」を見せるため Playground 直後に配置)。
  *
  * Docs (Guideline) は Icon.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -38,37 +37,35 @@ const meta: Meta<typeof Icon> = {
 export default meta;
 type Story = StoryObj<typeof Icon>;
 
-// ── 1. Playground ──────────────────────────────────────────────
-// args を全開放、Controls タブから props を探索する起点。
-// 基本動作 (registry 参照 + role/aria-label 自動付与) の play test もここに置く。
+const COLORS = ['inherit', 'neutral', 'primary', 'success', 'error', 'warning', 'info', 'disabled'] as const;
+const SIZE_PX: Record<'sm' | 'md' | 'lg' | 'xl', number> = { sm: 20, md: 24, lg: 32, xl: 48 };
+
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
-    // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。name="search" を指定すると registry の label "検索" が自動的に aria-label として付き role="img" になることを play test で保証。',
+        story: 'Controls から props を切り替えて挙動を確認する起点。name="search" で registry の label "検索" が aria-label に付き role="img" になることを play test で保証。',
       },
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // name="search" の registry エントリには label="検索" がある → role="img" + aria-label="検索"
     const icon = canvas.getByRole('img', { name: '検索' });
     await expect(icon).toBeInTheDocument();
   },
 };
 
-// ── 2. Library (Icon 固有) ─────────────────────────────────────
-// iconRegistry に登録されている全アイコンの catalog 表示。
-// 「どの name が使えるか」を一覧で見せる目的で、Playground の直後に配置。
+// ── 2. Library (Icon 固有・視覚回帰対象) ────────────────────────
+// iconRegistry 全アイコンの catalog。icon セット全体の視覚回帰も兼ねる。
 
 export const Library: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'iconRegistry に登録された全アイコンの一覧。`<Icon name="..." />` でそのまま使える name を表示。registry にないアイコンを使いたい場合は iconRegistry.ts に追記する。',
+        story: 'iconRegistry に登録された全アイコンの一覧。`<Icon name="..." />` でそのまま使える name を表示。registry に無いアイコンは iconRegistry.ts に追記する。',
       },
     },
   },
@@ -84,83 +81,86 @@ export const Library: Story = {
   ),
 };
 
-// ── 3. Variants ────────────────────────────────────────────────
-// 7 色のセマンティックカラーを静的に横並び。`color` prop の使い分け判断材料。
+// ── 3. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在軸を集約: color (8) / size (4) / variant (fill/stroke)。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '7 色のセマンティックカラーを横並びで比較。inherit (text-current) は親要素の色を継承するため Button 内のアイコン等で多用。意味別の使い分けは Guideline 参照。',
+        story: '視覚回帰用の総覧。color (8 semantic) / size (sm 20 / md 24 / lg 32 / xl 48) / variant (default / fill / stroke) を 1 枚に集約。inherit は親の text color を継承。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-wrap gap-6 items-center">
-      {(['inherit', 'neutral', 'primary', 'success', 'error', 'warning', 'info', 'disabled'] as const).map((color) => (
-        <Caption key={color} text={color}>
-          <Icon name="info" size="md" color={color} />
-        </Caption>
-      ))}
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">color (semantic 8)</div>
+        <div className="flex flex-wrap gap-6 items-center">
+          {COLORS.map((color) => (
+            <Caption key={color} text={color}>
+              <Icon name="info" size="md" color={color} />
+            </Caption>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">size (sm / md / lg / xl)</div>
+        <div className="flex flex-wrap gap-6 items-end">
+          {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+            <Caption key={size} text={`${size} (${SIZE_PX[size]}px)`}>
+              <Icon name="search" size={size} color="neutral" />
+            </Caption>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-xs text-onSurface-muted">variant (default / fill / stroke)</div>
+        <div className="flex flex-wrap gap-6 items-center">
+          <Caption text="default"><Icon name="favorite" size="lg" color="neutral" /></Caption>
+          <Caption text="fill"><Icon name="favorite" size="lg" color="neutral" variant="fill" /></Caption>
+          <Caption text="stroke"><Icon name="favorite" size="lg" color="neutral" variant="stroke" /></Caption>
+        </div>
+      </div>
     </div>
   ),
 };
 
-// ── 4. Sizes ───────────────────────────────────────────────────
-// 4 つのサイズを静的に横並び。本文と組み合わせるなら sm/md、装飾大表示は lg/xl。
-
-export const Sizes: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'sm (20px) / md (24px) / lg (32px) / xl (48px) の見比べ。本文サイズ (md text=16px) との視覚バランスのため sm/md が標準、見出しや空状態の図解で lg/xl を使う。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex flex-wrap gap-6 items-end">
-      {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
-        <Caption key={size} text={`${size} (${size === 'sm' ? 20 : size === 'md' ? 24 : size === 'lg' ? 32 : 48}px)`}>
-          <Icon name="search" size={size} color="neutral" />
-        </Caption>
-      ))}
-    </div>
-  ),
-};
-
-// ── 5. EdgeCases ───────────────────────────────────────────────
-// color="inherit" の親色連動 / custom SVG (children) / 存在しない name / xl + テキスト隣接など、
-// 視覚的に壊れやすい / 仕様確認が必要なケースの監視用。
+// ── 4. EdgeCases (視覚回帰対象) ─────────────────────────────────
+// props だけでは作れない文脈依存・フェイルセーフ: color=inherit (親色継承) /
+// custom SVG children / 存在しない name / xl + 本文隣接の baseline 揃え。
 
 export const EdgeCases: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'color="inherit" で親色を継承するパターン / registry にない custom SVG (children) / 存在しない name / xl + テキスト隣接時のレイアウトなど、エッジケース監視。',
+        story: 'color="inherit" の親色継承 / registry に無い custom SVG (children) / 存在しない name (装飾的フェイルセーフ) / xl + 本文隣接時の alignment など、文脈依存・境界条件を監視。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6">
-      <Caption text='color="inherit" — 親の text-red-500 を継承して赤くなる'>
+      <Caption text='color="inherit" — 親の text 色 (赤) を継承'>
         <div className="text-red-700 flex items-center gap-2">
           <Icon name="error" size="md" color="inherit" />
           <span>エラーメッセージのアイコンと文字が同色</span>
         </div>
       </Caption>
-      <Caption text='custom SVG (children + variant="stroke") — registry に無いカスタムパスを直接描画'>
+      <Caption text='custom SVG (children + variant="stroke") — registry に無いカスタムパス'>
         <Icon size="md" color="neutral" variant="stroke" label="カスタム円形">
           <circle cx="12" cy="12" r="8" />
           <path d="m20 20-3-3" />
         </Icon>
       </Caption>
-      <Caption text='存在しない name — registry に無い場合は何も描画されない (装飾的にフェイルセーフ)'>
+      <Caption text='存在しない name — registry に無い場合は path なし (装飾的フェイルセーフ)'>
         <div className="flex items-center gap-2 border border-dashed border-border-subtle p-2 rounded">
           <Icon name="nonexistent_icon" size="md" />
           <span className="text-xs text-onSurface-muted">↑ SVG タグはあるが path なし</span>
         </div>
       </Caption>
-      <Caption text='xl + 本文隣接 — text-baseline 揃えが効かないので flex items-center 必須'>
+      <Caption text='xl + 本文隣接 — baseline が効かないので flex items-center で揃える'>
         <div className="flex items-center gap-2">
           <Icon name="info" size="xl" color="info" />
           <span className="text-base">items-center で揃える</span>
@@ -169,4 +169,3 @@ export const EdgeCases: Story = {
     </div>
   ),
 };
-

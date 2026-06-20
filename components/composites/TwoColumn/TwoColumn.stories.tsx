@@ -81,9 +81,12 @@ export const Playground: Story = {
 
 export const Overview: Story = {
   parameters: {
+    // split 比率は cols breakpoint (>= 1024px) でのみ効き、mobile では全て縦積みで同一になるため
+    // Overview は desktop (1280) のみ撮る。mobile の縦積み / mobileReverse 等は EdgeCases ([375,1280]) で検証。
+    chromatic: { viewports: [1280] },
     docs: {
       description: {
-        story: '視覚回帰用の総覧。`split` 4 種 (6/6 / 7/5 / 8/4 / 9/3) を縦に並べて比較。meta の viewports=[375,1280] で、cols breakpoint (>= 1024px) の grid 化と mobile の縦積みの両方を撮る。gutter は grid.gutter トークン (16/16/24) 固定。',
+        story: '視覚回帰用の総覧。`split` 4 種 (6/6 / 7/5 / 8/4 / 9/3) を desktop 幅で比較。比率は cols breakpoint (>= 1024px) でのみ効くため Overview は 1280 のみ撮る (mobile では全て縦積みで同一)。mobile の breakpoint 挙動は EdgeCases ([375,1280]) で検証。gutter は grid.gutter トークン (16/16/24) 固定。',
       },
     },
   },

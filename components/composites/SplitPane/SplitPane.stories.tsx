@@ -106,9 +106,12 @@ export const Playground: Story = {
 export const Overview: Story = {
   parameters: {
     layout: 'padded',
+    // listWidth は cols breakpoint (>= 1024px) でのみ効き、mobile では全て縦積みで同一になるため
+    // Overview は desktop (1280) のみ撮る。mobile の縦積み / list 非表示等は EdgeCases ([375,1280]) で検証。
+    chromatic: { viewports: [1280] },
     docs: {
       description: {
-        story: '視覚回帰用の総覧。`listWidth` 3 段階 (280 / 360 / 480px) と `divider={false}` を縦に並べて比較。meta の viewports=[375,1280] で desktop の横分割と mobile の縦積みの両方を撮る。',
+        story: '視覚回帰用の総覧。`listWidth` 3 段階 (280 / 360 / 480px) と `divider={false}` を desktop 幅で比較。listWidth は cols breakpoint (>= 1024px) でのみ効くため Overview は 1280 のみ撮る (mobile では全て縦積みで同一)。mobile の breakpoint 挙動は EdgeCases ([375,1280]) で検証。',
       },
     },
   },

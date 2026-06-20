@@ -8,13 +8,13 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * AppShell stories — VR 集約モデル (§5-3): Playground / Overview / EdgeCases
  *
- * - Overview = props で作れる内在パターン (contentMax / showBottomNav)。
+ * - Overview = props で作れる内在パターン (contentMax)。desktop の機能なので desktop (1280) のみ撮影。
  * - EdgeCases = slot 省略 / layout="full" full-bleed / long-scroll 等、slot・className 駆動で
- *   Playground の Controls では作れない構造ケース。
+ *   Playground の Controls では作れない構造ケース。mobile/desktop の breakpoint 挙動 (`hidden shell:block`
+ *   のサイドバー出し分け等) を [375,1280] で撮る。
  * - 状態を持たない layout primitive のため States は無し。size/icon prop も無し。
- * - 視覚回帰は meta の `chromatic.viewports=[375,1280]` で mobile/desktop の breakpoint 挙動を撮る
- *   (`hidden shell:block` のサイドバー出し分け等)。Overview / EdgeCases は full-screen layout を
- *   `h-[500px] overflow-hidden` で wrap して 1 story 内に縦に並べる (Center.stories.tsx と同じ pattern)。
+ * - viewports は meta が [375,1280] (EdgeCases 用)、Overview は desktop 機能のため [1280] で override。
+ *   Overview / EdgeCases は full-screen layout を `h-[500px] overflow-hidden` で wrap して縦に並べる。
  */
 const meta: Meta<typeof AppShell> = {
   title: 'Composites/AppShell',
@@ -133,15 +133,18 @@ export const Playground: Story = {
 export const Overview: Story = {
   parameters: {
     layout: 'padded',
+    // contentMax は desktop の読み列幅機能 → Overview は desktop (1280) のみ撮る (375 では固定幅 1400px
+    // フレームが見切れるだけで無意味)。サイドバー出し分け等の breakpoint 挙動は EdgeCases ([375,1280]) で検証。
+    chromatic: { viewports: [1280] },
     docs: {
       description: {
-        story: '視覚回帰用の総覧。`contentMax` (narrow / wide、default は Playground) と `showBottomNav={false}` の挙動を比較。contentMax は「利用可能幅 > 768px」でないと narrow と wide の差が出ないため、内側読み列の幅差が分かるよう固定幅 1400px フレームで見せる (狭い canvas では横スクロール)。showBottomNav は mobile の挙動なので full-width。meta の viewports=[375,1280] で mobile/desktop を撮る。',
+        story: '視覚回帰用の総覧。`contentMax` (narrow / wide、default は Playground) の内側読み列の幅差を比較。contentMax は desktop の機能で「利用可能幅 > 768px」が要るため、固定幅 1400px フレームで desktop (1280) のみ撮る。showBottomNav (mobile 専用、prop JSDoc/guideline 参照) やサイドバー出し分け等の breakpoint 挙動は EdgeCases ([375,1280]) で検証。',
       },
     },
   },
   // contentMax (narrow 768 < wide) の差は「利用可能幅 > 768px」でないと出ない。
   // narrow/wide は固定幅 1400px フレーム (右 pane ≈ 1176px) で見せ、内側読み列の幅差を確実に可視化する
-  // (狭い canvas では outer の overflow-x-auto で横スクロール)。showBottomNav は mobile 挙動なので full-width。
+  // (狭い canvas では outer の overflow-x-auto で横スクロール)。desktop (1280) のみ撮影。
   render: () => (
     <div className="flex flex-col gap-6 p-4">
       {/* contentMax 比較は固定幅 1400px フレームで横並び (狭い canvas は内側 overflow-x-auto で横スクロール) */}
@@ -175,26 +178,6 @@ export const Overview: Story = {
             </AppShell>
           </ShellPreview>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-muted">{'showBottomNav={false} — BottomNav 非表示 + mobile main の pb-20 クリアランス無効化'}</span>
-        <ShellPreview>
-          <AppShell
-            header={<MockHeader />}
-            sidebar={<MockSidebar />}
-            bottomNav={<MockBottomNav />}
-            showBottomNav={false}
-            subBar={<MockSubBar title="No BottomNav" />}
-          >
-            <MockContent>
-              <div className="text-sm">
-                <p>showBottomNav=&#123;false&#125; で BottomNav 非表示、mobile main の <code>pb-20</code> クリアランスも無効化。</p>
-                <p className="mt-2">設定画面 / 詳細画面で sticky nav を消したい時に。</p>
-              </div>
-            </MockContent>
-          </AppShell>
-        </ShellPreview>
       </div>
     </div>
   ),

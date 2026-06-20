@@ -4,14 +4,13 @@ import { SplitPane } from './SplitPane';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * SplitPane stories — 標準ストーリー構造に準拠 (Playground / Variants / EdgeCases)
+ * SplitPane stories — VR 集約モデル (§5-3): Playground / Overview / EdgeCases
  *
- * - States 省略: 状態を持たない layout primitive のため (AGENTS.md §5-3 注)
- * - Sizes 省略: size prop なし (`listWidth` は Variants で扱う)
- * - WithIcon 省略: icon prop なし
- *
- * Variants / EdgeCases は full-screen layout を固定高さ container で wrap して
- * 1 story 内に縦に並べる方式 (Center.stories.tsx と同じ pattern)。
+ * - Overview = props で作れる内在パターン (`listWidth` / `divider`)。
+ * - EdgeCases = mobile で list 非表示 / detail 未選択 empty / custom height 等、className・文脈駆動の構造ケース。
+ * - 状態を持たない layout primitive のため States は無し。size/icon prop も無し。
+ * - 視覚回帰は meta の `chromatic.viewports=[375,1280]` で master-detail の縦スタック↔横分割を撮る。
+ *   Overview / EdgeCases は full-screen layout を固定高さ container で wrap し 1 story 内に縦に並べる。
  */
 const meta: Meta<typeof SplitPane> = {
   title: 'Composites/SplitPane',
@@ -101,50 +100,58 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在パターン: listWidth 3 段階 + divider={false}。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        story: '`listWidth` 3 段階 (280 / 360 / 480px) と `divider={false}` を縦に並べて比較。各 sub-render は固定高さ container で wrap し、視覚的に list 幅の差を比較しやすくしている。',
+        story: '視覚回帰用の総覧。`listWidth` 3 段階 (280 / 360 / 480px) と `divider={false}` を縦に並べて比較。meta の viewports=[375,1280] で desktop の横分割と mobile の縦積みの両方を撮る。',
       },
     },
   },
+  // listWidth の大小を相対比較できるよう全 pane を同じ総幅に揃える。
+  // Caption (items-start で shrink) だと listWidth ごとに総幅が変わり比較にならないため使わず、
+  // 共通の max-w 枠 + stretch ラベルにする (mobile は viewport 幅に収まり縦積み)。
   render: () => (
-    <div className="flex flex-col gap-6 p-4">
-      <Caption text='listWidth="280px" (狭め)'>
+    <div className="flex flex-col gap-6 p-4 max-w-[860px]">
+      <div className="flex flex-col gap-1.5">
+        <span className="text-caption text-onSurface-muted">listWidth=&quot;280px&quot; (狭め)</span>
         <PanePreview>
           <SplitPane listWidth="280px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
-      </Caption>
+      </div>
 
-      <Caption text='listWidth="360px" (default、consumer の標準採用値)'>
+      <div className="flex flex-col gap-1.5">
+        <span className="text-caption text-onSurface-muted">listWidth=&quot;360px&quot; (default、consumer の標準採用値)</span>
         <PanePreview>
           <SplitPane listWidth="360px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
-      </Caption>
+      </div>
 
-      <Caption text='listWidth="480px" (広め)'>
+      <div className="flex flex-col gap-1.5">
+        <span className="text-caption text-onSurface-muted">listWidth=&quot;480px&quot; (広め)</span>
         <PanePreview>
           <SplitPane listWidth="480px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
-      </Caption>
+      </div>
 
-      <Caption text='divider={false} — 両 pane 間の縦境界線なし'>
+      <div className="flex flex-col gap-1.5">
+        <span className="text-caption text-onSurface-muted">divider=&#123;false&#125; — 両 pane 間の縦境界線なし</span>
         <PanePreview>
           <SplitPane divider={false} height="500px" list={<MockList count={10} />}>
             <MockDetail />
           </SplitPane>
         </PanePreview>
-      </Caption>
+      </div>
     </div>
   ),
 };

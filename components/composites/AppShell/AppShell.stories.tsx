@@ -6,14 +6,15 @@ import { Center } from '../../primitives/Center';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
- * AppShell stories — 標準ストーリー構造に準拠 (Playground / Variants / EdgeCases)
+ * AppShell stories — VR 集約モデル (§5-3): Playground / Overview / EdgeCases
  *
- * - States 省略: 状態を持たない layout primitive のため (AGENTS.md §5-3 注)
- * - Sizes 省略: size prop なし (contentMax は Variants で扱う)
- * - WithIcon 省略: icon prop なし
- *
- * Variants / EdgeCases は full-screen layout を `h-[500px] overflow-hidden` で wrap して
- * 1 story 内に縦に並べる方式 (Center.stories.tsx と同じ pattern)。
+ * - Overview = props で作れる内在パターン (contentMax / showBottomNav)。
+ * - EdgeCases = slot 省略 / layout="full" full-bleed / long-scroll 等、slot・className 駆動で
+ *   Playground の Controls では作れない構造ケース。
+ * - 状態を持たない layout primitive のため States は無し。size/icon prop も無し。
+ * - 視覚回帰は meta の `chromatic.viewports=[375,1280]` で mobile/desktop の breakpoint 挙動を撮る
+ *   (`hidden shell:block` のサイドバー出し分け等)。Overview / EdgeCases は full-screen layout を
+ *   `h-[500px] overflow-hidden` で wrap して 1 story 内に縦に並べる (Center.stories.tsx と同じ pattern)。
  */
 const meta: Meta<typeof AppShell> = {
   title: 'Composites/AppShell',
@@ -90,9 +91,9 @@ const MockContent = ({ children }: { children?: React.ReactNode }) => (
   </div>
 );
 
-/** sub-render を 1 story に並べるための fullscreen wrapper。 */
-const ShellPreview = ({ children }: { children: React.ReactNode }) => (
-  <div className="h-[500px] overflow-hidden border border-border-default rounded-md">
+/** sub-render を 1 story に並べるための fullscreen wrapper。className で幅指定可。 */
+const ShellPreview = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={['h-[500px] overflow-hidden border border-border-default rounded-md', className].filter(Boolean).join(' ')}>
     {children}
   </div>
 );
@@ -126,48 +127,58 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Variants ────────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) ──────────────────────────────────
+// props で作れる内在パターン: contentMax (narrow/wide) と showBottomNav={false}。
 
-export const Variants: Story = {
+export const Overview: Story = {
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        story: '`contentMax` 3 段階 (narrow / default は Playground / wide) と `showBottomNav={false}` の挙動を比較。各 sub-render は固定高さ container で wrap し縦に並べる。',
+        story: '視覚回帰用の総覧。`contentMax` (narrow / wide、default は Playground) と `showBottomNav={false}` の挙動を比較。contentMax は「利用可能幅 > 768px」でないと narrow と wide の差が出ないため、内側読み列の幅差が分かるよう固定幅 1400px フレームで見せる (狭い canvas では横スクロール)。showBottomNav は mobile の挙動なので full-width。meta の viewports=[375,1280] で mobile/desktop を撮る。',
       },
     },
   },
+  // contentMax (narrow 768 < wide) の差は「利用可能幅 > 768px」でないと出ない。
+  // narrow/wide は固定幅 1400px フレーム (右 pane ≈ 1176px) で見せ、内側読み列の幅差を確実に可視化する
+  // (狭い canvas では outer の overflow-x-auto で横スクロール)。showBottomNav は mobile 挙動なので full-width。
   render: () => (
     <div className="flex flex-col gap-6 p-4">
-      <Caption text='contentMax="narrow" (768px shell) — Settings / reading 中心の画面向け'>
-        <ShellPreview>
-          <AppShell
-            contentMax="narrow"
-            sidebar={<MockSidebar />}
-            subBar={<MockSubBar title="narrow shell" />}
-          >
-            <MockContent>
-              <div className="text-sm">contentMax=&quot;narrow&quot; → 内側 main wrapper は <code>max-w-container-narrow</code> (= 768px)。</div>
-            </MockContent>
-          </AppShell>
-        </ShellPreview>
-      </Caption>
+      {/* contentMax 比較は固定幅 1400px フレームで横並び (狭い canvas は内側 overflow-x-auto で横スクロール) */}
+      <div className="flex flex-col gap-6 overflow-x-auto">
+        <div className="flex flex-col gap-1.5 w-[1400px]">
+          <span className="text-caption text-onSurface-muted">{'contentMax="narrow" (= max-w-container-narrow 768px) — 読み列が中央に絞られる'}</span>
+          <ShellPreview className="w-[1400px]">
+            <AppShell
+              contentMax="narrow"
+              sidebar={<MockSidebar />}
+              subBar={<MockSubBar title="narrow shell" />}
+            >
+              <MockContent>
+                <div className="text-sm">contentMax=&quot;narrow&quot; → 内側 main wrapper は <code>max-w-container-narrow</code> (= 768px)。右 pane が広くても読み列はここで頭打ち。</div>
+              </MockContent>
+            </AppShell>
+          </ShellPreview>
+        </div>
 
-      <Caption text='contentMax="wide" (1536px shell) — Dashboard / 横長 content 向け'>
-        <ShellPreview>
-          <AppShell
-            contentMax="wide"
-            sidebar={<MockSidebar />}
-            subBar={<MockSubBar title="wide shell" />}
-          >
-            <MockContent>
-              <div className="text-sm">contentMax=&quot;wide&quot; → 内側 main wrapper は <code>max-w-container-wide</code> (= 1536px)。</div>
-            </MockContent>
-          </AppShell>
-        </ShellPreview>
-      </Caption>
+        <div className="flex flex-col gap-1.5 w-[1400px]">
+          <span className="text-caption text-onSurface-muted">{'contentMax="wide" (= max-w-container-wide 1536px) — 読み列が右 pane いっぱいまで広がる'}</span>
+          <ShellPreview className="w-[1400px]">
+            <AppShell
+              contentMax="wide"
+              sidebar={<MockSidebar />}
+              subBar={<MockSubBar title="wide shell" />}
+            >
+              <MockContent>
+                <div className="text-sm">contentMax=&quot;wide&quot; → 内側 main wrapper は <code>max-w-container-wide</code> (= 1536px)。narrow と同じフレーム幅で並べると読み列が明確に広い。</div>
+              </MockContent>
+            </AppShell>
+          </ShellPreview>
+        </div>
+      </div>
 
-      <Caption text='showBottomNav={false} — BottomNav 非表示 + mobile main の pb-20 クリアランス無効化'>
+      <div className="flex flex-col gap-1.5">
+        <span className="text-caption text-onSurface-muted">{'showBottomNav={false} — BottomNav 非表示 + mobile main の pb-20 クリアランス無効化'}</span>
         <ShellPreview>
           <AppShell
             header={<MockHeader />}
@@ -184,7 +195,7 @@ export const Variants: Story = {
             </MockContent>
           </AppShell>
         </ShellPreview>
-      </Caption>
+      </div>
     </div>
   ),
 };

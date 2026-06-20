@@ -30,6 +30,8 @@
 
 ### Fixed
 
+- **Composites/Checkbox: 個別 `required` に視覚マーカー (`*`) を追加** (視覚変化、silent break §10-2、#89): 個別 `<Checkbox required>` は従来 native の `required` 属性が付くだけで視覚マーカーが無く、`*` を出す `CheckboxGroup` / `Input` / `Select` と非対称だった。`<Label required>` を渡すよう修正し、label の右に赤い `*` (`aria-label="必須"`) を表示。既存の `<Checkbox required>` の見た目が変わる (native の required 挙動は維持)。Overview に Required 行を復帰。[`Checkbox.tsx`](./components/composites/Checkbox/Checkbox.tsx)
+
 - **Primitives/Skeleton: multi-line text の幅潰れを修正** (視覚バグ): `variant="text"` + `lines>1` の外側 div が `width` 未指定時にデフォルト幅を持たず、shrink 文脈 (`flex items-start` 等) で幅 0 に潰れ各行が消えていた。単一行 text と揃えて **既定 100%** を補完。[`Skeleton.tsx`](./components/primitives/Skeleton/Skeleton.tsx)
 
 - **Primitives/Button: `description` を全 size で描画 + 行間を調整** (視覚変化、silent break §10-2): 従来 `size="sm"` では `description` を描画していなかったが、全 size で描画するよう変更 (`min-h` は最小値なので 2 行で縦に伸びるだけ、潰れない)。あわせて主ラベルと `description` の間に `gap-0.5` (2px) を追加し、詰まって見える問題を解消。既存の `<Button size="sm" description="…">` は 1 行 → 2 行表示に変わり縦に伸びる。[`Button.tsx`](./components/primitives/Button/Button.tsx)

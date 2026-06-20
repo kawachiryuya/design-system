@@ -56,8 +56,7 @@ export const Playground: Story = {
 };
 
 // ── 2. Overview (視覚回帰対象) ──────────────────────────────────
-// box 状態 × interaction (focus-visible は pseudo 強制) / error / description。
-// 個別 Checkbox の required は視覚マーカー無し (native 属性のみ) → Overview に並べない。`*` は CheckboxGroup legend (EdgeCases) で確認。
+// box 状態 × interaction (focus-visible は pseudo 強制) / error / required / description。
 
 export const Overview: Story = {
   parameters: {
@@ -66,7 +65,7 @@ export const Overview: Story = {
     },
     docs: {
       description: {
-        story: '視覚回帰用の総覧。box 状態 (unchecked / checked / indeterminate / disabled) と focus-visible、error (赤枠 + errorMessage)、description を集約。required は個別 Checkbox に視覚マーカーが無く (native 属性のみ)、`*` は CheckboxGroup の legend で出るため EdgeCases 側で確認。',
+        story: '視覚回帰用の総覧。box 状態 (unchecked / checked / indeterminate / disabled) と focus-visible、error (赤枠 + errorMessage)、required (label 右に * / aria-label=必須)、description を集約。',
       },
     },
   },
@@ -95,6 +94,9 @@ export const Overview: Story = {
         <div className="flex flex-col gap-3">
           <Caption text="Error (errorMessage 必須、aria-invalid 自動付与)">
             <Checkbox label="プライバシーポリシーに同意" error errorMessage="同意が必要です" />
+          </Caption>
+          <Caption text="Required (label 右に * / aria-label=必須)">
+            <Checkbox label="必須項目" required />
           </Caption>
           <Caption text="With description (補足説明)">
             <Checkbox label="マーケティングメールを受け取る" description="新機能・キャンペーン情報を月 1 回お知らせ" />

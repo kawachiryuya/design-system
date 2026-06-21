@@ -63,6 +63,16 @@ jobs:
       - name: Build Storybook
         run: npm run build-storybook
 
+      # 非ゲート: 適合率レポート (AGENTS §9-5)。常に exit 0、CI を落とさない。
+      - name: Report conformance (non-gating)
+        run: npm run report:conformance
+
+      - name: Upload conformance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: conformance-report
+          path: conformance/report.json
+
       - name: Install Playwright (chromium)
         run: npx playwright install --with-deps chromium
 

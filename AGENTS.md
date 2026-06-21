@@ -843,6 +843,21 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 - **人間ゲート (機械的に弾く §5-5-1 とは別レイヤー)**: 視覚差分の合否は人間が Chromatic UI でレビュー & accept する。`exitZeroOnChanges: true` のため Actions の `chromatic` job は視覚差分では赤にならず、PR の required check には Chromatic の **"UI Tests"** status を使う (branch protection)。初回 baseline の accept・token 登録 (`CHROMATIC_PROJECT_TOKEN` secret) も人間が行う。
 - semver: 視覚回帰の CI 追加は消費者向け契約 (§10-6) に影響せず **bump 不要**。ただし Chromatic が検出する**意図しない見た目変化**自体は visual break (§10-2) として CHANGELOG / semver の対象。
 
+### 9-5. 適合率レポート (conformance-report)
+
+既存検査 (`check:contrast` / `check:conventions` / `lint` / Chromatic) はすべて **pass/fail のゲート**で「規約違反が無いか」を測る。`report:conformance` ([`scripts/conformance-report.mjs`](./scripts/conformance-report.mjs)) は別レイヤーで、**token/utility がどれだけ使われているか (on-system %)** を測る **計測層**。思想は §8-5 の APCA / #58 の ΔEOK warn レンズと同じで、**ゲートではなく常に exit 0**。
+
+- **何を測るか**: 出荷コードの **spacing/サイズ次元** の適合状況。走査範囲は ESLint と一致 (`components/**/*.tsx`、除外 `**/*.stories.tsx` と `components/tokens/**`)。対象 utility は `gap`/`p*`/`m*`/`space-*` と `w`/`h`/`min-*`/`max-*`/`size`。色は ESLint で約 100% 強制済みなので測らない。
+- **主指標は「未承認 finding の絶対件数」** (比率は ~96〜99% で張り付き伸びしろが見えないため補助)。各「寸法指定」(utility 1 出現) を 4 分類:
+  - **immediate** — スケール値を bracket で書いただけ (`gap-[2px]`→`gap-0.5`)。**ピクセル不変の安全置換**。**ゲート昇格の第一候補**。
+  - **near-miss** — 最寄りスケール値との差が **0 < Δ ≤ ε** (既定 ε=2px、`--epsilon` で上書き)。snap すると**描画が変わる** (`mt-px` 1px→`mt-0.5` 2px)。「**修正方向」は候補であって自動修正の指示ではない** — 光学 nudge を機械的に潰さないよう「修正 or 承認」を都度判断する。
+  - **off-system** — Δ > ε。該当 token 無し = **穴候補** (スケール拡張 or 設計見直しの入力)。
+  - 動的値 (`calc`/`min`/`max`/`clamp`/`var`/`%`/`rem` 等) と非数値 utility (`w-full` 等) は **skip** (分母外、§8-5 の `color-mix` skip と同思想)。
+- **承認例外**: 行内 or 直前行に `/* conformance-ignore: <理由> */` を置くと、その finding を**承認済み例外**として母数から外す ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts) の `COLOR_CONTRAST_EXEMPT` と同じ運用)。光学的微調整 (icon の `mt-px` 整列等) を「承認された設計判断」として恒久的に黙らせる手段。**粒度は行単位** (同一行に複数 finding があると個別注釈で分離できない。要れば行を分割する) — v1 既知の制限。
+- **読み方の限界**: `rem`/コンテナ幅 (`min()`/`calc()` 等) を skip するのは spacing 次元での **未測定**であり「合格」ではない。これらは layout token ([`tokens/source/layout.json`](./tokens/source/layout.json)) を見る **第 2 次元 (phase 2)** で扱う。
+- **昇格運用** (#58 の warn→gate と同じ): ある次元の未承認件数が十分小さくなったら `check:*` ゲートへ昇格させ、以降は人手で見ない (§3-7 / §11「ドキュメントで守らせる < lint で弾く」)。
+- **出力 / 運用**: コンソール (件数主役 + コンポーネント別) + `conformance/report.json` (機械可読)。`report.json` は **v1 では非追跡** (`.gitignore`、`generatedAt` の diff ノイズ回避) で CI artifact のみ。トレンド (履歴推移) は phase 2。**`verify` には入れない** (verify はゲートの連鎖)。
+
 ---
 
 ## 10. Semver 規約

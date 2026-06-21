@@ -5,6 +5,10 @@ node_modules/
 storybook-static/
 dist/
 
+# 適合率レポート (report:conformance の機械可読出力。v1 では非追跡 + CI artifact のみ。
+# generatedAt の diff ノイズ回避。トレンドは phase 2 で別途設計 — AGENTS §9-5)
+conformance/
+
 # Incremental typecheck cache (tsc --noEmit --incremental)
 *.tsbuildinfo
 

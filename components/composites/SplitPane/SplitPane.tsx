@@ -97,7 +97,7 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
     ['--sp-height' as string]: height,
   };
   return (
-    <div {...rest} className={containerClass} style={mergedStyle}>
+    <div data-ds-root {...rest} className={containerClass} style={mergedStyle}>
       {/* 独立スクロールする pane はキーボードでもスクロールできるよう tabindex=0 を付与
           (WCAG 2.1.1 / axe scrollable-region-focusable)。 */}
       <div tabIndex={0} className="cols:pr-8 cols:overflow-y-auto">{list}</div>

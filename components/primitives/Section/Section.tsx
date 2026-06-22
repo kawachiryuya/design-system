@@ -97,7 +97,7 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(function Sect
 ) {
   const Tag = as as React.ElementType;
   return (
-    <Tag ref={ref} {...rest} className={sectionVariants({ padding, className })}>
+    <Tag data-ds-root ref={ref} {...rest} className={sectionVariants({ padding, className })}>
       {children}
     </Tag>
   );

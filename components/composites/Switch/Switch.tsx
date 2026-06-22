@@ -136,7 +136,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       .join(' ') || undefined;
 
     return (
-      <div className={`inline-flex ${description ? 'items-start' : 'items-center'} gap-3 ${className}`}>
+      <div data-ds-root className={`inline-flex ${description ? 'items-start' : 'items-center'} gap-3 ${className}`}>
         {labelPosition === 'left' && labelEl}
         <button
           ref={ref}

@@ -131,7 +131,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   ].join(' ');
 
   return (
-    <nav aria-label="ページネーション" className={['flex flex-wrap items-center gap-1', className].join(' ')}>
+    <nav data-ds-root aria-label="ページネーション" className={['flex flex-wrap items-center gap-1', className].join(' ')}>
       {showEdges && (
         <button
           type="button"

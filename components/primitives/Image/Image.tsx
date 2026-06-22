@@ -178,7 +178,7 @@ export const Image: React.FC<ImageProps> = ({
   }
 
   return (
-    <div className={imageContainerVariants({ aspectRatio, rounded, className })}>
+    <div data-ds-root className={imageContainerVariants({ aspectRatio, rounded, className })}>
       {imgElement}
     </div>
   );

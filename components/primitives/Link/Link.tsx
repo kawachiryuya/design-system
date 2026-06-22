@@ -174,7 +174,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     };
 
     return (
-      <a
+      <a data-ds-root
         ref={ref}
         // data-ds-link で Storybook docs (.sbdocs a の青色リンク標準スタイル) と
         // 識別。.storybook/tailwind.css で color: inherit / text-decoration: none に

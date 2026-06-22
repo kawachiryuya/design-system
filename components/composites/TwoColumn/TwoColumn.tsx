@@ -98,7 +98,7 @@ export const TwoColumn: React.FC<TwoColumnProps> = ({
   // sidebar 省略 = 単一カラム (grid を組まない)
   if (sidebar === undefined || sidebar === null) {
     return (
-      <div {...rest} className={className}>
+      <div data-ds-root {...rest} className={className}>
         {children}
       </div>
     );

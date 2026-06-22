@@ -102,7 +102,7 @@ const GridItem: React.FC<GridItemProps> = ({ span, start, children, className, .
     className,
   ].filter(Boolean).join(' ');
   return (
-    <div {...rest} className={cls}>
+    <div data-ds-root {...rest} className={cls}>
       {children}
     </div>
   );

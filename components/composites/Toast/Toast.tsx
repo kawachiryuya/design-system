@@ -189,7 +189,7 @@ const ToastBody: React.FC<ToastContent & {
   // role / aria-live は常設の live region コンテナ側に持たせる (告知の確実性向上)。
   // ToastBody 自体は視覚表現のみを担う。
   return (
-    <div
+    <div data-ds-root
       onMouseEnter={onPause}
       onMouseLeave={onResume}
       onFocus={onPause}

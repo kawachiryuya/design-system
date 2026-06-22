@@ -137,7 +137,7 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
         : { fill: 'none' as const, stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
 
     return (
-      <svg
+      <svg data-ds-root
         ref={ref}
         xmlns="http://www.w3.org/2000/svg"
         width={px}

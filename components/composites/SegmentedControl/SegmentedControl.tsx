@@ -107,7 +107,7 @@ export const SegmentedControl = <T extends string | number>({
   };
 
   return (
-    <div className="flex gap-1 overflow-x-auto" role="radiogroup" aria-label={ariaLabel}>
+    <div data-ds-root className="flex gap-1 overflow-x-auto" role="radiogroup" aria-label={ariaLabel}>
       {items.map((item, index) => {
         const isSelected = item.value === value;
         return (

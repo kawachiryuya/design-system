@@ -105,7 +105,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
     ref
   ) => {
     return (
-      <label
+      <label data-ds-root
         ref={ref}
         htmlFor={htmlFor}
         className={labelVariants({ size, disabled, className })}

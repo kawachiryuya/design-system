@@ -106,7 +106,7 @@ export const Accordion = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div data-ds-root className="space-y-2">
       {items.map((item) => {
         const isOpen = openIds.includes(item.id);
         const contentId = `accordion-content-${item.id}`;

@@ -226,7 +226,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       .join(' ') || undefined;
 
     return (
-      <div className={['flex flex-col gap-1', fullWidth ? 'w-full' : 'w-auto'].join(' ')}>
+      <div data-ds-root className={['flex flex-col gap-1', fullWidth ? 'w-full' : 'w-auto'].join(' ')}>
         {/* Label */}
         {label && (
           <Label htmlFor={inputId} size={size === 'lg' ? 'lg' : 'md'} required={required} disabled={disabled}>

@@ -169,7 +169,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       .join(' ') || undefined;
 
     return (
-      <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
+      <div data-ds-root className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
           <Label htmlFor={selectId} size={size === 'lg' ? 'lg' : 'md'} required={required} disabled={disabled}>
             {label}

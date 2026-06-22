@@ -187,7 +187,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   const ariaLabel = status ? `${baseLabel}（${statusLabelMap[status]}）` : baseLabel;
 
   return (
-    <span className={wrapperClass} role="img" aria-label={ariaLabel}>
+    <span data-ds-root className={wrapperClass} role="img" aria-label={ariaLabel}>
       <span className={innerClass}>
         {showImage ? (
           <img

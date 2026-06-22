@@ -165,7 +165,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <>
       {triggerEl}
-      <div
+      <div data-ds-root
         {...nativePopoverAttr}
         ref={panelRef}
         id={tooltipId}

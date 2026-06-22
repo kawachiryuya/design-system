@@ -182,7 +182,7 @@ export const Popover: React.FC<PopoverProps> = ({
   return (
     <>
       {triggerEl}
-      <div
+      <div data-ds-root
         {...nativePopoverAttr}
         ref={panelRef}
         id={panelId}

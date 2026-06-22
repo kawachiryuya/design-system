@@ -313,7 +313,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ...rest
       } = props;
       return (
-        <button
+        <button data-ds-root
           ref={ref}
           type={type}
           disabled={disabled || isLoading}
@@ -361,7 +361,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     return (
-      <button
+      <button data-ds-root
         ref={ref}
         type={type}
         disabled={disabled || isLoading}

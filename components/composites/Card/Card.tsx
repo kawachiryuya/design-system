@@ -197,7 +197,7 @@ export const Card: React.FC<CardProps> & {
 
   if (isLink) {
     return (
-      <a
+      <a data-ds-root
         className={classes}
         href={href}
         target={target}
@@ -210,7 +210,7 @@ export const Card: React.FC<CardProps> & {
   }
 
   return (
-    <div
+    <div data-ds-root
       className={classes}
       onClick={onClick}
       role={clickable || onClick ? 'button' : undefined}

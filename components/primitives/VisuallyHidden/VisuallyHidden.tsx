@@ -57,7 +57,7 @@ export const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>
     const Tag = as as React.ElementType;
     const classes = ['sr-only', className].filter(Boolean).join(' ');
     return (
-      <Tag ref={ref} className={classes} {...props}>
+      <Tag data-ds-root ref={ref} className={classes} {...props}>
         {children}
       </Tag>
     );

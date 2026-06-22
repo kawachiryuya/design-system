@@ -213,7 +213,7 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
     // data-ds-typography は Storybook docs (.sbdocs h1/h2/.../p) の hardcoded font-size
     // との競合を回避するためのマーカー (.storybook/tailwind.css 側で :not() 除外)
     return (
-      <Tag
+      <Tag data-ds-root
         ref={ref}
         data-ds-typography="true"
         className={typographyVariants({ variant, color, weight, truncate, className })}

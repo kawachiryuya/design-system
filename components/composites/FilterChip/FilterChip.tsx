@@ -84,7 +84,7 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
       .join(' ');
 
     return (
-      <button
+      <button data-ds-root
         ref={ref}
         type="button"
         aria-pressed={active}

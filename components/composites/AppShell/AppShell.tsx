@@ -172,7 +172,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       ? ['flex-1 w-full', fullPaddingY].filter(Boolean).join(' ')
       : ['flex-1 w-full mx-auto px-container', maxWidthClasses[contentMax], mainPaddingY].join(' ');
   return (
-    <div
+    <div data-ds-root
       {...rest}
       className={['min-h-screen flex flex-col shell:flex-row bg-background', className].filter(Boolean).join(' ')}
     >

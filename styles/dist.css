@@ -9,8 +9,14 @@
  *   `@kawachiryuya/design-system/tokens/variables.css` を import する (テーマ override 点)。
  *   utility は var(--color-...) 参照のまま焼き込まれ、variables.css と組で機能する。
  * - preflight (リセット) は tailwind.dist.config.cjs の corePlugins:{preflight:false} で無効。
- *   ライブラリにリセット CSS を同梱すると消費側グローバルを壊すため (定番事故)。
+ *   ライブラリに opinionated なリセット (見出し/リスト/body margin 等) を同梱すると消費側グローバルを
+ *   壊すため (定番事故)。ただし utility/フォームが動く前提の最小 base は別途 base.css で補う (下記)。
  * - @tailwind base は preflight off により reduced-motion (a11y) 等の addBase のみを出力する。 */
+
+/* utility / フォーム要素が動く前提の最小 base (preflight OFF で欠落する分を補う、mode① 用)。
+ * 配信専用 (Storybook は本物の preflight を持つので読み込まない)。@tailwind utilities より前に置き、
+ * .border 等の utility が最小 base を上書きできる順序にする。詳細は base.css 冒頭。 */
+@import "./base.css";
 
 /* 非 utility のコンポーネント CSS (Checkbox/Radio/keyframe)。Storybook と共有の SSoT。 */
 @import "./components.css";

@@ -28,7 +28,13 @@
 - **Primitives/Typography: 型スケールの並び順を統一** (declaration 順のみ、視覚/API 変化なし): `TypographyVariant` と Overview / Controls options を **font-size 大→小** (display→h1〜h4→body-lg→body→body-sm→label→caption) で統一。caption (12px、最小) を末尾に。variant の値・見た目・型は不変。
 - **EdgeCases の基準を明確化** (規約のみ、AGENTS.md §5-3 / §7-10): VR の `EdgeCases` は **Playground (Controls) で再現できない構造的ケースだけ** (inner-span `truncate` 等の特殊マークアップ / コンテナ幅依存は固定幅で / 複数インスタンス・item 数依存の配置)。長文折返し・`fullWidth` 等 Controls で出せるものは入れない。
 
+### Added
+
+- **mode①(no-Tailwind) の最小実証サンプル + CI ガード** (#95): `examples/no-tailwind/` に Vite + React (Tailwind ゼロ) の最小アプリを追加。公開エントリ + `styles.css` / `variables.css` の 2 ファイルだけで AppShell (レスポンシブなサイドバー) + Button / Card / フォームを描画し、mode① を end-to-end 検証する。CI (`verify` ジョブ) に「DS build → サンプル build」を追加し、exports / 配信 CSS の silent break (§10-2) を今後機械検出する。`Introduction` の「モード 1」節から導線。サンプルはパッケージ (`files`) に同梱しない。
+
 ### Fixed
+
+- **配信 CSS (mode①): Tailwind utility / フォームが動く最小 base を補完** (silent break §10-2 / 配信契約 §10-6(c)、#95): `styles.css` は preflight OFF (#57) のため、`border-style:solid` / `box-sizing:border-box` / フォーム要素の正規化が欠落し、mode① (no-Tailwind) 消費で **border が消える (button=outset / input=inset の UA 値に化け、checkbox の枠が不可視)・`<input>` が content-box でズレる**不具合があった (examples/no-tailwind で発覚)。opinionated な preflight (見出し/リスト/body margin 等) は入れず、**utility と native フォームが動く前提だけの最小 base** ([`styles/base.css`](./styles/base.css)) を配信ビルドに追加。消費側の document typography は従来どおり保つ。`check:styles` に最小 base の存在 assert と「opinionated preflight 非混入」判定を追加。Storybook (本物の preflight 所持) は影響なし。
 
 - **Composites/Checkbox: 個別 `required` に視覚マーカー (`*`) を追加** (視覚変化、silent break §10-2、#89): 個別 `<Checkbox required>` は従来 native の `required` 属性が付くだけで視覚マーカーが無く、`*` を出す `CheckboxGroup` / `Input` / `Select` と非対称だった。`<Label required>` を渡すよう修正し、label の右に赤い `*` (`aria-label="必須"`) を表示。既存の `<Checkbox required>` の見た目が変わる (native の required 挙動は維持)。Overview に Required 行を復帰。[`Checkbox.tsx`](./components/composites/Checkbox/Checkbox.tsx)
 

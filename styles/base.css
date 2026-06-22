@@ -1,0 +1,50 @@
+/* mode①(no-Tailwind) 用の最小 base — Tailwind utility と DS フォーム要素が動く前提だけを供給する。
+ *
+ * 背景: 配信 styles.css は preflight OFF (tailwind.dist.config.cjs、消費側の typographic global を
+ * 壊さない #57 の判断)。しかし Tailwind の preflight には「utility が機能する前提」も含まれており、
+ * それごと外したため mode① で以下が壊れていた (examples/no-tailwind で確認):
+ *   - border-style:solid が無く .border/.border-2 が border-style:none に化け、枠線が消える
+ *     (computed: button=outset / input=inset の UA 値、checkbox=見えない)。
+ *   - box-sizing:border-box が無く <input> が content-box になり寸法がズレる。
+ *   - フォーム要素が UA フォント/見た目のまま (font 非継承・native appearance)。
+ *
+ * 対策: preflight 全体 (見出し/リスト/段落/body margin 等の opinionated reset) は入れず、
+ * 「utility と native フォーム要素のサポートに必要な分」だけを手書きで供給する。これにより
+ * 消費側の document typography は保ったまま (#57 の意図)、mode① の「2 ファイルで動く」約束を満たす。
+ * 行は Tailwind v3 preflight の該当箇所に対応 (追従しやすいよう最小に保つ)。
+ *
+ * 注: Storybook (.storybook/tailwind.css) は本物の preflight を持つため、このファイルは
+ * 配信ビルド (styles/dist.css) からのみ読み込む (二重適用しない)。 */
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--color-border-default, currentColor);
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+}
+
+button,
+select {
+  text-transform: none;
+}
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button;
+  background-color: transparent;
+  background-image: none;
+}

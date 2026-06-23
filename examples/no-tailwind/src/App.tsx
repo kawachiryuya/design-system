@@ -1,5 +1,5 @@
-import React from 'react';
-import { AppShell, Button, Card, Input, Checkbox } from '@kawachiryuya/design-system';
+import React, { useState } from 'react';
+import { AppShell, Button, Card, Input, Checkbox, Modal } from '@kawachiryuya/design-system';
 
 /**
  * mode①(no-Tailwind) 検証アプリ。
@@ -101,7 +101,9 @@ const SubBar = () => (
 export const App = () => {
   const variants = ['primary', 'secondary', 'tertiary', 'destructive'] as const;
   const sizes = ['sm', 'md', 'lg'] as const;
+  const [modalOpen, setModalOpen] = useState(false);
   return (
+    <>
     <AppShell header={<Header />} sidebar={<Sidebar />} bottomNav={<BottomNav />} subBar={<SubBar />}>
       <h1 style={sectionTitle}>mode① — no-Tailwind 消費の実証</h1>
       <p style={{ margin: 0, color: 'var(--color-on-soft)', fontSize: 14 }}>
@@ -121,7 +123,7 @@ export const App = () => {
       ))}
       <div style={{ ...row, marginTop: 8 }}>
         <Button variant="primary" disabled>disabled</Button>
-        <Button variant="primary" loading>loading</Button>
+        <Button variant="primary" isLoading>loading</Button>
       </div>
 
       <div style={sectionLabel}>Cards — variant</div>
@@ -152,6 +154,40 @@ export const App = () => {
           </div>
         </div>
       </Card>
+
+      {/* overlay / top-layer: data-ds-root を <dialog> に付与済。top-layer に昇格しても
+          DOM 祖先は保たれるので、scope された reset が dialog の中身まで届くことを確認する面。 */}
+      <div style={sectionLabel}>Modal — overlay (top-layer) の中身も reset が届くか</div>
+      <Button variant="secondary" onClick={() => setModalOpen(true)}>モーダルを開く</Button>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="top-layer の中身">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--color-on-soft)' }}>
+            この内容は <code>&lt;dialog&gt;</code> の top-layer に出るが、枠線・チェックボックスが正しく描画されるはず。
+          </p>
+          <Input id="modal-email" type="email" placeholder="you@example.com" />
+          <Checkbox label="モーダル内のチェックボックス" />
+        </div>
+      </Modal>
     </AppShell>
+
+    {/* ── DS の外側 (data-ds-root の配下でない) 素の要素 ── #76 C-scoped の核心:
+        DS を import しても、ここの素要素は base reset を受けない (= 消費者を壊さない) ことを実証。 */}
+    <section
+      id="outside-ds"
+      style={{ borderTop: '4px solid var(--color-border-strong)', padding: 24, background: 'var(--color-surface-layer-1)' }}
+    >
+      <h2 style={{ fontSize: 18 }}>DS の外側（素の要素・非影響の証明）</h2>
+      <p style={{ fontSize: 14, color: 'var(--color-on-soft)' }}>
+        以下は DS コンポーネントの外（<code>data-ds-root</code> の配下でない）。DS の import で見た目が変わらないことを確認する。
+      </p>
+      {/* border-width だけ指定し border-style 未指定。reset が届けば solid で線が出るが、
+          外側なので border-style:none のまま = 線は出ない (= 非影響) */}
+      <div id="probe-bare-border" style={{ borderWidth: '2px', borderColor: 'red', padding: 8, marginBottom: 12 }}>
+        この div は borderWidth:2px だけ指定（border-style 未指定）。DS reset が漏れていなければ枠は出ない。
+      </div>
+      {/* 素の input。reset が漏れていなければ box-sizing は UA 既定の content-box のまま */}
+      <input id="probe-bare-input" type="text" placeholder="素の input（content-box のまま）" />
+    </section>
+    </>
   );
 };

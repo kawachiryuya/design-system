@@ -125,7 +125,7 @@ export const Alert: React.FC<AlertProps> = ({
   const config = variantConfig[variant];
 
   return (
-    <div
+    <div data-ds-root
       role="alert"
       className={[
         'relative flex gap-3 rounded-md p-4',

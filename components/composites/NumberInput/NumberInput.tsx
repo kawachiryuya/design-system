@@ -137,7 +137,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     .join(' ');
 
   return (
-    <div className="flex flex-col gap-1">
+    <div data-ds-root className="flex flex-col gap-1">
       {label && (
         <span id={labelId} className="text-label text-onSurface">
           {label}

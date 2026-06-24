@@ -253,7 +253,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   return (
     <>
       {triggerEl}
-      <div
+      <div data-ds-root
         {...nativePopoverAttr}
         ref={panelRef}
         id={panelId}

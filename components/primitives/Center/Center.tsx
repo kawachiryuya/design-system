@@ -111,7 +111,7 @@ export const Center: React.FC<CenterProps> = ({
   ...rest
 }) => {
   return (
-    <Tag {...rest} className={centerVariants({ max, className })}>
+    <Tag data-ds-root {...rest} className={centerVariants({ max, className })}>
       {children}
     </Tag>
   );

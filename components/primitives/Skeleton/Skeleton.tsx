@@ -104,7 +104,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   if (variant === 'text' && lines > 1) {
     const lineClass = skeletonVariants({ variant: 'text', animated });
     return (
-      <div
+      <div data-ds-root
         role="status"
         aria-label="読み込み中"
         aria-busy="true"

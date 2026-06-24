@@ -60,6 +60,13 @@ jobs:
       - name: Check dist styles (A2 #57 — utility 焼込 / preflight・hue util 非混入)
         run: npm run check:styles
 
+      # mode①(no-Tailwind) ガード (#95): build 済み dist に対し、Tailwind ゼロのサンプルが
+      # 公開エントリ + 2 CSS だけで build できることを検証 (exports / styles.css の silent break 検出)。
+      - name: Install no-Tailwind example deps
+        run: npm install --prefix examples/no-tailwind
+      - name: Build no-Tailwind example (mode① guard)
+        run: npm run build --prefix examples/no-tailwind
+
       - name: Build Storybook
         run: npm run build-storybook
 

@@ -114,6 +114,8 @@ import { Button, Card, Modal } from '@kawachiryuya/design-system';
 <Button variant="primary">保存</Button>
 ```
 
+> 📦 **動く最小例**: リポジトリの [`examples/no-tailwind/`](https://github.com/kawachiryuya/design-system/tree/main/examples/no-tailwind) が、この 2 ファイルだけで AppShell（レスポンシブなサイドバー）+ Button / Card / フォームを描画する実例（Tailwind ゼロ）。CI でも build を検証している。
+
 ### モード 2: Tailwind を使う（preset 継承・単一ビルド）
 
 自社アプリでも Tailwind を使う、または**自社コードで DS の semantic utility（`bg-surface-primary` / `text-onSurface-muted` 等）を書く**場合。DS を**自社の単一 Tailwind ビルドに含める**（この経路では `styles.css` は import しない）:

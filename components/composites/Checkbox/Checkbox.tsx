@@ -151,7 +151,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       .join(' ') || undefined;
 
     return (
-      <div className={`flex flex-col gap-1 ${className}`}>
+      <div data-ds-root className={`flex flex-col gap-1 ${className}`}>
         <div className="flex items-start gap-2">
           <input
             ref={resolvedRef}

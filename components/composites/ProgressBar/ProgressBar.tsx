@@ -129,7 +129,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   ].join(' ');
 
   return (
-    <div className="w-full">
+    <div data-ds-root className="w-full">
       {(label || showValue) && (
         <div className="flex justify-between items-center mb-1">
           {label && (

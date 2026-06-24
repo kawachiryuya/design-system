@@ -72,7 +72,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
       .join(' ');
 
     return (
-      <button
+      <button data-ds-root
         ref={ref}
         type="button"
         disabled={disabled}

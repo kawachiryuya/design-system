@@ -175,7 +175,7 @@ const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
   const ariaLabelledBy = title ? titleId : rest['aria-labelledby'];
 
   return (
-    <dialog
+    <dialog data-ds-root
       ref={setDialogRef}
       onCancel={handleCancel}
       onClick={handleClick}

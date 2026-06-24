@@ -1,0 +1,19 @@
+/* mode①(no-Tailwind): DS が案内する 2 ファイルだけを import する。
+ * 順序は variables → styles (Introduction.mdx「モード 1」節の規約。逆だと壊れる)。
+ * Tailwind / preset / @tailwind ディレクティブは一切使わない。 */
+@import '@kawachiryuya/design-system/tokens/variables.css';
+@import '@kawachiryuya/design-system/styles.css';
+
+/* ── app 責務の最小 reset のみ ──
+ * どんなアプリも持つ document 既定 (body margin / 基本フォント・配色) だけをここに置く。
+ * box-sizing / border-style など「Tailwind utility が動く前提」の reset はここに足さない
+ * (それは DS = styles.css の責務。例側で足すと mode① の finding を隠してしまう)。 */
+html,
+body {
+  margin: 0;
+}
+body {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-bg-default);
+  color: var(--color-on-default);
+}

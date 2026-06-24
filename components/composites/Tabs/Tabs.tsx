@@ -193,7 +193,7 @@ export const Tabs: React.FC<TabsProps> = ({
   };
 
   return (
-    <div className={['w-full', className].join(' ')}>
+    <div data-ds-root className={['w-full', className].join(' ')}>
       {/* タブリスト */}
       <div className="border-b border-border-subtle overflow-x-auto">
         <div

@@ -168,7 +168,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       .join(' ') || undefined;
 
     return (
-      <div className={`flex items-start gap-2 ${className}`}>
+      <div data-ds-root className={`flex items-start gap-2 ${className}`}>
         <input
           ref={ref}
           type="radio"

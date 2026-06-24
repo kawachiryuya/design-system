@@ -1,0 +1,50 @@
+/* mode①(no-Tailwind) 用の最小 base — Tailwind utility と DS フォーム要素が動く前提だけを供給する。
+ *
+ * 背景: 配信 styles.css は preflight OFF (tailwind.dist.config.cjs、消費側の typographic global を
+ * 壊さない #57 の判断)。しかし Tailwind の preflight には「utility が機能する前提」も含まれており、
+ * それごと外したため mode① で以下が壊れていた (examples/no-tailwind で確認):
+ *   - border-style:solid が無く .border/.border-2 が border-style:none に化け、枠線が消える
+ *     (computed: button=outset / input=inset の UA 値、checkbox=見えない)。
+ *   - box-sizing:border-box が無く <input> が content-box になり寸法がズレる。
+ *   - フォーム要素が UA フォント/見た目のまま (font 非継承・native appearance)。
+ *
+ * scope (#76, C-scoped): グローバル `*` / 素タグではなく **DS サブツリー (`[data-ds-root]`) 配下だけ**に
+ * 効かせ、消費者の素の要素には触れない (配信方針 §2/§5-2 を回復)。マーカー data-ds-root は
+ * 全コンポーネント root と overlay 要素に付与済 (Phase 1)。
+ *
+ * 特異性: すべて `:where()` で包み **特異性を 0 に保つ** (preflight と同じ profile)。これにより
+ * `.border` / `.bg-surface-primary` 等の utility (特異性 0,1,0) が必ず勝ち、見た目は従来どおり。
+ * 素のセレクタ (`[data-ds-root] button`) で書くと特異性が上がり utility を上書きして壊れるため不可。
+ *
+ * form は **root-or-descendant** で書く: コンポーネント root 自身が form 要素になる場合
+ * (Button=<button> / Input=<input> / Textarea / Select) も拾うため `[data-ds-root]` 自身と子孫の両方。
+ *
+ * opinionated な preflight (見出し/リスト/段落/body margin 等) は入れない (#57 の意図、消費者の
+ * document typography を保つ)。Storybook (.storybook/tailwind.css) は本物の preflight を持つため
+ * このファイルは配信ビルド (styles/dist.css) からのみ読み込む (二重適用しない)。 */
+
+/* ── box-model + border リセット (root + 全子孫 + 擬似要素) ── */
+:where([data-ds-root], [data-ds-root] *),
+:where([data-ds-root], [data-ds-root] *)::before,
+:where([data-ds-root], [data-ds-root] *)::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--color-border-default, currentColor);
+}
+
+/* ── フォーム要素の正規化 (root-or-descendant) ── */
+:where([data-ds-root], [data-ds-root] *):is(button, input, optgroup, select, textarea) {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+}
+:where([data-ds-root], [data-ds-root] *):is(button, select) {
+  text-transform: none;
+}
+/* appearance リセットは <button> を型セレクタ相当 (特異性 0,0,1) に保ち、bg utility が勝つようにする */
+:where([data-ds-root], [data-ds-root] *):is(button) {
+  -webkit-appearance: button;
+  background-color: transparent;
+  background-image: none;
+}

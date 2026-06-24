@@ -105,7 +105,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   const Separator = separatorMap[separator];
 
   return (
-    <nav aria-label={ariaLabel} className={className}>
+    <nav data-ds-root aria-label={ariaLabel} className={className}>
       <ol className="flex flex-wrap items-center gap-1">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;

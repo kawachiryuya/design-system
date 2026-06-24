@@ -97,7 +97,7 @@ export const Divider: React.FC<DividerProps> = ({
 
   if (orientation === 'vertical') {
     return (
-      <div
+      <div data-ds-root
         role="separator"
         aria-orientation="vertical"
         className={['self-stretch', borderClass, className].filter(Boolean).join(' ')}

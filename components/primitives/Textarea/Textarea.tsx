@@ -179,7 +179,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const isOverLimit = currentLength !== undefined && maxLength !== undefined && currentLength > maxLength;
 
     return (
-      <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
+      <div data-ds-root className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
         {label && (
           <div className="flex items-center justify-between">
             <Label htmlFor={textareaId} size="md" required={required} disabled={disabled}>

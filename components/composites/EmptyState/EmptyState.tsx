@@ -142,7 +142,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   const s = sizeConfig[size];
 
   return (
-    <div
+    <div data-ds-root
       className={[
         'flex flex-col items-center justify-center text-center',
         s.gap,

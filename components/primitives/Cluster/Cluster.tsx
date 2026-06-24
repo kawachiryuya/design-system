@@ -164,7 +164,7 @@ export const Cluster: React.FC<ClusterProps> = ({
   ...rest
 }) => {
   return (
-    <Tag {...rest} className={clusterVariants({ gap, align, justify, className })}>
+    <Tag data-ds-root {...rest} className={clusterVariants({ gap, align, justify, className })}>
       {children}
     </Tag>
   );

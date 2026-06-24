@@ -103,7 +103,7 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
     ref
   ) => {
     return (
-      <div
+      <div data-ds-root
         ref={ref}
         role="status"
         aria-label={label}

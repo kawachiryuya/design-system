@@ -236,7 +236,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
   ].join(' ');
 
   return (
-    <div className={containerClass}>
+    <div data-ds-root className={containerClass}>
       {/* 検索アイコン */}
       <span className={leadingClass}>
         <Icon name="search" size={s.iconSize} />

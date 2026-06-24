@@ -134,7 +134,7 @@ export const Stack: React.FC<StackProps> = ({
   ...rest
 }) => {
   return (
-    <Tag {...rest} className={stackVariants({ gap, align, className })}>
+    <Tag data-ds-root {...rest} className={stackVariants({ gap, align, className })}>
       {children}
     </Tag>
   );

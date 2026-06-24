@@ -152,7 +152,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     ref
   ) => {
     return (
-      <span
+      <span data-ds-root
         ref={ref}
         className={badgeVariants({ variant, appearance, className })}
         {...props}

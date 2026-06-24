@@ -11,8 +11,11 @@
  *  - 出荷する非 utility コンポーネント CSS (.ds-checkbox / .ds-radio / @keyframes indeterminate)
  *  - a11y の reduced-motion base (preflight off でも addBase は出る)
  *  - utility は var(--color-...) 参照のまま (テーマ override 追従)
+ *  - utility/フォームが動く前提の最小 base (box-sizing:border-box + border-style:solid。styles/base.css、
+ *    mode① 用。preflight OFF で欠落すると border が消え content-box にズレる #95)
  * MUST 含まない:
- *  - preflight グローバルリセット (同梱すると消費側を壊す)
+ *  - opinionated な preflight リセット (見出し/リスト/body margin 等。同梱すると消費側 typography を壊す)。
+ *    最小 base (box-sizing/border) は許容し、典型シグネチャ (body{margin:0} / 見出し font-size:inherit) のみ弾く
  *  - primitive hue 直参照 utility (.bg-teal-500 等。未 themeable な hex 焼付き)
  *
  * 失敗で exit 1。
@@ -55,10 +58,28 @@ if (!css.includes('prefers-reduced-motion'))
   fails.push('reduced-motion (a11y) base が無い — preset の addBase が出力されていない');
 if (!css.includes('var(--color-'))
   fails.push('var(--color-...) 参照が無い — 色が焼き付いてテーマ override に追従しない');
+// utility/フォームが動く前提の最小 base (styles/base.css、mode① 用、#95)
+if (!css.includes('box-sizing:border-box'))
+  fails.push('box-sizing:border-box の最小 base が無い — styles/base.css の @import が効いていない (mode① で寸法ズレ #95)');
+if (!/border-style:solid/.test(css))
+  fails.push('border-style:solid の最小 base が無い — preflight OFF だと .border が border-style:none に化け枠線が消える (mode① #95)');
+// base reset は [data-ds-root] に scope されていること (#76 C-scoped)
+if (!/\[data-ds-root\][^{]*\{[^}]*box-sizing:border-box/.test(css))
+  fails.push('base reset が [data-ds-root] に scope されていない — styles/base.css が :where([data-ds-root]…) でなくなっている (#76 C-scoped)');
 
 // ── MUST 含まない ──
-if (/\*,::before,::after\{box-sizing/.test(css))
-  fails.push('preflight グローバルリセットが混入 — corePlugins.preflight:false を確認 (消費側を壊す)');
+// opinionated な preflight (見出し/リスト/body margin 等) のみ弾く。最小 base (box-sizing/border) は許容。
+if (/body\{[^}]*margin:0/.test(css) || /h1,h2,h3,h4,h5,h6\{[^}]*font-size:inherit/.test(css))
+  fails.push('opinionated な preflight リセットが混入 (body margin / 見出し font リセット) — 消費側 typography を壊す。corePlugins.preflight:false と styles/base.css の範囲を確認');
+// グローバル footprint 禁止 (#76 C-scoped): base reset が scope 外 (global `*` / 素タグ) に漏れていないこと。
+// (1) トップレベルの universal `*{…box-model…}` (reduced-motion の @media 内 `*` は対象外 = `{` 直後のため不一致)
+if (/(?:^|})\*[,{][^{}]*\{[^{}]*(?:box-sizing|border-width|border-style)/.test(css))
+  fails.push('global universal (`*{…}`) の box-model リセットが混入 — base reset を :where([data-ds-root]…) に scope する (#76)。消費者の素要素を壊す');
+// (2) form 正規化 (`-webkit-appearance:button`) のルールが [data-ds-root] scope 外
+for (const m of css.matchAll(/([^{}]*)\{[^{}]*-webkit-appearance:button/g)) {
+  if (!m[1].includes('[data-ds-root]'))
+    fails.push(`form 正規化が scope 外 (global footprint): セレクタ \`${m[1].slice(-50)}\` に [data-ds-root] が無い — :where([data-ds-root]…):is(button) に scope する (#76)`);
+}
 const hueRe =
   /\.(?:bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(?:teal|neutral|green|red|orange|blue|yellow|lime|cyan|sky|violet|purple|pink)-[0-9]{2,3}\{/g;
 const hues = [...new Set((css.match(hueRe) || []).map((s) => s.replace(/\{$/, '')))];

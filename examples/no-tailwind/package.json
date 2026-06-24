@@ -1,0 +1,24 @@
+{
+  "name": "ds-example-no-tailwind",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "mode①(no-Tailwind) の最小実証サンプル。styles.css + variables.css の 2 ファイルだけで DS を消費する (Tailwind ゼロ)。",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@kawachiryuya/design-system": "file:../..",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^5.1.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  }
+}

@@ -88,6 +88,8 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 
 > 状態の「class 条件付加」検知の自動化は難しいため、規律 2 は当面**規約 + レビュー運用** (規律 1 は §3-7 lint で機械強制)。移行は §7 の手順で 1 コンポーネント = 1 PR で段階的に進める。出荷する `data-*` 属性名は silent-break 面 (§10-2)。
 
+> **配信ベースリセットの scope (#76, C-scoped)**: 各コンポーネントの最外要素と overlay (Modal/Popover 等) には識別属性 **`data-ds-root`** を付ける。配信 `styles.css` の最小ベース (box-sizing/border/form 正規化) は `:where([data-ds-root]…)` に scope され、消費者の素の要素には触れない。完全カプセル化 (D) の保留判断・forcing function は [`design-system-strategy.md`](./design-system-strategy.md) ロードマップ節を参照。`check:styles` が global footprint の再混入をガードする。
+
 ---
 
 ## 3. トークン参照ルール

@@ -246,6 +246,16 @@ z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだ
 - **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (Popover + `menu`/`menuitem` roving) → `Tooltip` (Popover + hover/focus delay)。Popover を土台に積み上げる
 - いずれも実装は別 PR。着手時に native `popover` 属性 / CSS Anchor Positioning の採用可否を最初に判断する
 
+### スタイルのカプセル化 (C-scoped 確定 / 完全カプセル化 D は保留) — #76
+
+v4.0.0 で preflight を非同梱化 (#57) した結果、mode①(no-Tailwind) で utility が動く前提 (`border-style:solid` / `box-sizing:border-box` / フォーム正規化) まで欠落し部品が壊れた。最小ベースを補完するにあたり、配信方針「ライブラリは消費者の素の要素に触れない」を保つため、ベースを **DS サブツリー (`[data-ds-root]`) 配下だけに scope** した (= **C-scoped**、`:where()` で特異性 0 を維持)。
+
+- **C は当初から中継地点**であり、今回 C-scoped に精製した。グローバル footprint をほぼゼロに戻し、配信方針を回復した。`check:styles` が global footprint の再混入を機械ガードする。
+- **既知の残留リーク (受容)**: DS コンポーネントに `children` として渡された消費者コンテンツはサブツリー内なのでベースリセット (box-sizing / border 既定) を受ける。「DS の箱の中身は DS の箱モデルに従う」という意図的・許容範囲の挙動として受容する (さらに厳密に閉じるのは D の領域)。
+- **完全カプセル化 (D) は保留**。進める場合の手段は **build-time の scoped CSS であり、Shadow DOM ではない**。理由: 本 DS は (1) SSR/RSC セーフが契約、(2) overlay 系 (Modal / Popover / Tooltip 等) が top-layer を多用、(3) native フォーム参加に依存しており、Shadow DOM はこの 3 点すべてと衝突する。scoped CSS は RSC ネイティブで、portal / top-layer をまたいでも効き、フォームにも影響しない。
+- **forcing function (D 着手の合図)**: (a) 2 人目の実消費者が別 framework での利用を要求、または (b) 未知 / 敵対的な消費者 CSS からの隔離 (埋め込み等) が必要な案件が発生。**「スコア向上」「念のため」は合図にしない。**
+- **D の最初の一歩**: 全面着手の前に overlay 系を 1 コンポーネント (例 Popover) だけ scoped CSS で spike し、実コストと痛点を実測してから全体を判断する。
+
 ---
 
 ## 本リポジトリでの実装対応

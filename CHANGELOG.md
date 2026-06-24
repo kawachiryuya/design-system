@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-06-24
+
 ### ⚠ BREAKING CHANGES
 
 - **ストーリー構造を VR 集約モデルへ移行 (Button から、段階展開)** (story id 削除 = silent break §10-2): `.stories.tsx` を **Playground / Overview / EdgeCases の 3 節**に統一する規約に変更 (AGENTS.md §5-3)。視覚回帰 (Chromatic) は props で作れる内在パターンを 1 枚に凍結した **Overview** と、文脈依存の **EdgeCases** のみを撮影し、`Playground` は撮影外。旧カタログ (`Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription`) は Overview + guideline.mdx に集約し**削除**する。**Button が参照実装**として先行移行 — `Primitives/Button` の `Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription` story が**削除**された (これらの Storybook URL `?path=/story/primitives-button--variants` 等は無効になる)。残コンポーネントは 1 コンポーネント = 1 PR で順次移行 (§7)。`check:conventions` の `SECTION_ORDER` に `Overview` を追加。
@@ -720,7 +722,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v5.0.0...HEAD
+[5.0.0]: https://github.com/kawachiryuya/design-system/compare/v4.0.0...v5.0.0
 [4.0.0]: https://github.com/kawachiryuya/design-system/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/kawachiryuya/design-system/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/kawachiryuya/design-system/compare/v2.0.0...v2.1.0

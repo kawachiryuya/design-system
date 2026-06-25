@@ -1,0 +1,152 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ActionBarStories from './ActionBar.stories';
+import { ActionBar } from './ActionBar';
+import { Button } from '../../primitives/Button';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={ActionBarStories} name="Guideline" />
+
+# ActionBar
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: '2 つだけの判断', href: '#2-つだけの判断' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: '別コンポーネントの方が適切な場面', href: '#別コンポーネントの方が適切な場面' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+複数の Button からなる**アクション群のレスポンシブ配置**を担う composite。向き・幅・DOM順・整列・閾値といった「判断後の確定的な帰結」を内部に所有し、文脈で決まる本物の判断 (どれが primary か / `align`) だけを露出する。**いつ使うか**: フォーム下部・ダイアログ・終端画面など、2〜3 個の Button を階層付きで並べる場面。**いつ使わないか**: 階層を持たない汎用の inline 並び・折り返しは `<Cluster>`、縦積みの一般レイアウトは `<Stack>`。
+
+`responsive` (既定) は **container query** で切替える: 閾値以下は縦 full-width、以上は横 hug。判断基準は viewport ではなく**群自身の利用可能幅**なので、`SplitPane` / `TwoColumn` 内の狭い pane に置いても正しく縦に畳む。
+
+> **配置の前提**: container query で幅を測るため、ActionBar は**確定幅を持つ通常のブロック文脈**(footer / form / dialog / カードなど) に置く。`inline-block` や中央寄せ flex (`items-center`) のような **shrink-wrap 文脈に直接置くと幅が 0 に潰れる** (container は自身の中身から幅を決められないため)。その場合は親で幅を確定させる。
+
+---
+
+## Props
+
+<ArgTypes of={ActionBarStories.Playground} />
+
+---
+
+## 2 つだけの判断
+
+ActionBar が消すのは「判断」ではなく「**判断のブレと、判断後の再現実装**」。人間に残す判断は 2 つだけ:
+
+1. **どれが primary か** (階層) — 子の `variant` で表現する。コンポーネントには決められない。primary は通常 1 つ (2 つ以上で dev warn)。
+2. **`align`** — footer / フォーム下部は `end`、中央の終端画面 (予約完了など) は `center`。機械的に `end` を当ててはいけない箇所。
+
+それ以外は上の 2 つが決まった瞬間に一意に導出されるので内部が処理する:
+
+| 軸 | 閾値以下 (縦) | 閾値以上 (横) |
+|---|---|---|
+| 向き | 縦 | 横 |
+| 幅 | full-width | hug-content + `min-w` 下限のみ |
+| 幅上限 | — | **ボタンではなく container が所有** (ダイアログ / 中央列 / shell の max-width) |
+| 整列 | 無関係 (全部 full) | `align` を適用 |
+
+**DOM順 = 優先度昇順** (tertiary→secondary→primary) で children を置くのが契約。これにより縦では primary が最下 (親指ゾーン)、横では primary が右端になり、**order CSS ゼロ**で DOM=視覚=tab 順が両ブレークポイントで一致する。
+
+> 幅の縦横切替は flex の `align-items: stretch` (既定) に委ねている: 縦では子が横に stretch して full-width、横では子が content 幅で hug (Button の `min-w` だけが効く)。ActionBar はボタンに幅上限を付けない。
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="DOM順は優先度昇順 (primary を最後) に置く"
+  doExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+      <ActionBar>
+        <Button variant="tertiary">キャンセル</Button>
+        <Button variant="primary">保存</Button>
+      </ActionBar>
+    </div>
+  }
+  doCaption="優先度昇順で置くと、横では primary が右端・縦では最下に来る。order CSS 不要で DOM=視覚=tab 順が一致する。"
+  dontExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+      <ActionBar>
+        <Button variant="primary">保存</Button>
+        <Button variant="tertiary">キャンセル</Button>
+      </ActionBar>
+    </div>
+  }
+  dontCaption="primary を先頭に置くと横で primary が左端・縦で最上になり、視覚の重み (右端 / 最下) と DOM・tab 順がズレる。"
+/>
+
+<DoDontExample
+  label="primary は 1 つに絞る"
+  doExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+      <ActionBar>
+        <Button variant="secondary">下書き保存</Button>
+        <Button variant="primary">公開する</Button>
+      </ActionBar>
+    </div>
+  }
+  doCaption="primary は 1 つ。階層が立ち、ユーザーは「次の一手」を迷わない。"
+  dontExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+      <ActionBar>
+        <Button variant="primary">下書き保存</Button>
+        <Button variant="primary">公開する</Button>
+      </ActionBar>
+    </div>
+  }
+  dontCaption="primary が 2 つだと階層が消え、どちらが主アクションか分からない (dev warn が出る)。"
+/>
+
+<DoDontExample
+  label="終端画面は align=center"
+  doExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+      <ActionBar orientation="horizontal" align="center">
+        <Button variant="secondary">ホームに戻る</Button>
+        <Button variant="primary">予約詳細を見る</Button>
+      </ActionBar>
+    </div>
+  }
+  doCaption="予約完了など中央寄せの終端画面では align=center。コンテンツの中心線にアクションが揃う。"
+  dontExample={
+    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+      <ActionBar orientation="horizontal" align="end">
+        <Button variant="secondary">ホームに戻る</Button>
+        <Button variant="primary">予約詳細を見る</Button>
+      </ActionBar>
+    </div>
+  }
+  dontCaption="中央レイアウトの終端画面で align=end (既定) のままだと、アクションだけ右に寄って中心からズレる。align は文脈で選ぶ。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| 階層を持たない汎用の inline 並び・折り返し | `<Cluster>` | ActionBar はアクション群の階層付きレスポンシブ配置に特化。汎用の横並びは Cluster |
+| 縦積みの一般レイアウト (form / list) | `<Stack>` | ActionBar はアクション群専用。汎用の縦並びは Stack |
+| 枠線を共有した連結セグメント (トグル / segmented) | `<SegmentedControl>` | 連結型は別物。ActionBar は独立したアクションの配置 |
+| モバイル下部に固定 (sticky) したい | AppShell の `bottomNav` / consumer 側で `fixed` | ActionBar は自分を fixed 配置しない。固定は AppShell / consumer の責務 (BottomNav クリアランスと衝突するため) |
+
+---
+
+## アクセシビリティ
+
+- **DOM順 = tab 順 = 視覚順**: 優先度昇順で置くと、縦横どちらでも tab は最後に primary へ着地する。order CSS を使わないため、SR の読み上げ順・キーボード移動順と視覚順が常に一致する
+- **container query と SR**: 縦横の切替は CSS のみ。DOM 構造は不変なので、SR の読み上げ順序はブレークポイントに依らず一定
+- **タッチターゲット**: 幅・高さは内包する `<Button>` が WCAG 2.5.5 を満たす (ActionBar は配置のみで size を変えない)
+- **primary の階層**: 色だけに頼らず variant の階層 (filled primary / outline secondary 等) で主アクションを示す。destructive を含む場合は Button 側でアイコン + 動詞ラベルを補強する
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+なし。ActionBar は素の `div` 2 層 (`@container` + `flex`) を組み立て、children の `<Button>` を配置する layout composite。`@tailwindcss/container-queries` を前提にする。

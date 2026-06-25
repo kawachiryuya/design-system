@@ -133,6 +133,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
+| 階層付きアクション群 (Button のレスポンシブ配置) | `<ActionBar>` | フォーム下部・ダイアログ・終端画面の「ボタン列」は ActionBar の責務。Cluster は常に `flex-wrap` で閾値以下を縦 full-width に畳めず、primary を立てる縦横切替も持たない。アクション群は ActionBar、汎用 inline 並びは Cluster で **two-ways-to-do-it を残さない** |
 | 縦並び (form / list 等) | `<Stack>` | Cluster は水平専用、垂直は Stack の責務 |
 | max-width で中央寄せ | `<Center>` | Center は単列 horizontal centering、Cluster は children の inline 並び |
 | 折り返さない horizontal | plain `flex items-center gap-N` | Cluster の wrap は無効化できない (定義的特徴)、non-wrap には不適 |

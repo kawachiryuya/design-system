@@ -31,8 +31,9 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (27) ──
+// ── Composites (28) ──
 export * from './composites/Accordion';
+export * from './composites/ActionBar';
 export * from './composites/Alert';
 export * from './composites/AppShell';
 export * from './composites/Avatar';

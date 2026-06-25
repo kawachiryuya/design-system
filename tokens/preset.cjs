@@ -245,6 +245,12 @@ module.exports = {
   // CSS 変数経由なので product 側は :root で値を 1 行 override 可能。
   // 詳細: components/tokens/Layout.guideline.mdx
   plugins: [
+    // ── container queries (@container / @[Npx]: 変種) ──
+    // ActionBar 等、利用可能幅 (= 群自身の container 幅) で縦横を切替える composite の前提。
+    // viewport media query では SplitPane / TwoColumn 内の狭い pane で破綻するため container 基準にする。
+    // preset 経由で mode② (consumer ビルド) に継承され、mode① は styles:build が
+    // components/ をスキャンして dist/styles.css に precompile する (両モード対応の要)。
+    require('@tailwindcss/container-queries'),
     // ── prefers-reduced-motion (a11y / WCAG 2.3.3) ──
     // animation / transition トークンを多用するため、視覚過敏・前庭障害ユーザー向けに
     // OS の「視差効果を減らす」設定時はアニメーションをほぼ無効化する。

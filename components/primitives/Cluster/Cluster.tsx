@@ -6,7 +6,7 @@ import { tv } from '../../_internal/tv';
  *
  * 段階ごとの想定用途 (horizontal context):
  * - `xs`  (4px)  — icon + label / breadcrumb separator / 密接した inline elements
- * - `sm`  (8px)  — menu items / button row / chip group の標準ギャップ
+ * - `sm`  (8px)  — menu items / chip group の標準ギャップ (階層付きのアクション群は `<ActionBar>`)
  * - `md`  (12px) — 中密度の inline list / 反復要素
  * - `lg`  (16px) — section header (title + actions) / 視覚的な分離
  * - `xl`  (24px) — 大ブロック inline / 余裕を持たせた配置

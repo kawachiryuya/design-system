@@ -13,6 +13,9 @@
 
 ### Added
 
+- **Composites/ActionBar: 階層付きアクション群のレスポンシブ配置 composite を追加** (新規 component = 後方互換 = MINOR、#98): 複数 Button からなるアクション群のレイアウトの確定的帰結 (向き・幅・DOM順・整列・閾値) を内部に所有し、文脈で決まる判断 (どれが primary か = 子の `variant` / `align`) だけを露出する。`orientation`(`responsive`/`vertical`/`horizontal`) / `align`(`start`/`center`/`end`/`between`、既定 `end`) / `collapseAt`(`sm`/`md`/`lg`、既定 `md`=400px) / `gap`(`xs`..`2xl`、既定 `sm`)。`responsive` は **container query** で縦↔横を切替 (viewport media query ではなく群自身の幅基準。狭い pane でも正しく縦に畳む)。幅は flex の `align-items:stretch` に委ね、縦=full-width / 横=hug+`min-w` を子幅操作なしで成立させる (幅上限はボタンに付けず container が所有)。**DOM順=優先度昇順** (tertiary→secondary→primary) で order CSS ゼロ、縦=primary 最下 / 横=primary 右端 / tab 順は最後に primary。primary が 2 つ以上で dev warn (hard gate ではない、Phase 2)。[`ActionBar.tsx`](./components/composites/ActionBar/ActionBar.tsx)
+- **Tokens/preset: `@tailwindcss/container-queries` plugin を導入** (新規 devDependency、#98): `@container` / `@[Npx]:` 変種を有効化。`tokens/preset.cjs` の `plugins` に追加し、mode② (consumer ビルド) は preset 継承で、mode① は `styles:build` が `components/` をスキャンして `dist/styles.css` に precompile することで両モードに透過する。ActionBar のレスポンシブの前提。
+- **Primitives/Cluster: guideline の「button row」用途を ActionBar 案内に更新** (ドキュメントのみ、#98): 階層付きアクション群は `<ActionBar>`、汎用 inline 並び・折り返しは `<Cluster>` と棲み分けを明示し two-ways-to-do-it を解消。`ClusterGap` の `sm` 用途ヒントと「別コンポーネントの方が適切な場面」表を更新。
 - **Composites/Tooltip: `defaultOpen` prop を追加** (optional、後方互換 = MINOR、#90): uncontrolled で mount 時に静的表示する逃げ道。主に VR / テストで開状態を hover 不要に撮るための prop (本番 UI では hover/focus 起動が原則なので通常使わない)。native `popover="manual"` を mount 時の effect で `showPopover()` する。[`Tooltip.tsx`](./components/composites/Tooltip/Tooltip.tsx)
 
 ## [5.0.0] - 2026-06-24

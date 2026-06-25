@@ -7,6 +7,14 @@
 
 ## [Unreleased]
 
+### ⚠ BREAKING CHANGES
+
+- **VR 集約モデル移行 (overlay の残: Tooltip / Toast の開状態を Overview 化、#90)** (story id 削除 = silent break §10-2): #78 overlay バッチで安定 VR 不可として見送っていた Tooltip / Toast の開状態を VR 対象化。Tooltip は新 prop `defaultOpen` で hover 不要に静的表示、Toast は**入場アニメが無いと判明**したため `ToastProvider` に `duration=0` で 5 variant を静的スタックして撮る (当初想定の「アニメ無効 API」は不要だった)。各 Playground を `disableSnapshot` に切替。Tooltip の `Placements` / `OnIconButton` / `LongText`、Toast の `Variants` / `States` / `EdgeCases` story を削除 (placement / position / usage は Playground Controls + guideline で担保)。`?path=/story/composites-tooltip--placements`・`composites-tooltip--on-icon-button`・`composites-toast--variants`・`composites-toast--states` 等の旧 Storybook URL が無効になる。
+
+### Added
+
+- **Composites/Tooltip: `defaultOpen` prop を追加** (optional、後方互換 = MINOR、#90): uncontrolled で mount 時に静的表示する逃げ道。主に VR / テストで開状態を hover 不要に撮るための prop (本番 UI では hover/focus 起動が原則なので通常使わない)。native `popover="manual"` を mount 時の effect で `showPopover()` する。[`Tooltip.tsx`](./components/composites/Tooltip/Tooltip.tsx)
+
 ## [5.0.0] - 2026-06-24
 
 ### ⚠ BREAKING CHANGES

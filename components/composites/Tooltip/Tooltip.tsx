@@ -51,6 +51,12 @@ export interface TooltipProps {
    * @default 300
    */
   delay?: number;
+  /**
+   * uncontrolled で初期表示する (mount 時に hover/focus 不要で開く)。主に VR / テストで
+   * 開状態を静的に撮るための逃げ道。本番 UI では通常使わない (tooltip は hover/focus 起動が原則)。
+   * @default false
+   */
+  defaultOpen?: boolean;
   /** パネルに付与する追加 class。 */
   className?: string;
 }
@@ -68,6 +74,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   placement = 'top',
   offset = 6,
   delay = 300,
+  defaultOpen = false,
   className = '',
 }) => {
   const panelRef = React.useRef<HTMLDivElement | null>(null);
@@ -146,6 +153,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
       cleanupRef.current?.();
       if (escHandlerRef.current) document.removeEventListener('keydown', escHandlerRef.current);
     };
+  }, []);
+
+  // defaultOpen: mount 時に一度だけ静的表示する (VR/テスト用)。
+  // refs は commit 時に attach 済みなので effect 内で setShown(true) が効く。
+  React.useEffect(() => {
+    if (defaultOpen) setShown(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const child = children as React.ReactElement<any>;

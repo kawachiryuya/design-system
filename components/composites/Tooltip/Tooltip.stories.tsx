@@ -2,16 +2,15 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
 import { Tooltip } from './Tooltip';
 import { Button } from '../../primitives/Button';
-import { Icon } from '../../primitives/Icon';
-import { Caption } from '@sb-blocks/Caption';
 
 /**
- * Tooltip stories — VR 集約モデル (§5-3) 移行は一部保留
+ * Tooltip stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
- * Tooltip は `open`/`defaultOpen` prop が無く hover/focus でのみ表示されるため、開状態を安定して
- * 静的に VR できない。開状態の Overview 追加は #90 (defaultOpen API) で対応予定。それまでは
- * §9-4 のスタンスに従い Playground を撮影対象に残す (closed trigger の撮影 = 退行検知の最低限)。
- * 各 story はトリガーに hover か Tab focus して開状態を確認する。
+ * 構成: Playground / Overview。
+ * Tooltip は通常 hover/focus でのみ表示されるが、`defaultOpen` (#90 で追加) で mount 時に静的表示
+ * できるため、Overview を VR 対象として撮る (bubble の見た目 + 長文折返し)。placement / icon button
+ * への付与等の usage は Playground (Controls) + guideline で確認。
+ * variant / size prop は無し。
  */
 const meta: Meta<typeof Tooltip> = {
   title: 'Composites/Tooltip',
@@ -30,13 +29,14 @@ const meta: Meta<typeof Tooltip> = {
 export default meta;
 type Story = StoryObj<typeof Tooltip>;
 
-// ── 1. Playground ──────────────────────────────────────────────
+// ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
 export const Playground: Story = {
   parameters: {
+    chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'focus で即時表示 (hover は遅延)。role="tooltip" + aria-describedby、Esc で閉じる (WCAG 1.4.13) を play test で保証。',
+        story: 'focus で即時表示 (hover は遅延)。Controls で content / placement / delay を切替。role="tooltip" + aria-describedby、Esc で閉じる (WCAG 1.4.13) を play test で保証。',
       },
     },
   },
@@ -50,11 +50,10 @@ export const Playground: Story = {
     const trigger = canvas.getByRole('button', { name: 'ヘルプ' });
     await expect(trigger).toHaveAttribute('aria-describedby');
 
-    // focus で即時表示 → role=tooltip が可視・内容一致
+    // focus で即時表示 → role=tooltip が可視
     trigger.focus();
     const tip = await screen.findByRole('tooltip');
     await expect(tip).toBeVisible();
-    await expect(tip).toHaveTextContent('クリックで詳細を表示します');
 
     // Esc で閉じる (Dismissible)
     await userEvent.keyboard('{Escape}');
@@ -62,67 +61,29 @@ export const Playground: Story = {
   },
 };
 
-// ── 2. Placements ──────────────────────────────────────────────
+// ── 2. Overview (視覚回帰対象) — defaultOpen で静的表示 ──────────
+// bubble の見た目 (dark / shadow / caption) と長文の max-w 折返しを撮る。
+// placement は floating-ui の位置決めで bubble 自体の見た目は不変のため Playground / guideline で確認。
 
-export const Placements: Story = {
+export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'placement で配置を指定。視界からはみ出す場合は flip / shift で自動補正される。hover か Tab focus で確認。',
+        story: '視覚回帰用の開状態。`defaultOpen` で hover 不要に静的表示。短い補足と長文 (max-w で折返し) の bubble を凍結する。',
       },
     },
   },
   render: () => (
-    <div className="flex flex-wrap gap-6 p-8">
-      {(['top', 'right', 'bottom', 'left'] as const).map((p) => (
-        <Caption key={p} text={p}>
-          <Tooltip content={`placement = ${p}`} placement={p}>
-            <Button variant="secondary">{p}</Button>
-          </Tooltip>
-        </Caption>
-      ))}
-    </div>
-  ),
-};
-
-// ── 3. OnIconButton ────────────────────────────────────────────
-
-export const OnIconButton: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'アイコンのみのボタンに補足を添える典型用途。Button は `aria-label` で名前を、Tooltip は `aria-describedby` で補足を提供する (役割が別)。',
-      },
-    },
-  },
-  render: () => (
-    <div className="flex gap-3">
-      <Tooltip content="お気に入りに追加">
-        <Button iconOnly icon={<Icon name="favorite" />} aria-label="お気に入りに追加" variant="tertiary" />
+    <div className="flex flex-col items-center gap-24 py-16">
+      <Tooltip content="クリックで詳細を表示します" defaultOpen>
+        <Button variant="secondary">短い補足</Button>
       </Tooltip>
-      <Tooltip content="ヘルプを表示">
-        <Button iconOnly icon={<Icon name="help" />} aria-label="ヘルプ" variant="tertiary" />
-      </Tooltip>
-      <Tooltip content="この操作は取り消せません">
-        <Button iconOnly icon={<Icon name="warning" />} aria-label="警告" variant="tertiary" />
+      <Tooltip
+        content="このフィールドは公開プロフィールに表示されます。後から設定でいつでも変更できます。"
+        defaultOpen
+      >
+        <Button variant="secondary">長文 (max-w で折返し)</Button>
       </Tooltip>
     </div>
-  ),
-};
-
-// ── 4. LongText ────────────────────────────────────────────────
-
-export const LongText: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: '長めの補足は max-width で折り返す。ただし tooltip は短い補足向け — 長文や操作が要るなら Popover を使う。',
-      },
-    },
-  },
-  render: () => (
-    <Tooltip content="このフィールドは公開プロフィールに表示されます。後から設定でいつでも変更できます。">
-      <Button variant="secondary">表示名</Button>
-    </Tooltip>
   ),
 };

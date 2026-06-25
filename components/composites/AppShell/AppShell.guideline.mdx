@@ -10,7 +10,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <GuidelineToc items={[
   { label: '概要', href: '#概要' },
   { label: 'Props', href: '#props' },
-  { label: '4 slot の役割', href: '#4-slot-の役割' },
+  { label: '5 slot の役割', href: '#5-slot-の役割' },
   { label: 'Breakpoint 挙動', href: '#breakpoint-挙動' },
   { label: 'consumer 側の責務', href: '#consumer-側の責務' },
   { label: '別コンポーネントの方が適切な場面', href: '#別コンポーネントの方が適切な場面' },
@@ -21,10 +21,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 ## 概要
 
 Application shell の骨格を提供する composite。**mobile と PC で構造そのものが変わる** タイプの layout で:
-- **mobile (< lg)**: Header (top) + subBar? + main + BottomNav (bottom fixed)
-- **PC (>= lg)**: Sidebar (left fixed) + 右 pane (subBar? + main)
+- **mobile (< lg)**: Header (top) + subBar? + main + footer? + BottomNav (bottom fixed)
+- **PC (>= lg)**: Sidebar (left fixed) + 右 pane (subBar? + main + footer?)
 
-Header / Sidebar / BottomNav / subBar の **中身** は consumer 提供 (slot)。AppShell は配置・breakpoint 制御 (`lg:hidden` / `hidden lg:block`) と内側 main の `max-w` / `px-container` / `py` を担当する。`PageTitleProvider` 等の context は **consumer 側で実装**、AppShell は router/state 依存を持ち込まない。
+Header / Sidebar / BottomNav / subBar / footer の **中身** は consumer 提供 (slot)。AppShell は配置・breakpoint 制御 (`lg:hidden` / `hidden lg:block`) と内側 main の `max-w` / `px-container` / `py`、footer landmark の配置を担当する。`PageTitleProvider` 等の context は **consumer 側で実装**、AppShell は router/state 依存を持ち込まない。
 
 ---
 
@@ -34,7 +34,7 @@ Header / Sidebar / BottomNav / subBar の **中身** は consumer 提供 (slot)�
 
 ---
 
-## 4 slot の役割
+## 5 slot の役割
 
 | Slot | 表示条件 | 想定中身 | DOM 配置 |
 |------|---------|---------|---------|
@@ -42,8 +42,11 @@ Header / Sidebar / BottomNav / subBar の **中身** は consumer 提供 (slot)�
 | `sidebar` | PC のみ (`hidden lg:block`) | ナビゲーション menu / ロゴ / utility link | 左、`<aside>` でラップ |
 | `bottomNav` | mobile のみ (`lg:hidden`)、かつ `showBottomNav=true` | tab bar (3-5 個の primary destination) | 最下部 (consumer 内部で `fixed bottom-0` 想定) |
 | `subBar` | 両方 (consumer 内部で表示制御推奨) | breadcrumb / step indicator / page title | main の上 |
+| `footer` | 両方 | サービス / サポートリンク + 著作権など全ページ共通フッター | 内容カラム最下部 (`main` の後)、AppShell が `<footer>` でラップ |
 
 すべて optional。omit すると AppShell はその slot を描画しない。
+
+**footer は「内容カラム幅の帯」**: レールの下までは貫かず、レール幅ぶんオフセットした内容カラム全幅の帯として描画される。本文 (`main`) が `flex-1`・footer が `shrink-0` なので、**短いページでもフッターはビューポート底に来る** (中央に浮かない)。帯の内側読み幅は consumer が `<Section>` / `<Center>` で絞る (`contained` / `full` の 2 層モデルと一貫)。AppShell が `<footer>` landmark を提供するため、consumer は中身を二重に `<footer>` で包まない。
 
 ---
 
@@ -56,10 +59,11 @@ Header / Sidebar / BottomNav / subBar の **中身** は consumer 提供 (slot)�
 
 切替点は **semantic breakpoint `shell:`** (既定 = lg / 1024px)。breakpoint トークンから派生し、consumer は自前 preset で `screens.shell` を override 可能。列レイアウトの `cols:` (TwoColumn 等) とは別軸なので、shell 切替と列切替を独立に調整できる。
 
-**bottomNav 表示時の main クリアランス**:
+**bottomNav 表示時のクリアランス**:
 - mobile: `pb-20` (= h-16 nav + 16px gap)
 - PC: `pb-8` (= 32px、token desktop padding)
 - `showBottomNav={false}` だと両方とも `py-container` (= token-driven 対称 padding)
+- **footer がある場合**、内容カラム最下部の要素は footer になるので、mobile のクリアランスは main から footer へ移る (footer に `mb-20`、main は通常 padding に戻る)。これで footer も固定 BottomNav に隠れない。
 
 ---
 
@@ -156,6 +160,7 @@ Center の代わりではない。
 
 - **`<main>` の暗黙の役割**: AppShell は内部で `<main>` タグを使用、ページの主コンテンツ landmark を提供。consumer が `as="main"` で他に `<main>` を入れない運用を推奨 (1 ページ 1 main)
 - **`<aside>` の sidebar**: PC sidebar slot は AppShell が `<aside>` でラップ、補助コンテンツ landmark として SR 認識
+- **`<footer>` の footer**: footer slot は AppShell が `<footer>` (contentinfo landmark) でラップ。全ページ共通のサポートリンク / 著作権を SR が contentinfo として認識。consumer は中身を二重に `<footer>` で包まない (landmark のネストを避ける)。mobile では従来 `TopHeader` (= `<aside>` complementary) 内に埋もれていたフッター内容が footer slot に出ることで、モバイルでもフッター情報に到達できる (穴を塞ぐ)
 - **bottomNav の semantic タグ**: BottomNav 中身を `<nav>` として実装するのは consumer 側、AppShell は外側 `<div className="lg:hidden">` でラップするだけ
 - **skip-link**: AppShell に skip-link は内蔵していない、consumer 側で `<a href="#main">` 等を提供することを想定
 

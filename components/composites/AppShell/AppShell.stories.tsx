@@ -33,6 +33,7 @@ const meta: Meta<typeof AppShell> = {
     sidebar: { control: false },
     bottomNav: { control: false },
     subBar: { control: false },
+    footer: { control: false },
     children: { control: false },
   },
   args: {
@@ -81,6 +82,19 @@ const MockSubBar = ({ title }: { title: string }) => (
   </div>
 );
 
+// AppShell が `<footer>` landmark を提供するので、中身は素の要素で渡す (二重に `<footer>` しない)。
+// 帯は内容カラム全幅、内側の読み幅は px-container で軽く絞る (consumer は Section/Center で組む)。
+const MockFooter = () => (
+  <div className="bg-surface border-t border-border-subtle px-container py-4 text-xs text-onSurface-muted">
+    <div className="flex flex-wrap gap-4">
+      <span>サービス紹介</span>
+      <span>ヘルプ</span>
+      <span>よくある質問</span>
+    </div>
+    <div className="mt-3">© 2026 Rail Demo</div>
+  </div>
+);
+
 const MockContent = ({ children }: { children?: React.ReactNode }) => (
   <div className="bg-surface-layer-2 border border-dashed border-border-subtle rounded-md p-4 min-h-[200px]">
     {children ?? (
@@ -108,6 +122,7 @@ export const Playground: Story = {
       sidebar={<MockSidebar />}
       bottomNav={<MockBottomNav />}
       subBar={<MockSubBar title="Playground" />}
+      footer={<MockFooter />}
     >
       <MockContent />
     </AppShell>
@@ -117,7 +132,7 @@ export const Playground: Story = {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: '4 slot (header / sidebar / bottomNav / subBar) 全て埋めた状態。Controls で `contentMax` / `showBottomNav` を変えて挙動確認。Storybook を viewport switcher で mobile / PC 切替すると breakpoint 挙動が見える。',
+        story: '5 slot (header / sidebar / bottomNav / subBar / footer) 全て埋めた状態。Controls で `contentMax` / `showBottomNav` を変えて挙動確認。Storybook を viewport switcher で mobile / PC 切替すると breakpoint 挙動が見える。',
       },
     },
   },
@@ -190,7 +205,7 @@ export const EdgeCases: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'slot omit パターン (header only / 全 slot なし) / long content scroll / layout="full" の full-bleed を確認。AppShell が slot を渡されない場合に degrade しても破綻しないこと、full モードで背景が端まで届くことを示す。',
+        story: 'slot omit パターン (header only / 全 slot なし) / long content scroll / layout="full" の full-bleed / footer slot を確認。AppShell が slot を渡されない場合に degrade しても破綻しないこと、full モードで背景が端まで届くこと、footer が短いページでもビューポート底に来て内容カラム幅の帯になることを示す。',
       },
     },
   },
@@ -232,6 +247,22 @@ export const EdgeCases: Story = {
           <AppShell>
             <MockContent>
               <div className="text-sm">全 slot 未指定でも min-h-screen / px-container / max-w-container は効く。最小限の app shell として使える。</div>
+            </MockContent>
+          </AppShell>
+        </ShellPreview>
+      </Caption>
+
+      <Caption text='footer slot (短いコンテンツ) — main が flex-1・footer が shrink-0 で、短くてもフッターはビューポート底へ。帯は内容カラム幅 (レール下に回り込まない)、mobile は BottomNav の上に押し上げ'>
+        <ShellPreview>
+          <AppShell
+            header={<MockHeader />}
+            sidebar={<MockSidebar />}
+            bottomNav={<MockBottomNav />}
+            subBar={<MockSubBar title="footer 付き" />}
+            footer={<MockFooter />}
+          >
+            <MockContent>
+              <div className="text-sm">短いコンテンツ。footer は中央に浮かず、内容カラム最下部 (= ビューポート底) に来る。</div>
             </MockContent>
           </AppShell>
         </ShellPreview>

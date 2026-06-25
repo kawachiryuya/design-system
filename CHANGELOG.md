@@ -13,6 +13,7 @@
 
 ### Added
 
+- **Composites/AppShell: `footer` slot を追加** (optional、後方互換 = MINOR、#97): 全ページ共通フッターを内容カラム最下部 (`children` の後) に `<footer>` (contentinfo) landmark として第一級化。レール下までは貫かず**内容カラム幅の帯**として描画し、本文 (`main`) が `flex-1`・footer が `shrink-0` なので**短いページでもフッターがビューポート底に来る** (中央に浮かない)。mobile で `bottomNav` 表示時は footer に下方向余白 (`mb-20`) を確保し固定 BottomNav に隠れないようにする (クリアランスを main から footer へ移譲)。これにより従来 `TopHeader` (complementary) 内に埋もれモバイルで欠落していたフッター情報の穴を塞ぐ。[`AppShell.tsx`](./components/composites/AppShell/AppShell.tsx)
 - **Composites/Tooltip: `defaultOpen` prop を追加** (optional、後方互換 = MINOR、#90): uncontrolled で mount 時に静的表示する逃げ道。主に VR / テストで開状態を hover 不要に撮るための prop (本番 UI では hover/focus 起動が原則なので通常使わない)。native `popover="manual"` を mount 時の effect で `showPopover()` する。[`Tooltip.tsx`](./components/composites/Tooltip/Tooltip.tsx)
 
 ## [5.0.0] - 2026-06-24

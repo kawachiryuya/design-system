@@ -34,8 +34,8 @@ export type AppShellLayout = 'contained' | 'full';
  *
  * Application shell の骨格を提供する composite。
  * mobile / PC で **構造そのものが変わる** タイプの layout:
- * - **mobile (< shell)**: Header (top) + subBar? + main + BottomNav (bottom fixed)
- * - **PC (>= shell)**: Sidebar (left) + 右 pane (subBar? + main)
+ * - **mobile (< shell)**: Header (top) + subBar? + main + footer? + BottomNav (bottom fixed)
+ * - **PC (>= shell)**: Sidebar (left) + 右 pane (subBar? + main + footer?)
  *
  * Header / Sidebar / BottomNav / subBar の **中身** は consumer 提供 (slot)。
  * AppShell は配置と breakpoint 制御 (semantic breakpoint `shell:` で mobile↔PC を切替) を担当する。
@@ -51,6 +51,7 @@ export type AppShellLayout = 'contained' | 'full';
  *     sidebar={<TopHeader />}
  *     bottomNav={<BottomNav />}
  *     subBar={<PageSubBar title="ホーム" />}
+ *     footer={<Footer />}
  *   >
  *     <Outlet />
  *   </AppShell>
@@ -102,6 +103,15 @@ export interface AppShellProps extends Omit<React.HTMLAttributes<HTMLDivElement>
    */
   subBar?: React.ReactNode;
   /**
+   * 任意の footer slot。内容カラム最下部 (`children` の後) に `<footer>` landmark として描画する。
+   * レールの下までは貫かず、レール幅ぶんオフセットした **内容カラム幅の帯**。本文領域 (`main`) が
+   * `flex-1`・footer が `shrink-0` なので、**短いページでもフッターがビューポート底に来る** (中央に浮かない)。
+   * 帯の内側読み幅は consumer が `<Section>` / `<Center>` で絞る (contained/full の 2 層モデルと一貫)。
+   * AppShell が `<footer>` を提供するので、中身を二重に `<footer>` で包まない。
+   * mobile で `bottomNav` 表示時は、固定 BottomNav に隠れないよう footer に下方向の余白を確保する。
+   */
+  footer?: React.ReactNode;
+  /**
    * BottomNav を実際に表示するか。`false` でも `bottomNav` slot は受け取るが描画しない、
    * mobile main の下部クリアランス (`pb-20`) も無効化する。
    * @default true
@@ -136,12 +146,16 @@ const maxWidthClasses: Record<AppShellContentMax, string> = {
  * - outer: `min-h-screen flex flex-col shell:flex-row bg-background` (mobile = 縦積み、PC = 横並び)
  * - header: AppShell が `shell:hidden` でラップ
  * - sidebar: AppShell が `hidden shell:block` でラップ (`<aside>`)
- * - right pane (`flex-1 min-w-0 flex flex-col`): subBar + main
+ * - right pane (`flex-1 min-w-0 flex flex-col`): subBar + main + footer?
  * - main inner (`layout="contained"` 既定): `mx-auto` + `px-container` + `max-w-container[*]` + `pt/pb`
  *   - bottomNav あり時: mobile `pb-20` (h-16 nav + 16px gap)、`shell:pb-8` に戻る
  *   - bottomNav なし時: `py-container` (token 由来)
+ *   - footer あり時: 最下部要素は footer になるので main の bottomNav クリアランスは外し (`pb-8`)、
+ *     クリアランスは footer 側へ移す
  * - main inner (`layout="full"`): wrapper (px + max-w) を外し `flex-1 w-full` のみ。
- *   mobile の bottomNav クリアランス (`pb-20 shell:pb-0`) だけ残す。横幅は内側 Section/Center が所有
+ *   mobile の bottomNav クリアランス (`pb-20 shell:pb-0`) だけ残す (footer がある時は footer へ移す)。横幅は内側 Section/Center が所有
+ * - footer (任意): main の後ろに `<footer>` (`shrink-0`) として内容カラム全幅の帯を描画。
+ *   mobile で bottomNav 表示時は `mb-20 shell:mb-0` で帯を BottomNav の上に押し上げる
  * - bottomNav: AppShell が `shell:hidden` でラップ
  *
  * @see AppShellProps for usage examples.
@@ -151,6 +165,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   sidebar,
   bottomNav,
   subBar,
+  footer,
   showBottomNav = true,
   contentMax = 'default',
   layout = 'contained',
@@ -159,18 +174,24 @@ export const AppShell: React.FC<AppShellProps> = ({
   ...rest
 }) => {
   const renderBottomNav = bottomNav !== undefined && showBottomNav;
+  const hasFooter = footer !== undefined;
   // 構造的な切替点は semantic breakpoint `shell:` を使う (C-1 / #48)。
-  // bottomNav clearance (pb) も shell の切替に同期させる (mobile は nav 分の余白、shell 以上で通常)。
+  // mobile の BottomNav クリアランス (h-16 nav + 16px gap = pb-20) は「内容カラム最下部の要素」に乗せる:
+  // footer があれば footer の margin-bottom、無ければ従来どおり main の padding-bottom (shell 以上で通常へ戻す)。
   const mainPaddingY = renderBottomNav
-    ? 'pt-4 sm:pt-6 shell:pt-8 pb-20 shell:pb-8'  // bottomNav clearance on mobile
+    ? hasFooter
+      ? 'pt-4 sm:pt-6 shell:pt-8 pb-8'             // footer が最下部 → main 下は通常 padding (clearance は footer へ)
+      : 'pt-4 sm:pt-6 shell:pt-8 pb-20 shell:pb-8' // main が最下部 → 下に bottomNav clearance
     : 'py-container';
   // full モードは wrapper (px + max-w) を外す。横/縦 padding は内側 (Section/Center) が持つが、
-  // mobile の bottomNav クリアランス (下部) だけは shell の責務として残す。
-  const fullPaddingY = renderBottomNav ? 'pb-20 shell:pb-0' : '';
+  // mobile の bottomNav クリアランス (下部) だけは shell の責務として残す (footer がある時は footer へ移す)。
+  const fullPaddingY = renderBottomNav && !hasFooter ? 'pb-20 shell:pb-0' : '';
   const mainInnerClass =
     layout === 'full'
       ? ['flex-1 w-full', fullPaddingY].filter(Boolean).join(' ')
       : ['flex-1 w-full mx-auto px-container', maxWidthClasses[contentMax], mainPaddingY].join(' ');
+  // footer 帯の mobile クリアランス: 固定 BottomNav に隠れないよう margin-bottom で帯を上へ押し上げる。
+  const footerClearance = renderBottomNav ? 'mb-20 shell:mb-0' : '';
   return (
     <div data-ds-root
       {...rest}
@@ -185,6 +206,11 @@ export const AppShell: React.FC<AppShellProps> = ({
             {children}
           </div>
         </main>
+        {footer && (
+          <footer className={['shrink-0', footerClearance].filter(Boolean).join(' ')}>
+            {footer}
+          </footer>
+        )}
       </div>
       {renderBottomNav && <div className="shell:hidden">{bottomNav}</div>}
     </div>

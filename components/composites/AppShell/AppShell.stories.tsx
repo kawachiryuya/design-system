@@ -254,9 +254,23 @@ export const EdgeCases: Story = {
 
       <Caption text='footer slot (短いコンテンツ) — main が flex-1・footer が shrink-0 で、短くてもフッターはビューポート底へ。帯は内容カラム幅 (レール下に回り込まない)、mobile は BottomNav の上に押し上げ'>
         <ShellPreview>
+          {/* footer を枠内で可視化するため「短い viewport」を模す:
+              (1) AppShell の min-h-screen を !min-h-full で枠 (500px) 高に収める。
+              (2) sidebar は h-screen 版 MockSidebar でなく枠高に収まる版を使う
+                  (h-screen=100vh は flex 行を 900px に広げ min-height を上回り footer を枠外へ押し出すため)。 */}
           <AppShell
+            className="!min-h-full"
             header={<MockHeader />}
-            sidebar={<MockSidebar />}
+            sidebar={
+              <div className="w-56 shrink-0 h-full border-r border-border-subtle bg-surface px-2">
+                <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar</div>
+                <nav className="px-2 flex flex-col gap-1">
+                  <span className="px-3 py-2 rounded text-sm">ホーム</span>
+                  <span className="px-3 py-2 rounded text-sm">予約一覧</span>
+                  <span className="px-3 py-2 rounded text-sm">マイページ</span>
+                </nav>
+              </div>
+            }
             bottomNav={<MockBottomNav />}
             subBar={<MockSubBar title="footer 付き" />}
             footer={<MockFooter />}

@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Tokens/preset: `@tailwindcss/container-queries` を devDependencies から dependencies へ移動** (packaging 修正 = PATCH、#98): mode② (consumer が preset 継承して自前 Tailwind でビルド) では `tokens/preset.cjs` が `require('@tailwindcss/container-queries')` を評価するため、consumer のツリーに当 plugin が存在しないと build が `Cannot find module` で落ちる。6.0.0 では devDependency だったため mode② consumer に推移的にインストールされず壊れていた。preset が無条件 require する以上、通常依存として宣言し consumer に自動で入るようにする (mode① は preset を評価しないので未使用だが無害)。
+
 ## [6.0.0] - 2026-06-26
 
 ### ⚠ BREAKING CHANGES

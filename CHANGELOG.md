@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+## [6.0.1] - 2026-06-27
+
 ### Fixed
 
 - **Tokens/preset: `@tailwindcss/container-queries` を devDependencies から dependencies へ移動** (packaging 修正 = PATCH、#98): mode② (consumer が preset 継承して自前 Tailwind でビルド) では `tokens/preset.cjs` が `require('@tailwindcss/container-queries')` を評価するため、consumer のツリーに当 plugin が存在しないと build が `Cannot find module` で落ちる。6.0.0 では devDependency だったため mode② consumer に推移的にインストールされず壊れていた。preset が無条件 require する以上、通常依存として宣言し consumer に自動で入るようにする (mode① は preset を評価しないので未使用だが無害)。
@@ -740,7 +742,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v6.0.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v6.0.1...HEAD
+[6.0.1]: https://github.com/kawachiryuya/design-system/compare/v6.0.0...v6.0.1
 [6.0.0]: https://github.com/kawachiryuya/design-system/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/kawachiryuya/design-system/compare/v4.0.0...v5.0.0
 [4.0.0]: https://github.com/kawachiryuya/design-system/compare/v3.0.0...v4.0.0

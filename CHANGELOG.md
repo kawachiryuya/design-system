@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+## [6.0.0] - 2026-06-26
+
 ### ⚠ BREAKING CHANGES
 
 - **VR 集約モデル移行 (overlay の残: Tooltip / Toast の開状態を Overview 化、#90)** (story id 削除 = silent break §10-2): #78 overlay バッチで安定 VR 不可として見送っていた Tooltip / Toast の開状態を VR 対象化。Tooltip は新 prop `defaultOpen` で hover 不要に静的表示、Toast は**入場アニメが無いと判明**したため `ToastProvider` に `duration=0` で 5 variant を静的スタックして撮る (当初想定の「アニメ無効 API」は不要だった)。各 Playground を `disableSnapshot` に切替。Tooltip の `Placements` / `OnIconButton` / `LongText`、Toast の `Variants` / `States` / `EdgeCases` story を削除 (placement / position / usage は Playground Controls + guideline で担保)。`?path=/story/composites-tooltip--placements`・`composites-tooltip--on-icon-button`・`composites-toast--variants`・`composites-toast--states` 等の旧 Storybook URL が無効になる。
@@ -734,7 +736,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v5.0.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v6.0.0...HEAD
+[6.0.0]: https://github.com/kawachiryuya/design-system/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/kawachiryuya/design-system/compare/v4.0.0...v5.0.0
 [4.0.0]: https://github.com/kawachiryuya/design-system/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/kawachiryuya/design-system/compare/v2.1.0...v3.0.0

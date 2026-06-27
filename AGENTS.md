@@ -425,7 +425,7 @@ themeable トークンを 3 層に分け、機械可読な manifest [`tokens/the
 | **コミット前の最終確認 (全体)** | `npm run verify` |
 | 視覚・a11y も含む全確認 | `npm run verify:full` |
 
-- `npm run verify` = `tokens:build → check:contrast → check:links → lint → typecheck` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
+- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → lint → typecheck` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
 - `typecheck` は incremental (`.tsbuildinfo`) のため 2 回目以降が速い。
 - **イテレーション中はスコープ版、全体走査はコミット前のみ** という方針を守る。
 
@@ -567,6 +567,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | §5 規約適合: forwardRef (§5-2) / Props の JSDoc (§5-2) / 4 ファイル構成 (§5-1) / barrel 同期 / 標準ストーリー構造 (§5-3) | **Check conventions** (`npm run check:conventions`、[`scripts/check-conventions.mjs`](./scripts/check-conventions.mjs)) |
 | 壊れた Storybook 内リンク (`?path=...`) が無い | **Check links** (`npm run check:links`、§9-3) |
 | コマンド・PR テンプレ・スクリプトの `§N` 参照が AGENTS.md の実在見出しを指す (改番でのリンク切れ防止) | **Check refs** (`npm run check:refs`、[`scripts/check-refs.mjs`](./scripts/check-refs.mjs)) |
+| `tokens/preset.cjs` が require する外部パッケージが dependencies / peerDependencies に宣言済み (mode② consumer の preset 解決を守る。devDependency 止まりだと `Cannot find module` で落ちる packaging silent break を弾く) | **Check preset deps** (`npm run check:preset-deps`、[`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs)) |
 | semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化 / bright-hue) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
 | 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
 

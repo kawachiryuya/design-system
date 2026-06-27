@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **Tokens/preset: mode② 解決スモークテスト `check:preset-deps` を追加 + `tailwindcss` を optional peerDependency として宣言** (packaging 強化、#98 follow-up): preset.cjs は consumer のビルド時に `require('tailwindcss/plugin')` / `require('@tailwindcss/container-queries')` を解決するため、これら外部 require がすべて `dependencies` / `peerDependencies` に宣言済みかを静的検査する `check:preset-deps` を `verify` に追加。6.0.0→6.0.1 で起きた「devDependency 止まりで mode② consumer が `Cannot find module` で落ちる」packaging 回帰を CI で機械ガードする ([`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs))。あわせて preset が前提とする `tailwindcss` を **optional peerDependency** (`^3.4.0`) として正式宣言 (mode② は consumer 提供 / mode① は preset 非評価のため optional)。consumer は Tailwind 3.4+ を持っていれば追加作業なし。
+
 ## [6.0.1] - 2026-06-27
 
 ### Fixed

@@ -220,7 +220,7 @@ const buttonVariants = tv({
     size: {
       // 文字サイズと gap だけ。高さ・余白・角丸は iconOnly との compoundVariants で
       sm: 'text-sm gap-1',
-      md: 'text-base gap-2',
+      md: 'text-md gap-2',
       lg: 'text-lg gap-2',
     },
     iconOnly: {

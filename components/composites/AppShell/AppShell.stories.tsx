@@ -49,7 +49,7 @@ type Story = StoryObj<typeof AppShell>;
 // ── slot 用 mock コンポーネント (Storybook 表示用) ───────────────────
 
 const MockHeader = () => (
-  <header className="bg-surface border-b border-border-subtle px-4 h-12 flex items-center font-semibold">
+  <header className="bg-surface border-b border-border-subtle px-4 h-12 flex items-center font-medium">
     📱 Mobile Header
   </header>
 );

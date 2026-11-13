@@ -279,10 +279,11 @@ borderRadius: { ...t.radius,  DEFAULT: t.radius.md  },
 - `radius`: `none / sm / md / lg / full` (5 段、中核 sm/md/lg + 境界 none/full)
 - `shadow`: `none / sm / md / lg` (4 段、中核 sm/md/lg + 境界 none)
 - **コンポーネントの `size` prop**: `Input` / `Label` / `Button` / `Badge` 等の Primitive、および `SearchBar` / `Radio` / `Checkbox` / `Switch` / `SegmentedControl` / `NumberInput` / `Select` 等の Composite で **`sm / md / lg` の文字列リテラル** に統一 (`small` / `medium` / `large` 表記は禁止)。これにより `<Button size="md">` / `rounded-md` / `shadow-md` / `text-md` が同じ `md` で並ぶ。Spinner (`xs/sm/md/lg/xl/2xl`) や Icon (`sm/md/lg/xl`)、Avatar (`xs/sm/md/lg/xl`) のように境界スケールを持つ component も、ラベル流派は `sm/md/lg` で揃える
+- **`font-size`**: `xs / sm / md / lg / xl / 2xl〜5xl`。16px は Tailwind 慣習の `base` ではなく **`md`** (#109)。`<Button size="md">` の文字が `text-md` で、size 名と揃う。`text-base` は存在しないクラスとして `check:utilities` が弾く
+- **font-weight**: `regular / medium / bold` の 3 段 (#109)。semibold (600) は和文の system font (Yu Gothic / Meiryo) で 700 に丸められ差が出ないため持たない。見出しは全段 bold、階層はサイズで作る
 - **Button の Radius は size 連動**: `Button size="sm" → rounded-sm` / `size="md" → rounded-md` / `size="lg" → rounded-lg`。size と radius が同じラベルで揃うため設計が直感的
 
 **非対象**:
-- **`font-size`**: Tailwind の慣習で `text-base` が body text のデフォルトとして広く認知されているため、`base` ラベルをそのまま維持 (本リポでも `text-base` は 16px の body 用途)
 - **`spacing`**: 0〜96 の数値スケールで size label でないため対象外
 - **その他 semantic ラベル系** (font-weight, line-height, letter-spacing, animation duration/easing, font-family, breakpoints, color palette): 用途ラベル / 数値スケールであり、`md = default` 規約は適用しない
 

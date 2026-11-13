@@ -40,13 +40,13 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="リンクテキストは遷移先が分かる言葉にする"
   doExample={
-    <p className="text-base leading-relaxed">
+    <p className="text-md leading-relaxed">
       詳細は <Link href="#">利用規約</Link> を参照してください。
     </p>
   }
   doCaption="動詞や具体名で書くと、SR の「リンク一覧」機能でも意味が取れる。"
   dontExample={
-    <p className="text-base leading-relaxed">
+    <p className="text-md leading-relaxed">
       詳細は <Link href="#">こちら</Link> を参照してください。
     </p>
   }
@@ -84,13 +84,13 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="色だけで区別せず、本文中のリンクは underline も併用する"
   doExample={
-    <p className="text-base leading-relaxed">
+    <p className="text-md leading-relaxed">
       お問合せは <Link href="#" underline="hover">サポート窓口</Link> までご連絡ください。
     </p>
   }
   doCaption="hover で下線、色覚特性に依存しない冗長な手がかりを提供する。"
   dontExample={
-    <p className="text-base leading-relaxed">
+    <p className="text-md leading-relaxed">
       お問合せは <Link href="#" underline="none">サポート窓口</Link> までご連絡ください。
     </p>
   }

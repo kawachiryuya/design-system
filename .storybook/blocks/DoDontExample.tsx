@@ -38,7 +38,7 @@ export const DoDontExample: React.FC<DoDontExampleProps> = ({
 }) => (
   <div className={`${SBDOCS_CLASS.doDontExample} my-10`}>
     {label && (
-      <div className={`${SBDOCS_CLASS.doDontExampleLabel} text-xs font-semibold tracking-wide uppercase mb-4`}>
+      <div className={`${SBDOCS_CLASS.doDontExampleLabel} text-xs font-medium tracking-wide uppercase mb-4`}>
         {label}
       </div>
     )}

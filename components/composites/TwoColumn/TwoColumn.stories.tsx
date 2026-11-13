@@ -37,14 +37,14 @@ type Story = StoryObj<typeof TwoColumn>;
 
 const Main = () => (
   <div className="bg-surface border border-border-default rounded-md p-4 min-h-[160px]">
-    <div className="text-sm font-semibold mb-2">Main (children)</div>
+    <div className="text-sm font-medium mb-2">Main (children)</div>
     <div className="text-sm text-onSurface-subtle">主コンテンツ領域。検索結果 / 座席選択 / form 等。</div>
   </div>
 );
 
 const Sidebar = () => (
   <div className="bg-surface-subtle border border-border-default rounded-md p-4 min-h-[160px]">
-    <div className="text-sm font-semibold mb-2">Sidebar (sidebar slot)</div>
+    <div className="text-sm font-medium mb-2">Sidebar (sidebar slot)</div>
     <div className="text-sm text-onSurface-subtle">補助コンテンツ。条件 / 料金 / preview 等。</div>
   </div>
 );
@@ -128,13 +128,13 @@ export const EdgeCases: Story = {
             mobileReverse
             sidebar={
               <div className="bg-surface-subtle border border-border-default rounded-md p-4">
-                <div className="text-sm font-semibold mb-2">Preview (sidebar)</div>
+                <div className="text-sm font-medium mb-2">Preview (sidebar)</div>
                 <div className="text-sm text-onSurface-subtle">mobile では上、PC では右に表示される。</div>
               </div>
             }
           >
             <div className="bg-surface border border-border-default rounded-md p-4">
-              <div className="text-sm font-semibold mb-2">Form (children = main)</div>
+              <div className="text-sm font-medium mb-2">Form (children = main)</div>
               <div className="text-sm text-onSurface-subtle">mobile では下、PC では左に表示される。</div>
             </div>
           </TwoColumn>
@@ -155,7 +155,7 @@ export const EdgeCases: Story = {
             split="8/4"
             sidebar={
               <div className="bg-surface-subtle border border-border-default rounded-md p-4 cols:sticky cols:top-4">
-                <div className="text-sm font-semibold mb-2">Sticky Sidebar</div>
+                <div className="text-sm font-medium mb-2">Sticky Sidebar</div>
                 <div className="text-sm text-onSurface-subtle">consumer 側で `cols:sticky cols:top-X` を className に付けるだけで、2 カラム化と sticky が同じ breakpoint で同期する。SeatPage の料金 sidebar pattern。</div>
               </div>
             }

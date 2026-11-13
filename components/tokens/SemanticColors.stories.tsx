@@ -48,7 +48,7 @@ const CardHeader: React.FC<{
   description: string;
 }> = ({ name, twClass, source, description }) => (
   <div className="flex flex-col gap-1 mt-3">
-    <code className="text-xs font-mono font-semibold text-onSurface">{name}</code>
+    <code className="text-xs font-mono font-medium text-onSurface">{name}</code>
     <code className="text-xs font-mono text-onSurface-subtle">{twClass}</code>
     <code className="text-xs font-mono text-onSurface-subtle">→ {source}</code>
     {description && (
@@ -132,7 +132,7 @@ const OnTextCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entr
   return (
     <div className="border border-border-subtle rounded-md p-3 bg-background">
       <div className={`${bgClass} p-4 rounded-sm border border-border-subtle`}>
-        <span className={`${tw('text-onSurface', entry.key)} text-base font-medium`}>
+        <span className={`${tw('text-onSurface', entry.key)} text-md font-medium`}>
           テキストサンプル · The quick brown fox
         </span>
       </div>

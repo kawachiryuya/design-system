@@ -41,7 +41,7 @@ export type TypographyColor =
   | 'inherit';
 
 /** フォントウェイト */
-export type TypographyWeight = 'normal' | 'medium' | 'semibold' | 'bold';
+export type TypographyWeight = 'normal' | 'medium' | 'bold';
 
 /** レンダリング先 HTML 要素（`as` prop） */
 export type TypographyElement =
@@ -74,7 +74,7 @@ export type TypographyElement =
  *
  * @example
  *   // ラベル（form 内で使用、強調）
- *   <Typography variant="label" weight="semibold">必須項目</Typography>
+ *   <Typography variant="label" weight="bold">必須項目</Typography>
  *
  * @example
  *   // 1 行省略（カード内タイトル等）
@@ -148,8 +148,8 @@ const typographyVariants = tv({
       display:   'text-heading-display font-bold',
       h1:        'text-heading-xl font-bold',
       h2:        'text-heading-lg font-bold',
-      h3:        'text-heading-md font-semibold',
-      h4:        'text-heading-sm font-semibold',
+      h3:        'text-heading-md font-bold',
+      h4:        'text-heading-sm font-bold',
       'body-lg': 'text-body-lg font-normal',
       body:      'text-body-md font-normal',
       'body-sm': 'text-body-sm font-normal',
@@ -172,7 +172,6 @@ const typographyVariants = tv({
     weight: {
       normal:   'font-normal',
       medium:   'font-medium',
-      semibold: 'font-semibold',
       bold:     'font-bold',
     },
     truncate: {

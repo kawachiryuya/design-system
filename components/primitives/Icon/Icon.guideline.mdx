@@ -90,14 +90,14 @@ SVG アイコンのラッパー。`name` 経由で `iconRegistry` の登録済�
 <DoDontExample
   label="本文には sm / md を使う"
   doExample={
-    <div className="flex items-center gap-2 text-base">
+    <div className="flex items-center gap-2 text-md">
       <Icon name="info" size="sm" color="info" />
       <span>本文サイズに合わせて sm (20px) で揃える</span>
     </div>
   }
-  doCaption="本文の text-base (16px) に対して sm/md がバランスする。同じ行の中で「文字より少し大きい程度」が自然。"
+  doCaption="本文の text-md (16px) に対して sm/md がバランスする。同じ行の中で「文字より少し大きい程度」が自然。"
   dontExample={
-    <div className="flex items-center gap-2 text-base">
+    <div className="flex items-center gap-2 text-md">
       <Icon name="info" size="xl" color="info" />
       <span>xl (48px) は本文に対して大きすぎる</span>
     </div>

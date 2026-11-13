@@ -142,7 +142,7 @@ export const Alert: React.FC<AlertProps> = ({
 
       <div className="flex-1 min-w-0">
         {title && (
-          <p className={['text-body-sm font-semibold leading-snug mb-1', config.title].join(' ')}>
+          <p className={['text-body-sm font-bold leading-snug mb-1', config.title].join(' ')}>
             {title}
           </p>
         )}

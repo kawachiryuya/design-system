@@ -41,7 +41,7 @@ type Story = StoryObj<typeof SplitPane>;
 
 const MockList = ({ count = 20 }: { count?: number }) => (
   <div className="p-4 space-y-2">
-    <div className="text-sm font-semibold mb-3">予約一覧 (list pane)</div>
+    <div className="text-sm font-medium mb-3">予約一覧 (list pane)</div>
     {Array.from({ length: count }, (_, i) => (
       <div key={i} className="bg-surface border border-border-default rounded-md p-3 hover:bg-surface-subtle cursor-pointer">
         <div className="text-sm font-medium">予約 #{String(i + 1).padStart(3, '0')}</div>

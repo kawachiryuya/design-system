@@ -14,6 +14,13 @@
 
 ### ⚠ BREAKING CHANGES
 
+- **Typography primitive の整理: font-size `base` → `md`、font-weight から `semibold` を削除、見出しを全段 bold に (#109 順番 4 / Typo-1)**:
+  - **`text-base` → `text-md`** (utility rename、silent break)。16px を Tailwind 慣習の `base` ではなく size 名 (sm / md / lg) と揃えた `md` で呼ぶ。`text-base` は `check:utilities` が「存在しないクラス」として弾く
+  - **`font-semibold` を削除** (utility / token `font-weight.semibold` / Typography `weight="semibold"`)。和文の system font (Yu Gothic は Medium / Bold、Meiryo は Regular / Bold) では 600 が 700 に丸められ、bold との差が存在しないため。3 段 (regular / medium / bold) に
+  - **見出し (heading md / sm) の weight が semibold → bold** (視覚変化)。見出し 5 段すべて bold、階層はサイズで作る
+  - 部品の semibold は役割で振り分け: 見出し的 (Card.Header / Alert・Toast のタイトル / EmptyState のタイトル / Typography h3・h4) → **bold**、ラベル的 (Tabs の件数 badge / Accordion の項目名 / Avatar の initials / Do・Don't のラベル) → **medium** (視覚変化)
+  - `heading.sm` に他の heading と同じ `letter-spacing: normal` を明示 (値は不変)
+  - Migration: `sed -i -E 's/\btext-base\b/text-md/g; s/\bfont-semibold\b/font-bold/g'` (ラベル的な箇所は `font-medium` に手で振り分ける)。`weight="semibold"` → `"bold"` (型エラーで検出できる)
 - **brand (teal) / warning (orange) の色相と段を変更、neutral.500 を微調整 (視覚変化、primary token の色相変更は visual break §10-1。#109 順番 4 / Color-2)**:
   - **brand**: teal の ramp を hue 166 → 159 (緑寄り) で作り直し、600 = `#008555` を brand の種色にする。`surface.primary` を teal.700 (`#006F50`) → **teal.600 (`#008555`)** に移し、他の role と同じ「塗り 600 / 文字 700」に揃える (白文字 4.68、AA)。`onSurface.primary` / `border.focus` / `state.*-primary` は新しい 700 (`#006D45`、白地 6.42)。Primary Button・Switch の on・FilterChip active・Badge primary・focus ring・リンク色が変わる
   - **warning**: orange の ramp を hue 63 → **82** (黄色寄り) で作り直し。段とアンカーは不変 (600 白文字 4.86)。Alert / Toast / Badge の warning、`orange-500` のアイコン色 (非テキスト 3.67) が変わる

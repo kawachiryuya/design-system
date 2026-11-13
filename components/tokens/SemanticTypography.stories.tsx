@@ -50,7 +50,7 @@ const StyleMeta: React.FC<{ name: string; twClass: string; spec: StyleSpec }> = 
   spec,
 }) => (
   <div className="flex flex-col gap-1 mt-3 text-xs font-mono">
-    <code className="font-semibold text-onSurface">{name}</code>
+    <code className="font-medium text-onSurface">{name}</code>
     <code className="text-onSurface-subtle">{twClass}</code>
     <code className="text-onSurface-subtle">
       font-size: <span className="text-onSurface">{formatRef(spec['font-size'].value)}</span>

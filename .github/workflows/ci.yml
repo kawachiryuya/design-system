@@ -12,7 +12,10 @@ concurrency:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    # ubuntu-latest が 26.04 に上がり、Playwright 1.60 の `install --with-deps chromium` が
+    # 「ubuntu26.04 は未対応」で落ちるため 24.04 に固定する。Playwright (= @storybook/test-runner) を
+    # 26.04 対応版へ上げたら ubuntu-latest に戻してよい。
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: read

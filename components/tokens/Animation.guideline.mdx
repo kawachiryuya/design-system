@@ -12,12 +12,13 @@ import * as AnimationStories from './Animation.stories';
 - **duration** (動きの長さ) = 開始から終了までの時間
   - `duration-fast` (100ms) / `duration-normal` (200ms) / `duration-slow` (300ms) / `duration-slower` (500ms)
 - **easing** (動きのカーブ) = その時間内での加減速のパターン
-  - `ease-out` (減速) / `ease-in-out` (両端緩急) / `ease-linear` (一定) / `ease-in` (加速)
+  - `ease-ease-out` (減速) / `ease-ease-in-out` (両端緩急) / `ease-linear` (一定) / `ease-ease-in` (加速)
+  - utility 名は `ease-` + token key で、key 自体が `ease-out` 等のため二重になる (Tailwind 既定の `ease-out` は preset の上書きで存在しない)。key の見直しは検討中
 
-**両方を組み合わせて使う**。例: `duration-normal ease-out` = 「200ms で減速しながら動く」。Tailwind の `transitionDuration` / `transitionTimingFunction` に統合済み。
+**両方を組み合わせて使う**。例: `duration-normal ease-ease-out` = 「200ms で減速しながら動く」。Tailwind の `transitionDuration` / `transitionTimingFunction` に統合済み。
 
 ```tsx
-<button className="transition-colors duration-normal ease-out">…</button>
+<button className="transition-colors duration-normal ease-ease-out">…</button>
 ```
 
 ---

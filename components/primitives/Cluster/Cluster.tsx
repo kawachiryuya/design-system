@@ -57,7 +57,7 @@ export type ClusterJustify = 'start' | 'center' | 'end' | 'between' | 'around';
  * @example
  *   // header pattern (title 左 + action 右、wrap あり)
  *   <Cluster gap="md" justify="between" align="center">
- *     <Typography variant="h2">予約一覧</Typography>
+ *     <Typography variant="sectionTitle">予約一覧</Typography>
  *     <Button>新規予約</Button>
  *   </Cluster>
  *

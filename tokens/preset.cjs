@@ -36,7 +36,7 @@ const splitFontFamily = (s) =>
 
 // typography-semantic → `.type-{role}` の合成クラス (text style、#109 Typo-2)。
 // 各 leaf { font-size, font-weight, line-height, letter-spacing? } を 1 クラスにまとめる。
-// ネストキーは kebab で連結: heading.display → 'type-heading-display'、control.md → 'type-control-md'。
+// ネストキーは kebab で連結: page-title → 'type-page-title'、control.md → 'type-control-md'。
 // components 層 (addComponents) に置くので、utilities 層の `font-bold` 等で weight だけを上書きできる
 // (Typography の weight prop)。出荷コンポーネントは primitive の text-{size} / leading-* / tracking-* を
 // 直接書かず、必ずこの type-* を使う (eslint で禁止、AGENTS §3-7)。
@@ -256,10 +256,10 @@ module.exports = {
         },
       });
     }),
-    // ── Semantic typography: `.type-{role}` (heading / body / control / label / caption) ──
-    // 例: <p className="type-body-md">…</p> / <h2 className="type-heading-md">…</h2>
+    // ── Semantic typography: `.type-{role}` (hero/page/section/item-title / body / control / label / caption) ──
+    // 例: <p className="type-body-md">…</p> / <h2 className="type-section-title">…</h2>
     // size + line-height + weight (+ 字間) をセットで持つ text style。components 層なので
-    // `type-heading-md font-normal` のように weight だけ utility で上書きできる。
+    // `type-section-title font-normal` のように weight だけ utility で上書きできる。
     plugin(function ({ addComponents }) {
       addComponents(typeStyles);
     }),

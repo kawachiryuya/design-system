@@ -115,7 +115,7 @@
 
 /* H1〜H4 / P の sbdocs 見出しスタイルは MDX 内の素の `#` `##` ... `<p>` を装飾するためのもの。
    `<Typography>` がレンダリングする要素は `data-ds-typography` で識別して除外する
-   (Typography variant の type-heading-* / type-body-* utility を効かせるため)。
+   (Typography variant の type-*-title / type-body-* utility を効かせるため)。
    既存の `.sbdocs hr:not([role])` と同じ exclusion パターン。 */
 
 /* H1 (ページタイトル) */

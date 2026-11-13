@@ -4,17 +4,16 @@ import { tv } from '../../_internal/tv';
 /**
  * Typography のバリアント定義（視覚スタイル）
  *
- * h5 / h6 は h4 と視覚的差が小さく実利用も少ないため省略。
- * 階層がさらに深い場合は `as` で <h5>/<h6> タグを指定しつつ `variant="h4"` で見た目を共有する。
+ * 見出しは「どこの見出しか」の役割名 (heroTitle / pageTitle / sectionTitle / itemTitle) で選ぶ。
+ * HTML の見出しレベル (h1〜h6) は `as` で独立に決める (視覚と文書構造の分離)。
  */
 // 型スケール順 = font-size 大→小。同サイズ (body-sm 14reg / label 14med) は
 // 例外的に body グループ (body-lg/body/body-sm) をまとめる方針で body-sm → label の順。
 export type TypographyVariant =
-  | 'display'
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
+  | 'heroTitle'
+  | 'pageTitle'
+  | 'sectionTitle'
+  | 'itemTitle'
   | 'body-lg'
   | 'body'
   | 'body-sm'
@@ -53,21 +52,21 @@ export type TypographyElement =
  * Typography Props
  *
  * **設計原則**: 視覚スタイル（`variant`）と意味論（`as`）を分離する。
- * - `variant` は見た目だけ決める（h1 サイズに見える等）
+ * - `variant` は見た目だけ決める（ページタイトルの大きさに見える等）
  * - `as` は HTML 構造を決める（`<h2>` を実際にレンダリング）
- * - 両方を組み合わせることで「h1 のスタイルで `<p>`」のような柔軟性を実現
+ * - 両方を組み合わせることで「sectionTitle のスタイルで `<h3>`」のような柔軟性を実現
  *
  * @example
- *   // 基本（variant に従う HTML タグが自動選択）
- *   <Typography variant="h1">ページタイトル</Typography>
+ *   // 基本（variant に従う HTML タグが自動選択: pageTitle → <h1>）
+ *   <Typography variant="pageTitle">ページタイトル</Typography>
  *
  * @example
- *   // 視覚 vs 意味の分離: 見た目 h2、構造は h3
- *   <Typography variant="h2" as="h3">セクションタイトル</Typography>
+ *   // 視覚 vs 意味の分離: 見た目はセクション見出し、文書構造は h3
+ *   <Typography variant="sectionTitle" as="h3">セクションタイトル</Typography>
  *
  * @example
- *   // 補足テキスト（mute 色）
- *   <Typography variant="body" color="muted">
+ *   // 補足テキスト（subtle 色）
+ *   <Typography variant="body" color="subtle">
  *     最終更新日: 2026-05-10
  *   </Typography>
  *
@@ -77,15 +76,18 @@ export type TypographyElement =
  *
  * @example
  *   // 1 行省略（カード内タイトル等）
- *   <Typography variant="h4" truncate>
+ *   <Typography variant="itemTitle" truncate>
  *     {longTitle}
  *   </Typography>
  */
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   /**
    * タイポグラフィのバリアント（視覚スタイル）。font-size 大→小 / 同サイズは太→細の順。
-   * - `display`: 最大級ヒーローテキスト（48px bold）
-   * - `h1`〜`h4`: 見出し（数字が大きいほど小さい。h5/h6 は視覚差が小さいため variant には無く、`as="h5"` でタグだけ指定して `variant="h4"` を流用）
+   * 見出しは役割名で選び、HTML の見出しレベルは `as` で別に決める。
+   * - `heroTitle`: LP ヒーロー・数値の強調（48px bold）。アプリ画面では使わない
+   * - `pageTitle`: 画面のタイトル（30px bold）。1 画面に 1 つ
+   * - `sectionTitle`: 画面内のセクション、Modal / Drawer のタイトル（24px bold）
+   * - `itemTitle`: Card / Accordion / リストグループの見出し（20px bold）
    * - `body-lg`/`body`/`body-sm`: 本文（18/16/14px）
    * - `label`: フォームラベル等（14px medium）
    * - `caption`: 補助テキスト（12px、最小）
@@ -93,10 +95,11 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
    */
   variant?: TypographyVariant;
   /**
-   * レンダリング先 HTML 要素。省略時は `variant` から自動選択（h1 → `<h1>` 等）。
-   * 視覚と意味論の分離に使う。
+   * レンダリング先 HTML 要素。省略時は `variant` から自動選択
+   * （heroTitle / pageTitle → `<h1>`、sectionTitle → `<h2>`、itemTitle → `<h3>`、body → `<p>` 等）。
+   * 視覚と意味論の分離に使う: 見出しレベルは文書アウトラインで決め、見た目は variant で決める。
    *
-   * @example variant="h1" as="p" → h1 のスタイルで `<p>` タグ
+   * @example variant="itemTitle" as="h4" → 項目見出しの見た目で `<h4>` タグ
    */
   as?: TypographyElement;
   /**
@@ -119,11 +122,10 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
 
 /** variant → デフォルト HTML タグのマップ (as prop 省略時の自動選択) */
 const defaultTag: Record<TypographyVariant, TypographyElement> = {
-  display:  'h1',
-  h1:       'h1',
-  h2:       'h2',
-  h3:       'h3',
-  h4:       'h4',
+  heroTitle:    'h1',
+  pageTitle:    'h1',
+  sectionTitle: 'h2',
+  itemTitle:    'h3',
   'body-lg': 'p',
   body:      'p',
   'body-sm': 'p',
@@ -145,11 +147,10 @@ const typographyVariants = tv({
   variants: {
     variant: {
       // weight は type-* (text style) に含まれる。weight prop の font-* が utilities 層で後勝ちする
-      display:   'type-heading-display',
-      h1:        'type-heading-xl',
-      h2:        'type-heading-lg',
-      h3:        'type-heading-md',
-      h4:        'type-heading-sm',
+      heroTitle:    'type-hero-title',
+      pageTitle:    'type-page-title',
+      sectionTitle: 'type-section-title',
+      itemTitle:    'type-item-title',
       'body-lg': 'type-body-lg',
       body:      'type-body-md',
       'body-sm': 'type-body-sm',

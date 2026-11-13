@@ -32,7 +32,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'full';
  *   // タイトルなし、Body に独自構造を入れる
  *   <Modal open={open} onClose={close} size="lg" aria-labelledby="custom-title">
  *     <Modal.Body>
- *       <h2 id="custom-title" className="type-heading-md mb-2">
+ *       <h2 id="custom-title" className="type-section-title mb-2">
  *         カスタム見出し
  *       </h2>
  *       <p>本文…</p>
@@ -194,7 +194,7 @@ const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
       {(title || !hideCloseButton) && (
         <header className="flex items-start justify-between gap-3 p-5">
           {title ? (
-            <h2 id={titleId} className="type-heading-md text-onSurface flex-1">
+            <h2 id={titleId} className="type-section-title text-onSurface flex-1">
               {title}
             </h2>
           ) : <span aria-hidden className="flex-1" />}

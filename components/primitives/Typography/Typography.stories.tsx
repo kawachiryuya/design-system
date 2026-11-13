@@ -17,7 +17,7 @@ const meta: Meta<typeof Typography> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['display', 'h1', 'h2', 'h3', 'h4', 'body-lg', 'body', 'body-sm', 'label', 'caption'],
+      options: ['heroTitle', 'pageTitle', 'sectionTitle', 'itemTitle', 'body-lg', 'body', 'body-sm', 'label', 'caption'],
     },
     as: {
       control: 'select',
@@ -46,13 +46,13 @@ type Story = StoryObj<typeof Typography>;
 // 「visual style と HTML 要素の分離 (variant vs as)」を play test で保証。
 
 export const Playground: Story = {
-  args: { variant: 'h2', as: 'h3', children: '見た目は h2、構造は h3' },
+  args: { variant: 'sectionTitle', as: 'h3', children: '見た目はセクション見出し、構造は h3' },
   parameters: {
     // Playground は Controls 探索の起点 → 視覚回帰対象外 (#78 / §5-3: 静的カタログが VR 対象)
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`as` で指定した HTML 要素が実際にレンダリングされることを play test で保証 (この例では `<h3>` タグ + type-heading-lg スタイル)。',
+        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`as` で指定した HTML 要素が実際にレンダリングされることを play test で保証 (この例では `<h3>` タグ + type-section-title スタイル)。',
       },
     },
   },
@@ -61,19 +61,19 @@ export const Playground: Story = {
     // as="h3" 指定で <h3> 要素として描画される
     const heading = canvas.getByRole('heading', { level: 3 });
     await expect(heading).toBeInTheDocument();
-    await expect(heading).toHaveTextContent('見た目は h2、構造は h3');
+    await expect(heading).toHaveTextContent('見た目はセクション見出し、構造は h3');
   },
 };
 
 // ── 2. Overview (VR 対象) ────────────────────────────────────────────────
-// 12 種類の variant を縦に積んでタイプスケールを示す。
+// 9 種類の variant を縦に積んでタイプスケールを示す。
 // 「どのサイズ・装飾でどの variant を使うか」の判断材料。
 
 export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'タイプスケール (display / h1〜h4 / body-lg / body / body-sm / label / caption、font-size 大→小。同サイズの body-sm/label は body グループをまとめる方針で body-sm→label) と color / weight の軸を 1 枚に集約。h5/h6 は h4 との視覚差が小さいため variant には無く、`as="h5"` でタグだけ指定して `variant="h4"` を流用する。',
+        story: 'タイプスケール (heroTitle / pageTitle / sectionTitle / itemTitle / body-lg / body / body-sm / label / caption、font-size 大→小。同サイズの body-sm/label は body グループをまとめる方針で body-sm→label) と color / weight の軸を 1 枚に集約。見出しは役割名で選び、HTML レベルは `as` で独立に決める。',
       },
     },
   },
@@ -81,11 +81,10 @@ export const Overview: Story = {
     <div className="flex flex-col gap-8">
       {/* タイプスケール — font-size 大→小 / 同サイズは太→細 */}
       <div className="flex flex-col gap-4">
-        <Typography variant="display">Display — 48px / ヒーロー</Typography>
-        <Typography variant="h1">H1 — ページタイトル</Typography>
-        <Typography variant="h2">H2 — セクション見出し</Typography>
-        <Typography variant="h3">H3 — サブセクション</Typography>
-        <Typography variant="h4">H4 — カードタイトル / 小見出し</Typography>
+        <Typography variant="heroTitle">heroTitle — 48px / LP ヒーロー</Typography>
+        <Typography variant="pageTitle">pageTitle — 30px / 画面のタイトル</Typography>
+        <Typography variant="sectionTitle">sectionTitle — 24px / セクション・Modal</Typography>
+        <Typography variant="itemTitle">itemTitle — 20px / Card・Accordion の見出し</Typography>
         <hr className="border-border-subtle" />
         <Typography variant="body-lg">Body Large — 18px / リード文</Typography>
         <Typography variant="body">Body — 16px / 本文 (デフォルト)</Typography>
@@ -107,7 +106,7 @@ export const Overview: Story = {
         <div className="text-xs text-onSurface-subtle">weight (variant デフォルトを上書き)</div>
         <div className="flex flex-wrap gap-4 items-baseline">
           {(['normal', 'medium', 'bold'] as const).map((weight) => (
-            <Typography key={weight} variant="h4" weight={weight}>{weight}</Typography>
+            <Typography key={weight} variant="itemTitle" weight={weight}>{weight}</Typography>
           ))}
         </div>
       </div>
@@ -132,7 +131,7 @@ export const EdgeCases: Story = {
     <div className="flex flex-col gap-8 max-w-prose">
       <Caption text="truncate — 1 行省略 (...) は親の width で機能">
         <div className="w-64 border border-dashed border-border-subtle p-2">
-          <Typography variant="h4" truncate>
+          <Typography variant="itemTitle" truncate>
             非常に長いカードタイトルが入る場合に truncate で省略される
           </Typography>
         </div>

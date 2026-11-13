@@ -6,8 +6,8 @@ import typographyTokens from '../../tokens/source/typography.json';
  * Semantic typography tokens の可視化カタログ。
  *
  * 入力: `tokens/source/typography.json` の `typography-semantic` セクション
- * (heading.{display,xl,lg,md,sm} / body.{lg,md,sm} / label / caption)。
- * 表示: 実テキストを対応する Tailwind class (`type-heading-xl` 等) で render。
+ * ({hero,page,section,item}-title / body.{lg,md,sm} / control.{sm,md,lg} / label / caption)。
+ * 表示: 実テキストを対応する Tailwind class (`type-page-title` 等) で render。
  */
 const meta: Meta = {
   title: 'Tokens/Typography/Semantic',
@@ -29,7 +29,10 @@ type StyleSpec = {
 };
 
 const SEMANTIC = (typographyTokens as any)['typography-semantic'] as {
-  heading: Record<string, StyleSpec>;
+  'hero-title': StyleSpec;
+  'page-title': StyleSpec;
+  'section-title': StyleSpec;
+  'item-title': StyleSpec;
   body: Record<string, StyleSpec>;
   control: Record<string, StyleSpec>;
   label: StyleSpec;
@@ -39,7 +42,7 @@ const SEMANTIC = (typographyTokens as any)['typography-semantic'] as {
 const formatRef = (v: string): string =>
   v.startsWith('{') ? v.slice(1, -1).replace(/^typography\./, '') : v;
 
-const HEADING_SAMPLE = '見出しテキスト · The quick brown fox';
+const TITLE_SAMPLE = '見出しテキスト · The quick brown fox';
 const BODY_SAMPLE =
   'デザインシステムは React・TypeScript・Tailwind CSS を使って構築されています。一貫した UI 品質と開発体験を提供します。';
 const CONTROL_SAMPLE = '予約する';
@@ -85,11 +88,11 @@ type Entry = {
 };
 
 const ENTRIES: Entry[] = [
-  ...(['display', 'xl', 'lg', 'md', 'sm'] as const).map((k) => ({
-    name: `heading.${k}`,
-    twClass: `type-heading-${k}`,
-    spec: SEMANTIC.heading[k],
-    sample: HEADING_SAMPLE,
+  ...(['hero-title', 'page-title', 'section-title', 'item-title'] as const).map((k) => ({
+    name: k,
+    twClass: `type-${k}`,
+    spec: SEMANTIC[k],
+    sample: TITLE_SAMPLE,
   })),
   ...(['lg', 'md', 'sm'] as const).map((k) => ({
     name: `body.${k}`,
@@ -111,7 +114,7 @@ export const Catalog: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Semantic typography 全 10 token を大→小の順で一覧。`heading.{display,xl,lg,md,sm}` / `body.{lg,md,sm}` / `label` / `caption`。各 token は font-size + font-weight + line-height + letter-spacing をセットで保持。',
+        story: 'Semantic typography 全 12 token を大→小の順で一覧。`{hero,page,section,item}-title` / `body.{lg,md,sm}` / `control.{sm,md,lg}` / `label` / `caption`。各 token は font-size + font-weight + line-height + letter-spacing をセットで保持。',
       },
     },
   },

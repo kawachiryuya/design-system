@@ -67,7 +67,7 @@ export const Container: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">container.padding-x (左右 padding)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">container.padding-x (左右 padding)</h3>
         <p className="m-0 type-body-sm text-onSurface-subtle">utility: <code className="font-mono text-xs">px-container</code> (単一 class、breakpoint で値が自動切替)</p>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
@@ -81,7 +81,7 @@ export const Container: Story = {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">container.padding-y (上下 padding)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">container.padding-y (上下 padding)</h3>
         <p className="m-0 type-body-sm text-onSurface-subtle">utility: <code className="font-mono text-xs">py-container</code></p>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
@@ -95,7 +95,7 @@ export const Container: Story = {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">container.max-width (4 variant)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">container.max-width (4 variant)</h3>
         <p className="m-0 type-body-sm text-onSurface-subtle">utility: <code className="font-mono text-xs">max-w-container[-narrow|-wide|-full]</code></p>
         <div className="flex flex-col gap-3">
           {(['narrow', 'default', 'wide', 'full'] as const).map((variant) => {
@@ -140,7 +140,7 @@ export const Content: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">content.max-width (Center の 4 段)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">content.max-width (Center の 4 段)</h3>
         <p className="m-0 type-body-sm text-onSurface-subtle">utility: <code className="font-mono text-xs">max-w-content-{'{sm|md|lg|xl}'}</code> / 値は rem (root font-size 追従)</p>
         <div className="flex flex-col gap-3">
           {(['sm', 'md', 'lg', 'xl'] as const).map((variant) => {
@@ -184,7 +184,7 @@ export const Section: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">section.gap (section 間の垂直余白)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">section.gap (section 間の垂直余白)</h3>
         <p className="m-0 type-body-sm text-onSurface-subtle">utility: <code className="font-mono text-xs">gap-section-{'{sm|md|lg}'}</code> / <code className="font-mono text-xs">space-y-section-{'{sm|md|lg}'}</code></p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {(['sm', 'md', 'lg'] as const).map((size) => (
@@ -204,7 +204,7 @@ export const Section: Story = {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">section.padding-y (section 自体の上下 padding)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">section.padding-y (section 自体の上下 padding)</h3>
         <p className="m-0 type-body-sm text-onSurface-subtle">utility: <code className="font-mono text-xs">py-section-{'{sm|md|lg}'}</code></p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {(['sm', 'md', 'lg'] as const).map((size) => (
@@ -237,7 +237,7 @@ export const Grid: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">grid.columns (カラム数)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">grid.columns (カラム数)</h3>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
             <div key={bp} className="flex items-center gap-4 py-2 px-3 rounded-md border border-border-subtle bg-surface">
@@ -250,7 +250,7 @@ export const Grid: Story = {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">grid.gutter (カラム間 gap)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">grid.gutter (カラム間 gap)</h3>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
             <div key={bp} className="flex items-center gap-4 py-2 px-3 rounded-md border border-border-subtle bg-surface">
@@ -263,7 +263,7 @@ export const Grid: Story = {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="type-heading-sm m-0 text-onSurface">grid-base 実例</h3>
+        <h3 className="type-item-title m-0 text-onSurface">grid-base 実例</h3>
         <p className="m-0 type-body-sm text-onSurface-subtle">
           viewport を狭めて columns が切替わるのを確認できる。子要素の <code className="font-mono text-xs">col-span-N</code> も合わせて responsive prefix で指定。
         </p>

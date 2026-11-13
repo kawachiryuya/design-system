@@ -9,7 +9,7 @@ import * as TypographyStories from './Typography.stories';
 
 タイポグラフィの primitive 層。font-size / weight / line-height / letter-spacing / family の 5 軸を持つ。`text-{key}` / `font-{key}` / `leading-{key}` / `tracking-{key}` / `font-{family}` の utility で参照。
 
-**禁則**: コンポーネント実装では [Semantic 層](?path=/docs/tokens-typography-semantic--guideline) の text style (`type-heading-xl` / `type-body-md` / `type-control-md` 等) を使う。primitive (`text-2xl` / `leading-tight` / `tracking-wide`) の直接利用は **lint で禁止** (AGENTS §3-7)。例外は Avatar の initials のように container 比で決まる文字だけで、理由付きの `eslint-disable` を書く。weight の `font-{weight}` は text style の上書きとして可。
+**禁則**: コンポーネント実装では [Semantic 層](?path=/docs/tokens-typography-semantic--guideline) の text style (`type-page-title` / `type-body-md` / `type-control-md` 等) を使う。primitive (`text-2xl` / `leading-tight` / `tracking-wide`) の直接利用は **lint で禁止** (AGENTS §3-7)。例外は Avatar の initials のように container 比で決まる文字だけで、理由付きの `eslint-disable` を書く。weight の `font-{weight}` は text style の上書きとして可。
 
 ---
 

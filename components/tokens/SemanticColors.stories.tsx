@@ -217,7 +217,7 @@ const StateCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry
       </div>
       <div className={`flex-1 relative h-16 rounded-sm border border-border-subtle overflow-hidden ${
         entry.key.includes('error') ? 'bg-surface-error' :
-        entry.key.includes('primary') ? 'bg-surface-primary' : 'bg-neutral-700'
+        entry.key.includes('primary') ? 'bg-surface-primary' : 'bg-surface-neutral-strong'
       }`}>
         <div className={`absolute inset-0 ${tw('bg-state', entry.key)}`} />
         <div className="absolute bottom-1 left-2 text-xs font-mono text-onSurface-inverse">on color</div>
@@ -276,13 +276,13 @@ const PairRow: React.FC<{ pair: PairRole }> = ({ pair }) => {
 
   return (
     <section className="border border-border-subtle rounded-md p-4 bg-surface flex flex-col gap-3">
-      <h4 className="text-heading-xs m-0 text-onSurface">{label} ({role})</h4>
+      <h4 className="text-heading-sm m-0 text-onSurface">{label} ({role})</h4>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
           <code className="text-xs font-mono text-onSurface-muted">強い塗り (Badge / dot) — 主張</code>
           <div className={`bg-surface-${role} border-2 border-border-${role}-emphasis rounded-md p-3 flex items-center gap-2`}>
-            <span className="inline-block w-2 h-2 rounded-full bg-onSurface-inverse" />
+            <span className="inline-block w-2 h-2 rounded-full bg-surface-layer-1" />
             <span className="text-onSurface-inverse text-sm font-medium">{label}バッジ</span>
           </div>
           <ul className="m-0 pl-4 text-xs text-onSurface-muted flex flex-col gap-0.5">

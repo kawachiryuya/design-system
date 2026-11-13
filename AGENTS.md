@@ -106,7 +106,7 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 
 ### 参照優先順位 (厳守)
 
-1. **Semantic を最優先**: `bg-surface-primary` / `text-onSurface-default` / `border-border-default`
+1. **Semantic を最優先**: `bg-surface-primary` / `text-onSurface` / `border-border-default`
 2. **Primitive 直参照は禁止**: PJ override 互換性のため
 3. **インラインスタイルでの色指定は禁止**
 
@@ -115,7 +115,7 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 ```tsx
 // ✅ OK
 <div className="bg-surface-primary text-onSurface-inverse">CTA</div>
-<div className="bg-surface-success-muted border border-border-success-muted">成功</div>
+<div className="bg-surface-success-muted border border-border-success-subtle">成功</div>
 
 // ❌ NG
 <div className="bg-primary-600 text-white">CTA</div>
@@ -218,10 +218,10 @@ Material 3 の Container ペア (`{role}` + `on-{role}` + `{role}-container` + `
 | Role | Intense (solid) | Text on intense | Container (soft) | Text on container |
 |---|---|---|---|---|
 | Brand (Primary) | `surface.primary` (teal.700) | `on.inverse` (white) | `surface.secondary` (teal.50) | `on.primary` (teal.700) |
-| Success | `surface.success` (green.500) | `on.inverse` (white) | `surface.success-muted` (green.50) | `on.success` (green.700) |
-| Error | `surface.error` (red.500) | `on.inverse` (white) | `surface.error-muted` (red.50) | `on.error` (red.700) |
-| Warning | `surface.warning` (orange.400) | `on.inverse` (white) | `surface.warning-muted` (orange.50) | `on.warning` (orange.700) |
-| Info | `surface.info` (blue.500) | `on.inverse` (white) | `surface.info-muted` (blue.50) | `on.info` (blue.700) |
+| Success | `surface.success` (green.600) | `on.inverse` (white) | `surface.success-muted` (green.50) | `on.success` (green.700) |
+| Error | `surface.error` (red.600) | `on.inverse` (white) | `surface.error-muted` (red.50) | `on.error` (red.700) |
+| Warning | `surface.warning` (orange.600) | `on.inverse` (white) | `surface.warning-muted` (orange.50) | `on.warning` (orange.700) |
+| Info | `surface.info` (blue.600) | `on.inverse` (white) | `surface.info-muted` (blue.50) | `on.info` (blue.700) |
 
 **Container 単独で intense なし** (自然な設計):
 - `surface.disabled` + `on.disabled` (disabled は常に弱いはず、intense 不要)
@@ -369,7 +369,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 
 マルチブランドの**テーマ契約は semantic 層に置く**。「正しいブランドテーマ = themeable な semantic トークンの完全な集合で、検証 (コントラスト + 距離 #58) を通るもの」と定義する。primitive ramp は契約でなく任意の generator の領域 (§3-1 注記)。適用機構は CSS 変数 override 一本 (A2 #57 で Tailwind 依存が外れ override に収斂、#56 の「色は semantic 経由」規律が前提)。
 
-themeable トークンを 3 層に分け、機械可読な manifest [`tokens/theme-contract.json`](./tokens/theme-contract.json) で定義する (将来の完全性チェック CI の入力。本バッチでは検証器は作らない):
+themeable トークンを 3 層に分け、機械可読な manifest `tokens/theme-contract.json` で定義する **予定** (未作成。#59 の積み残しで、Color を更新するときに作る (#109)。将来の完全性チェック CI の入力。検証器も未作成):
 
 - **① 必須 themeable** — ブランドが必ず供給 (妥当な既定なし)。`surface.primary` (+ `surface.secondary`) の実質ブランド塗り 2 色。ペア前景 (`on.inverse` / `on.primary`) は固定の白でなく primary の明度から自動導出 + コントラスト検証する設計 (上書き可、導出 generator は別途)。
 - **② 任意 themeable** — 上書き可、未指定は既定継承、上書き時のみ不変条件で検証。status 一式 (success/error/warning/info の surface / -muted / on / border)・`border.focus`・brand 連動 overlay (`state.hover-primary` 等)・将来 accent。**成長は ② で行う**。
@@ -916,7 +916,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 DS は独立した 3 つの互換面を持ち、**どれか一つでも壊れたら package は MAJOR**。§10-1 の各破壊面はこの 3 契約のいずれかに属する。
 
 - **(a) コンポーネント / props API**: props の型・rename・削除、variant/size/color 値の削除、`primitives/` ↔ `composites/` の path 移動、Storybook story id の rename。
-- **(b) テーマトークン契約**: themeable な semantic トークンの集合 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)、層定義は §3 / #59)。**必須層**トークンの追加・rename・削除 = 全テーマ作者への破壊 = **MAJOR**、**任意層**の追加 = 既定継承で後方互換 = **MINOR**。成長は任意層で、必須層は小さく安定に保つ。
+- **(b) テーマトークン契約**: themeable な semantic トークンの集合 (manifest `tokens/theme-contract.json` は未作成・予定 (#109)、層定義は §3 / #59)。**必須層**トークンの追加・rename・削除 = 全テーマ作者への破壊 = **MAJOR**、**任意層**の追加 = 既定継承で後方互換 = **MINOR**。成長は任意層で、必須層は小さく安定に保つ。
 - **(c) CSS + DOM 配信契約**: 出荷 CSS クラス名 (`dist/styles.css`)・`data-*` 属性・DOM 構造・CSS 変数名 (#56 / #57)。いずれも型では catch されない silent break (§10-2)。
 
 > A2 (#57) 後は「Tailwind utility が silent break 源」という面が消える代わりに、出荷 CSS クラス名・CSS 変数名 (=テーマ契約)・data 属性・DOM 構造がその源になる。

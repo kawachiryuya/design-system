@@ -38,7 +38,7 @@ export const DoDontExample: React.FC<DoDontExampleProps> = ({
 }) => (
   <div className={`${SBDOCS_CLASS.doDontExample} my-10`}>
     {label && (
-      <div className={`${SBDOCS_CLASS.doDontExampleLabel} text-xs font-semibold tracking-wider uppercase mb-4`}>
+      <div className={`${SBDOCS_CLASS.doDontExampleLabel} text-xs font-semibold tracking-wide uppercase mb-4`}>
         {label}
       </div>
     )}
@@ -55,8 +55,8 @@ const DoDontPane: React.FC<{
   caption: React.ReactNode;
 }> = ({ variant, example, caption }) => {
   const isDo = variant === 'do';
-  const barColor = isDo ? 'bg-success-500' : 'bg-error-500';
-  const labelColor = isDo ? 'text-success-700' : 'text-error-700';
+  const barColor = isDo ? 'bg-surface-success' : 'bg-surface-error';
+  const labelColor = isDo ? 'text-onSurface-success' : 'text-onSurface-error';
   const labelText = isDo ? 'DO' : "DON'T";
 
   return (
@@ -68,7 +68,7 @@ const DoDontPane: React.FC<{
         これがないと example 内の <span> に当てた Tailwind class が
         emotion 生成 CSS に specificity で負ける。
       */}
-      <div className="sb-unstyled border border-t-0 border-border-muted rounded-b p-6 flex flex-wrap items-center justify-center gap-3 min-h-[110px] bg-surface">
+      <div className="sb-unstyled border border-t-0 border-border-subtle rounded-b p-6 flex flex-wrap items-center justify-center gap-3 min-h-[110px] bg-surface">
         {example}
       </div>
       {/*

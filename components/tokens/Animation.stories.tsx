@@ -27,7 +27,8 @@ const EASINGS: AnimEntry[] = Object.entries(animationToken.easing).map(
   ([key, entry]) => ({
     key,
     value: (entry as { value: string }).value,
-    tw: key === 'ease-in-out' ? 'ease-in-out' : key === 'linear' ? 'ease-linear' : key,
+    // Tailwind の utility は `ease-${key}`。token key が `ease-out` 等なので `ease-ease-out` になる (#109)
+    tw: `ease-${key}`,
   }),
 );
 

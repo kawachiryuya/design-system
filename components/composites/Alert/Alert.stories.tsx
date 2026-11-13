@@ -66,9 +66,11 @@ export const Overview: Story = {
         story: '視覚回帰用の総覧。variant (success/error/warning/info/neutral) と構成 (本文のみ / タイトル付き / hideIcon / dismissible) + 閉じるボタンの hover/focus を 1 枚に集約。',
       },
     },
+    // pseudo-states addon は一致した要素そのものにだけ状態を当て、子孫には伝わらない。
+    // 外側の <div id> ではなく中の閉じるボタン (<button>) を指す。
     pseudo: {
-      hover: ['#close-hover'],
-      focusVisible: ['#close-focus'],
+      hover: ['#close-hover button'],
+      focusVisible: ['#close-focus button'],
     },
   },
   render: () => (

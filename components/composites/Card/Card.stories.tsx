@@ -65,8 +65,10 @@ export const Overview: Story = {
         story: '視覚回帰用の総覧。variant (elevated/outlined/filled) と構成パターン (compound / padding 直 children / divider=false / clickable / link card / hover) を 1 枚に集約。',
       },
     },
+    // pseudo-states addon は一致した要素そのものにだけ状態を当て、子孫には伝わらない。
+    // 外側の <div id> ではなく Card の root ([data-ds-root]) を指す。
     pseudo: {
-      hover: ['#card-hover'],
+      hover: ['#card-hover [data-ds-root]'],
     },
   },
   render: () => (

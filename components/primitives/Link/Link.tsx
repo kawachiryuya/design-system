@@ -115,7 +115,7 @@ const linkVariants = tv({
     },
     size: {
       sm: 'text-sm',
-      md: 'text-base',
+      md: 'text-md',
       lg: 'text-lg',
     },
     // text-decoration 系は `!important` (`!underline` / `!no-underline`) で勝たせる。

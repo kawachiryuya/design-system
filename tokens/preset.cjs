@@ -93,7 +93,7 @@ module.exports = {
       current: 'currentColor',
     },
     fontSize: t.typography['font-size'],
-    // token は regular / medium / semibold / bold。Tailwind 慣用の `font-normal` は regular の
+    // token は regular / medium / bold。Tailwind 慣用の `font-normal` は regular の
     // alias として残す (`rounded` ≒ `rounded-md` と同じ DEFAULT/alias の手法)。上書きで消すと
     // 「書いても CSS が出ない」silent break になる (#109)。
     fontWeight: { ...t.typography['font-weight'], normal: t.typography['font-weight'].regular },

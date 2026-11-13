@@ -150,7 +150,7 @@ const inputVariants = tv({
   variants: {
     size: {
       sm: 'h-10 text-sm',
-      md: 'h-12 text-base',
+      md: 'h-12 text-md',
       lg: 'h-14 text-lg',
     },
     error: {

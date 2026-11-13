@@ -27,7 +27,7 @@ const meta: Meta<typeof Typography> = {
       control: 'select',
       options: ['default', 'subdued', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info', 'inherit'],
     },
-    weight: { control: 'select', options: [undefined, 'normal', 'medium', 'semibold', 'bold'] },
+    weight: { control: 'select', options: [undefined, 'normal', 'medium', 'bold'] },
     truncate: { control: 'boolean' },
     children: { control: 'text' },
   },
@@ -106,7 +106,7 @@ export const Overview: Story = {
       <div className="flex flex-col gap-1">
         <div className="text-xs text-onSurface-subtle">weight (variant デフォルトを上書き)</div>
         <div className="flex flex-wrap gap-4 items-baseline">
-          {(['normal', 'medium', 'semibold', 'bold'] as const).map((weight) => (
+          {(['normal', 'medium', 'bold'] as const).map((weight) => (
             <Typography key={weight} variant="h4" weight={weight}>{weight}</Typography>
           ))}
         </div>

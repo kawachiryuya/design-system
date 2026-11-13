@@ -154,7 +154,7 @@ export const EdgeCases: Story = {
       <Caption text='xl + 本文隣接 — baseline が効かないので flex items-center で揃える'>
         <div className="flex items-center gap-2">
           <Icon name="info" size="xl" color="info" />
-          <span className="text-base">items-center で揃える</span>
+          <span className="text-md">items-center で揃える</span>
         </div>
       </Caption>
     </div>

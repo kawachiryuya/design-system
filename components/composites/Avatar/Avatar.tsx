@@ -89,7 +89,7 @@ export interface AvatarProps {
 const sizeMap = {
   xs: { container: 'w-6 h-6',   text: 'text-xs',   statusDot: 'w-1.5 h-1.5' },
   sm: { container: 'w-8 h-8',   text: 'text-xs',   statusDot: 'w-2 h-2' },
-  md: { container: 'w-10 h-10', text: 'text-base', statusDot: 'w-2.5 h-2.5' },
+  md: { container: 'w-10 h-10', text: 'text-md', statusDot: 'w-2.5 h-2.5' },
   lg: { container: 'w-12 h-12', text: 'text-lg',   statusDot: 'w-3 h-3' },
   xl: { container: 'w-16 h-16', text: 'text-2xl',  statusDot: 'w-4 h-4' },
 };
@@ -198,7 +198,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           />
         ) : showInitials ? (
           <span
-            className={`font-semibold text-onSurface-inverse leading-none ${sizes.text}`}
+            className={`font-medium text-onSurface-inverse leading-none ${sizes.text}`}
             aria-hidden="true"
           >
             {getInitials(name)}

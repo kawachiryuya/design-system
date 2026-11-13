@@ -141,7 +141,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
     },
     md: {
       container: 'h-10',
-      input: 'text-base pl-8 pr-10',
+      input: 'text-md pl-8 pr-10',
       icon: 'left-2',
       trailing: 'right-3',
       iconSize: 'sm' as const,

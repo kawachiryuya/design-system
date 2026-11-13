@@ -35,7 +35,6 @@ const FONT_FAMILIES = extractValues(T['font-family']);
 const WEIGHT_LABELS: Record<string, string> = {
   regular: 'Regular',
   medium: 'Medium',
-  semibold: 'Semibold',
   bold: 'Bold',
 };
 

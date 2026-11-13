@@ -136,7 +136,7 @@ export const Accordion = ({
                 size="sm"
                 color="inherit"
               />
-              <span className="flex-1 text-body-md font-semibold text-onSurface">{item.title}</span>
+              <span className="flex-1 text-body-md font-medium text-onSurface">{item.title}</span>
             </button>
             {isOpen && (
               <div

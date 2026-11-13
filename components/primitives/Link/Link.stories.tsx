@@ -136,7 +136,7 @@ export const EdgeCases: Story = {
   render: () => (
     <div className="flex flex-col gap-6 w-80">
       <Caption text="段落中インライン (text-decoration が周辺と分離)">
-        <p className="text-base leading-relaxed">
+        <p className="text-md leading-relaxed">
           このサービスをご利用の際は、<Link href="#">利用規約</Link>および
           <Link href="#">プライバシーポリシー</Link>に同意したものとみなします。
         </p>

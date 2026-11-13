@@ -113,7 +113,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   const sizeStyles = {
     sm: { container: 'h-10', button: 'w-10', display: 'w-8 text-sm' },
-    md: { container: 'h-12', button: 'w-12', display: 'w-10 text-base' },
+    md: { container: 'h-12', button: 'w-12', display: 'w-10 text-md' },
   }[size];
 
   // disabled state は色ベース (Button と同じ精神、bg 強い場合の半透明問題を回避)。

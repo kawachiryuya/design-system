@@ -10,7 +10,8 @@
  *    - L 正規化: chromatic の同一 step で OKLCH L 差が閾値内 (override 互換の保証)
  *    - bright-hue: BRIGHT_HUES に登録した hue は上記の例外 (濃色文字前提)。既定パレットには無い (#109 で yellow を削除)
  * 3. 知覚距離 ΔEOK (#58、warn レンズ、exit に影響しない): themeable 色が役割識別可能か
- *    (primary↔status / status 総当たり / primary-muted↔status を solid 段で)。通常視のみ (CVD は次段)。
+ *    (status 総当たり / primary-muted↔status を solid 段で。primary↔status は対象外: brand は status と同系色でも
+ *    よい (#109、役割は文脈 + icon + 文字で区別する))。通常視のみ (CVD は次段)。
  *
  * WCAG 比 / OKLCH L / ΔEOK は culori、APCA Lc は apca-w3 に委譲 (自前実装しない)。
  * テーマ切替 (将来ダークモード) のため vars/pairs/colors はオプション引数化。
@@ -120,7 +121,8 @@ inv.forEach((m) => fails.push(`[不変条件] ${m}`));
 const deltaEOK = differenceEuclidean('oklab');
 const STATUS = ['success', 'error', 'warning', 'info'];
 const distPairs = [];
-for (const s of STATUS) distPairs.push(['surface-primary', `surface-${s}`, 'gate候補']); // primary↔status (4)
+// primary↔status は測らない (#109 Color-2/3 で決定): brand が status と同系色 (teal × green 等) になるのは正当で、
+// 役割の識別は置き場所 (Button vs Badge) + icon + 文字が担う。床 0.08 は旧パレット実測由来で brand↔status の設計制約ではない。
 for (let i = 0; i < STATUS.length; i++) for (let j = i + 1; j < STATUS.length; j++) distPairs.push([`surface-${STATUS[i]}`, `surface-${STATUS[j]}`, 'gate候補']); // status 総当たり (6)
 for (const s of STATUS) distPairs.push(['surface-primary-muted', `surface-${s}`, 'warn']); // primary-muted↔status (4、severity 低)
 const deltaWarns = [];

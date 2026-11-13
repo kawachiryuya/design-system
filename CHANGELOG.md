@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **テーマ契約の manifest `tokens/theme-contract.json` と `check:theme-contract`** (#109 Color-3、§3-8 / §10-6 (b)): semantic color token 45 個を required (`surface.primary` の 1 色) / optional (status 一式・brand 連動の文字 / 縁 / overlay・`primary-muted`) / fixed (中性の canvas / 文字 / 境界 / state / disabled / skeleton) の 3 層に振り分けた。`verify` に組み込んだ check が「全 token がどれか 1 層にちょうど 1 回」を保証するので、token を足すときは層を決めて manifest にも追記する。テーマ値の検証 (多テーマの contrast / 距離) は未作成。consumer 影響なし。
+
 ### ⚠ BREAKING CHANGES
 
 - **brand (teal) / warning (orange) の色相と段を変更、neutral.500 を微調整 (視覚変化、primary token の色相変更は visual break §10-1。#109 順番 4 / Color-2)**:
@@ -52,6 +56,7 @@
 
 ### Changed
 
+- **`check:contrast` の ΔEOK (役割識別性の warn) から primary ↔ status を外した** (#109): brand が status と同系色になるのは正当 (teal × green 等) で、役割の識別は置き場所 + icon + 文字が担う。status 同士と primary-muted ↔ status は引き続き測る。
 - **`check:utilities` を `verify` に追加 — 書いた Tailwind utility が CSS を生成しているかを機械検査** (CI 強化、#109): 出荷コンポーネントの utility を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラスがあれば fail ([`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs))。#107 (`border-border-default`) と #109 (`text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の帯) のような「書いても効いていない」silent break を CI で止める。consumer 影響なし。
 - **Tokens/preset: mode② 解決スモークテスト `check:preset-deps` を追加 + `tailwindcss` を optional peerDependency として宣言** (packaging 強化、#98 follow-up): preset.cjs は consumer のビルド時に `require('tailwindcss/plugin')` / `require('@tailwindcss/container-queries')` を解決するため、これら外部 require がすべて `dependencies` / `peerDependencies` に宣言済みかを静的検査する `check:preset-deps` を `verify` に追加。6.0.0→6.0.1 で起きた「devDependency 止まりで mode② consumer が `Cannot find module` で落ちる」packaging 回帰を CI で機械ガードする ([`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs))。あわせて preset が前提とする `tailwindcss` を **optional peerDependency** (`^3.4.0`) として正式宣言 (mode② は consumer 提供 / mode① は preset 非評価のため optional)。consumer は Tailwind 3.4+ を持っていれば追加作業なし。
 

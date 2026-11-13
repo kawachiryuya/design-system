@@ -368,7 +368,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 
 マルチブランドの**テーマ契約は semantic 層に置く**。「正しいブランドテーマ = themeable な semantic トークンの完全な集合で、検証 (コントラスト + 距離 #58) を通るもの」と定義する。primitive ramp は契約でなく任意の generator の領域 (§3-1 注記)。適用機構は CSS 変数 override 一本 (A2 #57 で Tailwind 依存が外れ override に収斂、#56 の「色は semantic 経由」規律が前提)。
 
-themeable トークンを 3 層に分け、機械可読な manifest `tokens/theme-contract.json` で定義する **予定** (未作成。#59 の積み残しで、Color を更新するときに作る (#109)。将来の完全性チェック CI の入力。検証器も未作成):
+themeable トークンを 3 層に分け、機械可読な manifest [`tokens/theme-contract.json`](./tokens/theme-contract.json) で定義する (#109 Color-3)。`check:theme-contract` ([`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)、`verify` に組込) が「semantic の全 token がどれか 1 層にちょうど 1 回出る」ことを保証するので、**token を足すときは層を決めて manifest にも追記する** (決めずに足せない)。テーマ値そのものの検証 (多テーマの contrast / 距離) は未作成:
 
 - **① 必須 themeable** — ブランドが必ず供給 (妥当な既定なし)。`surface.primary` の 1 色のみ (#109)。`surface.primary-muted` (薄い面) は同じ ramp の 50 段から決まるので任意層で既定継承する。ペア前景 (`onSurface.inverse` / `onSurface.primary`) は固定の白でなく primary の明度から自動導出 + コントラスト検証する設計 (上書き可、導出 generator は別途)。
 - **② 任意 themeable** — 上書き可、未指定は既定継承、上書き時のみ不変条件で検証。status 一式 (success/error/warning/info の surface / -muted / on / border)・`border.focus`・brand 連動 overlay (`state.hover-primary` 等)・将来 accent。**成長は ② で行う**。
@@ -424,7 +424,7 @@ themeable トークンを 3 層に分け、機械可読な manifest `tokens/them
 | **コミット前の最終確認 (全体)** | `npm run verify` |
 | 視覚・a11y も含む全確認 | `npm run verify:full` |
 
-- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:conventions → typecheck → check:styles → check:utilities` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
+- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:conventions → typecheck → check:styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
 - `typecheck` は incremental (`.tsbuildinfo`) のため 2 回目以降が速い。
 - **イテレーション中はスコープ版、全体走査はコミット前のみ** という方針を守る。
 
@@ -568,6 +568,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | コマンド・PR テンプレ・スクリプトの `§N` 参照が AGENTS.md の実在見出しを指す (改番でのリンク切れ防止) | **Check refs** (`npm run check:refs`、[`scripts/check-refs.mjs`](./scripts/check-refs.mjs)) |
 | `tokens/preset.cjs` が require する外部パッケージが dependencies / peerDependencies に宣言済み (mode② consumer の preset 解決を守る。devDependency 止まりだと `Cannot find module` で落ちる packaging silent break を弾く) | **Check preset deps** (`npm run check:preset-deps`、[`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs)) |
 | 書いた Tailwind utility が実際に CSS を生成している (出荷コンポーネント ↔ 配信 CSS、stories / `.storybook` / mdx ↔ Storybook CSS。存在しないクラスを書いても型・lint では止まらない silent break を弾く、§3-7) | **Check utilities** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)) |
+| semantic color token がテーマ契約 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)) のどれか 1 層にちょうど 1 回出る (層を決めずに token を足せない。rename / 削除の取り残しも弾く、§3-8) | **Check theme contract** (`npm run check:theme-contract`、[`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)) |
 | semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
 | 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
 
@@ -916,7 +917,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 DS は独立した 3 つの互換面を持ち、**どれか一つでも壊れたら package は MAJOR**。§10-1 の各破壊面はこの 3 契約のいずれかに属する。
 
 - **(a) コンポーネント / props API**: props の型・rename・削除、variant/size/color 値の削除、`primitives/` ↔ `composites/` の path 移動、Storybook story id の rename。
-- **(b) テーマトークン契約**: themeable な semantic トークンの集合 (manifest `tokens/theme-contract.json` は未作成・予定 (#109)、層定義は §3 / #59)。**必須層**トークンの追加・rename・削除 = 全テーマ作者への破壊 = **MAJOR**、**任意層**の追加 = 既定継承で後方互換 = **MINOR**。成長は任意層で、必須層は小さく安定に保つ。
+- **(b) テーマトークン契約**: themeable な semantic トークンの集合 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)、層定義は §3 / #59)。**必須層**トークンの追加・rename・削除 = 全テーマ作者への破壊 = **MAJOR**、**任意層**の追加 = 既定継承で後方互換 = **MINOR**。成長は任意層で、必須層は小さく安定に保つ。
 - **(c) CSS + DOM 配信契約**: 出荷 CSS クラス名 (`dist/styles.css`)・`data-*` 属性・DOM 構造・CSS 変数名 (#56 / #57)。いずれも型では catch されない silent break (§10-2)。
 
 > A2 (#57) 後は「Tailwind utility が silent break 源」という面が消える代わりに、出荷 CSS クラス名・CSS 変数名 (=テーマ契約)・data 属性・DOM 構造がその源になる。

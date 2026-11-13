@@ -9,6 +9,7 @@
 
 ### Added
 
+- **`Tokens/Color/Regression` swatch story (Chromatic 専用、`diffThreshold: 0`)** (#109 Color-4、§9-4): primitive 全段 + semantic 全 token を文字なしの平坦な色面で並べ、閾値 0 で撮る。Chromatic の既定閾値では token 値の微調整 (#115 の brand 変更、RGB +22) が部品の snapshot で「unchanged」に吸収され検出できなかった盲点への対策。consumer 影響なし。
 - **テーマ契約の manifest `tokens/theme-contract.json` と `check:theme-contract`** (#109 Color-3、§3-8 / §10-6 (b)): semantic color token 45 個を required (`surface.primary` の 1 色) / optional (status 一式・brand 連動の文字 / 縁 / overlay・`primary-muted`) / fixed (中性の canvas / 文字 / 境界 / state / disabled / skeleton) の 3 層に振り分けた。`verify` に組み込んだ check が「全 token がどれか 1 層にちょうど 1 回」を保証するので、token を足すときは層を決めて manifest にも追記する。テーマ値の検証 (多テーマの contrast / 距離) は未作成。consumer 影響なし。
 
 ### ⚠ BREAKING CHANGES

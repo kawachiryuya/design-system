@@ -14,7 +14,7 @@ const preview: Preview = {
             'Overview',
             'Animation',
             'Breakpoints',
-            'Color', ['Primitive', 'Semantic'],
+            'Color', ['Primitive', 'Semantic', 'Regression'],
             'Focus Ring',
             'Layout',
             'Opacity',

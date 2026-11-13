@@ -63,8 +63,8 @@ type Kind = keyof typeof KIND;
 const Section: React.FC<{ title: string; note?: string; children: React.ReactNode }> = ({ title, note, children }) => (
   <section className="flex flex-col gap-3">
     <div>
-      <h2 className="text-base font-bold text-onSurface">{title}</h2>
-      {note && <p className="text-xs text-onSurface-muted mt-1">{note}</p>}
+      <h2 className="type-body font-bold text-onSurface">{title}</h2>
+      {note && <p className="text-xs text-onSurface-subtle mt-1">{note}</p>}
     </div>
     <div className="flex flex-col divide-y divide-border-subtle border-y border-border-subtle">{children}</div>
   </section>
@@ -83,12 +83,12 @@ const Row: React.FC<{ name: string; kinds: Kind[]; how?: string; render: () => R
   <div className="grid grid-cols-[220px_1fr_1fr] gap-6 items-center py-4">
     <div className="flex flex-col gap-1">
       <div className="text-sm font-bold text-onSurface">{name}</div>
-      <ul className="text-xs text-onSurface-muted list-none p-0 m-0">
+      <ul className="text-xs text-onSurface-subtle list-none p-0 m-0">
         {kinds.map((k) => (
           <li key={k}>{KIND[k]}</li>
         ))}
       </ul>
-      {how && <div className="text-xs text-onSurface-muted">{how}</div>}
+      {how && <div className="text-xs text-onSurface-subtle">{how}</div>}
     </div>
     <div className="min-w-0">{render()}</div>
     <div className="min-w-0" data-force-hover>
@@ -98,7 +98,7 @@ const Row: React.FC<{ name: string; kinds: Kind[]; how?: string; render: () => R
 );
 
 const Header: React.FC = () => (
-  <div className="grid grid-cols-[220px_1fr_1fr] gap-6 text-xs font-bold text-onSurface-muted">
+  <div className="grid grid-cols-[220px_1fr_1fr] gap-6 text-xs font-bold text-onSurface-subtle">
     <div>部品と、コード上の表現</div>
     <div>通常</div>
     <div>ホバー (強制表示)</div>
@@ -120,10 +120,10 @@ export const AsIs: Story = {
   render: () => (
     <div className="flex flex-col gap-10 max-w-[1040px] bg-surface p-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-lg font-bold text-onSurface">DDR-1 ホバー：今のまま</h1>
-        <p className="text-sm text-onSurface-muted">
-          コミット 64626a7 時点の部品をそのまま並べている。部品には手を入れていない。Toast の閉じるボタンは Alert
-          と同じ指定 (黒 8%) のため省いた。
+        <h1 className="type-item-title text-onSurface">DDR-1 ホバー：今のまま</h1>
+        <p className="text-sm text-onSurface-subtle">
+          コミット 6380631 (Color / Typography 更新後の main、#119 マージ時点) の部品をそのまま並べている。部品には手を入れていない。Toast
+          の閉じるボタンは Alert と同じ指定 (黒 8%) のため省いた。
         </p>
         <Header />
       </div>
@@ -170,11 +170,11 @@ export const AsIs: Story = {
           )}
         />
         <Row
-          name="Link muted"
+          name="Link subtle"
           kinds={['black', 'underline']}
           how="背景色"
           render={() => (
-            <Link href="#" color="muted">
+            <Link href="#" color="subtle">
               プライバシーポリシー
             </Link>
           )}

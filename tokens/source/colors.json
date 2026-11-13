@@ -2,43 +2,43 @@
   "color": {
     "teal": {
       "50": {
-        "value": "#E4FCF2",
+        "value": "#E3FBED",
         "type": "color"
       },
       "100": {
-        "value": "#C9F3E3",
+        "value": "#CAF2DA",
         "type": "color"
       },
       "200": {
-        "value": "#A1E5CC",
+        "value": "#A3E4C0",
         "type": "color"
       },
       "300": {
-        "value": "#6ED1B0",
+        "value": "#74D1A0",
         "type": "color"
       },
       "400": {
-        "value": "#30B792",
+        "value": "#3EB87F",
         "type": "color"
       },
       "500": {
-        "value": "#00A079",
+        "value": "#159F68",
         "type": "color"
       },
       "600": {
-        "value": "#008965",
+        "value": "#008555",
         "type": "color"
       },
       "700": {
-        "value": "#006F50",
+        "value": "#006D45",
         "type": "color"
       },
       "800": {
-        "value": "#00553D",
+        "value": "#015434",
         "type": "color"
       },
       "900": {
-        "value": "#003C2A",
+        "value": "#013B23",
         "type": "color"
       }
     },
@@ -64,7 +64,7 @@
         "type": "color"
       },
       "500": {
-        "value": "#737373",
+        "value": "#666666",
         "type": "color"
       },
       "600": {
@@ -170,44 +170,44 @@
     },
     "orange": {
       "50": {
-        "value": "#FFF2E0",
+        "value": "#FDF3E0",
         "type": "color"
       },
       "100": {
-        "value": "#FFE3C3",
+        "value": "#F8E4C0",
         "type": "color"
       },
       "200": {
-        "value": "#F8CB99",
+        "value": "#EECE94",
         "type": "color"
       },
       "300": {
-        "value": "#E9AE66",
+        "value": "#DEB360",
         "type": "color"
       },
       "400": {
-        "value": "#D38E2E",
+        "value": "#C89522",
         "type": "color"
       },
       "500": {
-        "value": "#BE7200",
+        "value": "#B07C00",
         "type": "color",
         "description": "鮮オレンジ (条件付きステップ)。白文字は 3.75 で AA 未満 → 白文字は large-text / 非テキスト (アイコン・グラフ) 限定 (WCAG 1.4.3 例外)。本文を載せる面が必要なら白文字は orange-600/700 (濃色シフト)、濃色文字は orange-50〜200 の淡色面 (文字色反転) を使う。L 正規化のため中間ステップは muddy で、濃色文字でも APCA Lc が body 目標に届かない"
       },
       "600": {
-        "value": "#A55F00",
+        "value": "#966900",
         "type": "color"
       },
       "700": {
-        "value": "#874A00",
+        "value": "#7A5300",
         "type": "color"
       },
       "800": {
-        "value": "#673800",
+        "value": "#5D3F00",
         "type": "color"
       },
       "900": {
-        "value": "#4A2700",
+        "value": "#432C00",
         "type": "color"
       }
     },

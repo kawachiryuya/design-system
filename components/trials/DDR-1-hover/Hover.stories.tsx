@@ -1,0 +1,346 @@
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import {
+  Accordion,
+  Alert,
+  Breadcrumb,
+  Button,
+  Card,
+  Checkbox,
+  DropdownMenu,
+  FilterChip,
+  Icon,
+  Input,
+  Link,
+  NumberInput,
+  Pagination,
+  Radio,
+  SearchBar,
+  SegmentedControl,
+  Select,
+  Switch,
+  Tabs,
+  Textarea,
+  ToggleButton,
+} from '../../index';
+
+/**
+ * 試作 (DDR-1): ホバーの適用範囲はどこまでで、どんな表現パターンが必要か。
+ *
+ * このファイルは検討用で、main には入れない前提 (出荷物でも規約の対象でもない)。
+ * 本体の部品には一切手を入れず、今のホバーを 1 ページに並べて見比べるためだけにある。
+ * - 「今のまま」= 比べる基準。案の story を足すときも、これは変えない・複製しない。
+ * - ホバーは storybook-addon-pseudo-states で強制表示 (マウス操作なしで見える)。
+ * - Chromatic の撮影対象外 (検討用の画面で、視覚回帰の基準にしない)。
+ */
+const meta: Meta = {
+  title: 'Trials/DDR-1 Hover',
+  parameters: {
+    layout: 'padded',
+    chromatic: { disableSnapshot: true },
+  },
+};
+
+export default meta;
+type Story = StoryObj;
+
+const noop = () => {};
+
+/** 表現の種類 (DDR-1「現在の形」の 7 種類 + 指定なし)。 */
+const KIND = {
+  black: '黒 8% を重ねる',
+  brand: 'ブランド色 8% を重ねる',
+  error: 'エラー色 8% を重ねる',
+  border: '枠線を濃くする',
+  text: '文字色を濃くする',
+  shadow: '影を付ける',
+  underline: '下線を出す',
+  none: '指定なし',
+} as const;
+
+type Kind = keyof typeof KIND;
+
+const Section: React.FC<{ title: string; note?: string; children: React.ReactNode }> = ({ title, note, children }) => (
+  <section className="flex flex-col gap-3">
+    <div>
+      <h2 className="text-base font-bold text-onSurface">{title}</h2>
+      {note && <p className="text-xs text-onSurface-muted mt-1">{note}</p>}
+    </div>
+    <div className="flex flex-col divide-y divide-border-subtle border-y border-border-subtle">{children}</div>
+  </section>
+);
+
+/**
+ * 1 行 = 1 部品 (または 1 variant)。左から 名前と表現 / 通常 / ホバー。
+ * ホバー列は `data-force-hover` の内側の全要素を pseudo-states で hover にする。
+ */
+const Row: React.FC<{ name: string; kinds: Kind[]; how?: string; render: () => React.ReactNode }> = ({
+  name,
+  kinds,
+  how,
+  render,
+}) => (
+  <div className="grid grid-cols-[220px_1fr_1fr] gap-6 items-center py-4">
+    <div className="flex flex-col gap-1">
+      <div className="text-sm font-bold text-onSurface">{name}</div>
+      <ul className="text-xs text-onSurface-muted list-none p-0 m-0">
+        {kinds.map((k) => (
+          <li key={k}>{KIND[k]}</li>
+        ))}
+      </ul>
+      {how && <div className="text-xs text-onSurface-muted">{how}</div>}
+    </div>
+    <div className="min-w-0">{render()}</div>
+    <div className="min-w-0" data-force-hover>
+      {render()}
+    </div>
+  </div>
+);
+
+const Header: React.FC = () => (
+  <div className="grid grid-cols-[220px_1fr_1fr] gap-6 text-xs font-bold text-onSurface-muted">
+    <div>部品と、コード上の表現</div>
+    <div>通常</div>
+    <div>ホバー (強制表示)</div>
+  </div>
+);
+
+export const AsIs: Story = {
+  name: '今のまま',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '今のホバーを全部品ぶん 1 ページに並べた、比べるための基準。ホバー列は、その部品の中でホバーに反応する箇所をすべて同時に反応させている。',
+      },
+    },
+    // addon は一致した要素そのものにだけ hover を当てる (子孫には伝わらない) ので、内側の全要素を指定する。
+    pseudo: { hover: ['[data-force-hover] *'] },
+  },
+  render: () => (
+    <div className="flex flex-col gap-10 max-w-[1040px] bg-surface p-6">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-lg font-bold text-onSurface">DDR-1 ホバー：今のまま</h1>
+        <p className="text-sm text-onSurface-muted">
+          コミット 6004e4c 時点の部品をそのまま並べている。部品には手を入れていない。Toast の閉じるボタンは Alert
+          と同じ指定 (黒 8%) のため省いた。
+        </p>
+        <p className="text-sm text-onSurface-muted">
+          並べて分かったこと：Input・Textarea・FilterChip・ToggleButton 未選択 は、通常時の枠線が文字色 (ほぼ黒)
+          で出ていて、ホバーで逆に薄くなる。通常時の指定 `border-border-default` に対応するクラスが生成されていないため
+          (生成されるのは `border-border`)。Select と SearchBar は `border-border` を使っていて、意図どおり濃くなる。
+        </p>
+        <Header />
+      </div>
+
+      <Section title="1. 色を重ねる" note="重ね方は 2 通り：内側の影として重ねる (Button・ToggleButton) / 背景色として重ねる (その他)。">
+        <Row name="Button primary" kinds={['black']} how="内側の影" render={() => <Button variant="primary">予約する</Button>} />
+        <Row name="Button secondary" kinds={['brand']} how="内側の影" render={() => <Button variant="secondary">戻る</Button>} />
+        <Row name="Button tertiary" kinds={['brand']} how="内側の影" render={() => <Button variant="tertiary">キャンセル</Button>} />
+        <Row name="Button destructive" kinds={['error']} how="内側の影" render={() => <Button variant="destructive">削除する</Button>} />
+        <Row
+          name="ToggleButton 選択中"
+          kinds={['black']}
+          how="内側の影"
+          render={() => (
+            <ToggleButton selected onClick={noop}>
+              12
+            </ToggleButton>
+          )}
+        />
+        <Row
+          name="ToggleButton 未選択"
+          kinds={['brand', 'border']}
+          how="内側の影"
+          render={() => (
+            <ToggleButton selected={false} onClick={noop}>
+              13
+            </ToggleButton>
+          )}
+        />
+        <Row
+          name="Link primary"
+          kinds={['brand', 'underline']}
+          how="背景色"
+          render={() => <Link href="#">会社概要</Link>}
+        />
+        <Row
+          name="Link neutral"
+          kinds={['black', 'underline']}
+          how="背景色"
+          render={() => (
+            <Link href="#" color="neutral">
+              利用規約
+            </Link>
+          )}
+        />
+        <Row
+          name="Link muted"
+          kinds={['black', 'underline']}
+          how="背景色"
+          render={() => (
+            <Link href="#" color="muted">
+              プライバシーポリシー
+            </Link>
+          )}
+        />
+        <Row
+          name="Alert の閉じるボタン"
+          kinds={['black']}
+          how="背景色"
+          render={() => (
+            <Alert variant="info" onClose={noop}>
+              お知らせの本文。
+            </Alert>
+          )}
+        />
+        <Row
+          name="Accordion の見出し"
+          kinds={['brand']}
+          how="背景色"
+          render={() => <Accordion items={[{ id: 'a', title: 'よくある質問', content: '中身' }]} />}
+        />
+        <Row
+          name="Pagination"
+          kinds={['brand']}
+          how="背景色"
+          render={() => <Pagination currentPage={2} totalPages={5} onPageChange={noop} />}
+        />
+        <Row
+          name="FilterChip"
+          kinds={['brand', 'border']}
+          how="背景色"
+          render={() => (
+            <FilterChip iconRight={<Icon name="expand_more" size="sm" />} onClick={noop}>
+              並び順: 出発時刻順
+            </FilterChip>
+          )}
+        />
+        <Row
+          name="SegmentedControl 未選択"
+          kinds={['brand', 'border']}
+          how="背景色"
+          render={() => (
+            <SegmentedControl
+              items={[
+                { value: 'list', label: 'リスト' },
+                { value: 'grid', label: 'グリッド' },
+              ]}
+              value="list"
+              onChange={noop}
+              aria-label="表示モード"
+            />
+          )}
+        />
+        <Row
+          name="NumberInput"
+          kinds={['brand', 'text', 'border']}
+          how="増減ボタン：背景色と文字色 / 枠：枠線"
+          render={() => <NumberInput value={2} onChange={noop} min={0} max={9} label="人数" />}
+        />
+        <Row
+          name="SearchBar"
+          kinds={['brand', 'text', 'border']}
+          how="クリアボタン：背景色と文字色 / 枠：枠線"
+          render={() => <SearchBar value="新大阪" onChange={noop} placeholder="駅名を検索" />}
+        />
+      </Section>
+
+      <Section title="2. 枠線を濃くする (だけ)">
+        <Row name="Input" kinds={['border']} render={() => <Input label="メールアドレス" placeholder="example@email.com" />} />
+        <Row name="Textarea" kinds={['border']} render={() => <Textarea label="お問い合わせ内容" rows={2} />} />
+        <Row
+          name="Select"
+          kinds={['border']}
+          render={() => (
+            <Select label="都道府県">
+              <option value="osaka">大阪府</option>
+              <option value="tokyo">東京都</option>
+            </Select>
+          )}
+        />
+      </Section>
+
+      <Section title="3. 文字色・下線">
+        <Row
+          name="Tabs 未選択"
+          kinds={['text']}
+          render={() => (
+            <Tabs
+              ariaLabel="Tabs"
+              defaultActiveId="a"
+              tabs={[
+                { id: 'a', label: '概要', content: null },
+                { id: 'b', label: 'メンバー', content: null },
+                { id: 'c', label: '設定', content: null },
+              ]}
+            />
+          )}
+        />
+        <Row
+          name="Breadcrumb のリンク"
+          kinds={['text', 'underline']}
+          how="文字色はブランド色に変わる"
+          render={() => (
+            <Breadcrumb
+              items={[
+                { label: 'ホーム', href: '#' },
+                { label: '予約一覧', href: '#' },
+                { label: '予約詳細' },
+              ]}
+            />
+          )}
+        />
+      </Section>
+
+      <Section title="4. 影を付ける">
+        <Row
+          name="Card (押せるもの)"
+          kinds={['shadow']}
+          render={() => (
+            <Card variant="outlined" clickable onClick={noop}>
+              <Card.Body>
+                <p className="text-sm text-onSurface">のぞみ 12 号</p>
+              </Card.Body>
+            </Card>
+          )}
+        />
+      </Section>
+
+      <Section title="5. ホバーの指定が見つからない操作部品">
+        <Row name="Checkbox" kinds={['none']} render={() => <Checkbox label="利用規約に同意する" />} />
+        <Row name="Radio" kinds={['none']} render={() => <Radio name="asis-radio" value="card" label="クレジットカード" />} />
+        <Row name="Switch" kinds={['none']} render={() => <Switch label="メール通知" checked={false} onChange={noop} />} />
+      </Section>
+    </div>
+  ),
+};
+
+export const AsIsMenu: Story = {
+  name: '今のまま (メニュー)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'DropdownMenu の項目のホバー。メニューは最前面に重なって開くため、一覧とは別の story にした。全項目を同時にホバーにしている (通常：黒 8% / 削除：エラー色 8%)。',
+      },
+    },
+    pseudo: { hover: ['[role="menuitem"]'] },
+  },
+  render: () => (
+    <div className="p-8 pb-56 flex justify-center">
+      <DropdownMenu
+        trigger={<Button variant="secondary">操作</Button>}
+        placement="bottom"
+        open
+        onOpenChange={noop}
+        aria-label="操作メニュー"
+        items={[
+          { label: 'お気に入りに追加', icon: <Icon name="favorite" size="sm" />, onSelect: noop },
+          { label: '新しいタブで開く', icon: <Icon name="open_in_new" size="sm" />, onSelect: noop },
+          { label: '削除', icon: <Icon name="remove" size="sm" />, destructive: true, onSelect: noop },
+        ]}
+      />
+    </div>
+  ),
+};

@@ -205,7 +205,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           </span>
         ) : (
           // 画像もnameもない場合はプレースホルダーアイコン
-          <Icon name="person" className="w-1/2 h-1/2 text-onSurface-muted" />
+          <Icon name="person" className="w-1/2 h-1/2 text-onSurface-subtle" />
         )}
       </span>
 

@@ -115,7 +115,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 - **`<label htmlFor>` 必須**: input の `id` と結ぶことで SR が両者の関係を認識。label クリックで input にフォーカスが当たる
 - **必須マーク**: `*` の span に `aria-label="必須"` を自動付与。SR で「必須」と読まれる
-- **任意マーク**: 「（任意）」は通常テキストとして読まれる。色は `text-onSurface-muted` (#737373 = 4.69:1) で AA 通常テキスト要件を満たす
+- **任意マーク**: 「（任意）」は通常テキストとして読まれる。色は `text-onSurface-subtle` (#737373 = 4.69:1) で AA 通常テキスト要件を満たす
 - **disabled 連動**: `disabled` 時は `text-onSurface-disabled` + `cursor-not-allowed`。input 側の disabled と必ず連動させる
 - **色のみの意味禁止**: 必須は色 + 記号 (`*`) + SR テキスト (`aria-label`) の三重表現で伝える
 

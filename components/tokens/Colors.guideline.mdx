@@ -9,7 +9,7 @@ import * as ColorsStories from './Colors.stories';
 
 OKLCH ベースで知覚明度を統一したカラーパレット。**Primitive 層は hue 名のみ** (`teal` / `green` / `red` / `orange` / `blue` / `neutral` 等) で構成し、`primary` / `success` / `error` 等の **役割名は [Semantic 層](?path=/docs/tokens-color-semantic--guideline) でのみ** 定義する (2 層アーキテクチャの純度を保つ設計)。
 
-各 palette は 10 段 (`50` / `100` / ... / `900`) のスケールで、`bg-{palette}-{shade}` / `text-{palette}-{shade}` / `border-{palette}-{shade}` の utility で参照可能。
+各 palette は 10 段 (`50` / `100` / ... / `900`) のスケール。
 
 **禁則**: 実装では `bg-teal-700` のような primitive 直参照は **禁止**。必ず [Semantic 層](?path=/docs/tokens-color-semantic--guideline) (`bg-surface-primary` 等) を経由する。理由: 下流 product が brand palette を override したときに自動連動させるため。
 
@@ -21,8 +21,7 @@ OKLCH ベースで知覚明度を統一したカラーパレット。**Primitive
 - **OKLCH ベース**: 知覚明度を palette 間で揃える。同じ shade 番号なら異なる palette でも体感の明度が近い (50: L=0.97 → 900: L=0.31)
 - **shade 数値スケール (50〜900)**: Tailwind / Material 慣習に準拠
 - **brand から独立した bg**: `bg.default` は `neutral.50` を参照。下流 product が brand を override しても bg は中性のまま ([AGENTS.md §3-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール))
-- **13 hue + base**: teal / neutral / green / red / orange / blue (semantic で参照される 6 hue) + yellow / lime / cyan / sky / violet / purple / pink (下流用予備 7 hue) + base (white / black / transparent)
-- **予備 7 hue は「カテゴリカルパレット」用に予約**: データ可視化 (グラフの系列色) / Avatar 背景など、**意味を持たない区別** のための色。`success` / `error` 等の UI セマンティクスには使わない (semantic 層を経由する)。各 hue の `500` に同旨の description を付与済み
+- **6 hue + base**: teal (brand) / neutral / green / red / orange / blue (semantic が参照する hue) + base (white / black / transparent)。予備の hue は持たず、データ可視化等で必要になった時に既存 step の L に合わせて足す
 
 ---
 
@@ -46,33 +45,26 @@ OKLCH ベースで知覚明度を統一したカラーパレット。**Primitive
 - **step 差ルール**: `bg ≤ 100` × `text ≥ 700` の全 hue 組合せが 4.5:1 を満たす (L 正規化に依存)。崩れたら正規化が壊れたシグナル
 - **新 hue 追加 / 既存調整時は、既存 step の L に合わせること** (合わせないと step 差ルールが崩れ CI が fail する)
 
-**bright-hue の例外 (yellow)**: vivid な発色を優先し L 正規化・白文字アンカーから除外。**step 50〜600 は濃色 (neutral-900 系) 文字、700〜900 は白文字**で AA を満たす (薄い面に白文字を載せない)。詳細は [Principles / Semantic Colors](?path=/docs/principles-color-semantic-colors--docs)。
 
 ---
 
 ## カタログ
 
-White / Black から各 hue palette まで全 13 palette + 2 base 色を横ストリップで一覧できます。同 shade を縦に揃えて palette 間の明度・彩度を比較するのに便利。
+White / Black から各 hue palette まで全 6 palette + 2 base 色を横ストリップで一覧できます。同 shade を縦に揃えて palette 間の明度・彩度を比較するのに便利。
 
 → [Tokens/Color/Primitive/Catalog](?path=/story/tokens-color-primitive--catalog) で確認
 
 ---
 
-## 下流 product での palette override
+## 下流 product での色の override
 
-Extra palette を brand 色として採用する例:
+brand を変えるときは semantic 変数を直接 override する (テーマ契約は semantic 層、AGENTS §3-8)。既定パレットと同じ幾何で済む単一ブランドなら primitive 変数 1 行の override でも全 chain が追従する:
 
-```js
-// tailwind.config.js
-module.exports = {
-  presets: [require('design-system/tokens/preset.cjs')],
-  // Extra palette を semantic 上書きに使う
-  theme: {
-    extend: {
-      backgroundColor: { brand: 'var(--color-violet-600)' },
-    },
-  },
-};
+```css
+:root {
+  --color-surface-primary: #5B4C99;      /* semantic を直接 (推奨) */
+  /* または --color-teal-600: #5B4C99;  primitive 経由のショートカット */
+}
 ```
 
 ---

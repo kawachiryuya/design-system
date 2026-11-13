@@ -49,10 +49,10 @@ const CardHeader: React.FC<{
 }> = ({ name, twClass, source, description }) => (
   <div className="flex flex-col gap-1 mt-3">
     <code className="text-xs font-mono font-semibold text-onSurface">{name}</code>
-    <code className="text-xs font-mono text-onSurface-muted">{twClass}</code>
-    <code className="text-xs font-mono text-onSurface-muted">→ {source}</code>
+    <code className="text-xs font-mono text-onSurface-subtle">{twClass}</code>
+    <code className="text-xs font-mono text-onSurface-subtle">→ {source}</code>
     {description && (
-      <p className="text-xs text-onSurface-muted leading-relaxed mt-1">{description}</p>
+      <p className="text-xs text-onSurface-subtle leading-relaxed mt-1">{description}</p>
     )}
   </div>
 );
@@ -82,14 +82,14 @@ export const Background: Story = {
 // ── Surface ──────────────────────────────────────────────────
 
 const SURFACE_ORDER = [
-  'layer-1', 'layer-2', 'layer-3',
-  'inset', 'overlay',
-  'primary', 'secondary',
+  'default', 'subtle',
+  'overlay',
+  'primary', 'primary-muted',
   'success', 'success-muted',
   'error', 'error-muted',
   'warning', 'warning-muted',
   'info', 'info-muted',
-  'disabled', 'skeleton', 'neutral',
+  'disabled', 'skeleton', 'neutral', 'neutral-strong',
 ];
 
 const SurfaceCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry }) => (
@@ -108,7 +108,7 @@ export const Surface: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'カード / モーダル / 役割色の塗り。階層 (`layer-1/2/3`) → 特殊役割 (`inset`/`overlay`) → Brand → 機能色 → 状態マーカーの順で並ぶ。機能色の組合せは Container Pairs story を参照。',
+        story: 'カード / モーダル / 役割色の塗り。階層 (`default` → `subtle`) → 特殊役割 (`overlay`) → 役割色 (brand / functional / state) の順。',
       },
     },
   },
@@ -122,7 +122,7 @@ export const Surface: Story = {
 // ── Text (on) ────────────────────────────────────────────────
 
 const ON_ORDER = [
-  'default', 'soft', 'muted',
+  'default', 'subtle',
   'primary', 'success', 'error', 'warning', 'info',
   'disabled', 'inverse',
 ];
@@ -137,7 +137,7 @@ const OnTextCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entr
         </span>
       </div>
       <CardHeader
-        name={`on.${entry.key}`}
+        name={`onSurface.${entry.key}`}
         twClass={tw('text-onSurface', entry.key)}
         source={entry.sourceValue}
         description={entry.description}
@@ -157,7 +157,7 @@ export const Text: Story = {
   },
   render: () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {pick(SC.on, ON_ORDER).map((e) => <OnTextCard key={e.key} entry={e} />)}
+      {pick(SC.onSurface, ON_ORDER).map((e) => <OnTextCard key={e.key} entry={e} />)}
     </div>
   ),
 };
@@ -165,11 +165,11 @@ export const Text: Story = {
 // ── Border ───────────────────────────────────────────────────
 
 const BORDER_ORDER = [
-  'subtle', 'default', 'strong', 'emphasis',
-  'success-subtle', 'success-emphasis',
-  'error-subtle', 'error-emphasis',
-  'warning-subtle', 'warning-emphasis',
-  'info-subtle', 'info-emphasis',
+  'subtle', 'default', 'strong',
+  'success-muted', 'success-strong',
+  'error-muted', 'error-strong',
+  'warning-muted', 'warning-strong',
+  'info-muted', 'info-strong',
   'focus',
 ];
 
@@ -213,7 +213,7 @@ const StateCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry
     <div className="flex gap-2 mb-3">
       <div className="flex-1 relative bg-background h-16 rounded-sm border border-border-subtle overflow-hidden">
         <div className={`absolute inset-0 ${tw('bg-state', entry.key)}`} />
-        <div className="absolute bottom-1 left-2 text-xs font-mono text-onSurface-muted">on bg</div>
+        <div className="absolute bottom-1 left-2 text-xs font-mono text-onSurface-subtle">on bg</div>
       </div>
       <div className={`flex-1 relative h-16 rounded-sm border border-border-subtle overflow-hidden ${
         entry.key.includes('error') ? 'bg-surface-error' :
@@ -265,13 +265,13 @@ const PairRow: React.FC<{ pair: PairRole }> = ({ pair }) => {
   const { role, label } = pair;
   const solidTokens = [
     `surface.${role}`,
-    `on.inverse`,
-    `border.${role}-emphasis`,
+    `onSurface.inverse`,
+    `border.${role}-strong`,
   ];
   const softTokens = [
     `surface.${role}-muted`,
-    `on.${role}`,
-    `border.${role}-subtle`,
+    `onSurface.${role}`,
+    `border.${role}-muted`,
   ];
 
   return (
@@ -280,23 +280,23 @@ const PairRow: React.FC<{ pair: PairRole }> = ({ pair }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <code className="text-xs font-mono text-onSurface-muted">強い塗り (Badge / dot) — 主張</code>
-          <div className={`bg-surface-${role} border-2 border-border-${role}-emphasis rounded-md p-3 flex items-center gap-2`}>
-            <span className="inline-block w-2 h-2 rounded-full bg-surface-layer-1" />
+          <code className="text-xs font-mono text-onSurface-subtle">強い塗り (Badge / dot) — 主張</code>
+          <div className={`bg-surface-${role} border-2 border-border-${role}-strong rounded-md p-3 flex items-center gap-2`}>
+            <span className="inline-block w-2 h-2 rounded-full bg-surface" />
             <span className="text-onSurface-inverse text-sm font-medium">{label}バッジ</span>
           </div>
-          <ul className="m-0 pl-4 text-xs text-onSurface-muted flex flex-col gap-0.5">
+          <ul className="m-0 pl-4 text-xs text-onSurface-subtle flex flex-col gap-0.5">
             {solidTokens.map((t) => <li key={t}><code className="font-mono">{t}</code></li>)}
           </ul>
         </div>
 
         <div className="flex flex-col gap-2">
-          <code className="text-xs font-mono text-onSurface-muted">薄い塗り (Alert / 通知) — 落ち着き</code>
-          <div className={`bg-surface-${role}-muted border border-border-${role}-subtle rounded-md p-3`}>
+          <code className="text-xs font-mono text-onSurface-subtle">薄い塗り (Alert / 通知) — 落ち着き</code>
+          <div className={`bg-surface-${role}-muted border border-border-${role}-muted rounded-md p-3`}>
             <p className={`m-0 text-sm text-onSurface-${role} font-medium`}>{label}メッセージ</p>
-            <p className="m-0 mt-1 text-xs text-onSurface-muted">補助テキスト・詳細説明など</p>
+            <p className="m-0 mt-1 text-xs text-onSurface-subtle">補助テキスト・詳細説明など</p>
           </div>
-          <ul className="m-0 pl-4 text-xs text-onSurface-muted flex flex-col gap-0.5">
+          <ul className="m-0 pl-4 text-xs text-onSurface-subtle flex flex-col gap-0.5">
             {softTokens.map((t) => <li key={t}><code className="font-mono">{t}</code></li>)}
           </ul>
         </div>

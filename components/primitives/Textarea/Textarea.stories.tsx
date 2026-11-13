@@ -79,7 +79,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">state (Default / Hover / Focus / Filled / Error / Disabled)</div>
+        <div className="text-xs text-onSurface-subtle">state (Default / Hover / Focus / Filled / Error / Disabled)</div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full w-[44rem] max-w-full">
           <Caption text="Default">
             <Textarea label="Default" placeholder="入力してください" rows={3} fullWidth />
@@ -103,7 +103,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">文字数カウンター — 近接 (185/200) / 上限到達は赤+太字 (200/200)</div>
+        <div className="text-xs text-onSurface-subtle">文字数カウンター — 近接 (185/200) / 上限到達は赤+太字 (200/200)</div>
         <div className="flex flex-col gap-4 w-96">
           <Textarea label="自己紹介 (近接)" maxLength={200} currentLength={185} value={'A'.repeat(185)} onChange={() => {}} rows={3} fullWidth />
           <Textarea label="自己紹介 (上限)" maxLength={200} currentLength={200} value={'A'.repeat(200)} onChange={() => {}} rows={3} fullWidth />
@@ -111,7 +111,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">resize (none / vertical / horizontal / both)</div>
+        <div className="text-xs text-onSurface-subtle">resize (none / vertical / horizontal / both)</div>
         <div className="grid grid-cols-2 gap-3 w-[44rem] max-w-full">
           <Textarea label="none (固定)" resize="none" placeholder="サイズ固定" rows={3} fullWidth />
           <Textarea label="vertical (デフォルト)" resize="vertical" placeholder="縦のみ" rows={3} fullWidth />

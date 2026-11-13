@@ -8,7 +8,7 @@
  *   import { COLORS, SPACING } from '@kawachiryuya/design-system/tokens';
  *   const cta = COLORS.surface.primary;        // "#008965" (literal type)
  *   const gap = SPACING['4'];                   // "16px"
- *   const onText = COLORS.on.default;           // "#171717"
+ *   const onText = COLORS.onSurface.default;           // "#171717"
  */
 
 export { TOKENS, type Tokens } from './build/tokens';

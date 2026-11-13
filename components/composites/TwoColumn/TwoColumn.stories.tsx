@@ -38,14 +38,14 @@ type Story = StoryObj<typeof TwoColumn>;
 const Main = () => (
   <div className="bg-surface border border-border-default rounded-md p-4 min-h-[160px]">
     <div className="text-sm font-semibold mb-2">Main (children)</div>
-    <div className="text-sm text-onSurface-muted">主コンテンツ領域。検索結果 / 座席選択 / form 等。</div>
+    <div className="text-sm text-onSurface-subtle">主コンテンツ領域。検索結果 / 座席選択 / form 等。</div>
   </div>
 );
 
 const Sidebar = () => (
-  <div className="bg-surface-layer-2 border border-border-default rounded-md p-4 min-h-[160px]">
+  <div className="bg-surface-subtle border border-border-default rounded-md p-4 min-h-[160px]">
     <div className="text-sm font-semibold mb-2">Sidebar (sidebar slot)</div>
-    <div className="text-sm text-onSurface-muted">補助コンテンツ。条件 / 料金 / preview 等。</div>
+    <div className="text-sm text-onSurface-subtle">補助コンテンツ。条件 / 料金 / preview 等。</div>
   </div>
 );
 
@@ -54,7 +54,7 @@ const Sidebar = () => (
 export const Playground: Story = {
   render: (args) => (
     // split 切替時に総幅を一定に保ち、比率変化だけを感じられるよう max-w 枠で固定
-    <div className="p-4 bg-surface-layer-2 max-w-[960px]">
+    <div className="p-4 bg-surface-subtle max-w-[960px]">
       <TwoColumn {...args} sidebar={<Sidebar />}>
         <Main />
       </TwoColumn>
@@ -97,8 +97,8 @@ export const Overview: Story = {
     <div className="flex flex-col gap-8 max-w-[960px]">
       {(['6/6', '7/5', '8/4', '9/3'] as const).map((s) => (
         <div key={s} className="flex flex-col gap-1.5">
-          <span className="text-caption text-onSurface-muted font-mono">split=&quot;{s}&quot;</span>
-          <div className="p-3 bg-surface-layer-2 rounded-md">
+          <span className="text-caption text-onSurface-subtle font-mono">split=&quot;{s}&quot;</span>
+          <div className="p-3 bg-surface-subtle rounded-md">
             <TwoColumn split={s} sidebar={<Sidebar />}>
               <Main />
             </TwoColumn>
@@ -122,27 +122,27 @@ export const EdgeCases: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <Caption text='mobileReverse=true (SearchPage pattern) — mobile で sidebar 上 / main 下 (DOM 順は main→sidebar 固定)'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="p-3 bg-surface-subtle">
           <TwoColumn
             split="6/6"
             mobileReverse
             sidebar={
-              <div className="bg-surface-layer-2 border border-border-default rounded-md p-4">
+              <div className="bg-surface-subtle border border-border-default rounded-md p-4">
                 <div className="text-sm font-semibold mb-2">Preview (sidebar)</div>
-                <div className="text-sm text-onSurface-muted">mobile では上、PC では右に表示される。</div>
+                <div className="text-sm text-onSurface-subtle">mobile では上、PC では右に表示される。</div>
               </div>
             }
           >
             <div className="bg-surface border border-border-default rounded-md p-4">
               <div className="text-sm font-semibold mb-2">Form (children = main)</div>
-              <div className="text-sm text-onSurface-muted">mobile では下、PC では左に表示される。</div>
+              <div className="text-sm text-onSurface-subtle">mobile では下、PC では左に表示される。</div>
             </div>
           </TwoColumn>
         </div>
       </Caption>
 
       <Caption text='sidebar 省略 — main のみ full width (単一カラム)'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="p-3 bg-surface-subtle">
           <TwoColumn split="8/4">
             <Main />
           </TwoColumn>
@@ -150,13 +150,13 @@ export const EdgeCases: Story = {
       </Caption>
 
       <Caption text='sidebar に cols:sticky (Seat pattern) — 列切替と sticky が cols で同期'>
-        <div className="p-3 bg-surface-layer-2">
+        <div className="p-3 bg-surface-subtle">
           <TwoColumn
             split="8/4"
             sidebar={
-              <div className="bg-surface-layer-2 border border-border-default rounded-md p-4 cols:sticky cols:top-4">
+              <div className="bg-surface-subtle border border-border-default rounded-md p-4 cols:sticky cols:top-4">
                 <div className="text-sm font-semibold mb-2">Sticky Sidebar</div>
-                <div className="text-sm text-onSurface-muted">consumer 側で `cols:sticky cols:top-X` を className に付けるだけで、2 カラム化と sticky が同じ breakpoint で同期する。SeatPage の料金 sidebar pattern。</div>
+                <div className="text-sm text-onSurface-subtle">consumer 側で `cols:sticky cols:top-X` を className に付けるだけで、2 カラム化と sticky が同じ breakpoint で同期する。SeatPage の料金 sidebar pattern。</div>
               </div>
             }
           >

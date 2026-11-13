@@ -188,7 +188,7 @@ export const Tabs: React.FC<TabsProps> = ({
         ? 'text-onSurface-disabled cursor-not-allowed'
         : isActive
           ? 'text-onSurface-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-surface-primary after:rounded-full'
-          : 'text-onSurface-muted hover:text-onSurface',
+          : 'text-onSurface-subtle hover:text-onSurface',
     ].join(' ');
   };
 
@@ -218,7 +218,7 @@ export const Tabs: React.FC<TabsProps> = ({
               <span className="flex items-center gap-1">
                 {tab.label}
                 {tab.badge !== undefined && (
-                  <span className="text-caption font-semibold px-1.5 py-0.5 rounded-sm min-w-5 text-center leading-none bg-surface-disabled text-onSurface-muted">
+                  <span className="text-caption font-semibold px-1.5 py-0.5 rounded-sm min-w-5 text-center leading-none bg-surface-disabled text-onSurface-subtle">
                     {tab.badge}
                   </span>
                 )}

@@ -123,7 +123,7 @@ const inputVariants = tv({
     'border',
     'bg-surface',
     'text-onSurface',
-    'placeholder:text-onSurface-muted',
+    'placeholder:text-onSurface-subtle',
     // transition-colors のみ (transition-all だと box-shadow も transition 対象になり、
     // CSS の `inset` キーワードが discrete (連続補間不可) なため inset ring が
     // 「一瞬 outside + offset gap」を経由して切り替わるチラつきが出る)。
@@ -154,7 +154,7 @@ const inputVariants = tv({
       lg: 'h-14 text-lg',
     },
     error: {
-      true:  'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted',
+      true:  'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted',
       false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus',
     },
     fullWidth: {
@@ -238,7 +238,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {leadingIcon && (
             <span
-              className={`absolute ${iconPositionClass.leading[size]} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
+              className={`absolute ${iconPositionClass.leading[size]} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none flex items-center justify-center`}
             >
               {leadingIcon}
             </span>
@@ -266,7 +266,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           {trailingIcon && (
             <span
-              className={`absolute ${iconPositionClass.trailing[size]} top-1/2 -translate-y-1/2 text-onSurface-muted pointer-events-none flex items-center justify-center`}
+              className={`absolute ${iconPositionClass.trailing[size]} top-1/2 -translate-y-1/2 text-onSurface-subtle pointer-events-none flex items-center justify-center`}
             >
               {trailingIcon}
             </span>

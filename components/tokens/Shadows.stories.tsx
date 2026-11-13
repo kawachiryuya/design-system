@@ -39,10 +39,10 @@ export const Elevations: Story = {
             className={`w-20 h-20 bg-surface rounded-md ${s.tw} ${s.key === 'none' ? 'border border-border-subtle' : ''}`}
           />
           <div className="text-center flex flex-col gap-1">
-            <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
+            <code className="bg-surface-subtle text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
               {s.key}
             </code>
-            <span className="text-xs font-mono text-onSurface-muted">{s.tw}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">{s.tw}</span>
           </div>
         </div>
       ))}
@@ -65,13 +65,13 @@ export const TokenValues: Story = {
           key={s.key}
           className="flex items-center gap-4 py-2.5 px-4 rounded-md border border-border-subtle bg-surface"
         >
-          <code className="bg-surface-inset text-onSurface px-2 py-0.5 rounded-sm font-mono text-xs flex-shrink-0 min-w-[72px]">
+          <code className="bg-surface-subtle text-onSurface px-2 py-0.5 rounded-sm font-mono text-xs flex-shrink-0 min-w-[72px]">
             {s.key}
           </code>
-          <span className="font-mono text-xs text-onSurface-muted flex-shrink-0 min-w-[90px]">
+          <span className="font-mono text-xs text-onSurface-subtle flex-shrink-0 min-w-[90px]">
             {s.tw}
           </span>
-          <span className="font-mono text-xs text-onSurface-muted break-all">{s.value}</span>
+          <span className="font-mono text-xs text-onSurface-subtle break-all">{s.value}</span>
         </div>
       ))}
     </div>

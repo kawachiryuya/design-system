@@ -40,19 +40,19 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="icon + label の組合せは gap=xs + align=center で"
   doExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="xs">
         <span>⏱</span>
-        <span className="text-sm text-onSurface-muted">5 分で読める</span>
+        <span className="text-sm text-onSurface-subtle">5 分で読める</span>
       </Cluster>
     </div>
   }
   doCaption="icon + label のような密接した inline 要素は xs (4px) + align=center (default) で揃える。Cluster の default align=center が活きる典型用途。"
   dontExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="xl" align="start">
         <span>⏱</span>
-        <span className="text-sm text-onSurface-muted">5 分で読める</span>
+        <span className="text-sm text-onSurface-subtle">5 分で読める</span>
       </Cluster>
     </div>
   }
@@ -62,7 +62,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="navigation は as='nav' で semantic タグを保つ"
   doExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md" as="nav">
         <a href="#" className="text-sm">ホーム</a>
         <a href="#" className="text-sm">予約一覧</a>
@@ -72,7 +72,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="navigation の役割を持つ menu は as='nav' で semantic タグを保つ。SR が「ナビゲーション」と読み上げる、skip-link 等の a11y 機能も効く。"
   dontExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md">
         <a href="#" className="text-sm">ホーム</a>
         <a href="#" className="text-sm">予約一覧</a>
@@ -86,7 +86,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="header pattern (title + action) は justify=between で"
   doExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md" justify="between">
         <div className="text-base font-semibold">予約一覧</div>
         <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button>
@@ -95,7 +95,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="title 左 + action 右の典型 pattern は justify=between が定石。狭い画面では自動で折り返す。"
   dontExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md" justify="start">
         <div className="text-base font-semibold">予約一覧</div>
         <div className="ml-auto"><button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button></div>
@@ -108,7 +108,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="non-wrap が必要な場合は Cluster ではなく plain な flex を使う"
   doExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <div className="flex items-center gap-2 whitespace-nowrap overflow-x-auto">
         <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 1</div>
         <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 2</div>
@@ -118,7 +118,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="horizontal scroll させたい tab 列等は plain な flex + overflow-x-auto で。Cluster は『折り返す』のが定義なので不適合。"
   dontExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="sm">
         <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 1</div>
         <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 2</div>
@@ -162,8 +162,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 <div className="max-w-md p-3 border border-border-subtle rounded-lg">
   <Cluster gap="xs" align="center">
-    <span className="text-onSurface-muted">⏱</span>
-    <span className="text-sm text-onSurface-muted">5 分で読める</span>
+    <span className="text-onSurface-subtle">⏱</span>
+    <span className="text-sm text-onSurface-subtle">5 分で読める</span>
   </Cluster>
 </div>
 

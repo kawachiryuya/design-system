@@ -66,7 +66,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (xs / sm / md / lg / xl / 2xl)</div>
+        <div className="text-xs text-onSurface-subtle">size (xs / sm / md / lg / xl / 2xl)</div>
         <div className="flex flex-wrap gap-6 items-end">
           {SIZES.map((size) => (
             <Caption key={size} text={size}>
@@ -77,7 +77,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">color (primary / neutral / white)</div>
+        <div className="text-xs text-onSurface-subtle">color (primary / neutral / white)</div>
         <div className="flex flex-wrap gap-8 items-center">
           <Caption text="primary (CTA / 主要操作)">
             <Spinner size="lg" color="primary" />
@@ -111,7 +111,7 @@ export const EdgeCases: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <Caption text="インライン (テキスト隣) — size=xs で text と高さを揃える">
-        <div className="flex items-center gap-2 text-onSurface-muted">
+        <div className="flex items-center gap-2 text-onSurface-subtle">
           <Spinner size="xs" color="neutral" label="確認中" />
           <span className="text-sm">データを読み込んでいます...</span>
         </div>
@@ -131,7 +131,7 @@ export const EdgeCases: Story = {
         <div className="relative w-64 h-40 bg-neutral-100 rounded overflow-hidden flex items-center justify-center">
           <div className="absolute inset-0 bg-white/75 flex flex-col items-center justify-center gap-3 rounded">
             <Spinner size="xl" color="primary" label="読み込み中" />
-            <p className="text-sm text-onSurface-muted">データを取得中...</p>
+            <p className="text-sm text-onSurface-subtle">データを取得中...</p>
           </div>
         </div>
       </Caption>

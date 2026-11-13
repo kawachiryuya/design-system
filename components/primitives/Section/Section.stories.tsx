@@ -40,7 +40,7 @@ const Block = ({ label }: { label: string }) => (
 export const Playground: Story = {
   decorators: [
     (Story) => (
-      <div className="bg-surface-layer-2 border border-dashed border-border-subtle">
+      <div className="bg-surface-subtle border border-dashed border-border-subtle">
         <Story />
       </div>
     ),
@@ -81,7 +81,7 @@ export const Overview: Story = {
     <div className="flex flex-col gap-6">
       {(['none', 'sm', 'md', 'lg'] as const).map((p) => (
         <Caption key={p} text={`padding="${p}"`}>
-          <div className="bg-surface-layer-2 border border-dashed border-border-subtle">
+          <div className="bg-surface-subtle border border-dashed border-border-subtle">
             <Section padding={p}>
               <Center max="md">
                 <Block label={`padding=${p}`} />

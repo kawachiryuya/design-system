@@ -65,7 +65,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">marker (なし / required / optional / required+optional=required 優先)</div>
+        <div className="text-xs text-onSurface-subtle">marker (なし / required / optional / required+optional=required 優先)</div>
         <div className="flex flex-wrap gap-8 items-center">
           <Caption text="なし"><Label>メールアドレス</Label></Caption>
           <Caption text="required"><Label required>メールアドレス</Label></Caption>
@@ -75,7 +75,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm 12px / md 14px / lg 16px)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm 12px / md 14px / lg 16px)</div>
         <div className="flex flex-col gap-3 items-start">
           <Label size="sm" required>Small (12px)</Label>
           <Label size="md" required>Medium (14px)</Label>
@@ -84,7 +84,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">state (Default / Disabled) — 非 interactive のため hover/focus/active 無し</div>
+        <div className="text-xs text-onSurface-subtle">state (Default / Disabled) — 非 interactive のため hover/focus/active 無し</div>
         <div className="flex flex-wrap gap-8 items-start">
           <Caption text="Default"><Label>メールアドレス</Label></Caption>
           <Caption text="Disabled"><Label disabled>読み取り専用フィールド</Label></Caption>

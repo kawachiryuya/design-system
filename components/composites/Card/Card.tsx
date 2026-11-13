@@ -141,13 +141,13 @@ const paddingStyles = {
 };
 
 // Card variant 設計:
-// - elevated: layer-1 + shadow で浮き上がり感
-// - outlined: layer-1 + 薄い border で控えめな枠
-// - filled: layer-2 (= 1 段下) + border で塗りつぶし感、layer-1 より沈める意図
+// - elevated: surface (default) + shadow で浮き上がり感
+// - outlined: surface (default) + 薄い border で控えめな枠
+// - filled: surface-subtle (= 1 段下) + border で塗りつぶし感、default より沈める意図
 const variantStyles = {
   elevated: 'bg-surface shadow-md rounded-md',
   outlined: 'bg-surface border border-border-subtle rounded-md',
-  filled: 'bg-surface-layer-2 border border-border-subtle rounded-md',
+  filled: 'bg-surface-subtle border border-border-subtle rounded-md',
 };
 
 /**

@@ -15,12 +15,12 @@ import { AppShell, Button, Card, Input, Checkbox, Modal } from '@kawachiryuya/de
  */
 
 // ── 自前 chrome のスタイル (token 変数を素の CSS で参照。Tailwind は使わない) ──
-const brand: React.CSSProperties = { fontWeight: 700, fontSize: 18, color: 'var(--color-on-default)' };
+const brand: React.CSSProperties = { fontWeight: 700, fontSize: 18, color: 'var(--color-on-surface-default)' };
 const navLink: React.CSSProperties = {
   display: 'block',
   padding: '8px 12px',
   borderRadius: 8,
-  color: 'var(--color-on-soft)',
+  color: 'var(--color-on-surface-subtle)',
   textDecoration: 'none',
   fontSize: 14,
 };
@@ -30,7 +30,7 @@ const sectionLabel: React.CSSProperties = {
   fontWeight: 600,
   textTransform: 'uppercase',
   letterSpacing: '0.04em',
-  color: 'var(--color-on-muted)',
+  color: 'var(--color-on-surface-subtle)',
   margin: '24px 0 8px',
 };
 const row: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' };
@@ -46,13 +46,13 @@ const Sidebar = () => (
       boxSizing: 'border-box',
       padding: 16,
       borderRight: '1px solid var(--color-border-default)',
-      background: 'var(--color-surface-layer-1)',
+      background: 'var(--color-surface-default)',
     }}
   >
     <div style={{ ...brand, marginBottom: 24 }}>Acme DS</div>
     <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {NAV.map((n, i) => (
-        <a key={n} href="#" style={{ ...navLink, ...(i === 0 ? { background: 'var(--color-surface-secondary)', color: 'var(--color-on-primary)' } : null) }}>
+        <a key={n} href="#" style={{ ...navLink, ...(i === 0 ? { background: 'var(--color-surface-primary-muted)', color: 'var(--color-on-surface-primary)' } : null) }}>
           {n}
         </a>
       ))}
@@ -68,11 +68,11 @@ const Header = () => (
       justifyContent: 'space-between',
       padding: '12px 16px',
       borderBottom: '1px solid var(--color-border-default)',
-      background: 'var(--color-surface-layer-1)',
+      background: 'var(--color-surface-default)',
     }}
   >
     <span style={brand}>Acme DS</span>
-    <span style={{ fontSize: 13, color: 'var(--color-on-muted)' }}>mode① / mobile</span>
+    <span style={{ fontSize: 13, color: 'var(--color-on-surface-subtle)' }}>mode① / mobile</span>
   </div>
 );
 
@@ -81,11 +81,11 @@ const BottomNav = () => (
     style={{
       display: 'flex',
       borderTop: '1px solid var(--color-border-default)',
-      background: 'var(--color-surface-layer-1)',
+      background: 'var(--color-surface-default)',
     }}
   >
     {NAV.map((n) => (
-      <a key={n} href="#" style={{ flex: 1, textAlign: 'center', padding: '10px 4px', fontSize: 12, color: 'var(--color-on-soft)', textDecoration: 'none' }}>
+      <a key={n} href="#" style={{ flex: 1, textAlign: 'center', padding: '10px 4px', fontSize: 12, color: 'var(--color-on-surface-subtle)', textDecoration: 'none' }}>
         {n}
       </a>
     ))}
@@ -93,7 +93,7 @@ const BottomNav = () => (
 );
 
 const SubBar = () => (
-  <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border-subtle)', fontSize: 14, color: 'var(--color-on-muted)' }}>
+  <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border-subtle)', fontSize: 14, color: 'var(--color-on-surface-subtle)' }}>
     ダッシュボード / 概要
   </div>
 );
@@ -106,7 +106,7 @@ export const App = () => {
     <>
     <AppShell header={<Header />} sidebar={<Sidebar />} bottomNav={<BottomNav />} subBar={<SubBar />}>
       <h1 style={sectionTitle}>mode① — no-Tailwind 消費の実証</h1>
-      <p style={{ margin: 0, color: 'var(--color-on-soft)', fontSize: 14 }}>
+      <p style={{ margin: 0, color: 'var(--color-on-surface-subtle)', fontSize: 14 }}>
         この画面は <code>styles.css</code> + <code>variables.css</code> の 2 ファイルだけで描画されています
         (Tailwind は未使用)。ウィンドウ幅を 1024px の上下で変えると、サイドバー / ヘッダー / 下部ナビの出し分けが切り替わります。
       </p>
@@ -132,7 +132,7 @@ export const App = () => {
           <Card key={v} variant={v} padding="md">
             <div style={{ width: 220 }}>
               <div style={{ fontWeight: 600, marginBottom: 4 }}>Card / {v}</div>
-              <div style={{ fontSize: 14, color: 'var(--color-on-soft)' }}>
+              <div style={{ fontSize: 14, color: 'var(--color-on-surface-subtle)' }}>
                 枠線・影・背景が Storybook と一致するか確認する面。
               </div>
             </div>
@@ -161,7 +161,7 @@ export const App = () => {
       <Button variant="secondary" onClick={() => setModalOpen(true)}>モーダルを開く</Button>
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="top-layer の中身">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
-          <p style={{ margin: 0, fontSize: 14, color: 'var(--color-on-soft)' }}>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--color-on-surface-subtle)' }}>
             この内容は <code>&lt;dialog&gt;</code> の top-layer に出るが、枠線・チェックボックスが正しく描画されるはず。
           </p>
           <Input id="modal-email" type="email" placeholder="you@example.com" />
@@ -174,10 +174,10 @@ export const App = () => {
         DS を import しても、ここの素要素は base reset を受けない (= 消費者を壊さない) ことを実証。 */}
     <section
       id="outside-ds"
-      style={{ borderTop: '4px solid var(--color-border-strong)', padding: 24, background: 'var(--color-surface-layer-1)' }}
+      style={{ borderTop: '4px solid var(--color-border-strong)', padding: 24, background: 'var(--color-surface-default)' }}
     >
       <h2 style={{ fontSize: 18 }}>DS の外側（素の要素・非影響の証明）</h2>
-      <p style={{ fontSize: 14, color: 'var(--color-on-soft)' }}>
+      <p style={{ fontSize: 14, color: 'var(--color-on-surface-subtle)' }}>
         以下は DS コンポーネントの外（<code>data-ds-root</code> の配下でない）。DS の import で見た目が変わらないことを確認する。
       </p>
       {/* border-width だけ指定し border-style 未指定。reset が届けば solid で線が出るが、

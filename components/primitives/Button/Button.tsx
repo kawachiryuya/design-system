@@ -207,7 +207,7 @@ const buttonVariants = tv({
         'bg-surface',
         'text-onSurface-error',
         'border',
-        'border-border-error-emphasis',
+        'border-border-error-strong',
         'focus-visible:ring-border-error',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-error)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-error)]',

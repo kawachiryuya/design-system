@@ -67,7 +67,7 @@ function ToastOverviewDemo() {
     showToast({ variant: 'neutral', description: '同期しています…', duration: 0 });
   }, [showToast]);
   return (
-    <p className="text-caption text-onSurface-muted">
+    <p className="text-caption text-onSurface-subtle">
       5 variant (success / error / warning / info + action / neutral) を Provider に静的スタック (VR 用、右上)。
     </p>
   );

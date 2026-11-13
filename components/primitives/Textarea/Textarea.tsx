@@ -104,7 +104,7 @@ const textareaVariants = tv({
     'rounded-sm',
     'border',
     'text-onSurface',
-    'placeholder:text-onSurface-muted',
+    'placeholder:text-onSurface-subtle',
     'px-3',
     'py-2',
     'text-base',
@@ -119,7 +119,7 @@ const textareaVariants = tv({
   ],
   variants: {
     error: {
-      true:  'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted',
+      true:  'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted',
       false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface',
     },
     fullWidth: {
@@ -186,7 +186,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               {label}
             </Label>
             {showCounter && (
-              <span className={`text-caption ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-muted'}`}>
+              <span className={`text-caption ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-subtle'}`}>
                 {currentLength ?? 0}/{maxLength}
               </span>
             )}

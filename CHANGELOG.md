@@ -7,6 +7,38 @@
 
 ## [Unreleased]
 
+### ⚠ BREAKING CHANGES
+
+- **Color token の整理 (削除と rename、値は変更なし。#109 順番 4 / Color-1)**: 半年ぶりの点検で、使われていない token と規則に乗っていない名前を整理した。CSS 変数名・Tailwind utility 名・TS の token path が変わる (型では catch されない silent break §10-2)。見た目は変わらない (Chromatic 差分なし)。
+  - **削除**: primitive の予備 7 hue (`yellow` / `lime` / `cyan` / `sky` / `violet` / `purple` / `pink`。`--color-violet-600` 等の変数と utility が無くなる。bright-hue 例外の規約も不要になった)、`surface.layer-3`、`surface.inset`、`border.emphasis`、文字色の中段 `on.soft`、`divide-border-muted` alias
+  - **rename**: 下表。`bg-surface` / `text-onSurface` / `border-border` (DEFAULT) はそのまま使える。`bg-surface-default` / `text-onSurface-default` も生成する
+  - **Typography**: `color="subdued"` / `color="muted"` はどちらも `onSurface.subtle` に写す (prop 値は当面維持)
+
+  | 旧 | 新 |
+  |---|---|
+  | `surface.layer-1` / `bg-surface-layer-1` / `--color-surface-layer-1` | `surface.default` / `bg-surface` / `--color-surface-default` |
+  | `surface.layer-2` / `bg-surface-layer-2` / `--color-surface-layer-2` | `surface.subtle` / `bg-surface-subtle` / `--color-surface-subtle` |
+  | `surface.inset` / `bg-surface-inset` | (削除。`surface.subtle` を使う) |
+  | `surface.secondary` / `bg-surface-secondary` / `--color-surface-secondary` | `surface.primary-muted` / `bg-surface-primary-muted` / `--color-surface-primary-muted` |
+  | `on.*` / `--color-on-*` | `onSurface.*` / `--color-on-surface-*` (utility `text-onSurface-*` は不変) |
+  | `on.muted` / `text-onSurface-muted` / `on.soft` / `text-onSurface-soft` | `onSurface.subtle` / `text-onSurface-subtle` |
+  | `border.{role}-subtle` / `border-border-{role}-subtle` | `border.{role}-muted` / `border-border-{role}-muted` |
+  | `border.{role}-emphasis` / `border-border-{role}-emphasis` | `border.{role}-strong` / `border-border-{role}-strong` |
+  | `divide-border-muted` | `divide-border-subtle` |
+
+  Migration (consumer の tsx / css に対して):
+  ```sh
+  sed -i -E \
+    -e 's/bg-surface-layer-1/bg-surface/g; s/surface-layer-1/surface-default/g; s/surface\.layer-1/surface.default/g' \
+    -e 's/surface-layer-2/surface-subtle/g; s/surface\.layer-2/surface.subtle/g; s/surface-inset/surface-subtle/g' \
+    -e 's/surface-secondary/surface-primary-muted/g; s/surface\.secondary/surface.primary-muted/g' \
+    -e 's/text-onSurface-(muted|soft)/text-onSurface-subtle/g; s/--color-on-(soft|muted)/--color-on-surface-subtle/g; s/--color-on-([a-z]+)/--color-on-surface-\1/g' \
+    -e 's/border-(success|error|warning|info)-subtle/border-\1-muted/g; s/border-(success|error|warning|info)-emphasis/border-\1-strong/g' \
+    -e 's/divide-border-muted/divide-border-subtle/g' \
+    $(git ls-files '*.tsx' '*.ts' '*.css' '*.mdx')
+  ```
+  TS の `COLORS.on.*` は `COLORS.onSurface.*` に (型エラーで検出できる)。
+
 ### Fixed
 
 - **出荷コンポーネントで CSS を生成していなかった 7 クラスを修正** (バグ修正。視覚変化あり、#109): 出荷コンポーネントの全 class を生成 CSS と突き合わせた結果 (#107 と同種)。(1) preset が `theme.colors` / `theme.fontWeight` / `theme.transitionDuration` を上書きして Tailwind 既定を落としていたため、`text-inherit` (Card link / Typography `color="inherit"`)、`text-current` (Icon `color="inherit"`)、`focus-visible:ring-current` (Alert / Toast の閉じるボタン)、`font-normal` (Typography body 系 / `weight="normal"` / Label) が無効だった → preset に `colors.inherit` / `colors.current` と `fontWeight.normal` (= regular の alias) を追加。(2) `duration-150` (Radio / Checkbox / Pagination) → `duration-normal`、`duration-300` (ProgressBar) → `duration-slow` に token 化。(3) Typography `color="subdued"` が存在しない `text-onSurface-subdued` を指していた → `text-onSurface-soft` (token `on.soft`) に写す。**視覚変化**: Typography `subdued` が真っ黒 (`#000`) → neutral.700 に、Alert / Toast の閉じるボタンのフォーカスリングが Tailwind 既定の青 → 文字色 (currentColor) に、mode① (dist) の link Card の文字色がブラウザ既定の青 → 継承色に、ProgressBar の fill が 150ms → 300ms に、太字の親の中の Typography body が親の weight 継承 → regular に。

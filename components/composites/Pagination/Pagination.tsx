@@ -127,7 +127,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     btnBase,
     disabled
       ? 'text-onSurface-disabled cursor-not-allowed'
-      : 'text-onSurface-muted hover:bg-state-hover-primary',
+      : 'text-onSurface-subtle hover:bg-state-hover-primary',
   ].join(' ');
 
   return (
@@ -156,7 +156,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {pages.map((page, i) =>
         page === null ? (
-          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-muted', buttonSizeStyle].join(' ')}>
+          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-subtle', buttonSizeStyle].join(' ')}>
             …
           </span>
         ) : (

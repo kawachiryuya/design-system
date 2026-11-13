@@ -9,7 +9,13 @@
 
 ### ⚠ BREAKING CHANGES
 
-- **Color token の整理 (削除と rename、値は変更なし。#109 順番 4 / Color-1)**: 半年ぶりの点検で、使われていない token と規則に乗っていない名前を整理した。CSS 変数名・Tailwind utility 名・TS の token path が変わる (型では catch されない silent break §10-2)。見た目は変わらない (Chromatic 差分なし)。
+- **brand (teal) / warning (orange) の色相と段を変更、neutral.500 を微調整 (視覚変化、primary token の色相変更は visual break §10-1。#109 順番 4 / Color-2)**:
+  - **brand**: teal の ramp を hue 166 → 159 (緑寄り) で作り直し、600 = `#008555` を brand の種色にする。`surface.primary` を teal.700 (`#006F50`) → **teal.600 (`#008555`)** に移し、他の role と同じ「塗り 600 / 文字 700」に揃える (白文字 4.68、AA)。`onSurface.primary` / `border.focus` / `state.*-primary` は新しい 700 (`#006D45`、白地 6.42)。Primary Button・Switch の on・FilterChip active・Badge primary・focus ring・リンク色が変わる
+  - **warning**: orange の ramp を hue 63 → **82** (黄色寄り) で作り直し。段とアンカーは不変 (600 白文字 4.86)。Alert / Toast / Badge の warning、`orange-500` のアイコン色 (非テキスト 3.67) が変わる
+  - **neutral.500**: `#737373` → **`#666666`**。`onSurface.subtle` (補助テキスト) が白地 5.74 / ページ背景 5.50 になり、APCA Lc 75 を白地・ページ背景の両方で満たす (`check:contrast` の注意 2 件が解消)。neutral は L 正規化の対象外なので他 hue に影響なし
+  - 各段の明度は既存パレットの段アンカー (有彩色 5 hue の OKLCH L 平均) に揃えて機械生成した。`check:contrast` の不変条件 (アンカー / step 差 / L 正規化) はすべて pass
+  - Migration: 値の変更のみで名前は変わらない。brand を override している product は新しい ramp を基準に見直す
+- **Color token の整理 (削除と rename、値は変更なし。#109 順番 4 / Color-1)**: 半年ぶりの点検で、使われていない token と規則に乗っていない名前を整理した。CSS 変数名・Tailwind utility 名・TS の token path が変わる (型では catch されない silent break §10-2)。見た目の変化は 1 点のみ: 文字階層の中段 (`on.soft` = neutral.700) を削除したため、Typography `subdued` と Checkbox / Radio / Switch の description (FormDescription) が neutral.500 の subtle になる。
   - **削除**: primitive の予備 7 hue (`yellow` / `lime` / `cyan` / `sky` / `violet` / `purple` / `pink`。`--color-violet-600` 等の変数と utility が無くなる。bright-hue 例外の規約も不要になった)、`surface.layer-3`、`surface.inset`、`border.emphasis`、文字色の中段 `on.soft`、`divide-border-muted` alias
   - **rename**: 下表。`bg-surface` / `text-onSurface` / `border-border` (DEFAULT) はそのまま使える。`bg-surface-default` / `text-onSurface-default` も生成する
   - **Typography**: `color="subdued"` / `color="muted"` はどちらも `onSurface.subtle` に写す (prop 値は当面維持)

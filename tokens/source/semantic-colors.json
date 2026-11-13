@@ -24,9 +24,9 @@
         "description": "Modal の背景マスク (rgba 50% black)。layer 階層とは別軸の特殊役割"
       },
       "primary": {
-        "value": "{color.teal.700}",
+        "value": "{color.teal.600}",
         "type": "color",
-        "description": "主要アクション (Primary Button 等) の塗り。白文字で WCAG AA を満たす段を使う"
+        "description": "主要アクション (Primary Button 等) の塗り。他の role と同じ 600 段 (白文字 4.68、AA)。brand の種色 #008555"
       },
       "primary-muted": {
         "value": "{color.teal.50}",
@@ -108,7 +108,7 @@
       "primary": {
         "value": "{color.teal.700}",
         "type": "color",
-        "description": "リンク・CTA。白背景に対して WCAG AA (6.19:1) を満たすため teal.700 を使用。"
+        "description": "リンク・CTA のテキスト。塗り (600) より 1 段濃い 700 (白地 6.42、ページ背景 5.89)。他の role の on と同じ段"
       },
       "success": {
         "value": "{color.green.700}",

@@ -36,7 +36,7 @@
       "primary": {
         "value": "{color.teal.700}",
         "type": "color",
-        "description": "主要アクション（Primaryボタン等）。WCAG AA (白文字 6.19:1) を満たすため primary.700 を使用。"
+        "description": "主要アクション（Primaryボタン等）。WCAG AA (白文字 6.19:1) を満たすため teal.700 を使用。"
       },
       "secondary": {
         "value": "{color.teal.50}",
@@ -123,7 +123,7 @@
       "primary": {
         "value": "{color.teal.700}",
         "type": "color",
-        "description": "リンク・CTA。白背景に対して WCAG AA (6.19:1) を満たすため primary.700 を使用。"
+        "description": "リンク・CTA。白背景に対して WCAG AA (6.19:1) を満たすため teal.700 を使用。"
       },
       "success": {
         "value": "{color.green.700}",
@@ -227,7 +227,7 @@
       "hover": {
         "value": "rgba(0, 0, 0, 0.08)",
         "type": "color",
-        "description": "中性 hover overlay (8% black)。色付き背景・透明背景どちらに重ねても汎用的に機能。Primary Button (緑bg) や Pagination 等で利用"
+        "description": "中性 hover overlay (8% black)。色付き背景・透明背景どちらに重ねても汎用的に機能。Primary Button (teal bg) 等で利用"
       },
       "active": {
         "value": "rgba(0, 0, 0, 0.12)",

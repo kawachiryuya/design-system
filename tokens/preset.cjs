@@ -197,6 +197,10 @@ module.exports = {
         border: {
           // 強度軸 (intensity scale、neutral)
           DEFAULT:  'var(--color-border-default)',
+          // `border-border-default` (トークン名 border.default そのまま) の受け口。
+          // Tailwind は DEFAULT キーから `border-border` しか生成しないため、明示キーが無いと
+          // `border-border-default` は CSS が出ず、枠線が currentColor (文字色) に落ちる。
+          default:  'var(--color-border-default)',
           subtle:   'var(--color-border-subtle)',
           strong:   'var(--color-border-strong)',
           emphasis: 'var(--color-border-emphasis)',

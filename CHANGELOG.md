@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Tokens/preset: `border-border-default` が CSS を生成しておらず、枠線が文字色で描かれていた不具合を修正** (バグ修正。視覚変化あり): preset の `borderColor.border` には `DEFAULT` キーしか無く、Tailwind は `border-border` だけを生成していた。コンポーネントが使う `border-border-default` (トークン名 `border.default` と同じ綴り、AGENTS.md §3 の例示) は該当ルールが無く、枠線色が `currentColor` (= `on.default`、ほぼ黒) に落ちていた。`default` キーを足して `border-border-default` → `var(--color-border-default)` (neutral.300) を生成する。**視覚変化**: `Input` / `Textarea` / `FilterChip` (非 active) / `ToggleButton` (未選択) の通常時の枠線が ほぼ黒 → neutral.300 に、`Button` secondary / destructive の disabled 時の枠線が neutral.300 になる。あわせてホバーの `hover:border-border-strong` (neutral.400) が「通常より濃くなる」本来の向きで見えるようになる (修正前は通常の方が濃く、ホバーで薄くなっていた)。既存の `border-border` は変更なし。mode① (`dist/styles.css`) / mode② (preset 継承) の両方に効く。
+
 ### Changed
 
 - **Tokens/preset: mode② 解決スモークテスト `check:preset-deps` を追加 + `tailwindcss` を optional peerDependency として宣言** (packaging 強化、#98 follow-up): preset.cjs は consumer のビルド時に `require('tailwindcss/plugin')` / `require('@tailwindcss/container-queries')` を解決するため、これら外部 require がすべて `dependencies` / `peerDependencies` に宣言済みかを静的検査する `check:preset-deps` を `verify` に追加。6.0.0→6.0.1 で起きた「devDependency 止まりで mode② consumer が `Cannot find module` で落ちる」packaging 回帰を CI で機械ガードする ([`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs))。あわせて preset が前提とする `tailwindcss` を **optional peerDependency** (`^3.4.0`) として正式宣言 (mode② は consumer 提供 / mode① は preset 非評価のため optional)。consumer は Tailwind 3.4+ を持っていれば追加作業なし。

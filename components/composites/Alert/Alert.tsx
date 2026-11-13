@@ -142,11 +142,11 @@ export const Alert: React.FC<AlertProps> = ({
 
       <div className="flex-1 min-w-0">
         {title && (
-          <p className={['type-body-sm font-bold mb-1', config.title].join(' ')}>
+          <p className={['type-supporting font-bold mb-1', config.title].join(' ')}>
             {title}
           </p>
         )}
-        <div className="type-body-sm">
+        <div className="type-supporting">
           {children}
         </div>
       </div>

@@ -83,11 +83,10 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">size (sm 14 / md 16 / lg 18)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm 14 / md 16)</div>
         <div className="flex flex-wrap gap-6 items-baseline">
           <Link href="#" size="sm">Small</Link>
           <Link href="#" size="md">Medium</Link>
-          <Link href="#" size="lg">Large</Link>
         </div>
       </div>
 

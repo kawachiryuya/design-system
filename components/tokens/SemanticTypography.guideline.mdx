@@ -7,12 +7,13 @@ import * as SemanticTypographyStories from './SemanticTypography.stories';
 
 ## 概要
 
-タイポグラフィの semantic 層 = **text style**。見出し 4 役割 (`hero-title` / `page-title` / `section-title` / `item-title`) / `body.{lg,md,sm}` / `control.{sm,md,lg}` / `label` / `caption` の 12 種類を「役割名」で参照する。各 style は size + line-height + weight (+ 字間) をセットで持つ 1 クラス `type-{role}`。見出し / body / label / caption は Typography コンポーネントの `variant` prop と 1:1 対応、control は Button 等の size 段。
+タイポグラフィの semantic 層 = **text style**。見出し 4 役割 (`hero-title` / `page-title` / `section-title` / `item-title`) / `body` / `supporting` / `control.{sm,md,lg}` / `label` / `caption` の 11 種類を「役割名」で参照する。各 style は size + line-height + weight (+ 字間) をセットで持つ 1 クラス `type-{role}`。見出し / body / supporting / label / caption は Typography コンポーネントの `variant` prop と 1:1 対応、control は Button 等の size 段。
 
 利用 utility:
 - `type-hero-title` (48px) / `type-page-title` (30px) / `type-section-title` (24px) / `type-item-title` (20px) — 見出し。全段 bold、「どこの見出しか」で選ぶ (下の「迷ったらこれ」)
-- `type-body-{lg,md,sm}` — 本文 (Input / Select / Link の文字もここ)
-- `type-control-{sm,md,lg}` — 操作部品のラベル (Button / SegmentedControl / Pagination / ToggleButton)。medium、行間 tight
+- `type-body` (16px) — 読み物の本文と入力欄の文字 (Input / Select / Textarea は全 size 16px、Modal 本文、Link)
+- `type-supporting` (14px) — 本文ではない UI 文言: 補助説明・エラー文・メニュー項目・通知 (Alert / Toast) の文言・Breadcrumb・密な表
+- `type-control-{sm,md,lg}` — 操作部品のラベル (Button / SegmentedControl / Pagination / ToggleButton)。medium、**行間 1 (none)**: 1 行のラベルで高さは容器が決める。折り返すと行が詰まるので control は 1 行が契約 (長文は短くするか truncate)
 - `type-label` — フォームラベル
 - `type-caption` — 注釈
 
@@ -24,7 +25,7 @@ import * as SemanticTypographyStories from './SemanticTypography.stories';
 
 → [Tokens/Typography/Semantic/Catalog](?path=/story/tokens-typography-semantic--catalog) で確認
 
-見出し (4 役割) → body (3 段) → control (3 段) → label → caption の順で全 12 token を大→小の順に並列表示。
+見出し (4 役割) → body → supporting → control (3 段) → label → caption の順で全 11 token を大→小の順に並列表示。
 
 ---
 
@@ -32,9 +33,9 @@ import * as SemanticTypographyStories from './SemanticTypography.stories';
 
 - **役割名で意図を表現**: `text-2xl` ではなく `type-section-title` と書くことで「これはセクションの見出し」が明確。見出しは size 名 (lg / md) でなく**場所の役割名**で持つ: 画面のどこに置く見出しかは有限 (hero / page / section / item) で、size 名だと「Modal のタイトルは md か lg か」を毎回決め直すことになる
 - **weight まで含む text style**: 1 クラスで文字の見え方が決まる (size だけの utility だと weight / 行間を部品ごとに手で書くことになり、primitive 直参照が増える)。上書きは `font-{weight}` のみ
-- **control は body と別**: 操作部品のラベルは medium + 行間 tight (1.25)、本文は regular + 1.5。同じ 14 / 16 / 18px でも役割が違う
-- **body-sm (14px) は UI 文言用**: ラベル・補助・表の中など。記事や長文の本文は body-md (16px) 以上 (Readability 原則)
-- **見出しは 4 役割、body は 3 段**: 大半の UI に必要十分。役割は増やさず、新しい用途は下の表で既存役割に写す (card-title / modal-title のような用途別 token は作らない)
+- **control は body と別**: 操作部品のラベルは medium + 行間 1 (1 行契約)、本文は regular + 1.5。同じ 14 / 16px でも役割が違う
+- **supporting (14px) は UI 文言用**: 補助説明・メニュー・通知・表の中など、「読み物の本文ではない」文言。記事や長文の本文は body (16px) 以上 (Readability 原則)。18px の本文 (旧 body-lg) は持たない: リード文は位置で分かるので body で足り、18 bold は item-title (20 bold) と区別がつかない
+- **見出しは 4 役割、本文は body / supporting の 2 つ**: 大半の UI に必要十分。役割は増やさず、新しい用途は下の表で既存役割に写す (card-title / modal-title のような用途別 token は作らない)
 - **見出しは和文最適化**: hero / page は letter-spacing 0 (欧文のネガティブ字間は漢字連続で窮屈になるため) + line-height snug (1.35)。さらに詰めたい場合は字形側の `font-feature-settings: "palt"` を推奨
 
 ---
@@ -47,7 +48,8 @@ import * as SemanticTypographyStories from './SemanticTypography.stories';
 | 画面のタイトル (1 画面に 1 つ) | `page-title` | `h1` |
 | 画面内のセクション見出し、Modal / Drawer / Popover のタイトル | `section-title` | `h2` |
 | Card / Accordion / リストグループ / EmptyState の見出し、設定項目の見出し | `item-title` | `h3`〜`h4` |
-| 見出しより弱い強調行 (リード文、フォーム内の小見出し) | `body-lg` or `body-md` + `font-bold` | `p` |
+| 見出しより弱い強調行 (Card のヘッダ文言、フォーム内の小見出し) | `body` + `font-bold` | `p` |
+| 補助説明・エラー文・メニュー項目・通知の文言 | `supporting` | `p` / `span` |
 
 HTML の見出しレベルは文書アウトラインで決める (Typography の `as`)。サイドバーの見出しは見た目 `section-title` でも `as="h3"` のように、役割と HTML レベルは独立。
 

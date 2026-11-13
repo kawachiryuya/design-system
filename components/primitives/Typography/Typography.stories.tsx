@@ -17,7 +17,7 @@ const meta: Meta<typeof Typography> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['heroTitle', 'pageTitle', 'sectionTitle', 'itemTitle', 'body-lg', 'body', 'body-sm', 'label', 'caption'],
+      options: ['heroTitle', 'pageTitle', 'sectionTitle', 'itemTitle', 'body', 'supporting', 'label', 'caption'],
     },
     as: {
       control: 'select',
@@ -66,14 +66,14 @@ export const Playground: Story = {
 };
 
 // ── 2. Overview (VR 対象) ────────────────────────────────────────────────
-// 9 種類の variant を縦に積んでタイプスケールを示す。
+// 8 種類の variant を縦に積んでタイプスケールを示す。
 // 「どのサイズ・装飾でどの variant を使うか」の判断材料。
 
 export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'タイプスケール (heroTitle / pageTitle / sectionTitle / itemTitle / body-lg / body / body-sm / label / caption、font-size 大→小。同サイズの body-sm/label は body グループをまとめる方針で body-sm→label) と color / weight の軸を 1 枚に集約。見出しは役割名で選び、HTML レベルは `as` で独立に決める。',
+        story: 'タイプスケール (heroTitle / pageTitle / sectionTitle / itemTitle / body / supporting / label / caption、font-size 大→小。同サイズの supporting / label は regular → medium の順) と color / weight の軸を 1 枚に集約。見出しは役割名で選び、HTML レベルは `as` で独立に決める。',
       },
     },
   },
@@ -86,9 +86,8 @@ export const Overview: Story = {
         <Typography variant="sectionTitle">sectionTitle — 24px / セクション・Modal</Typography>
         <Typography variant="itemTitle">itemTitle — 20px / Card・Accordion の見出し</Typography>
         <hr className="border-border-subtle" />
-        <Typography variant="body-lg">Body Large — 18px / リード文</Typography>
-        <Typography variant="body">Body — 16px / 本文 (デフォルト)</Typography>
-        <Typography variant="body-sm">Body Small — 14px / 補足</Typography>
+        <Typography variant="body">body — 16px / 読み物の本文・入力欄 (デフォルト)</Typography>
+        <Typography variant="supporting">supporting — 14px / 補助説明・メニュー・通知などの UI 文言</Typography>
         <Typography variant="label">Label — 14px medium / フォームラベル</Typography>
         <Typography variant="caption">Caption — 12px / 注釈・著作権</Typography>
       </div>

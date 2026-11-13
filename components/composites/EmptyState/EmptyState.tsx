@@ -109,13 +109,13 @@ const DefaultIcon = () => (
   </svg>
 );
 
-// title は size 段ごとに semantic (body-md / body-lg は font-bold 上書き、lg は item-title)
-// 統一 (title 系 text style は 20px+ で sm/md の 16/18px と一致しないため不採用)。
-// desc は semantic body-X に揃える。
+// title は size 段ごとに text style を割り当てる: sm は body + font-bold (16px の強調行、
+// 見出しにしない)、md は item-title (20px)、lg は section-title (24px、Hero / Onboarding 用途)。
+// desc は body / supporting。
 const sizeConfig = {
-  sm: { icon: 'w-12 h-12', title: 'type-body-md font-bold', desc: 'type-body-sm', gap: 'gap-2', py: 'py-6' },
-  md: { icon: 'w-16 h-16', title: 'type-body-lg font-bold', desc: 'type-body-sm', gap: 'gap-3', py: 'py-10' },
-  lg: { icon: 'w-24 h-24', title: 'type-item-title', desc: 'type-body-md', gap: 'gap-4', py: 'py-16' },
+  sm: { icon: 'w-12 h-12', title: 'type-body font-bold', desc: 'type-supporting', gap: 'gap-2', py: 'py-6' },
+  md: { icon: 'w-16 h-16', title: 'type-item-title', desc: 'type-supporting', gap: 'gap-3', py: 'py-10' },
+  lg: { icon: 'w-24 h-24', title: 'type-section-title', desc: 'type-body', gap: 'gap-4', py: 'py-16' },
 };
 
 /**

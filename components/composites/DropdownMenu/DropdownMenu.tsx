@@ -278,7 +278,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             tabIndex={index === activeIndex ? 0 : -1}
             onClick={() => selectAt(index)}
             className={[
-              'flex w-full items-center gap-2 px-3 py-2 text-left type-body-sm transition-colors',
+              'flex w-full items-center gap-2 px-3 py-2 text-left type-supporting transition-colors',
               'focus:outline-none',
               item.disabled
                 ? 'text-onSurface-disabled cursor-not-allowed'

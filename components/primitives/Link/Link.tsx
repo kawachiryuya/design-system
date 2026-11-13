@@ -5,7 +5,7 @@ import { tv } from '../../_internal/tv';
 import { Icon } from '../Icon';
 
 /** Link のテキストサイズ */
-export type LinkSize = 'sm' | 'md' | 'lg';
+export type LinkSize = 'sm' | 'md';
 
 /** Link のテキストカラー */
 export type LinkColor = 'primary' | 'neutral' | 'subtle';
@@ -32,7 +32,7 @@ export type LinkUnderline = 'always' | 'hover' | 'none';
  *
  * @example
  *   // 大サイズ + 常にアンダーライン（CTA リンク）
- *   <Link href="/start" size="lg" underline="always">今すぐ始める</Link>
+ *   <Link href="/start" size="md" underline="always">今すぐ始める</Link>
  *
  * @example
  *   // 無効状態（クリック不可、aria-disabled 自動付与）
@@ -114,9 +114,8 @@ const linkVariants = tv({
       subtle:  '!text-onSurface-subtle hover:bg-state-hover active:bg-state-active',
     },
     size: {
-      sm: 'type-body-sm',
-      md: 'type-body-md',
-      lg: 'type-body-lg',
+      sm: 'type-supporting',
+      md: 'type-body',
     },
     // text-decoration 系は `!important` (`!underline` / `!no-underline`) で勝たせる。
     // Storybook docs の `.sbdocs a` 標準スタイル (specificity 0,1,1) が Tailwind の

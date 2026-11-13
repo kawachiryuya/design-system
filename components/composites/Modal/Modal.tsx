@@ -218,7 +218,7 @@ const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
 ModalRoot.displayName = 'Modal';
 
 const ModalBody: React.FC<ModalBodyProps> = ({ className = '', children }) => (
-  <div className={['p-5 overflow-y-auto type-body-md text-onSurface', className].filter(Boolean).join(' ')}>
+  <div className={['p-5 overflow-y-auto type-body text-onSurface', className].filter(Boolean).join(' ')}>
     {children}
   </div>
 );

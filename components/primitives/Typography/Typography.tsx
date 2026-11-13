@@ -7,16 +7,14 @@ import { tv } from '../../_internal/tv';
  * 見出しは「どこの見出しか」の役割名 (heroTitle / pageTitle / sectionTitle / itemTitle) で選ぶ。
  * HTML の見出しレベル (h1〜h6) は `as` で独立に決める (視覚と文書構造の分離)。
  */
-// 型スケール順 = font-size 大→小。同サイズ (body-sm 14reg / label 14med) は
-// 例外的に body グループ (body-lg/body/body-sm) をまとめる方針で body-sm → label の順。
+// 型スケール順 = font-size 大→小。同サイズ (supporting 14reg / label 14med) は regular → medium の順。
 export type TypographyVariant =
   | 'heroTitle'
   | 'pageTitle'
   | 'sectionTitle'
   | 'itemTitle'
-  | 'body-lg'
   | 'body'
-  | 'body-sm'
+  | 'supporting'
   | 'label'
   | 'caption';
 
@@ -88,7 +86,8 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
    * - `pageTitle`: 画面のタイトル（30px bold）。1 画面に 1 つ
    * - `sectionTitle`: 画面内のセクション、Modal / Drawer のタイトル（24px bold）
    * - `itemTitle`: Card / Accordion / リストグループの見出し（20px bold）
-   * - `body-lg`/`body`/`body-sm`: 本文（18/16/14px）
+   * - `body`: 読み物の本文・入力欄の文字（16px regular）
+   * - `supporting`: 本文ではない UI 文言 — 補助説明・メニュー項目・通知・密な表（14px regular）
    * - `label`: フォームラベル等（14px medium）
    * - `caption`: 補助テキスト（12px、最小）
    * @default 'body'
@@ -126,9 +125,8 @@ const defaultTag: Record<TypographyVariant, TypographyElement> = {
   pageTitle:    'h1',
   sectionTitle: 'h2',
   itemTitle:    'h3',
-  'body-lg': 'p',
-  body:      'p',
-  'body-sm': 'p',
+  body:       'p',
+  supporting: 'p',
   label:     'span',
   caption:   'p',
 };
@@ -151,9 +149,8 @@ const typographyVariants = tv({
       pageTitle:    'type-page-title',
       sectionTitle: 'type-section-title',
       itemTitle:    'type-item-title',
-      'body-lg': 'type-body-lg',
-      body:      'type-body-md',
-      'body-sm': 'type-body-sm',
+      body:       'type-body',
+      supporting: 'type-supporting',
       label:     'type-label',
       caption:   'type-caption',
     },

@@ -149,9 +149,9 @@ const inputVariants = tv({
   ],
   variants: {
     size: {
-      sm: 'h-10 type-body-sm',
-      md: 'h-12 type-body-md',
-      lg: 'h-14 type-body-lg',
+      sm: 'h-10 type-supporting',
+      md: 'h-12 type-body',
+      lg: 'h-14 type-body',
     },
     error: {
       true:  'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted',

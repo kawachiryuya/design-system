@@ -77,7 +77,7 @@ interface ButtonRegularProps extends ButtonBaseProps {
    * 例: 「購入する / ¥1,200」「予約する / 残り3席」のように、主アクションに付随する
    * 数値・補足情報を 1 つの押下対象に集約したい時に使う。
    *
-   * - `type-caption`(sm/md) / `type-body-sm`(lg) で主ラベルより一段小さく、階層化は font-size のみで作る (opacity は当てない — 価格・残数など読ませたい情報なのでフル不透明)
+   * - `type-caption`(sm/md) / `type-supporting`(lg) で主ラベルより一段小さく、階層化は font-size のみで作る (opacity は当てない — 価格・残数など読ませたい情報なのでフル不透明)
    * - 全 size で描画される（`min-h` は最小値なので、2 行になると縦に伸びるだけで潰れない）
    * - icon と共存可。アイコンは 2 行ブロック全体の左右に配置される
    */
@@ -353,7 +353,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const labelBlock = showDescription ? (
       <span className="inline-flex flex-col items-center gap-0.5">
         <span>{children}</span>
-        <span className={size === 'lg' ? 'type-body-sm' : 'type-caption'}>{description}</span>
+        <span className={size === 'lg' ? 'type-supporting' : 'type-caption'}>{description}</span>
       </span>
     ) : (
       children

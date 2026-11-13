@@ -257,7 +257,7 @@ module.exports = {
       });
     }),
     // ── Semantic typography: `.type-{role}` (hero/page/section/item-title / body / control / label / caption) ──
-    // 例: <p className="type-body-md">…</p> / <h2 className="type-section-title">…</h2>
+    // 例: <p className="type-body">…</p> / <h2 className="type-section-title">…</h2>
     // size + line-height + weight (+ 字間) をセットで持つ text style。components 層なので
     // `type-section-title font-normal` のように weight だけ utility で上書きできる。
     plugin(function ({ addComponents }) {

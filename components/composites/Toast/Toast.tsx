@@ -206,9 +206,9 @@ const ToastBody: React.FC<ToastContent & {
 
       <div className="flex-1 min-w-0">
         {title && (
-          <p className="type-body-sm font-bold mb-1">{title}</p>
+          <p className="type-supporting font-bold mb-1">{title}</p>
         )}
-        <div className="type-body-sm">{description}</div>
+        <div className="type-supporting">{description}</div>
         {action && (
           <div className="mt-2">
             <Button variant="tertiary" size="sm" onClick={action.onClick}>
@@ -219,7 +219,7 @@ const ToastBody: React.FC<ToastContent & {
       </div>
 
       {/* 閉じるボタンは absolute 配置 (Alert と同じ pattern)。
-          Toast は description のみ (type-body-sm) と title 付き両方で使われる。
+          Toast は description のみ (type-supporting) と title 付き両方で使われる。
           top-4 + mt-px (= 17px) で左 icon span (同じ y=17 offset) と左右対称にし、
           icon center y=27 を description (leading-relaxed glyph center y≈27) /
           title (leading-snug glyph center y≈25.6) いずれにも近づける。 */}

@@ -90,7 +90,7 @@ function PaletteStrip({ palette }: { palette: Palette }) {
   const shades = Object.keys(palette.shades);
   return (
     <div>
-      <p className="type-body-sm font-medium text-onSurface m-0 mb-2">{palette.label}</p>
+      <p className="type-supporting font-medium text-onSurface m-0 mb-2">{palette.label}</p>
       <div className="flex rounded-md overflow-hidden border border-border-subtle">
         {shades.map((shade, i) => (
           <ColorSwatch
@@ -128,7 +128,7 @@ function BaseRow() {
         const subColor = dark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.5)';
         return (
           <div key={c.label} className="flex-shrink-0">
-            <p className="type-body-sm font-medium text-onSurface m-0 mb-2">{c.label}</p>
+            <p className="type-supporting font-medium text-onSurface m-0 mb-2">{c.label}</p>
             <div
               className="rounded-md border border-border-subtle flex flex-col items-center justify-center px-2 py-4 gap-[2px]"
               style={{ backgroundColor: c.hex, color: dark ? '#FFFFFF' : '#171717', width: '64px' }}

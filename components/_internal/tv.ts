@@ -15,7 +15,7 @@
  * ## 解決
  * `extendTailwindMerge` で custom utility を **正しい classGroup に明示登録** する。
  *
- * - `font-size` group → type-*-title / type-body-* / type-label / type-caption
+ * - `font-size` group → type-*-title / type-body / type-supporting / type-label / type-caption
  * - `ring-w` group → ring-focus
  * - `ring-color` group → ring-border-focus / ring-border-error
  *   (ring-current は Tailwind 既定で対応済み)
@@ -37,9 +37,8 @@ export const tv = createTV({
               'page-title',
               'section-title',
               'item-title',
-              'body-lg',
-              'body-md',
-              'body-sm',
+              'body',
+              'supporting',
               'label',
               'caption',
             ],

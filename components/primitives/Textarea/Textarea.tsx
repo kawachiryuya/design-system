@@ -107,7 +107,7 @@ const textareaVariants = tv({
     'placeholder:text-onSurface-subtle',
     'px-3',
     'py-2',
-    'type-body-md',
+    'type-body',
     // transition-colors のみ (詳細は Input.tsx 同セクションのコメント参照)
     'transition-colors',
     'duration-normal',

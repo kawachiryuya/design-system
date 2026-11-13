@@ -45,7 +45,7 @@ export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   onChange?: (checked: boolean) => void;
   /** ラベルテキスト。クリックでもトグルする。 */
   label?: string;
-  /** ラベルの補足テキスト (body-sm サイズ、SR には `aria-describedby` で伝わる)。 */
+  /** ラベルの補足テキスト (supporting サイズ、SR には `aria-describedby` で伝わる)。 */
   description?: string;
   /**
    * ラベルの位置。

@@ -69,13 +69,13 @@ const labelVariants = tv({
   variants: {
     // size は semantic typography token に対応:
     // - sm: type-caption (12px regular)
-    // - md: type-body-sm (14px regular)
-    // - lg: type-body-md (16px regular)
-    // Label は regular (type-label は medium なので使わず、caption / body 系で regular に)
+    // - md: type-supporting (14px regular)
+    // - lg: type-body (16px regular)
+    // Label は regular (type-label は medium なので使わず、caption / supporting / body で regular に)
     size: {
       sm: 'type-caption',
-      md: 'type-body-sm',
-      lg: 'type-body-md',
+      md: 'type-supporting',
+      lg: 'type-body',
     },
     disabled: {
       true:  'text-onSurface-disabled cursor-not-allowed',

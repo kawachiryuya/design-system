@@ -150,7 +150,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       'cursor-pointer',
       'bg-surface',
       'transition-all',
-      'duration-150',
+      'duration-normal',
       'focus:outline-none',
       'focus-visible:ring-focus',
       'focus-visible:ring-offset-focus',

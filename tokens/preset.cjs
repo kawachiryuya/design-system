@@ -94,9 +94,16 @@ module.exports = {
       white: t.color.base.white,
       black: t.color.base.black,
       transparent: t.color.base.transparent,
+      // Tailwind 既定の特殊値。theme.colors を上書きすると既定ごと消えるため明示的に残す
+      // (text-inherit / text-current / ring-current 等が CSS を生成しなくなっていた #109)。
+      inherit: 'inherit',
+      current: 'currentColor',
     },
     fontSize: t.typography['font-size'],
-    fontWeight: t.typography['font-weight'],
+    // token は regular / medium / semibold / bold。Tailwind 慣用の `font-normal` は regular の
+    // alias として残す (`rounded` ≒ `rounded-md` と同じ DEFAULT/alias の手法)。上書きで消すと
+    // 「書いても CSS が出ない」silent break になる (#109)。
+    fontWeight: { ...t.typography['font-weight'], normal: t.typography['font-weight'].regular },
     lineHeight: t.typography['line-height'],
     letterSpacing: t.typography['letter-spacing'],
     fontFamily: {

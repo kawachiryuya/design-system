@@ -44,7 +44,7 @@ export const Playground: Story = {
     <Card {...args}>
       <Card.Header>カードタイトル</Card.Header>
       <Card.Body>
-        <p className="text-sm text-onSurface-muted">ここにコンテンツが入ります。</p>
+        <p className="text-sm text-onSurface-subtle">ここにコンテンツが入ります。</p>
       </Card.Body>
       <Card.Footer>
         <Button size="sm" variant="tertiary">キャンセル</Button>
@@ -65,20 +65,22 @@ export const Overview: Story = {
         story: '視覚回帰用の総覧。variant (elevated/outlined/filled) と構成パターン (compound / padding 直 children / divider=false / clickable / link card / hover) を 1 枚に集約。',
       },
     },
+    // pseudo-states addon は一致した要素そのものにだけ状態を当て、子孫には伝わらない。
+    // 外側の <div id> ではなく Card の root ([data-ds-root]) を指す。
     pseudo: {
-      hover: ['#card-hover'],
+      hover: ['#card-hover [data-ds-root]'],
     },
   },
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">variant (elevated / outlined / filled)</div>
+        <div className="text-xs text-onSurface-subtle">variant (elevated / outlined / filled)</div>
         <div className="flex flex-col gap-4 w-80">
           {(['elevated', 'outlined', 'filled'] as const).map((variant) => (
             <Card key={variant} variant={variant}>
               <Card.Body>
                 <p className="text-sm font-medium text-onSurface">{variant}</p>
-                <p className="text-xs text-onSurface-muted mt-1">カードのバリアントサンプル</p>
+                <p className="text-xs text-onSurface-subtle mt-1">カードのバリアントサンプル</p>
               </Card.Body>
             </Card>
           ))}
@@ -86,12 +88,12 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">構成 (compound / padding 直 children / divider=false / clickable / link / hover)</div>
+        <div className="text-xs text-onSurface-subtle">構成 (compound / padding 直 children / divider=false / clickable / link / hover)</div>
         <div className="flex flex-col gap-4 w-80">
           <Caption text="Compound (Header + Body + Footer)">
             <Card>
               <Card.Header>カードタイトル</Card.Header>
-              <Card.Body><p className="text-sm text-onSurface-muted">本文</p></Card.Body>
+              <Card.Body><p className="text-sm text-onSurface-subtle">本文</p></Card.Body>
               <Card.Footer><Button size="sm">保存</Button></Card.Footer>
             </Card>
           </Caption>
@@ -101,7 +103,7 @@ export const Overview: Story = {
           <Caption text="divider=false (Header/Footer の境界線なし)">
             <Card>
               <Card.Header divider={false}>タイトル</Card.Header>
-              <Card.Body><p className="text-sm text-onSurface-muted">divider=false で境界線が消える</p></Card.Body>
+              <Card.Body><p className="text-sm text-onSurface-subtle">divider=false で境界線が消える</p></Card.Body>
               <Card.Footer divider={false}><Button size="sm">OK</Button></Card.Footer>
             </Card>
           </Caption>
@@ -109,7 +111,7 @@ export const Overview: Story = {
             <Card clickable onClick={() => {}}>
               <Card.Body>
                 <p className="text-sm font-medium text-onSurface">クリック可能</p>
-                <p className="text-xs text-onSurface-muted mt-1">Enter/Space も対応</p>
+                <p className="text-xs text-onSurface-subtle mt-1">Enter/Space も対応</p>
               </Card.Body>
             </Card>
           </Caption>
@@ -117,7 +119,7 @@ export const Overview: Story = {
             <Card href="#" target="_blank">
               <Card.Body>
                 <p className="text-sm font-medium text-onSurface">リンクカード</p>
-                <p className="text-xs text-onSurface-muted mt-1">href 指定で a タグ</p>
+                <p className="text-xs text-onSurface-subtle mt-1">href 指定で a タグ</p>
               </Card.Body>
             </Card>
           </Caption>

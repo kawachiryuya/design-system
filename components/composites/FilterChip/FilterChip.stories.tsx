@@ -79,7 +79,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">状態 × interaction (aria-pressed で active を SR へ)</div>
+        <div className="text-xs text-onSurface-subtle">状態 × interaction (aria-pressed で active を SR へ)</div>
         <div className="grid grid-cols-3 gap-4 items-start">
           <Caption text="Default"><FilterChip>並び順</FilterChip></Caption>
           <Caption text="Active"><FilterChip active>並び順: 出発時刻順</FilterChip></Caption>
@@ -93,7 +93,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">icon 構成 (iconOnly は aria-label 必須)</div>
+        <div className="text-xs text-onSurface-subtle">icon 構成 (iconOnly は aria-label 必須)</div>
         <div className="flex flex-wrap gap-3 items-center">
           <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />}>左アイコン</FilterChip>
           <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>右に矢印 (Modal 起動)</FilterChip>

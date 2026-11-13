@@ -65,7 +65,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
         const total = 47;
         return (
           <div className="space-y-2">
-            <p className="text-sm text-onSurface-muted">
+            <p className="text-sm text-onSurface-subtle">
               全 {total} 件中 {(p - 1) * perPage + 1}〜{Math.min(p * perPage, total)} 件
             </p>
             <Pagination currentPage={p} totalPages={Math.ceil(total / perPage)} onPageChange={setP} />
@@ -106,10 +106,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 **記事一覧ページ（件数表示 + Pagination + showEdges）** — リストの上に件数、下に中央寄せの Pagination を置く定番構成。
 
 <div className="w-96 space-y-4">
-  <p className="text-body-sm text-onSurface-muted">全 47 件中 1〜5 件を表示</p>
+  <p className="type-supporting text-onSurface-subtle">全 47 件中 1〜5 件を表示</p>
   <ul className="divide-y divide-border-subtle border border-border-subtle rounded-md">
     {['記事タイトル #1','記事タイトル #2','記事タイトル #3'].map((title) => (
-      <li key={title} className="px-4 py-3 text-body-sm text-onSurface">{title}</li>
+      <li key={title} className="px-4 py-3 type-supporting text-onSurface">{title}</li>
     ))}
   </ul>
   <div className="flex justify-center">

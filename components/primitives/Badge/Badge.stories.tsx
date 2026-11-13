@@ -71,11 +71,11 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">appearance × variant</div>
+        <div className="text-xs text-onSurface-subtle">appearance × variant</div>
         <div className="flex flex-col gap-3">
           {APPEARANCES.map((appearance) => (
             <div key={appearance} className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-onSurface-muted w-14 shrink-0">{appearance}</span>
+              <span className="text-xs text-onSurface-subtle w-14 shrink-0">{appearance}</span>
               {VARIANTS.map((variant) => (
                 <Badge key={variant} variant={variant} appearance={appearance}>{variant}</Badge>
               ))}
@@ -85,7 +85,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">dot (リアルタイム性: 処理中 / 接続中 / 新着等)</div>
+        <div className="text-xs text-onSurface-subtle">dot (リアルタイム性: 処理中 / 接続中 / 新着等)</div>
         <div className="flex flex-wrap gap-2">
           {VARIANTS.map((variant) => (
             <Badge key={variant} variant={variant} dot>{variant}</Badge>
@@ -94,7 +94,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">count (solid で通知バッジ風 / 1〜3 桁)</div>
+        <div className="text-xs text-onSurface-subtle">count (solid で通知バッジ風 / 1〜3 桁)</div>
         <div className="flex gap-2 items-center">
           <Badge variant="error" appearance="solid">1</Badge>
           <Badge variant="error" appearance="solid">12</Badge>

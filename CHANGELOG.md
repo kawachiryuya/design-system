@@ -7,12 +7,75 @@
 
 ## [Unreleased]
 
+### Added
+
+- **`Tokens/Color/Regression` swatch story (Chromatic 専用、`diffThreshold: 0`)** (#109 Color-4、§9-4): primitive 全段 + semantic 全 token を文字なしの平坦な色面で並べ、閾値 0 で撮る。Chromatic の既定閾値では token 値の微調整 (#115 の brand 変更、RGB +22) が部品の snapshot で「unchanged」に吸収され検出できなかった盲点への対策。consumer 影響なし。
+- **テーマ契約の manifest `tokens/theme-contract.json` と `check:theme-contract`** (#109 Color-3、§3-8 / §10-6 (b)): semantic color token 45 個を required (`surface.primary` の 1 色) / optional (status 一式・brand 連動の文字 / 縁 / overlay・`primary-muted`) / fixed (中性の canvas / 文字 / 境界 / state / disabled / skeleton) の 3 層に振り分けた。`verify` に組み込んだ check が「全 token がどれか 1 層にちょうど 1 回」を保証するので、token を足すときは層を決めて manifest にも追記する。テーマ値の検証 (多テーマの contrast / 距離) は未作成。consumer 影響なし。
+
+### ⚠ BREAKING CHANGES
+
+- **Semantic typography を text style `type-{role}` に (size + 行間 + weight + 字間を 1 クラスで)、`control.sm/md/lg` を追加、primitive typography の直参照を lint で禁止 (#109 順番 4 / Typo-2)**:
+  - **`text-heading-*` / `text-body-*` / `text-label` / `text-caption` → `type-*` text style** (utility rename、silent break)。旧 utility は size + 行間だけだったが、新 `type-*` は weight も含む (preset が components 層に生成。`font-*` で上書き可)
+  - **見出しは size 名 (`heading.{display,xl,lg,md,sm}` 5 段) から「どこの見出しか」の役割名 4 つに**: `hero-title` (48px) / `page-title` (30px) / `section-title` (24px) / `item-title` (20px)。全段 bold。**36px (旧 `heading.xl`) は削除** (page と hero の間に役割がない)。CSS 変数も `--typography-semantic-heading-*` → `--typography-semantic-{hero,page,section,item}-title-*`
+  - **Typography `variant` を役割名に**: `display` / `h1` / `h2` / `h3` / `h4` → `heroTitle` / `pageTitle` / `sectionTitle` / `itemTitle`、`body-sm` → `supporting`、`body-lg` は削除 (`body` か `itemTitle` へ) (型で検出できる)。HTML の見出しレベルは従来どおり `as` で独立に決める (`variant="sectionTitle" as="h3"`)。既定タグは hero / page → `h1`、section → `h2`、item → `h3`
+  - **本文は size 名 (`body.{lg,md,sm}` 3 段) から `body` (16px) / `supporting` (14px) の 2 役割に**。`supporting` は「読み物の本文ではない UI 文言」(補助説明・エラー文・メニュー項目・Alert / Toast の文言・Breadcrumb・密な表)。**18px (旧 `body.lg`) は削除**: リード文は `body` で足り、18 bold は item-title (20 bold) と区別できないため。Input / Select / SearchBar の lg は 18 → **16px** (視覚変化、56px の入力欄に 16px は標準的)。**Link `size="lg"` を削除** (sm / md のみ、型で検出できる)。CSS 変数は `--typography-semantic-body-*` / `--typography-semantic-supporting-*`
+  - **`type-control-{sm,md,lg}` を追加** (14 / 16 / 18px、medium、**行間 1 (none)**)。Button / SegmentedControl / Pagination / ToggleButton / NumberInput のラベル用。control は 1 行のラベルで高さは容器が決める契約 (折り返すと行が詰まる)。Input / Select / SearchBar / Textarea / Link / Divider / Label の文字は `type-body` / `type-supporting`
+  - **lint**: 出荷コンポーネントで `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error (hue 直参照と同じ仕組み)。例外は Avatar の initials (理由付き `eslint-disable`)
+  - **Typography `color="subdued"` / `"muted"` → `"subtle"`、Link `color="muted"` → `"subtle"`** (prop 値の削除、型で検出できる)
+  - 視覚変化 (行間の正規化): Alert / Toast のタイトル (snug 1.35 → 1.5) と本文 (relaxed 1.75 → 1.5)、Label (tight 1.25 → 1.5 / caption 1.5)、Button の description (caption 1.5)、Tabs の件数 badge (none → 1.5)、Textarea の文字カウンタ (medium → regular)、EmptyState のタイトル (sm は body + bold 16px、md は item-title 20px、lg は section-title 24px)、Modal のタイトルは section-title (24px、値は不変)、Button のラベル行間 1.25 → 1 (高さは `h-*` で不変)
+  - Migration: `sed -i -E 's/\btext-body-md\b/type-body/g; s/\btext-body-sm\b/type-supporting/g; s/\btext-(label|caption)\b/type-\1/g; s/\btext-heading-display\b/type-hero-title/g; s/\btext-heading-lg\b/type-page-title/g; s/\btext-heading-md\b/type-section-title/g; s/\btext-heading-sm\b/type-item-title/g'`。`text-heading-xl` (36px) は `type-page-title` (30px) か `type-hero-title` (48px) に、`text-body-lg` (18px) は `type-body` (16px) か `type-item-title` (20px bold) に手で振り分け。primitive の `text-{size}` は役割に応じて `type-body` / `type-supporting` (本文・UI 文言) か `type-control-*` (操作部品) に手で置き換え。Typography: `variant="display"` → `"heroTitle"`、`"h1"` → `"pageTitle"` (36 → 30px)、`"h2"` → `"pageTitle"` (30px) か `"sectionTitle"` (24px)、`"h3"` → `"sectionTitle"`、`"h4"` → `"itemTitle"`、`"body-sm"` → `"supporting"`、`"body-lg"` → `"body"`。Link `size="lg"` → `"md"`。`color="subdued|muted"` → `"subtle"`
+- **Typography primitive の整理: font-size `base` → `md`、font-weight から `semibold` を削除、見出しを全段 bold に (#109 順番 4 / Typo-1)**:
+  - **`text-base` → `text-md`** (utility rename、silent break)。16px を Tailwind 慣習の `base` ではなく size 名 (sm / md / lg) と揃えた `md` で呼ぶ。`text-base` は `check:utilities` が「存在しないクラス」として弾く
+  - **`font-semibold` を削除** (utility / token `font-weight.semibold` / Typography `weight="semibold"`)。和文の system font (Yu Gothic は Medium / Bold、Meiryo は Regular / Bold) では 600 が 700 に丸められ、bold との差が存在しないため。3 段 (regular / medium / bold) に
+  - **見出し (heading md / sm) の weight が semibold → bold** (視覚変化)。見出し 5 段すべて bold、階層はサイズで作る
+  - 部品の semibold は役割で振り分け: 見出し的 (Card.Header / Alert・Toast のタイトル / EmptyState のタイトル / Typography h3・h4) → **bold**、ラベル的 (Tabs の件数 badge / Accordion の項目名 / Avatar の initials / Do・Don't のラベル) → **medium** (視覚変化)
+  - `heading.sm` に他の heading と同じ `letter-spacing: normal` を明示 (値は不変)
+  - Migration: `sed -i -E 's/\btext-base\b/text-md/g; s/\bfont-semibold\b/font-bold/g'` (ラベル的な箇所は `font-medium` に手で振り分ける)。`weight="semibold"` → `"bold"` (型エラーで検出できる)
+- **brand (teal) / warning (orange) の色相と段を変更、neutral.500 を微調整 (視覚変化、primary token の色相変更は visual break §10-1。#109 順番 4 / Color-2)**:
+  - **brand**: teal の ramp を hue 166 → 159 (緑寄り) で作り直し、600 = `#008555` を brand の種色にする。`surface.primary` を teal.700 (`#006F50`) → **teal.600 (`#008555`)** に移し、他の role と同じ「塗り 600 / 文字 700」に揃える (白文字 4.68、AA)。`onSurface.primary` / `border.focus` / `state.*-primary` は新しい 700 (`#006D45`、白地 6.42)。Primary Button・Switch の on・FilterChip active・Badge primary・focus ring・リンク色が変わる
+  - **warning**: orange の ramp を hue 63 → **82** (黄色寄り) で作り直し。段とアンカーは不変 (600 白文字 4.86)。Alert / Toast / Badge の warning、`orange-500` のアイコン色 (非テキスト 3.67) が変わる
+  - **neutral.500**: `#737373` → **`#666666`**。`onSurface.subtle` (補助テキスト) が白地 5.74 / ページ背景 5.50 になり、APCA Lc 75 を白地・ページ背景の両方で満たす (`check:contrast` の注意 2 件が解消)。neutral は L 正規化の対象外なので他 hue に影響なし
+  - 各段の明度は既存パレットの段アンカー (有彩色 5 hue の OKLCH L 平均) に揃えて機械生成した。`check:contrast` の不変条件 (アンカー / step 差 / L 正規化) はすべて pass
+  - Migration: 値の変更のみで名前は変わらない。brand を override している product は新しい ramp を基準に見直す
+- **Color token の整理 (削除と rename、値は変更なし。#109 順番 4 / Color-1)**: 半年ぶりの点検で、使われていない token と規則に乗っていない名前を整理した。CSS 変数名・Tailwind utility 名・TS の token path が変わる (型では catch されない silent break §10-2)。見た目の変化は 1 点のみ: 文字階層の中段 (`on.soft` = neutral.700) を削除したため、Typography `subdued` と Checkbox / Radio / Switch の description (FormDescription) が neutral.500 の subtle になる。
+  - **削除**: primitive の予備 7 hue (`yellow` / `lime` / `cyan` / `sky` / `violet` / `purple` / `pink`。`--color-violet-600` 等の変数と utility が無くなる。bright-hue 例外の規約も不要になった)、`surface.layer-3`、`surface.inset`、`border.emphasis`、文字色の中段 `on.soft`、`divide-border-muted` alias
+  - **rename**: 下表。`bg-surface` / `text-onSurface` / `border-border` (DEFAULT) はそのまま使える。`bg-surface-default` / `text-onSurface-default` も生成する
+  - **Typography**: `color="subdued"` / `color="muted"` はどちらも `onSurface.subtle` に写す (prop 値は当面維持)
+
+  | 旧 | 新 |
+  |---|---|
+  | `surface.layer-1` / `bg-surface-layer-1` / `--color-surface-layer-1` | `surface.default` / `bg-surface` / `--color-surface-default` |
+  | `surface.layer-2` / `bg-surface-layer-2` / `--color-surface-layer-2` | `surface.subtle` / `bg-surface-subtle` / `--color-surface-subtle` |
+  | `surface.inset` / `bg-surface-inset` | (削除。`surface.subtle` を使う) |
+  | `surface.secondary` / `bg-surface-secondary` / `--color-surface-secondary` | `surface.primary-muted` / `bg-surface-primary-muted` / `--color-surface-primary-muted` |
+  | `on.*` / `--color-on-*` | `onSurface.*` / `--color-on-surface-*` (utility `text-onSurface-*` は不変) |
+  | `on.muted` / `text-onSurface-muted` / `on.soft` / `text-onSurface-soft` | `onSurface.subtle` / `text-onSurface-subtle` |
+  | `border.{role}-subtle` / `border-border-{role}-subtle` | `border.{role}-muted` / `border-border-{role}-muted` |
+  | `border.{role}-emphasis` / `border-border-{role}-emphasis` | `border.{role}-strong` / `border-border-{role}-strong` |
+  | `divide-border-muted` | `divide-border-subtle` |
+
+  Migration (consumer の tsx / css に対して):
+  ```sh
+  sed -i -E \
+    -e 's/bg-surface-layer-1/bg-surface/g; s/surface-layer-1/surface-default/g; s/surface\.layer-1/surface.default/g' \
+    -e 's/surface-layer-2/surface-subtle/g; s/surface\.layer-2/surface.subtle/g; s/surface-inset/surface-subtle/g' \
+    -e 's/surface-secondary/surface-primary-muted/g; s/surface\.secondary/surface.primary-muted/g' \
+    -e 's/text-onSurface-(muted|soft)/text-onSurface-subtle/g; s/--color-on-(soft|muted)/--color-on-surface-subtle/g; s/--color-on-([a-z]+)/--color-on-surface-\1/g' \
+    -e 's/border-(success|error|warning|info)-subtle/border-\1-muted/g; s/border-(success|error|warning|info)-emphasis/border-\1-strong/g' \
+    -e 's/divide-border-muted/divide-border-subtle/g' \
+    $(git ls-files '*.tsx' '*.ts' '*.css' '*.mdx')
+  ```
+  TS の `COLORS.on.*` は `COLORS.onSurface.*` に (型エラーで検出できる)。
+
 ### Fixed
 
+- **出荷コンポーネントで CSS を生成していなかった 7 クラスを修正** (バグ修正。視覚変化あり、#109): 出荷コンポーネントの全 class を生成 CSS と突き合わせた結果 (#107 と同種)。(1) preset が `theme.colors` / `theme.fontWeight` / `theme.transitionDuration` を上書きして Tailwind 既定を落としていたため、`text-inherit` (Card link / Typography `color="inherit"`)、`text-current` (Icon `color="inherit"`)、`focus-visible:ring-current` (Alert / Toast の閉じるボタン)、`font-normal` (Typography body 系 / `weight="normal"` / Label) が無効だった → preset に `colors.inherit` / `colors.current` と `fontWeight.normal` (= regular の alias) を追加。(2) `duration-150` (Radio / Checkbox / Pagination) → `duration-normal`、`duration-300` (ProgressBar) → `duration-slow` に token 化。(3) Typography `color="subdued"` が存在しない `text-onSurface-subdued` を指していた → `text-onSurface-soft` (token `on.soft`) に写す。**視覚変化**: Typography `subdued` が真っ黒 (`#000`) → neutral.700 に、Alert / Toast の閉じるボタンのフォーカスリングが Tailwind 既定の青 → 文字色 (currentColor) に、mode① (dist) の link Card の文字色がブラウザ既定の青 → 継承色に、ProgressBar の fill が 150ms → 300ms に、太字の親の中の Typography body が親の weight 継承 → regular に。
 - **Tokens/preset: `border-border-default` が CSS を生成しておらず、枠線が文字色で描かれていた不具合を修正** (バグ修正。視覚変化あり): preset の `borderColor.border` には `DEFAULT` キーしか無く、Tailwind は `border-border` だけを生成していた。コンポーネントが使う `border-border-default` (トークン名 `border.default` と同じ綴り、AGENTS.md §3 の例示) は該当ルールが無く、枠線色が `currentColor` (= `on.default`、ほぼ黒) に落ちていた。`default` キーを足して `border-border-default` → `var(--color-border-default)` (neutral.300) を生成する。**視覚変化**: `Input` / `Textarea` / `FilterChip` (非 active) / `ToggleButton` (未選択) の通常時の枠線が ほぼ黒 → neutral.300 に、`Button` secondary / destructive の disabled 時の枠線が neutral.300 になる。あわせてホバーの `hover:border-border-strong` (neutral.400) が「通常より濃くなる」本来の向きで見えるようになる (修正前は通常の方が濃く、ホバーで薄くなっていた)。既存の `border-border` は変更なし。mode① (`dist/styles.css`) / mode② (preset 継承) の両方に効く。
 
 ### Changed
 
+- **`check:contrast` の ΔEOK (役割識別性の warn) から primary ↔ status を外した** (#109): brand が status と同系色になるのは正当 (teal × green 等) で、役割の識別は置き場所 + icon + 文字が担う。status 同士と primary-muted ↔ status は引き続き測る。
+- **`check:utilities` を `verify` に追加 — 書いた Tailwind utility が CSS を生成しているかを機械検査** (CI 強化、#109): 出荷コンポーネントの utility を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラスがあれば fail ([`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs))。#107 (`border-border-default`) と #109 (`text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の帯) のような「書いても効いていない」silent break を CI で止める。consumer 影響なし。
 - **Tokens/preset: mode② 解決スモークテスト `check:preset-deps` を追加 + `tailwindcss` を optional peerDependency として宣言** (packaging 強化、#98 follow-up): preset.cjs は consumer のビルド時に `require('tailwindcss/plugin')` / `require('@tailwindcss/container-queries')` を解決するため、これら外部 require がすべて `dependencies` / `peerDependencies` に宣言済みかを静的検査する `check:preset-deps` を `verify` に追加。6.0.0→6.0.1 で起きた「devDependency 止まりで mode② consumer が `Cannot find module` で落ちる」packaging 回帰を CI で機械ガードする ([`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs))。あわせて preset が前提とする `tailwindcss` を **optional peerDependency** (`^3.4.0`) として正式宣言 (mode② は consumer 提供 / mode① は preset 非評価のため optional)。consumer は Tailwind 3.4+ を持っていれば追加作業なし。
 
 ## [6.0.1] - 2026-06-27

@@ -69,38 +69,38 @@ export interface AlertProps {
 
 const variantConfig = {
   success: {
-    container: 'bg-surface-success-muted border border-border-success-subtle text-onSurface-success',
+    container: 'bg-surface-success-muted border border-border-success-muted text-onSurface-success',
     icon: 'text-onSurface-success',
     title: 'text-onSurface-success',
     closeBtn: 'text-onSurface-success hover:bg-state-hover',
     iconName: 'check_circle' as const,
   },
   error: {
-    container: 'bg-surface-error-muted border border-border-error-subtle text-onSurface-error',
+    container: 'bg-surface-error-muted border border-border-error-muted text-onSurface-error',
     icon: 'text-onSurface-error',
     title: 'text-onSurface-error',
     closeBtn: 'text-onSurface-error hover:bg-state-hover',
     iconName: 'error' as const,
   },
   warning: {
-    container: 'bg-surface-warning-muted border border-border-warning-subtle text-onSurface-warning',
+    container: 'bg-surface-warning-muted border border-border-warning-muted text-onSurface-warning',
     icon: 'text-onSurface-warning',
     title: 'text-onSurface-warning',
     closeBtn: 'text-onSurface-warning hover:bg-state-hover',
     iconName: 'warning' as const,
   },
   info: {
-    container: 'bg-surface-info-muted border border-border-info-subtle text-onSurface-info',
+    container: 'bg-surface-info-muted border border-border-info-muted text-onSurface-info',
     icon: 'text-onSurface-info',
     title: 'text-onSurface-info',
     closeBtn: 'text-onSurface-info hover:bg-state-hover',
     iconName: 'info' as const,
   },
   neutral: {
-    container: 'bg-surface-layer-2 border border-border-subtle text-onSurface',
-    icon: 'text-onSurface-muted',
+    container: 'bg-surface-subtle border border-border-subtle text-onSurface',
+    icon: 'text-onSurface-subtle',
     title: 'text-onSurface',
-    closeBtn: 'text-onSurface-muted hover:bg-state-hover',
+    closeBtn: 'text-onSurface-subtle hover:bg-state-hover',
     iconName: 'info' as const,
   },
 };
@@ -142,11 +142,11 @@ export const Alert: React.FC<AlertProps> = ({
 
       <div className="flex-1 min-w-0">
         {title && (
-          <p className={['text-body-sm font-semibold leading-snug mb-1', config.title].join(' ')}>
+          <p className={['type-supporting font-bold mb-1', config.title].join(' ')}>
             {title}
           </p>
         )}
-        <div className="text-body-sm leading-relaxed">
+        <div className="type-supporting">
           {children}
         </div>
       </div>

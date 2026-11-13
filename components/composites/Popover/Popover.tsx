@@ -194,7 +194,7 @@ export const Popover: React.FC<PopoverProps> = ({
           // floating-ui が left/top を inline で設定する。
           'fixed inset-auto m-0 w-max max-w-[min(20rem,calc(100vw-2rem))]',
           'bg-surface text-onSurface rounded-md border border-border-subtle shadow-lg',
-          'p-4 text-body-sm',
+          'p-4 type-supporting',
           'focus:outline-none',
           className,
         ].filter(Boolean).join(' ')}

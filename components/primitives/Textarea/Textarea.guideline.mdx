@@ -123,7 +123,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
   <div className="space-y-section-sm">
-    <h3 className="text-heading-sm text-onSurface m-0">お問い合わせ</h3>
+    <h3 className="type-item-title text-onSurface m-0">お問い合わせ</h3>
     <div className="flex flex-col gap-4">
       <Textarea label="件名" required fullWidth rows={2} placeholder="お問い合わせの概要" />
       <Textarea label="本文" required fullWidth rows={6} maxLength={500} currentLength={0} helpText="500 文字以内で具体的にご記入ください" placeholder="お問い合わせ内容を詳しくご記入ください" />
@@ -142,7 +142,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`role="alert"`** (FormMessage 内部): エラーメッセージ表示時に SR が即時通知
 - **キーボード**: `Tab` でフォーカス、`Shift+Enter` / `Enter` で改行 (Enter は送信に取られない)
 - **文字数カウンター**: 視覚的に表示。上限超過で赤+太字 + SR には errorMessage で明示通知
-- **placeholder 色**: `text-onSurface-muted` (#737373) で AA 4.69:1 を満たす
+- **placeholder 色**: `text-onSurface-subtle` (#737373) で AA 4.69:1 を満たす
 
 ---
 

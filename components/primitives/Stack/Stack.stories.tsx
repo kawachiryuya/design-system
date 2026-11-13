@@ -43,7 +43,7 @@ const Item = ({ children }: { children: React.ReactNode }) => (
 export const Playground: Story = {
   decorators: [
     (Story) => (
-      <div className="w-72 bg-surface-layer-2 border border-dashed border-border-subtle p-4">
+      <div className="w-72 bg-surface-subtle border border-dashed border-border-subtle p-4">
         <Story />
       </div>
     ),
@@ -85,11 +85,11 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">gap (xs / sm / md / lg / xl)</div>
+        <div className="text-xs text-onSurface-subtle">gap (xs / sm / md / lg / xl)</div>
         <div className="flex flex-wrap gap-6">
           {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((g) => (
             <Caption key={g} text={`gap=${g}`}>
-              <div className="w-56 bg-surface-layer-2 border border-dashed border-border-subtle p-3">
+              <div className="w-56 bg-surface-subtle border border-dashed border-border-subtle p-3">
                 <Stack gap={g}>
                   <Item>A</Item>
                   <Item>B</Item>
@@ -102,11 +102,11 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">align (cross-axis: start / center / end / stretch)</div>
+        <div className="text-xs text-onSurface-subtle">align (cross-axis: start / center / end / stretch)</div>
         <div className="grid grid-cols-4 gap-2">
           {(['start', 'center', 'end', 'stretch'] as const).map((a) => (
-            <div key={a} className="bg-surface-layer-2 border border-dashed border-border-subtle p-3">
-              <div className="text-xs text-onSurface-muted mb-2">align={a}</div>
+            <div key={a} className="bg-surface-subtle border border-dashed border-border-subtle p-3">
+              <div className="text-xs text-onSurface-subtle mb-2">align={a}</div>
               <Stack gap="sm" align={a}>
                 <Item>短い</Item>
                 <Item>少し長めの item</Item>

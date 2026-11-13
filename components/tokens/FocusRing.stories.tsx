@@ -34,10 +34,10 @@ export const Tokens: Story = {
           className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-subtle bg-surface"
           style={{ gridTemplateColumns: '200px 80px 1fr' }}
         >
-          <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
+          <code className="bg-surface-subtle text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
             {e.utility}
           </code>
-          <code className="font-mono text-xs text-onSurface-muted">{e.value}</code>
+          <code className="font-mono text-xs text-onSurface-subtle">{e.value}</code>
           <span className="text-sm text-onSurface">{e.description}</span>
         </div>
       ))}

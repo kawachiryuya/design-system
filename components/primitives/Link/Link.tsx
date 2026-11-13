@@ -5,10 +5,10 @@ import { tv } from '../../_internal/tv';
 import { Icon } from '../Icon';
 
 /** Link のテキストサイズ */
-export type LinkSize = 'sm' | 'md' | 'lg';
+export type LinkSize = 'sm' | 'md';
 
 /** Link のテキストカラー */
-export type LinkColor = 'primary' | 'neutral' | 'muted';
+export type LinkColor = 'primary' | 'neutral' | 'subtle';
 
 /** Link のアンダーライン表示タイミング */
 export type LinkUnderline = 'always' | 'hover' | 'none';
@@ -28,11 +28,11 @@ export type LinkUnderline = 'always' | 'hover' | 'none';
  *
  * @example
  *   // ミュート色 + ホバー時のみアンダーライン（フッター用）
- *   <Link href="/terms" color="muted" underline="hover">利用規約</Link>
+ *   <Link href="/terms" color="subtle" underline="hover">利用規約</Link>
  *
  * @example
  *   // 大サイズ + 常にアンダーライン（CTA リンク）
- *   <Link href="/start" size="lg" underline="always">今すぐ始める</Link>
+ *   <Link href="/start" size="md" underline="always">今すぐ始める</Link>
  *
  * @example
  *   // 無効状態（クリック不可、aria-disabled 自動付与）
@@ -57,7 +57,7 @@ export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorEle
    * テキストカラー。
    * - `primary` プライマリ色（CTA 的リンク）
    * - `neutral` 通常テキスト色
-   * - `muted` 控えめ色（フッター・補足等）
+   * - `subtle` 控えめ色（フッター・補足等）
    * @default 'primary'
    */
   color?: LinkColor;
@@ -80,7 +80,7 @@ export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorEle
  *
  * - base: 全 color/size 共通 (フォーカスリング / トランジション)
  * - variants.color: 文字色 + hover/active overlay
- *   primary は `--color-state-hover-primary` で薄緑、neutral/muted は中性 overlay
+ *   primary は `--color-state-hover-primary` で薄緑、neutral/subtle は中性 overlay
  * - variants.size: text-size のみ
  * - variants.underline: 下線の表示タイミング
  * - variants.disabled: 操作不能化 (opacity + pointer-events)
@@ -111,12 +111,11 @@ const linkVariants = tv({
     color: {
       primary: '!text-onSurface-primary hover:bg-state-hover-primary active:bg-state-active-primary',
       neutral: '!text-onSurface hover:bg-state-hover active:bg-state-active',
-      muted:   '!text-onSurface-muted hover:bg-state-hover active:bg-state-active',
+      subtle:  '!text-onSurface-subtle hover:bg-state-hover active:bg-state-active',
     },
     size: {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
+      sm: 'type-supporting',
+      md: 'type-body',
     },
     // text-decoration 系は `!important` (`!underline` / `!no-underline`) で勝たせる。
     // Storybook docs の `.sbdocs a` 標準スタイル (specificity 0,1,1) が Tailwind の

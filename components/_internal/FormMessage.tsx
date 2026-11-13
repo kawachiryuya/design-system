@@ -30,7 +30,7 @@ export const FormMessage: React.FC<FormMessageProps> = ({
     {error && errorMessage && (
       <p
         id={errorId}
-        className="text-body-sm text-onSurface-error"
+        className="type-supporting text-onSurface-error"
         role="alert"
         data-ds-typography
       >
@@ -40,7 +40,7 @@ export const FormMessage: React.FC<FormMessageProps> = ({
     {!error && helpText && (
       <p
         id={helpId}
-        className="text-body-sm text-onSurface-muted"
+        className="type-supporting text-onSurface-subtle"
         data-ds-typography
       >
         {helpText}

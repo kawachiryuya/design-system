@@ -76,7 +76,7 @@ export type AppShellLayout = 'contained' | 'full';
  * @example
  *   // full-bleed (Landing 等): wrapper を外し Section(背景) + Center(読み列) で組む
  *   <AppShell sidebar={<Sidebar />} layout="full">
- *     <Section padding="lg" className="bg-surface-secondary">
+ *     <Section padding="lg" className="bg-surface-primary-muted">
  *       <Center max="xl">...hero...</Center>
  *     </Section>
  *   </AppShell>

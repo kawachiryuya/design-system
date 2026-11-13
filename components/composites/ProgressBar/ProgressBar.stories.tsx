@@ -71,7 +71,7 @@ export const Overview: Story = {
   render: () => (
     <div className="w-80 flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">color (primary 進捗 / success 完了 / error 失敗 / warning 警告) — value も値域を兼ねる</div>
+        <div className="text-xs text-onSurface-subtle">color (primary 進捗 / success 完了 / error 失敗 / warning 警告) — value も値域を兼ねる</div>
         <div className="flex flex-col gap-3">
           <ProgressBar value={70} color="primary" label="primary (70%)" showValue />
           <ProgressBar value={100} color="success" label="success (100%)" showValue />
@@ -81,7 +81,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm 4px / md 8px)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm 4px / md 8px)</div>
         <div className="flex flex-col gap-3">
           <ProgressBar value={60} size="sm" label="sm (4px)" />
           <ProgressBar value={60} size="md" label="md (8px)" />
@@ -89,7 +89,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">label / showValue なし (バーのみ)</div>
+        <div className="text-xs text-onSurface-subtle">label / showValue なし (バーのみ)</div>
         <ProgressBar value={40} />
       </div>
     </div>

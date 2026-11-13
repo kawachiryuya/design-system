@@ -59,7 +59,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">content fallback (image → initials → placeholder)</div>
+        <div className="text-xs text-onSurface-subtle">content fallback (image → initials → placeholder)</div>
         <div className="flex flex-wrap gap-4 items-center">
           <Caption text="Image (src 指定)"><Avatar src={IMG} name="田中 太郎" /></Caption>
           <Caption text="Initials (src なし)"><Avatar name="田中 太郎" /></Caption>
@@ -68,19 +68,19 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (xs 24 / sm 32 / md 40 / lg 48 / xl 64)</div>
+        <div className="text-xs text-onSurface-subtle">size (xs 24 / sm 32 / md 40 / lg 48 / xl 64)</div>
         <div className="flex items-end gap-4">
           {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
             <div key={size} className="flex flex-col items-center gap-2">
               <Avatar size={size} name="田中 太郎" src={IMG} />
-              <span className="text-caption text-onSurface-muted font-mono">{size}</span>
+              <span className="type-caption text-onSurface-subtle font-mono">{size}</span>
             </div>
           ))}
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">shape (circle 個人 / square チーム・組織) — 角丸のみ比較するためイニシャルで統一</div>
+        <div className="text-xs text-onSurface-subtle">shape (circle 個人 / square チーム・組織) — 角丸のみ比較するためイニシャルで統一</div>
         <div className="flex gap-6 items-center">
           <Caption text="circle"><Avatar shape="circle" size="lg" name="田中 太郎" /></Caption>
           <Caption text="square"><Avatar shape="square" size="lg" name="チーム A" /></Caption>
@@ -88,12 +88,12 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">status (online / offline / busy / away)</div>
+        <div className="text-xs text-onSurface-subtle">status (online / offline / busy / away)</div>
         <div className="flex gap-6 items-center">
           {(['online', 'offline', 'busy', 'away'] as const).map((status) => (
             <div key={status} className="flex flex-col items-center gap-1">
               <Avatar size="lg" name="田中 太郎" status={status} src={IMG} />
-              <span className="text-caption text-onSurface-muted font-mono">{status}</span>
+              <span className="type-caption text-onSurface-subtle font-mono">{status}</span>
             </div>
           ))}
         </div>

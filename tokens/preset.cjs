@@ -34,17 +34,19 @@ const screens = { ...t.screens, shell: t.screens.lg, cols: t.screens.lg };
 const splitFontFamily = (s) =>
   typeof s === 'string' ? s.split(/\s*,\s*/) : s;
 
-// typography-semantic を Tailwind の theme.fontSize 形式に変換。
-// 各 leaf は { 'font-size', 'line-height', 'letter-spacing' (任意) } のオブジェクト。
-// font-weight はキーに含まれていても Tailwind の fontSize には注入しない
-// (variant の weight 上書きを font-* ユーティリティで効かせるため)。
-// ネストキーは kebab で連結: heading.display → 'heading-display'
+// typography-semantic → `.type-{role}` の合成クラス (text style、#109 Typo-2)。
+// 各 leaf { font-size, font-weight, line-height, letter-spacing? } を 1 クラスにまとめる。
+// ネストキーは kebab で連結: page-title → 'type-page-title'、control.md → 'type-control-md'。
+// components 層 (addComponents) に置くので、utilities 層の `font-bold` 等で weight だけを上書きできる
+// (Typography の weight prop)。出荷コンポーネントは primitive の text-{size} / leading-* / tracking-* を
+// 直接書かず、必ずこの type-* を使う (eslint で禁止、AGENTS §3-7)。
 const flattenSemanticTypo = (node, prefix = '', out = {}) => {
   if (node && typeof node === 'object' && node['font-size']) {
-    const opts = {};
-    if (node['line-height'])    opts.lineHeight    = String(node['line-height']);
-    if (node['letter-spacing']) opts.letterSpacing = String(node['letter-spacing']);
-    out[prefix.replace(/-$/, '')] = [node['font-size'], opts];
+    const decl = { fontSize: String(node['font-size']) };
+    if (node['line-height'])    decl.lineHeight    = String(node['line-height']);
+    if (node['font-weight'])    decl.fontWeight    = String(node['font-weight']);
+    if (node['letter-spacing']) decl.letterSpacing = String(node['letter-spacing']);
+    out[`.type-${prefix.replace(/-$/, '')}`] = decl;
     return out;
   }
   if (node && typeof node === 'object') {
@@ -54,9 +56,7 @@ const flattenSemanticTypo = (node, prefix = '', out = {}) => {
   }
   return out;
 };
-const semanticTypo = t['typography-semantic']
-  ? flattenSemanticTypo(t['typography-semantic'])
-  : {};
+const typeStyles = t['typography-semantic'] ? flattenSemanticTypo(t['typography-semantic']) : {};
 
 /**
  * Spacing 名を Tailwind utility 名に変換する。
@@ -76,27 +76,27 @@ module.exports = {
     spacing: tailwindSpacing,
     colors: {
       // Primitive palette は **hue 名** で表現 (2 層アーキテクチャの純度を保つため)。
-      // brand / 機能色の役割名は semantic-colors.json (surface.primary / on.success 等)
-      // で担う。13 palette × 10 shade で hue wheel を 30° 刻みで埋める。
+      // brand / 機能色の役割名は semantic-colors.json (surface.primary / onSurface.success 等)
+      // で担う。semantic が参照する 6 hue のみ (予備 hue は #109 で削除、必要になった時に足す)。
       teal:    t.color.teal,
       neutral: t.color.neutral,
       green:   t.color.green,
       red:     t.color.red,
       orange:  t.color.orange,
       blue:    t.color.blue,
-      yellow:  t.color.yellow,
-      lime:    t.color.lime,
-      cyan:    t.color.cyan,
-      sky:     t.color.sky,
-      violet:  t.color.violet,
-      purple:  t.color.purple,
-      pink:    t.color.pink,
       white: t.color.base.white,
       black: t.color.base.black,
       transparent: t.color.base.transparent,
+      // Tailwind 既定の特殊値。theme.colors を上書きすると既定ごと消えるため明示的に残す
+      // (text-inherit / text-current / ring-current 等が CSS を生成しなくなっていた #109)。
+      inherit: 'inherit',
+      current: 'currentColor',
     },
     fontSize: t.typography['font-size'],
-    fontWeight: t.typography['font-weight'],
+    // token は regular / medium / bold。Tailwind 慣用の `font-normal` は regular の
+    // alias として残す (`rounded` ≒ `rounded-md` と同じ DEFAULT/alias の手法)。上書きで消すと
+    // 「書いても CSS が出ない」silent break になる (#109)。
+    fontWeight: { ...t.typography['font-weight'], normal: t.typography['font-weight'].regular },
     lineHeight: t.typography['line-height'],
     letterSpacing: t.typography['letter-spacing'],
     fontFamily: {
@@ -130,28 +130,21 @@ module.exports = {
       // 例: `focus-visible:ring-focus focus-visible:ring-offset-focus`
       ringWidth:       { focus: t['focus-ring'].width  },
       ringOffsetWidth: { focus: t['focus-ring'].offset },
-      // Semantic typography (heading / body / label / caption)
-      // 例: <p className="text-heading-xl">…</p>
-      // 注: font-weight は意図的に含めない (variant の weight 上書きを font-* で効かせるため)
-      fontSize: semanticTypo,
-
       // ── Semantic color tokens (WHERE × WHAT) ──
       // CSS 変数経由で resolve（実体は tokens/build/variables.css）
       backgroundColor: {
         background: 'var(--color-bg-default)',
         surface: {
-          // Layer 階層 (Carbon 流の numeric 命名、ページ→入れ子の深さ):
-          //   DEFAULT (= bg-surface) は layer-1 alias で利用最頻度を簡潔に保つ
-          DEFAULT:   'var(--color-surface-layer-1)',
-          'layer-1': 'var(--color-surface-layer-1)',
-          'layer-2': 'var(--color-surface-layer-2)',
-          'layer-3': 'var(--color-surface-layer-3)',
-          // 特殊役割 (depth 軸とは別)
-          inset:   'var(--color-surface-inset)',
+          // 面の階層: default (= bg-surface、カード等の既定の面) → subtle (default の中の入れ子区画)。
+          // `default` キーも置き、bg-surface / bg-surface-default のどちらでも生成する (#107 の DEFAULT 問題の回避)。
+          DEFAULT: 'var(--color-surface-default)',
+          default: 'var(--color-surface-default)',
+          subtle:  'var(--color-surface-subtle)',
+          // 特殊役割 (階層軸とは別)
           overlay: 'var(--color-surface-overlay)',
-          // 役割色 (brand / functional)
-          primary:   'var(--color-surface-primary)',
-          secondary: 'var(--color-surface-secondary)',
+          // 役割色 (brand / functional)。{role} = solid、{role}-muted = 薄い面 (Container ペア)
+          primary:         'var(--color-surface-primary)',
+          'primary-muted': 'var(--color-surface-primary-muted)',
           success:         'var(--color-surface-success)',
           'success-muted': 'var(--color-surface-success-muted)',
           error:           'var(--color-surface-error)',
@@ -177,67 +170,59 @@ module.exports = {
       },
       textColor: {
         onSurface: {
-          // 階層軸 (default → soft → muted) — hierarchy 名称で
-          // primary/secondary/tertiary の役割名 (`primary` = brand) との衝突を回避。
-          // disabled は state 軸 (操作不能、legible 要件免除) で hierarchy とは別軌道
-          DEFAULT:  'var(--color-on-default)',
-          soft:     'var(--color-on-soft)',
-          muted:    'var(--color-on-muted)',
-          // 役割 (functional / state)
-          primary:  'var(--color-on-primary)',
-          success:  'var(--color-on-success)',
-          error:    'var(--color-on-error)',
-          warning:  'var(--color-on-warning)',
-          info:     'var(--color-on-info)',
-          disabled: 'var(--color-on-disabled)',
-          inverse:  'var(--color-on-inverse)',
+          // 階層は default / subtle の 2 段 (#109)。primary = brand 色テキスト (リンク等) で階層軸とは別。
+          // disabled は state 軸 (操作不能、legible 要件免除)。
+          DEFAULT:  'var(--color-on-surface-default)',
+          default:  'var(--color-on-surface-default)',
+          subtle:   'var(--color-on-surface-subtle)',
+          primary:  'var(--color-on-surface-primary)',
+          success:  'var(--color-on-surface-success)',
+          error:    'var(--color-on-surface-error)',
+          warning:  'var(--color-on-surface-warning)',
+          info:     'var(--color-on-surface-info)',
+          disabled: 'var(--color-on-surface-disabled)',
+          inverse:  'var(--color-on-surface-inverse)',
         },
       },
       borderColor: {
         border: {
-          // 強度軸 (intensity scale、neutral)
+          // 中性の強度軸 subtle / default / strong。`border-border-default` (トークン名どおりの綴り) も生成する (#107)
           DEFAULT:  'var(--color-border-default)',
-          // `border-border-default` (トークン名 border.default そのまま) の受け口。
-          // Tailwind は DEFAULT キーから `border-border` しか生成しないため、明示キーが無いと
-          // `border-border-default` は CSS が出ず、枠線が currentColor (文字色) に落ちる。
           default:  'var(--color-border-default)',
           subtle:   'var(--color-border-subtle)',
           strong:   'var(--color-border-strong)',
-          emphasis: 'var(--color-border-emphasis)',
-          // Functional roles × intensity
-          'success-subtle':   'var(--color-border-success-subtle)',
-          'success-emphasis': 'var(--color-border-success-emphasis)',
-          'error-subtle':     'var(--color-border-error-subtle)',
-          'error-emphasis':   'var(--color-border-error-emphasis)',
-          'warning-subtle':   'var(--color-border-warning-subtle)',
-          'warning-emphasis': 'var(--color-border-warning-emphasis)',
-          'info-subtle':      'var(--color-border-info-subtle)',
-          'info-emphasis':    'var(--color-border-info-emphasis)',
-          // Interactive (intensity axis とは独立)
+          // role × 強度: {role}-muted (薄い面 surface.{role}-muted の縁) / {role}-strong (強い枠: validation / Badge outline)
+          'success-muted':  'var(--color-border-success-muted)',
+          'success-strong': 'var(--color-border-success-strong)',
+          'error-muted':    'var(--color-border-error-muted)',
+          'error-strong':   'var(--color-border-error-strong)',
+          'warning-muted':  'var(--color-border-warning-muted)',
+          'warning-strong': 'var(--color-border-warning-strong)',
+          'info-muted':     'var(--color-border-info-muted)',
+          'info-strong':    'var(--color-border-info-strong)',
+          // Interactive (強度軸とは独立)
           focus:    'var(--color-border-focus)',
         },
       },
       ringColor: {
         border: {
           focus:   'var(--color-border-focus)',
-          // border.primary は border 強度軸 refactor (subtle/default/strong/emphasis) で廃止。
+          // border.primary は border 強度軸 refactor (subtle/default/strong) で廃止。
           // teal.700 (= border-focus) と同色のため alias 継続、consumer 側の `ring-border-primary` は引き続き有効。
           primary: 'var(--color-border-focus)',
-          // border.error は border-error-emphasis (red.600) のエイリアス。consumer 側で
+          // border.error は border-error-strong (red.600) のエイリアス。consumer 側で
           // `ring-border-error` が複数 component (Button / Input / Select / Checkbox / Radio / Textarea)
           // から参照されているため alias 継続。
-          error:   'var(--color-border-error-emphasis)',
+          error:   'var(--color-border-error-strong)',
         },
-        // surface.default は廃止済 (Carbon 流の layer-1/2/3 numeric 体系に移行、CHANGELOG `Surface layer 階層化` 参照)。
-        // 旧 `ring-surface` は layer-1 (= white) を指していたため、現行命名で同等の参照に更新。
-        surface: 'var(--color-surface-layer-1)',
+        // 旧 `ring-surface` は surface.default (= white) を指す alias。
+        surface: 'var(--color-surface-default)',
       },
       divideColor: {
+        // divide-border / divide-border-subtle 等は borderColor から自動派生する。
+        // 旧 alias `divide-border-muted` (= border.subtle) は #109 で廃止 (muted は role の薄い面を指す語に統一)。
         border: {
           DEFAULT: 'var(--color-border-default)',
-          // border.muted は border-subtle (neutral.200) のエイリアス。consumer 側で
-          // `divide-border-muted` が継続利用されているため alias 継続。
-          muted:   'var(--color-border-subtle)',
         },
       },
     },
@@ -270,6 +255,13 @@ module.exports = {
           },
         },
       });
+    }),
+    // ── Semantic typography: `.type-{role}` (hero/page/section/item-title / body / control / label / caption) ──
+    // 例: <p className="type-body">…</p> / <h2 className="type-section-title">…</h2>
+    // size + line-height + weight (+ 字間) をセットで持つ text style。components 層なので
+    // `type-section-title font-normal` のように weight だけ utility で上書きできる。
+    plugin(function ({ addComponents }) {
+      addComponents(typeStyles);
     }),
     plugin(function ({ addUtilities }) {
       addUtilities({

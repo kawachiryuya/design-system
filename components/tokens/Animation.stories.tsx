@@ -27,7 +27,8 @@ const EASINGS: AnimEntry[] = Object.entries(animationToken.easing).map(
   ([key, entry]) => ({
     key,
     value: (entry as { value: string }).value,
-    tw: key === 'ease-in-out' ? 'ease-in-out' : key === 'linear' ? 'ease-linear' : key,
+    // Tailwind の utility は `ease-${key}`。token key が `ease-out` 等なので `ease-ease-out` になる (#109)
+    tw: `ease-${key}`,
   }),
 );
 
@@ -42,7 +43,7 @@ function LoopingBar({
   easing: string;
 }) {
   return (
-    <div className="w-full h-2 bg-surface-inset rounded-sm overflow-hidden relative">
+    <div className="w-full h-2 bg-surface-subtle rounded-sm overflow-hidden relative">
       <div
         className="w-10 h-2 bg-surface-primary rounded-sm absolute top-0"
         style={{
@@ -87,15 +88,15 @@ const Row: React.FC<{ entry: AnimEntry; bar: React.ReactNode; trailingValue?: st
 }) => (
   <div className="flex items-center gap-4 p-4 rounded-md border border-border-subtle bg-surface">
     <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
-      <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block self-start">
+      <code className="bg-surface-subtle text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block self-start">
         {entry.key}
       </code>
-      <span className="text-xs font-mono text-onSurface-muted">{entry.value}</span>
-      <span className="text-xs font-mono text-onSurface-muted">{entry.tw}</span>
+      <span className="text-xs font-mono text-onSurface-subtle">{entry.value}</span>
+      <span className="text-xs font-mono text-onSurface-subtle">{entry.tw}</span>
     </div>
     <div className="flex-1 min-w-[260px]">{bar}</div>
     {trailingValue && (
-      <span className="text-xs font-mono text-onSurface-muted flex-shrink-0 min-w-[200px] text-right">
+      <span className="text-xs font-mono text-onSurface-subtle flex-shrink-0 min-w-[200px] text-right">
         {trailingValue}
       </span>
     )}

@@ -103,11 +103,11 @@ export const Overview: Story = {
       <div className="grid grid-cols-[auto_repeat(6,auto)] gap-x-4 gap-y-3 items-center w-fit">
         <div />
         {OV_STATE_COLS.map((s) => (
-          <div key={s} className="text-xs text-onSurface-muted">{s}</div>
+          <div key={s} className="text-xs text-onSurface-subtle">{s}</div>
         ))}
         {OV_VARIANTS.map((v) => (
           <Fragment key={v}>
-            <div className="text-xs text-onSurface-muted capitalize">{v}</div>
+            <div className="text-xs text-onSurface-subtle capitalize">{v}</div>
             <Button variant={v}>Button</Button>
             <Button variant={v} id={`ov-${v}-hover`}>Button</Button>
             <Button variant={v} id={`ov-${v}-focus`}>Button</Button>
@@ -120,7 +120,7 @@ export const Overview: Story = {
 
       {/* サイズ */}
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size</div>
+        <div className="text-xs text-onSurface-subtle">size</div>
         <div className="flex gap-3 items-end">
           <Button size="sm">Small</Button>
           <Button size="md">Medium</Button>
@@ -130,7 +130,7 @@ export const Overview: Story = {
 
       {/* アイコン (leading / trailing / iconOnly) */}
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">icon</div>
+        <div className="text-xs text-onSurface-subtle">icon</div>
         <div className="flex flex-wrap gap-3 items-center">
           <Button icon={<Icon name="check_circle" size="sm" />}>左アイコン</Button>
           <Button icon={<Icon name="check_circle" size="sm" />} iconPosition="right">右アイコン</Button>
@@ -140,7 +140,7 @@ export const Overview: Story = {
 
       {/* description (2 行 CTA) — size 別 + variant 別 (全 size で描画) */}
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">description (2 行 CTA)</div>
+        <div className="text-xs text-onSurface-subtle">description (2 行 CTA)</div>
         <div className="flex flex-wrap gap-3 items-start">
           <Button size="sm" description="¥1,200">購入</Button>
           <Button size="md" description="¥1,200">購入する</Button>

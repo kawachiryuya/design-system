@@ -2,43 +2,43 @@
   "color": {
     "teal": {
       "50": {
-        "value": "#E4FCF2",
+        "value": "#E3FBED",
         "type": "color"
       },
       "100": {
-        "value": "#C9F3E3",
+        "value": "#CAF2DA",
         "type": "color"
       },
       "200": {
-        "value": "#A1E5CC",
+        "value": "#A3E4C0",
         "type": "color"
       },
       "300": {
-        "value": "#6ED1B0",
+        "value": "#74D1A0",
         "type": "color"
       },
       "400": {
-        "value": "#30B792",
+        "value": "#3EB87F",
         "type": "color"
       },
       "500": {
-        "value": "#00A079",
+        "value": "#159F68",
         "type": "color"
       },
       "600": {
-        "value": "#008965",
+        "value": "#008555",
         "type": "color"
       },
       "700": {
-        "value": "#006F50",
+        "value": "#006D45",
         "type": "color"
       },
       "800": {
-        "value": "#00553D",
+        "value": "#015434",
         "type": "color"
       },
       "900": {
-        "value": "#003C2A",
+        "value": "#013B23",
         "type": "color"
       }
     },
@@ -64,7 +64,7 @@
         "type": "color"
       },
       "500": {
-        "value": "#737373",
+        "value": "#666666",
         "type": "color"
       },
       "600": {
@@ -170,44 +170,44 @@
     },
     "orange": {
       "50": {
-        "value": "#FFF2E0",
+        "value": "#FDF3E0",
         "type": "color"
       },
       "100": {
-        "value": "#FFE3C3",
+        "value": "#F8E4C0",
         "type": "color"
       },
       "200": {
-        "value": "#F8CB99",
+        "value": "#EECE94",
         "type": "color"
       },
       "300": {
-        "value": "#E9AE66",
+        "value": "#DEB360",
         "type": "color"
       },
       "400": {
-        "value": "#D38E2E",
+        "value": "#C89522",
         "type": "color"
       },
       "500": {
-        "value": "#BE7200",
+        "value": "#B07C00",
         "type": "color",
         "description": "鮮オレンジ (条件付きステップ)。白文字は 3.75 で AA 未満 → 白文字は large-text / 非テキスト (アイコン・グラフ) 限定 (WCAG 1.4.3 例外)。本文を載せる面が必要なら白文字は orange-600/700 (濃色シフト)、濃色文字は orange-50〜200 の淡色面 (文字色反転) を使う。L 正規化のため中間ステップは muddy で、濃色文字でも APCA Lc が body 目標に届かない"
       },
       "600": {
-        "value": "#A55F00",
+        "value": "#966900",
         "type": "color"
       },
       "700": {
-        "value": "#874A00",
+        "value": "#7A5300",
         "type": "color"
       },
       "800": {
-        "value": "#673800",
+        "value": "#5D3F00",
         "type": "color"
       },
       "900": {
-        "value": "#4A2700",
+        "value": "#432C00",
         "type": "color"
       }
     },
@@ -252,90 +252,6 @@
         "value": "#0A3255",
         "type": "color"
       }
-    },
-    "yellow": {
-      "50":  { "value": "#FEFCE8", "type": "color" },
-      "100": { "value": "#FEF9C3", "type": "color" },
-      "200": { "value": "#FEF08A", "type": "color" },
-      "300": { "value": "#FDE047", "type": "color" },
-      "400": { "value": "#FACC15", "type": "color" },
-      "500": { "value": "#EAB308", "type": "color", "description": "bright-hue (鮮やかな黄): 濃色文字前提の明るい色相。step 50〜600 は dark text (neutral-900 系) で ≥4.5、700〜900 は white text で ≥4.5。薄い面に白文字を載せない。L 正規化と白文字アンカーの例外 (contrast-policy C-7=B)。データ可視化 / 強調 / 注意喚起に" },
-      "600": { "value": "#CA8A04", "type": "color" },
-      "700": { "value": "#A16207", "type": "color" },
-      "800": { "value": "#854D0E", "type": "color" },
-      "900": { "value": "#713F12", "type": "color" }
-    },
-    "lime": {
-      "50":  { "value": "#F1F8E6", "type": "color" },
-      "100": { "value": "#E0EECA", "type": "color" },
-      "200": { "value": "#C8DEA4", "type": "color" },
-      "300": { "value": "#A9C870", "type": "color" },
-      "400": { "value": "#8BAD42", "type": "color" },
-      "500": { "value": "#729513", "type": "color", "description": "カテゴリカルパレット用 (データ可視化 / Avatar 背景等)。UI セマンティクス (success/error 等) には使わない" },
-      "600": { "value": "#5F7F00", "type": "color" },
-      "700": { "value": "#4C6500", "type": "color" },
-      "800": { "value": "#394D00", "type": "color" },
-      "900": { "value": "#273700", "type": "color" }
-    },
-    "cyan": {
-      "50":  { "value": "#E3FBFC", "type": "color" },
-      "100": { "value": "#C2F3F5", "type": "color" },
-      "200": { "value": "#93E5E9", "type": "color" },
-      "300": { "value": "#3FD1D9", "type": "color" },
-      "400": { "value": "#00B7C1", "type": "color" },
-      "500": { "value": "#009FAA", "type": "color", "description": "カテゴリカルパレット用 (データ可視化 / Avatar 背景等)。UI セマンティクス (success/error 等) には使わない" },
-      "600": { "value": "#008892", "type": "color" },
-      "700": { "value": "#006D75", "type": "color" },
-      "800": { "value": "#00545A", "type": "color" },
-      "900": { "value": "#003B40", "type": "color" }
-    },
-    "sky": {
-      "50":  { "value": "#E5F9FF", "type": "color" },
-      "100": { "value": "#C7EFFF", "type": "color" },
-      "200": { "value": "#9DDFFF", "type": "color" },
-      "300": { "value": "#5CC9F9", "type": "color" },
-      "400": { "value": "#00ADE4", "type": "color" },
-      "500": { "value": "#0094CE", "type": "color", "description": "カテゴリカルパレット用 (データ可視化 / Avatar 背景等)。UI セマンティクス (success/error 等) には使わない" },
-      "600": { "value": "#007EB3", "type": "color" },
-      "700": { "value": "#006590", "type": "color" },
-      "800": { "value": "#004D70", "type": "color" },
-      "900": { "value": "#003650", "type": "color" }
-    },
-    "violet": {
-      "50":  { "value": "#F4F3FF", "type": "color" },
-      "100": { "value": "#E7E3FF", "type": "color" },
-      "200": { "value": "#D3CCFF", "type": "color" },
-      "300": { "value": "#B9ADFF", "type": "color" },
-      "400": { "value": "#9E8EEF", "type": "color" },
-      "500": { "value": "#8673D9", "type": "color", "description": "カテゴリカルパレット用 (データ可視化 / Avatar 背景等)。UI セマンティクス (success/error 等) には使わない" },
-      "600": { "value": "#7260BD", "type": "color" },
-      "700": { "value": "#5B4C99", "type": "color" },
-      "800": { "value": "#453976", "type": "color" },
-      "900": { "value": "#312755", "type": "color" }
-    },
-    "purple": {
-      "50":  { "value": "#FDF0FF", "type": "color" },
-      "100": { "value": "#F7DEFD", "type": "color" },
-      "200": { "value": "#ECC4F5", "type": "color" },
-      "300": { "value": "#DDA1EA", "type": "color" },
-      "400": { "value": "#C480D4", "type": "color" },
-      "500": { "value": "#AD65BE", "type": "color", "description": "カテゴリカルパレット用 (データ可視化 / Avatar 背景等)。UI セマンティクス (success/error 等) には使わない" },
-      "600": { "value": "#9553A4", "type": "color" },
-      "700": { "value": "#784184", "type": "color" },
-      "800": { "value": "#5C3166", "type": "color" },
-      "900": { "value": "#422149", "type": "color" }
-    },
-    "pink": {
-      "50":  { "value": "#FFEFF6", "type": "color" },
-      "100": { "value": "#FFDBE9", "type": "color" },
-      "200": { "value": "#FFBFD7", "type": "color" },
-      "300": { "value": "#F799BE", "type": "color" },
-      "400": { "value": "#E177A3", "type": "color" },
-      "500": { "value": "#C95A8B", "type": "color", "description": "カテゴリカルパレット用 (データ可視化 / Avatar 背景等)。UI セマンティクス (success/error 等) には使わない" },
-      "600": { "value": "#AE4976", "type": "color" },
-      "700": { "value": "#8C395E", "type": "color" },
-      "800": { "value": "#6C2A48", "type": "color" },
-      "900": { "value": "#4E1C32", "type": "color" }
     },
     "base": {
       "white": {

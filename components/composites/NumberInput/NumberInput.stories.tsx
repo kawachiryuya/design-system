@@ -82,7 +82,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm 40px / md 48px、md 以上で WCAG 2.5.5 タッチターゲット達成)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm 40px / md 48px、md 以上で WCAG 2.5.5 タッチターゲット達成)</div>
         <div className="flex flex-col gap-4 items-start">
           <Caption text="sm (40px)"><NumberInput value={3} onChange={() => {}} size="sm" min={1} max={9} label="サイズ sm" /></Caption>
           <Caption text="md (48px)"><NumberInput value={3} onChange={() => {}} size="md" min={1} max={9} label="サイズ md" /></Caption>
@@ -90,7 +90,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">states</div>
+        <div className="text-xs text-onSurface-subtle">states</div>
         <div className="grid grid-cols-2 gap-4 items-end">
           <Caption text="Default"><NumberInput value={3} onChange={() => {}} min={1} max={5} label="数量" /></Caption>
           <Caption text="At min (− disabled)"><NumberInput value={1} onChange={() => {}} min={1} max={5} label="最小値" /></Caption>

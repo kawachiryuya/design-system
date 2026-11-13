@@ -79,7 +79,7 @@ function buildPages(current: number, total: number, maxVisible: number): (number
 
 // 40×40 固定 (shadcn / Material 3 と同等)。サイズバリエーションは廃止し
 // touch target を WCAG 2.5.5 (44px) に近い 40px に統一。
-const buttonSizeStyle = 'h-10 min-w-10 text-sm';
+const buttonSizeStyle = 'h-10 min-w-10 type-control-sm';
 
 /**
  * Pagination Component
@@ -106,8 +106,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   const pages = buildPages(currentPage, totalPages, maxVisible);
 
   const btnBase = [
-    'inline-flex items-center justify-center rounded-sm font-medium',
-    'transition-colors duration-150',
+    'inline-flex items-center justify-center rounded-sm',
+    'transition-colors duration-normal',
     'focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus',
     'px-1',
     buttonSizeStyle,
@@ -127,7 +127,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     btnBase,
     disabled
       ? 'text-onSurface-disabled cursor-not-allowed'
-      : 'text-onSurface-muted hover:bg-state-hover-primary',
+      : 'text-onSurface-subtle hover:bg-state-hover-primary',
   ].join(' ');
 
   return (
@@ -156,7 +156,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {pages.map((page, i) =>
         page === null ? (
-          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-muted', buttonSizeStyle].join(' ')}>
+          <span key={`ellipsis-${i}`} className={['inline-flex items-center justify-center text-onSurface-subtle', buttonSizeStyle].join(' ')}>
             …
           </span>
         ) : (

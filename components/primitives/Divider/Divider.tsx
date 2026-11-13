@@ -113,7 +113,7 @@ export const Divider: React.FC<DividerProps> = ({
         className={['flex items-center gap-3', className].filter(Boolean).join(' ')}
       >
         <div className={`flex-1 ${borderClass}`} />
-        <span className="text-sm text-onSurface-muted whitespace-nowrap select-none">
+        <span className="type-supporting text-onSurface-subtle whitespace-nowrap select-none">
           {label}
         </span>
         <div className={`flex-1 ${borderClass}`} />

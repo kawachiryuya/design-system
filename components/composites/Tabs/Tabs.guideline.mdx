@@ -120,8 +120,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="ページ全体の切替は Routing、タブはページ内"
   doExample={
     <div className="text-sm space-y-2">
-      <div className="px-3 py-2 rounded-md bg-surface-inset">/users (一覧ページ — URL ごと)</div>
-      <div className="px-3 py-2 rounded-md bg-surface-inset">/users/123 (詳細ページ — Tabs で「概要 / 履歴 / 設定」)</div>
+      <div className="px-3 py-2 rounded-md bg-surface-subtle">/users (一覧ページ — URL ごと)</div>
+      <div className="px-3 py-2 rounded-md bg-surface-subtle">/users/123 (詳細ページ — Tabs で「概要 / 履歴 / 設定」)</div>
     </div>
   }
   doCaption="ページ全体の切替は URL / Routing で。タブはあくまで「1 つの画面内の切り替え」に留める。共有 URL や戻る/進む操作にも整合する。"
@@ -155,20 +155,20 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 > 旧 EdgeCases の usage 合成例。VR (Overview/EdgeCases) からは外し、ドキュメントとして保持。要不要は後で個別判断。
 
-**プロフィールページ（badge 文字列 + Layered surface）** — ヘッダー（layer-2）の下に Tabs を置き、badge に件数（`48` / `1.2k` 等の文字列も可）を表示。
+**プロフィールページ（badge 文字列 + Layered surface）** — ヘッダー（surface.subtle）の下に Tabs を置き、badge に件数（`48` / `1.2k` 等の文字列も可）を表示。
 
 <div className="border border-border-subtle rounded-md overflow-hidden">
-  <div className="p-4 bg-surface-layer-2 border-b border-border-subtle">
-    <h2 className="font-semibold text-onSurface m-0">田中 太郎</h2>
-    <p className="text-sm text-onSurface-muted">UI デザイナー</p>
+  <div className="p-4 bg-surface-subtle border-b border-border-subtle">
+    <h2 className="font-medium text-onSurface m-0">田中 太郎</h2>
+    <p className="text-sm text-onSurface-subtle">UI デザイナー</p>
   </div>
   <div className="px-4">
     <Tabs
       defaultActiveId="posts"
       tabs={[
-        { id: 'posts', label: '記事', badge: 48, content: <p className="text-sm text-onSurface-muted py-2">記事一覧</p> },
-        { id: 'followers', label: 'フォロワー', badge: '1.2k', content: <p className="text-sm text-onSurface-muted py-2">フォロワー一覧</p> },
-        { id: 'following', label: 'フォロー中', badge: 320, content: <p className="text-sm text-onSurface-muted py-2">フォロー中一覧</p> },
+        { id: 'posts', label: '記事', badge: 48, content: <p className="text-sm text-onSurface-subtle py-2">記事一覧</p> },
+        { id: 'followers', label: 'フォロワー', badge: '1.2k', content: <p className="text-sm text-onSurface-subtle py-2">フォロワー一覧</p> },
+        { id: 'following', label: 'フォロー中', badge: 320, content: <p className="text-sm text-onSurface-subtle py-2">フォロー中一覧</p> },
       ]}
     />
   </div>

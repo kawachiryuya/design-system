@@ -9,15 +9,15 @@ import * as TypographyStories from './Typography.stories';
 
 タイポグラフィの primitive 層。font-size / weight / line-height / letter-spacing / family の 5 軸を持つ。`text-{key}` / `font-{key}` / `leading-{key}` / `tracking-{key}` / `font-{family}` の utility で参照。
 
-**禁則**: コンポーネント実装では原則 [Semantic 層](?path=/docs/tokens-typography-semantic--guideline) (`text-heading-xl` / `text-body-md` 等) を使う。primitive (`text-2xl` 等) 直接利用は限定的に。
+**禁則**: コンポーネント実装では [Semantic 層](?path=/docs/tokens-typography-semantic--guideline) の text style (`type-page-title` / `type-body` / `type-control-md` 等) を使う。primitive (`text-2xl` / `leading-tight` / `tracking-wide`) の直接利用は **lint で禁止** (AGENTS §3-7)。例外は Avatar の initials のように container 比で決まる文字だけで、理由付きの `eslint-disable` を書く。weight の `font-{weight}` は text style の上書きとして可。
 
 ---
 
 ## カタログ
 
-- [FontSizes](?path=/story/tokens-typography-primitive--font-sizes) — xs〜5xl の 9 段のフォントサイズ
-- [FontWeights](?path=/story/tokens-typography-primitive--font-weights) — regular / medium / semibold / bold の 4 段
-- [LineHeights](?path=/story/tokens-typography-primitive--line-heights) — tight / normal / relaxed の 3 段
+- [FontSizes](?path=/story/tokens-typography-primitive--font-sizes) — xs / sm / md / lg / xl / 2xl〜5xl の 9 段 (16px は `md`)
+- [FontWeights](?path=/story/tokens-typography-primitive--font-weights) — regular / medium / bold の 3 段
+- [LineHeights](?path=/story/tokens-typography-primitive--line-heights) — none / tight / snug / normal / relaxed の 5 段
 - [LetterSpacings](?path=/story/tokens-typography-primitive--letter-spacings) — tight / normal / wide の 3 段
 - [FontFamilies](?path=/story/tokens-typography-primitive--font-families) — sans / mono の 2 種
 
@@ -25,9 +25,9 @@ import * as TypographyStories from './Typography.stories';
 
 ## 設計方針
 
-- **font-size**: Tailwind 標準スケール (xs〜5xl) を採用、9 段
-- **font-weight**: regular / medium / semibold / bold の 4 段。light は orphan として削除済
-- **line-height**: tight (1.25) / snug (1.35) / normal (1.5) / relaxed (1.75) の 4 段。snug は和文見出し (display/xl/lg) 用に追加。loose は orphan として削除済
+- **font-size**: xs / sm / md / lg / xl / 2xl / 3xl / 4xl / 5xl の 9 段。16px は Tailwind 慣習の `base` ではなく `md` (size 名 sm / md / lg と揃える)
+- **font-weight**: regular / medium / bold の 3 段。semibold (600) は和文の system font (Yu Gothic / Meiryo) で bold に丸められ差が出ないため削除。light は orphan として削除済
+- **line-height**: none (1) / tight (1.25) / snug (1.35) / normal (1.5) / relaxed (1.75) の 5 段。snug は和文見出し (display/xl/lg) 用。loose は orphan として削除済
 - **letter-spacing**: tight (-0.02em) / normal / wide の 3 段
 - **font-family**: sans / mono の 2 種。serif は orphan として削除済。sans は欧文フォントの後ろに和文 (Hiragino / Noto Sans JP / Yu Gothic UI / Meiryo) を明示し、Windows でも Mac と同じトーンを保つ
 

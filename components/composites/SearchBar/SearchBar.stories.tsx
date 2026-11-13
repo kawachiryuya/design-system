@@ -88,7 +88,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm テーブルフィルタ / md 標準 / lg ヘッダー検索)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm テーブルフィルタ / md 標準 / lg ヘッダー検索)</div>
         <div className="flex flex-col gap-3 w-80">
           <SearchBar size="sm" value="" onChange={() => {}} placeholder="sm" />
           <SearchBar size="md" value="" onChange={() => {}} placeholder="md (デフォルト)" />
@@ -97,7 +97,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">states</div>
+        <div className="text-xs text-onSurface-subtle">states</div>
         <div className="flex flex-col gap-3 w-96">
           <Caption text="Empty (placeholder のみ)">
             <SearchBar value="" onChange={() => {}} placeholder="検索..." />

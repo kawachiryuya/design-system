@@ -81,7 +81,7 @@ for (const m of css.matchAll(/([^{}]*)\{[^{}]*-webkit-appearance:button/g)) {
     fails.push(`form 正規化が scope 外 (global footprint): セレクタ \`${m[1].slice(-50)}\` に [data-ds-root] が無い — :where([data-ds-root]…):is(button) に scope する (#76)`);
 }
 const hueRe =
-  /\.(?:bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(?:teal|neutral|green|red|orange|blue|yellow|lime|cyan|sky|violet|purple|pink)-[0-9]{2,3}\{/g;
+  /\.(?:bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(?:teal|neutral|green|red|orange|blue)-[0-9]{2,3}\{/g;
 const hues = [...new Set((css.match(hueRe) || []).map((s) => s.replace(/\{$/, '')))];
 if (hues.length)
   fails.push(

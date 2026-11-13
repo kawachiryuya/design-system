@@ -47,9 +47,9 @@ export type CenterElement = 'div' | 'section' | 'article' | 'main';
  *
  * @example
  *   // Landing の hero section
- *   <section className="bg-surface-secondary py-16">
+ *   <section className="bg-surface-primary-muted py-16">
  *     <Center max="xl" className="text-center">
- *       <Typography variant="h1">...</Typography>
+ *       <Typography variant="pageTitle">...</Typography>
  *     </Center>
  *   </section>
  */

@@ -121,7 +121,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     'h-full',
     'rounded-full',
     'transition-all',
-    'duration-300',
+    'duration-slow',
     colorStyles[color],
     indeterminate
       ? 'animate-[indeterminate_1.5s_ease-in-out_infinite]'
@@ -133,10 +133,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       {(label || showValue) && (
         <div className="flex justify-between items-center mb-1">
           {label && (
-            <span className="text-body-sm text-onSurface">{label}</span>
+            <span className="type-supporting text-onSurface">{label}</span>
           )}
           {showValue && !indeterminate && (
-            <span className="text-body-sm text-onSurface-muted ml-auto">
+            <span className="type-supporting text-onSurface-subtle ml-auto">
               {percentage}%
             </span>
           )}

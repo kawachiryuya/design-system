@@ -51,5 +51,18 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           buildScriptName: build-storybook # prebuild-storybook フックで tokens:build も走る
           onlyChanged: true # TurboSnap: 変更 story (と依存先) だけ再撮影
+          # TurboSnap は Vite の module graph (import 連鎖) で「変更が届く story」を探す。
+          # Tailwind / PostCSS 経由で CSS になるファイル (preset・token source・global CSS) は
+          # どの story からも import されておらず graph の外にいるため、変えても
+          # 「0 story 影響 → 撮影 skip」になる (#107 で枠線色が変わっても 67 snapshot が
+          # bypass され、main の baseline も更新されなかった)。これらを externals に列挙し、
+          # 1 つでも変わったら TurboSnap を無効化して全 story を撮り直す。
+          # (.storybook/ と package.json / lockfile は CLI が既定で全撮影扱い)
+          externals: |
+            tokens/**
+            styles/**
+            tailwind.config.cjs
+            postcss.config.js
+            .github/workflows/chromatic.yml
           exitZeroOnChanges: true # 視覚差分で Actions job を赤にしない (差分は Chromatic UI でレビュー)
           autoAcceptChanges: 'main' # main は baseline ブランチとして自動 accept (squash マージでの baseline 消失を防ぐ)

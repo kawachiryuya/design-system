@@ -112,8 +112,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const atMax = value >= max;
 
   const sizeStyles = {
-    sm: { container: 'h-10', button: 'w-10', display: 'w-8 text-sm' },
-    md: { container: 'h-12', button: 'w-12', display: 'w-10 text-base' },
+    sm: { container: 'h-10', button: 'w-10', display: 'w-8 type-control-sm' },
+    md: { container: 'h-12', button: 'w-12', display: 'w-10 type-control-md' },
   }[size];
 
   // disabled state は色ベース (Button と同じ精神、bg 強い場合の半透明問題を回避)。
@@ -122,7 +122,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const buttonClasses = [
     sizeStyles.button,
     'h-full flex items-center justify-center transition-colors',
-    'text-onSurface-muted hover:text-onSurface hover:bg-state-hover-primary',
+    'text-onSurface-subtle hover:text-onSurface hover:bg-state-hover-primary',
     'disabled:text-onSurface-disabled disabled:cursor-not-allowed disabled:hover:bg-transparent',
     'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
   ].join(' ');
@@ -139,7 +139,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   return (
     <div data-ds-root className="flex flex-col gap-1">
       {label && (
-        <span id={labelId} className="text-label text-onSurface">
+        <span id={labelId} className="type-label text-onSurface">
           {label}
         </span>
       )}
@@ -158,7 +158,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           <Icon name="remove" size="sm" color="inherit" />
         </button>
         <span
-          className={`${sizeStyles.display} text-center font-medium ${disabled ? 'text-onSurface-disabled' : 'text-onSurface'}`}
+          className={`${sizeStyles.display} text-center ${disabled ? 'text-onSurface-disabled' : 'text-onSurface'}`}
           aria-live="polite"
           aria-atomic="true"
         >

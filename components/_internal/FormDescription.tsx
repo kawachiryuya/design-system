@@ -22,7 +22,7 @@ export interface FormDescriptionProps {
 }
 
 export const FormDescription: React.FC<FormDescriptionProps> = ({ id, children }) => (
-  <span id={id} className="text-body-sm text-onSurface-soft">
+  <span id={id} className="type-supporting text-onSurface-subtle">
     {children}
   </span>
 );

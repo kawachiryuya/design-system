@@ -56,7 +56,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doCaption="`<fieldset>` + `<legend>` で SR にもグループ用途が伝わる。helpText / errorMessage はグループ単位。"
   dontExample={
     <div className="flex flex-col gap-1">
-      <p className="text-sm font-semibold">通知設定</p>
+      <p className="text-sm font-medium">通知設定</p>
       <Checkbox label="メール通知" defaultChecked />
       <Checkbox label="プッシュ通知" />
       <Checkbox label="SMS 通知" />
@@ -124,7 +124,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 <form className="w-full px-container py-container max-w-container-narrow mx-auto bg-surface border border-border-subtle rounded-md">
   <div className="space-y-section-sm">
-    <h3 className="text-heading-sm text-onSurface m-0">会員登録</h3>
+    <h3 className="type-item-title text-onSurface m-0">会員登録</h3>
     <RadioGroup legend="性別" inline>
       <Radio name="ex-gender" value="male" label="男性" defaultChecked />
       <Radio name="ex-gender" value="female" label="女性" />

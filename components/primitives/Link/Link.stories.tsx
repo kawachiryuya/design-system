@@ -14,7 +14,7 @@ const meta: Meta<typeof Link> = {
   title: 'Primitives/Link',
   component: Link,
   argTypes: {
-    color: { control: 'radio', options: ['primary', 'neutral', 'muted'] },
+    color: { control: 'radio', options: ['primary', 'neutral', 'subtle'] },
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     underline: { control: 'radio', options: ['always', 'hover', 'none'] },
     external: { control: 'boolean' },
@@ -62,7 +62,7 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '視覚回帰用の総覧。color (primary/neutral/muted) / size (sm/md/lg) / state (Default/Hover/Focus/Active/Disabled) / underline (always/hover/none) / external (外部アイコン) を 1 枚に集約。',
+        story: '視覚回帰用の総覧。color (primary/neutral/subtle) / size (sm/md/lg) / state (Default/Hover/Focus/Active/Disabled) / underline (always/hover/none) / external (外部アイコン) を 1 枚に集約。',
       },
     },
     pseudo: {
@@ -74,25 +74,24 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">color (primary / neutral / muted)</div>
+        <div className="text-xs text-onSurface-subtle">color (primary / neutral / subtle)</div>
         <div className="flex flex-wrap gap-6 items-center">
           <Link href="#" color="primary">Primary</Link>
           <Link href="#" color="neutral">Neutral</Link>
-          <Link href="#" color="muted">Muted</Link>
+          <Link href="#" color="subtle">Subtle</Link>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm 14 / md 16 / lg 18)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm 14 / md 16)</div>
         <div className="flex flex-wrap gap-6 items-baseline">
           <Link href="#" size="sm">Small</Link>
           <Link href="#" size="md">Medium</Link>
-          <Link href="#" size="lg">Large</Link>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">state (Default / Hover / Focus / Active / Disabled)</div>
+        <div className="text-xs text-onSurface-subtle">state (Default / Hover / Focus / Active / Disabled)</div>
         <div className="grid grid-cols-3 gap-4 items-start">
           <Caption text="Default"><Link href="#">Default</Link></Caption>
           <Caption text="Hover"><Link href="#" id="link-hover">Hover</Link></Caption>
@@ -103,7 +102,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">underline (always / hover / none)</div>
+        <div className="text-xs text-onSurface-subtle">underline (always / hover / none)</div>
         <div className="flex flex-col gap-2 items-start">
           <Link href="#" underline="always">underline=always (常に下線)</Link>
           <Link href="#" underline="hover">underline=hover (ホバー時のみ)</Link>
@@ -112,7 +111,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">external (外部アイコン自動付与 + rel/target)</div>
+        <div className="text-xs text-onSurface-subtle">external (外部アイコン自動付与 + rel/target)</div>
         <Link href="https://example.com" external>外部リンク</Link>
       </div>
     </div>
@@ -136,7 +135,7 @@ export const EdgeCases: Story = {
   render: () => (
     <div className="flex flex-col gap-6 w-80">
       <Caption text="段落中インライン (text-decoration が周辺と分離)">
-        <p className="text-base leading-relaxed">
+        <p className="text-md leading-relaxed">
           このサービスをご利用の際は、<Link href="#">利用規約</Link>および
           <Link href="#">プライバシーポリシー</Link>に同意したものとみなします。
         </p>

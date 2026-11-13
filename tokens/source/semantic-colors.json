@@ -8,25 +8,15 @@
       }
     },
     "surface": {
-      "layer-1": {
+      "default": {
         "value": "{color.base.white}",
         "type": "color",
-        "description": "Layer 1: ページ最下層 (bg.default) の上に乗るカード・モーダル等の最初のサーフェス。bg-surface (DEFAULT alias) も layer-1 を指す"
+        "description": "既定の面。ページ最下層 (bg.default) の上に乗るカード・モーダル等。utility は bg-surface"
       },
-      "layer-2": {
+      "subtle": {
         "value": "{color.neutral.50}",
         "type": "color",
-        "description": "Layer 2: layer-1 の中に入れ子で配置するサーフェス (Section / Subgroup 等)"
-      },
-      "layer-3": {
-        "value": "{color.neutral.100}",
-        "type": "color",
-        "description": "Layer 3: layer-2 の中にさらに深い入れ子で配置するサーフェス (rare、複雑な UI の最深層)"
-      },
-      "inset": {
-        "value": "{color.neutral.50}",
-        "type": "color",
-        "description": "Sunken control 用 (Input field / Code block 等の凹みコンテナ)。layer 階層とも status 軸 (surface.neutral) とも別の特殊役割。値は layer-2 と同じだが意図が違う"
+        "description": "控えめな面。default の中に入れ子で置く区画 (Card filled / Alert・Toast の neutral 等)。値は bg.default と同じ neutral.50"
       },
       "overlay": {
         "value": "rgba(0, 0, 0, 0.5)",
@@ -34,14 +24,14 @@
         "description": "Modal の背景マスク (rgba 50% black)。layer 階層とは別軸の特殊役割"
       },
       "primary": {
-        "value": "{color.teal.700}",
+        "value": "{color.teal.600}",
         "type": "color",
-        "description": "主要アクション（Primaryボタン等）。WCAG AA (白文字 6.19:1) を満たすため primary.700 を使用。"
+        "description": "主要アクション (Primary Button 等) の塗り。他の role と同じ 600 段 (白文字 4.68、AA)。brand の種色 #008555"
       },
-      "secondary": {
+      "primary-muted": {
         "value": "{color.teal.50}",
         "type": "color",
-        "description": "選択状態・アクティブ項目"
+        "description": "brand の薄い面 (選択中の FilterChip / Badge soft primary 等)。surface.primary と Container ペアを成す (role-muted の規則)"
       },
       "success": {
         "value": "{color.green.600}",
@@ -104,26 +94,21 @@
         "description": "強い中性塗り (Badge solid neutral / Chip 等の主張ある neutral fill)。surface.neutral (status marker 用、薄め) と用途分離"
       }
     },
-    "on": {
+    "onSurface": {
       "default": {
         "value": "{color.neutral.900}",
         "type": "color",
         "description": "主テキスト (Heading h1〜h4 / body のメイン)"
       },
-      "soft": {
-        "value": "{color.neutral.700}",
-        "type": "color",
-        "description": "副テキスト (サブ見出し / 強めの補足) — default ほど強くはないが muted より読ませたい階層。やわらかく控えめな印象"
-      },
-      "muted": {
+      "subtle": {
         "value": "{color.neutral.500}",
         "type": "color",
-        "description": "補助テキスト (placeholder / caption / hint / 装飾的な補助テキスト全般) AA 4.69:1"
+        "description": "控えめなテキスト (補助テキスト / caption / hint / placeholder / 補助アイコン)。default との 2 階層で文字の強弱を表す。白地・ページ背景の両方で AA (4.5) を満たす"
       },
       "primary": {
         "value": "{color.teal.700}",
         "type": "color",
-        "description": "リンク・CTA。白背景に対して WCAG AA (6.19:1) を満たすため primary.700 を使用。"
+        "description": "リンク・CTA のテキスト。塗り (600) より 1 段濃い 700 (白地 6.42、ページ背景 5.89)。他の role の on と同じ段"
       },
       "success": {
         "value": "{color.green.700}",
@@ -170,49 +155,44 @@
       "strong": {
         "value": "{color.neutral.400}",
         "type": "color",
-        "description": "強調ボーダー"
+        "description": "強調ボーダー (hover 時の枠線の濃化等)。中性の最も強い段"
       },
-      "emphasis": {
-        "value": "{color.neutral.700}",
-        "type": "color",
-        "description": "最も強い neutral ボーダー (注意喚起、CTA 周辺の輪郭強化等)"
-      },
-      "success-subtle": {
+      "success-muted": {
         "value": "{color.green.200}",
         "type": "color",
-        "description": "成功 container 枠 (Alert 背景の縁取り等)。surface.success-muted とのペアで使う"
+        "description": "成功 container 枠 (Alert 背景の縁取り等)。surface.success-muted とのペアで使う (role-muted の規則)"
       },
-      "success-emphasis": {
+      "success-strong": {
         "value": "{color.green.600}",
         "type": "color",
         "description": "成功の強い枠 (Badge outline / 強調枠等)"
       },
-      "error-subtle": {
+      "error-muted": {
         "value": "{color.red.200}",
         "type": "color",
-        "description": "エラー container 枠 (Alert 背景の縁取り等)。surface.error-muted とのペアで使う"
+        "description": "エラー container 枠 (Alert 背景の縁取り等)。surface.error-muted とのペアで使う (role-muted の規則)"
       },
-      "error-emphasis": {
+      "error-strong": {
         "value": "{color.red.600}",
         "type": "color",
         "description": "エラーの強い枠 (Input validation / Badge outline 等)"
       },
-      "warning-subtle": {
+      "warning-muted": {
         "value": "{color.orange.200}",
         "type": "color",
-        "description": "警告 container 枠 (Alert 背景の縁取り等)。surface.warning-muted とのペアで使う"
+        "description": "警告 container 枠 (Alert 背景の縁取り等)。surface.warning-muted とのペアで使う (role-muted の規則)"
       },
-      "warning-emphasis": {
+      "warning-strong": {
         "value": "{color.orange.600}",
         "type": "color",
         "description": "警告の強い枠 (Badge outline / 強調枠等)"
       },
-      "info-subtle": {
+      "info-muted": {
         "value": "{color.blue.200}",
         "type": "color",
-        "description": "情報 container 枠 (Alert 背景の縁取り等)。surface.info-muted とのペアで使う"
+        "description": "情報 container 枠 (Alert 背景の縁取り等)。surface.info-muted とのペアで使う (role-muted の規則)"
       },
-      "info-emphasis": {
+      "info-strong": {
         "value": "{color.blue.600}",
         "type": "color",
         "description": "情報の強い枠 (Badge outline / 強調枠等)"
@@ -227,7 +207,7 @@
       "hover": {
         "value": "rgba(0, 0, 0, 0.08)",
         "type": "color",
-        "description": "中性 hover overlay (8% black)。色付き背景・透明背景どちらに重ねても汎用的に機能。Primary Button (緑bg) や Pagination 等で利用"
+        "description": "中性 hover overlay (8% black)。色付き背景・透明背景どちらに重ねても汎用的に機能。Primary Button (teal bg) 等で利用"
       },
       "active": {
         "value": "rgba(0, 0, 0, 0.12)",

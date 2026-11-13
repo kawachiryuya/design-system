@@ -57,7 +57,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="レスポンシブなカード集は minItemWidth (auto-fit) を使う"
   doExample={
-    <div className="p-2 bg-surface-layer-2">
+    <div className="p-2 bg-surface-subtle">
       <Grid minItemWidth="8rem">
         <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">A</div>
         <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">B</div>
@@ -67,7 +67,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="minItemWidth は幅で列数が自動的に決まり breakpoint 不要。カードグリッドの第一候補。"
   dontExample={
-    <div className="p-2 bg-surface-layer-2">
+    <div className="p-2 bg-surface-subtle">
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">A</div>
         <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">B</div>
@@ -81,7 +81,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="中央寄せの単列は Grid でなく Center に畳む"
   doExample={
-    <div className="p-2 bg-surface-layer-2 border border-dashed border-border-subtle">
+    <div className="p-2 bg-surface-subtle border border-dashed border-border-subtle">
       <div className="max-w-content-md mx-auto bg-surface border border-border-default rounded-md p-3 text-xs text-center">
         Center max=md で中央寄せ
       </div>
@@ -89,7 +89,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="揃える相手の共有グリッドが無い「中央寄せ単列」は Center の責務。max-width + mx-auto で十分。"
   dontExample={
-    <div className="p-2 bg-surface-layer-2 border border-dashed border-border-subtle">
+    <div className="p-2 bg-surface-subtle border border-dashed border-border-subtle">
       <div className="grid-base">
         <div className="col-span-full cols:col-span-8 cols:col-start-3 bg-surface border border-border-default rounded-md p-3 text-xs text-center">
           12 カラムの col-start-3 col-span-8 で中央寄せ
@@ -103,7 +103,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="厳密に N 列が要るときだけ cols を使う"
   doExample={
-    <div className="p-2 bg-surface-layer-2">
+    <div className="p-2 bg-surface-subtle">
       <Grid cols={2}>
         <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">プラン A</div>
         <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">プラン B</div>
@@ -112,7 +112,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="2-up 比較のように「常に 2 列」が意味を持つときは cols={2}。サイズに関わらず崩さない。"
   dontExample={
-    <div className="p-2 bg-surface-layer-2">
+    <div className="p-2 bg-surface-subtle">
       <Grid cols={4}>
         <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 1</div>
         <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 2</div>

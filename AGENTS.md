@@ -97,7 +97,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 ### トークン階層
 
 ```
-tokens/source/colors.json          ← primitive tokens (10-step scale: primary-50〜900 等)
+tokens/source/colors.json          ← primitive tokens (hue 名 × 10-step scale: teal-50〜900 等)
 tokens/source/semantic-colors.json ← semantic tokens (WHERE × WHAT)
    └ value で primitive を参照、description で意味付け
 tokens/build/variables.css         ← Style Dictionary で自動生成された CSS 変数
@@ -106,7 +106,7 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 
 ### 参照優先順位 (厳守)
 
-1. **Semantic を最優先**: `bg-surface-primary` / `text-onSurface-default` / `border-border-default`
+1. **Semantic を最優先**: `bg-surface-primary` / `text-onSurface` / `border-border-default`
 2. **Primitive 直参照は禁止**: PJ override 互換性のため
 3. **インラインスタイルでの色指定は禁止**
 
@@ -150,7 +150,7 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 :root {
   --color-teal-700: #5B4C99;  /* brand を violet 系に変更 */
 }
-/* → --color-surface-primary, --color-on-primary, --color-border-focus,
+/* → --color-surface-primary, --color-on-surface-primary, --color-border-focus,
        --color-state-hover-primary 等が自動的に violet ベースに切り替わる */
 ```
 
@@ -188,26 +188,24 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 
 brand 色の薄 tint をページ最下層に敷きたい product は、PJ 側で `bg-{brand}-25` などの brand-coupled token を追加し、`bg.default` の参照先を override する。本リポは default として brand 連動を採用しない (Multi-product hub の独立性を優先)。
 
-**3-4-2. Surface layer 階層 (Carbon 流 numeric)**
+**3-4-2. Surface 階層**
 
-Surface は **depth 階層** を numeric (`layer-1/2/3`) で表現し、特殊役割 (`inset` / `overlay`) と役割色 (`primary` / `success` 等) は別軸:
+Surface は **面の階層** を `default` → `subtle` の 2 段で表現し、特殊役割 (`overlay`) と役割色 (`primary` / `success` 等) は別軸:
 
 ```
-bg.default       (neutral.50)   ページ最下層
-surface.layer-1  (white)        layer 1: ページ上のカード・モーダル
-surface.layer-2  (neutral.50)   layer 2: layer-1 の入れ子 (Section 等)
-surface.layer-3  (neutral.100)  layer 3: さらに深い入れ子 (rare)
+bg.default       (neutral.50)   ページ最下層 (UI の canvas。surface とは別グループに置き、dark mode で独立に値を持つ)
+surface.default  (white)        既定の面: ページ上のカード・モーダル等。utility は bg-surface
+surface.subtle   (neutral.50)   控えめな面: default の中の入れ子区画 (Card filled / Alert・Toast の neutral 等)
 
-surface.inset    (neutral.50)   sunken control (Input field / Code block 等の凹み)
 surface.overlay  (rgba)         Modal の背景マスク
 surface.{role}   (各色)         brand / functional / state
 ```
 
-**`bg-surface` (DEFAULT alias)** は **layer-1** を指す (Tailwind の preset で alias 設定)。最頻利用なので簡潔記法を残す。
+**`bg-surface`** は `surface.default` を指す (preset の DEFAULT)。`bg-surface-default` も同じ値で生成するが、既定の面は `bg-surface` と書く。
 
-**dark mode 視点**: 各 layer の dark 値は**同名 semantic 変数を `[data-mode=dark]` セレクタで再定義**して与える (軸別変数名は作らない、機構と命名規約は §3-9)。light で深い (深い = darker neutral) のと逆に、dark では深い = brighter neutral になる:
-- light: layer-1 white / layer-2 neutral.50 / layer-3 neutral.100
-- dark (将来): layer-1 neutral.900 / layer-2 neutral.800 / layer-3 neutral.700 (仮)
+**dark mode 視点**: 各面の dark 値は**同名 semantic 変数を `[data-mode=dark]` セレクタで再定義**して与える (軸別変数名は作らない、機構と命名規約は §3-9)。light で深い (深い = darker neutral) のと逆に、dark では深い = brighter neutral になる:
+- light: bg.default neutral.50 / surface.default white / surface.subtle neutral.50
+- dark (将来): bg.default neutral.900 / surface.default neutral.800 / surface.subtle neutral.700 (仮)
 
 ---
 
@@ -217,14 +215,14 @@ Material 3 の Container ペア (`{role}` + `on-{role}` + `{role}-container` + `
 
 | Role | Intense (solid) | Text on intense | Container (soft) | Text on container |
 |---|---|---|---|---|
-| Brand (Primary) | `surface.primary` (teal.700) | `on.inverse` (white) | `surface.secondary` (teal.50) | `on.primary` (teal.700) |
-| Success | `surface.success` (green.500) | `on.inverse` (white) | `surface.success-muted` (green.50) | `on.success` (green.700) |
-| Error | `surface.error` (red.500) | `on.inverse` (white) | `surface.error-muted` (red.50) | `on.error` (red.700) |
-| Warning | `surface.warning` (orange.400) | `on.inverse` (white) | `surface.warning-muted` (orange.50) | `on.warning` (orange.700) |
-| Info | `surface.info` (blue.500) | `on.inverse` (white) | `surface.info-muted` (blue.50) | `on.info` (blue.700) |
+| Brand (Primary) | `surface.primary` (teal.700) | `onSurface.inverse` (white) | `surface.primary-muted` (teal.50) | `onSurface.primary` (teal.700) |
+| Success | `surface.success` (green.600) | `onSurface.inverse` (white) | `surface.success-muted` (green.50) | `onSurface.success` (green.700) |
+| Error | `surface.error` (red.600) | `onSurface.inverse` (white) | `surface.error-muted` (red.50) | `onSurface.error` (red.700) |
+| Warning | `surface.warning` (orange.600) | `onSurface.inverse` (white) | `surface.warning-muted` (orange.50) | `onSurface.warning` (orange.700) |
+| Info | `surface.info` (blue.600) | `onSurface.inverse` (white) | `surface.info-muted` (blue.50) | `onSurface.info` (blue.700) |
 
 **Container 単独で intense なし** (自然な設計):
-- `surface.disabled` + `on.disabled` (disabled は常に弱いはず、intense 不要)
+- `surface.disabled` + `onSurface.disabled` (disabled は常に弱いはず、intense 不要)
 - `surface.skeleton` (loader、text なし)
 
 **Status indicator は text counterpart 不要** (小さな塗り、テキストを載せない):
@@ -232,7 +230,7 @@ Material 3 の Container ペア (`{role}` + `on-{role}` + `{role}-container` + `
 
 **実装例** (Alert success が Container ペアパターンに合致):
 ```tsx
-'bg-surface-success-muted text-onSurface-success border-border-success-subtle'
+'bg-surface-success-muted text-onSurface-success border-border-success-muted'
 //   ↑ container          ↑ on-container          ↑ border-on-container
 ```
 
@@ -242,7 +240,7 @@ Material 3 の Container ペア (`{role}` + `on-{role}` + `{role}-container` + `
 
 **3-5. Primitive Color は hue 名、role 名は Semantic 層に集約**
 
-Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `green` / `red` / `orange` / `blue` / `neutral` / 他 7 補助 hue) で構成する。`primary` / `success` / `error` / `warning` / `info` のような **role 名は Semantic 層** (`surface.primary` / `on.success` 等) でのみ定義し、Primitive 層には持ち込まない。
+Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `green` / `red` / `orange` / `blue` / `neutral` の 6 hue) で構成する。予備の hue は持たない (データ可視化等で必要になった時に、既存 step の L に合わせて足す、#109)。`primary` / `success` / `error` / `warning` / `info` のような **role 名は Semantic 層** (`surface.primary` / `onSurface.success` 等) でのみ定義し、Primitive 層には持ち込まない。
 
 理由: 2 層アーキテクチャの純度を保つため。`primary` は概念上「ブランドの中核色」というロール (= 意味付け) であり、teal という色相そのものではない。下流 product が brand を別 hue に変えたい場合、Semantic 層で `surface.primary` の参照先を `{color.violet.700}` 等に差し替えるだけで Primitive 層は触らない設計。
 
@@ -281,10 +279,11 @@ borderRadius: { ...t.radius,  DEFAULT: t.radius.md  },
 - `radius`: `none / sm / md / lg / full` (5 段、中核 sm/md/lg + 境界 none/full)
 - `shadow`: `none / sm / md / lg` (4 段、中核 sm/md/lg + 境界 none)
 - **コンポーネントの `size` prop**: `Input` / `Label` / `Button` / `Badge` 等の Primitive、および `SearchBar` / `Radio` / `Checkbox` / `Switch` / `SegmentedControl` / `NumberInput` / `Select` 等の Composite で **`sm / md / lg` の文字列リテラル** に統一 (`small` / `medium` / `large` 表記は禁止)。これにより `<Button size="md">` / `rounded-md` / `shadow-md` / `text-md` が同じ `md` で並ぶ。Spinner (`xs/sm/md/lg/xl/2xl`) や Icon (`sm/md/lg/xl`)、Avatar (`xs/sm/md/lg/xl`) のように境界スケールを持つ component も、ラベル流派は `sm/md/lg` で揃える
+- **`font-size`**: `xs / sm / md / lg / xl / 2xl〜5xl`。16px は Tailwind 慣習の `base` ではなく **`md`** (#109)。`<Button size="md">` の文字が `text-md` で、size 名と揃う。`text-base` は存在しないクラスとして `check:utilities` が弾く
+- **font-weight**: `regular / medium / bold` の 3 段 (#109)。semibold (600) は和文の system font (Yu Gothic / Meiryo) で 700 に丸められ差が出ないため持たない。見出しは全段 bold、階層はサイズで作る
 - **Button の Radius は size 連動**: `Button size="sm" → rounded-sm` / `size="md" → rounded-md` / `size="lg" → rounded-lg`。size と radius が同じラベルで揃うため設計が直感的
 
 **非対象**:
-- **`font-size`**: Tailwind の慣習で `text-base` が body text のデフォルトとして広く認知されているため、`base` ラベルをそのまま維持 (本リポでも `text-base` は 16px の body 用途)
 - **`spacing`**: 0〜96 の数値スケールで size label でないため対象外
 - **その他 semantic ラベル系** (font-weight, line-height, letter-spacing, animation duration/easing, font-family, breakpoints, color palette): 用途ラベル / 数値スケールであり、`md = default` 規約は適用しない
 
@@ -358,8 +357,10 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 [`eslint.config.mjs`](./eslint.config.mjs) で、これまでドキュメント任せだった規約の一部を機械強制する (CI の Lint ステップで違反 PR をブロック)。
 
 - **生 hex / 色 bracket 禁止** (§3): 出荷される component 実装 (`components/**/*.tsx`。stories / tokens カタログ / `.storybook` 設定は対象外) の `className` 等に `#xxxxxx` / `[#xxx]` / `[rgb(...)]` / `[hsl(...)]` を書くと error。semantic token を使う。**spacing/サイズ bracket (`w-[44px]`) は意図的利用のため対象外**
-- **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue/yellow/lime/cyan/sky/violet/purple/pink) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-muted` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
+- **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-subtle` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
 - **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
+- **primitive typography 直参照禁止** (#109 Typo-2): 出荷コンポーネントに `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error。semantic の text style `type-{role}` (`type-section-title` / `type-body` / `type-supporting` / `type-control-md` / `type-label` / `type-caption`。見出しは hero / page / section / item の役割名、本文は body (16) / supporting (14) の 2 つ。size + 行間 + weight + 字間を 1 クラスで持つ、preset が components 層に生成) を使う。weight の `font-{weight}` は type-* の上書き (Typography の weight prop 等) として可。例外は container 比で決まる文字 (Avatar の initials) のみで、理由付き `eslint-disable`
+- **書いた utility は CSS を生成していなければならない** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)、lint ではなく verify の check): 出荷コンポーネントの string literal 内の utility 候補を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラス (= preset に写像が無い / token 名と違う / Tailwind 既定が上書きで消えている) があれば error。`border-border-default` (#107) / `text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の `bg-success-500` (#109) の再発防止。動的に組み立てるクラスは検査できないので、`${}` を含む template は skip、意図的な例外は同じ行に `utility-ignore: <理由>`
 - **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
 - **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
 
@@ -369,11 +370,11 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 
 マルチブランドの**テーマ契約は semantic 層に置く**。「正しいブランドテーマ = themeable な semantic トークンの完全な集合で、検証 (コントラスト + 距離 #58) を通るもの」と定義する。primitive ramp は契約でなく任意の generator の領域 (§3-1 注記)。適用機構は CSS 変数 override 一本 (A2 #57 で Tailwind 依存が外れ override に収斂、#56 の「色は semantic 経由」規律が前提)。
 
-themeable トークンを 3 層に分け、機械可読な manifest [`tokens/theme-contract.json`](./tokens/theme-contract.json) で定義する (将来の完全性チェック CI の入力。本バッチでは検証器は作らない):
+themeable トークンを 3 層に分け、機械可読な manifest [`tokens/theme-contract.json`](./tokens/theme-contract.json) で定義する (#109 Color-3)。`check:theme-contract` ([`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)、`verify` に組込) が「semantic の全 token がどれか 1 層にちょうど 1 回出る」ことを保証するので、**token を足すときは層を決めて manifest にも追記する** (決めずに足せない)。テーマ値そのものの検証 (多テーマの contrast / 距離) は未作成:
 
-- **① 必須 themeable** — ブランドが必ず供給 (妥当な既定なし)。`surface.primary` (+ `surface.secondary`) の実質ブランド塗り 2 色。ペア前景 (`on.inverse` / `on.primary`) は固定の白でなく primary の明度から自動導出 + コントラスト検証する設計 (上書き可、導出 generator は別途)。
+- **① 必須 themeable** — ブランドが必ず供給 (妥当な既定なし)。`surface.primary` の 1 色のみ (#109)。`surface.primary-muted` (薄い面) は同じ ramp の 50 段から決まるので任意層で既定継承する。ペア前景 (`onSurface.inverse` / `onSurface.primary`) は固定の白でなく primary の明度から自動導出 + コントラスト検証する設計 (上書き可、導出 generator は別途)。
 - **② 任意 themeable** — 上書き可、未指定は既定継承、上書き時のみ不変条件で検証。status 一式 (success/error/warning/info の surface / -muted / on / border)・`border.focus`・brand 連動 overlay (`state.hover-primary` 等)・将来 accent。**成長は ② で行う**。
-- **③ 固定** — 上書き不可、保証の土台。中性 canvas (`surface.layer-1/2/3` / inset / overlay)・中性テキスト (`on.default/soft/muted`)・中性境界 (`border.default/subtle` 系)・中性 state overlay (`state.hover/active`)・disabled / skeleton。ブランド背景が要る場合は canvas を override させず、別ロール (`brand-surface` 等) を ② に足す。
+- **③ 固定** — 上書き不可、保証の土台。中性 canvas (`bg.default` / `surface.default/subtle` / overlay)・中性テキスト (`onSurface.default/subtle`)・中性境界 (`border.default/subtle` 系)・中性 state overlay (`state.hover/active`)・disabled / skeleton。ブランド背景が要る場合は canvas を override させず、別ロール (`brand-surface` 等) を ② に足す。
 
 **テーマ契約 semver** (§10-6 (b)): **必須 (①) の追加 = 全テーマ作者への破壊 = MAJOR / 任意 (②) の追加 = 既定継承で後方互換 = MINOR**。① は小さく安定に保つ。
 
@@ -425,7 +426,7 @@ themeable トークンを 3 層に分け、機械可読な manifest [`tokens/the
 | **コミット前の最終確認 (全体)** | `npm run verify` |
 | 視覚・a11y も含む全確認 | `npm run verify:full` |
 
-- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → lint → typecheck` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
+- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:conventions → typecheck → check:styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
 - `typecheck` は incremental (`.tsbuildinfo`) のため 2 回目以降が速い。
 - **イテレーション中はスコープ版、全体走査はコミット前のみ** という方針を守る。
 
@@ -568,7 +569,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | 壊れた Storybook 内リンク (`?path=...`) が無い | **Check links** (`npm run check:links`、§9-3) |
 | コマンド・PR テンプレ・スクリプトの `§N` 参照が AGENTS.md の実在見出しを指す (改番でのリンク切れ防止) | **Check refs** (`npm run check:refs`、[`scripts/check-refs.mjs`](./scripts/check-refs.mjs)) |
 | `tokens/preset.cjs` が require する外部パッケージが dependencies / peerDependencies に宣言済み (mode② consumer の preset 解決を守る。devDependency 止まりだと `Cannot find module` で落ちる packaging silent break を弾く) | **Check preset deps** (`npm run check:preset-deps`、[`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs)) |
-| semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化 / bright-hue) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
+| 書いた Tailwind utility が実際に CSS を生成している (出荷コンポーネント ↔ 配信 CSS、stories / `.storybook` / mdx ↔ Storybook CSS。存在しないクラスを書いても型・lint では止まらない silent break を弾く、§3-7) | **Check utilities** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)) |
+| semantic color token がテーマ契約 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)) のどれか 1 層にちょうど 1 回出る (層を決めずに token を足せない。rename / 削除の取り残しも弾く、§3-8) | **Check theme contract** (`npm run check:theme-contract`、[`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)) |
+| semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
 | 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
 
 #### 5-5-2. 人間が判断する
@@ -787,15 +790,15 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 | 区分 | 閾値 | 使用可能な場所 |
 |---|---|---|
 | 合格 | ≥ 4.5:1 | 全テキスト |
-| 条件付き | ≥ 3:1 | heading lg 以上 / 太字 18.66px 以上 / アイコン・グラフィック・UI 境界線 / 装飾・ロゴ・disabled |
+| 条件付き | ≥ 3:1 | title 系 text style (全段 bold 20px 以上) / 太字 18.66px 以上 / アイコン・グラフィック・UI 境界線 / 装飾・ロゴ・disabled |
 | 不合格 | < 3:1 | 使用不可 (装飾・ロゴ・disabled を除く) |
 
 **APCA Lc 参考目標 (警告基準であり、ゲートではない)**:
 
 | タイポトークン | APCA Lc 参考目標 |
 |---|---|
-| body md 以下 | Lc 75 以上 |
-| body lg / heading md 以上 | Lc 60 以上 |
+| body / supporting / label / control | Lc 75 以上 |
+| title 系 (hero / page / section / item) | Lc 60 以上 |
 | caption / 補助テキスト | Lc 60 以上 (太字推奨) |
 | 非テキスト | Lc 45 以上 |
 
@@ -838,9 +841,9 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 - 実行: GitHub Actions [`.github/workflows/chromatic.yml`](./.github/workflows/chromatic.yml) は **`push` ベース** (全ブランチ、tag 除く)。公式 `chromaui/action` が `npm run build-storybook` (→ `prebuild-storybook` で `tokens:build`) でビルドし撮影する。ローカルは `npm run chromatic` (要 `CHROMATIC_PROJECT_TOKEN` env)。
   - **`pull_request` イベントは使わない** (公式推奨): GitHub が作る ephemeral な merge commit 上で走り baseline の系譜を見失う (PR で before が空になる現象の原因)。push でビルドした head SHA に GitHub App が `UI Tests` status を出すので required check は機能する。
   - **`autoAcceptChanges: 'main'`**: main は baseline ブランチとして自動 accept。squash マージで git 系譜が切れても main の baseline が確定し、以降の PR が正しく比較できる。差分の人間レビューは PR 段階 (`UI Tests`) で行う前提。
-- **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。tokens / `tokens/preset.cjs` / global CSS / `.storybook/*` を変えると全 story 再撮影 (全コンポーネントに波及するため妥当)。
+- **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。依存の追跡は **Vite の module graph (import 連鎖)** で行うため、Tailwind / PostCSS 経由で CSS になるだけのファイル (`tokens/**` の source JSON と `preset.cjs`、`styles/**` の global CSS、`tailwind.config.cjs` / `postcss.config.js`) は graph の外にいて、変えても「影響 story 0 → 撮影 skip」になる。これらは workflow の **`externals`** に列挙し、1 つでも変わったら TurboSnap を無効化して全 story を撮り直す (全コンポーネントに波及するため妥当)。`.storybook/**` と `package.json` / lockfile は CLI が既定で全撮影扱い。**graph 外から見た目に効く経路を新しく足したら `externals` にも足す** (足し忘れは「変えたのに UI Tests が unchanged」として現れる。#107 がこの例)。
 - **複数 viewport はレイアウト系の EdgeCases のみ**: **AppShell / TwoColumn / SplitPane** の **EdgeCases** に `parameters.chromatic.viewports = [375, 1280]` を設定し mobile / desktop の構造切替を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。これら 3 つの **Overview は `[1280]` のみ** — prop カタログ (contentMax / split / listWidth) は desktop 機能で mobile では縦積みに潰れて重複ショットになるため (§7-10 のレイアウト系注意)。meta に `[375,1280]` を置き Overview で `[1280]` に override すると最小記述。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
-- **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。token 値の変化は利用側コンポーネントの snapshot で捕捉されるため検知漏れにはならない。
+- **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。**例外は `Tokens/Color/Regression`** ([`components/tokens/ColorRegression.stories.tsx`](./components/tokens/ColorRegression.stories.tsx)): 文字も角丸も無い平坦な swatch (primitive 全段 + semantic 全 token) を **`diffThreshold: 0`** で撮る。Chromatic の既定閾値 (0.063、アンチエイリアス吸収用) では token 値の微調整 (RGB で +22 程度、#115 の brand 変更) が部品の snapshot で「unchanged」に吸収され検出できなかったため (#109 Color-4)。平坦面にはアンチエイリアスが無いので閾値 0 でも誤検知しない。**token の値を変える PR では、この story の差分が出ることを確認する** (出なければ変更が CSS に届いていない)。
 - **Playground は撮影対象外**: 全 component story の `Playground` に `parameters.chromatic.disableSnapshot = true` を付ける (Controls 探索の起点で、静的カタログ Variants/Sizes/States と冗長なため。§5-3)。
 - **overlay / portal 系の開状態は #78 で対応中**: Modal / Popover / Tooltip / DropdownMenu / Toast は「開いた状態」が play 駆動 story にしか無い (Toast は未撮影)。開状態の静的 story を追加して撮るのは別 PR (#78) で進める。それまで該当 component の Playground は撮影対象に残す。
 - **人間ゲート (機械的に弾く §5-5-1 とは別レイヤー)**: 視覚差分の合否は人間が Chromatic UI でレビュー & accept する。`exitZeroOnChanges: true` のため Actions の `chromatic` job は視覚差分では赤にならず、PR の required check には Chromatic の **"UI Tests"** status を使う (branch protection)。初回 baseline の accept・token 登録 (`CHROMATIC_PROJECT_TOKEN` secret) も人間が行う。

@@ -36,7 +36,7 @@ const L = layoutToken.layout as {
 };
 
 const KeyBadge: React.FC<{ k: string }> = ({ k }) => (
-  <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
+  <code className="bg-surface-subtle text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
     {k}
   </code>
 );
@@ -67,36 +67,36 @@ export const Container: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">container.padding-x (左右 padding)</h3>
-        <p className="m-0 text-body-sm text-onSurface-muted">utility: <code className="font-mono text-xs">px-container</code> (単一 class、breakpoint で値が自動切替)</p>
+        <h3 className="type-item-title m-0 text-onSurface">container.padding-x (左右 padding)</h3>
+        <p className="m-0 type-supporting text-onSurface-subtle">utility: <code className="font-mono text-xs">px-container</code> (単一 class、breakpoint で値が自動切替)</p>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
             <div key={bp} className="flex items-center gap-4 py-2 px-3 rounded-md border border-border-subtle bg-surface">
               <KeyBadge k={bp} />
               <code className="font-mono text-xs text-onSurface">{L.container['padding-x'][bp].value}</code>
-              <span className="text-xs text-onSurface-muted">{L.container['padding-x'][bp].description}</span>
+              <span className="text-xs text-onSurface-subtle">{L.container['padding-x'][bp].description}</span>
             </div>
           ))}
         </div>
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">container.padding-y (上下 padding)</h3>
-        <p className="m-0 text-body-sm text-onSurface-muted">utility: <code className="font-mono text-xs">py-container</code></p>
+        <h3 className="type-item-title m-0 text-onSurface">container.padding-y (上下 padding)</h3>
+        <p className="m-0 type-supporting text-onSurface-subtle">utility: <code className="font-mono text-xs">py-container</code></p>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
             <div key={bp} className="flex items-center gap-4 py-2 px-3 rounded-md border border-border-subtle bg-surface">
               <KeyBadge k={bp} />
               <code className="font-mono text-xs text-onSurface">{L.container['padding-y'][bp].value}</code>
-              <span className="text-xs text-onSurface-muted">{L.container['padding-y'][bp].description}</span>
+              <span className="text-xs text-onSurface-subtle">{L.container['padding-y'][bp].description}</span>
             </div>
           ))}
         </div>
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">container.max-width (4 variant)</h3>
-        <p className="m-0 text-body-sm text-onSurface-muted">utility: <code className="font-mono text-xs">max-w-container[-narrow|-wide|-full]</code></p>
+        <h3 className="type-item-title m-0 text-onSurface">container.max-width (4 variant)</h3>
+        <p className="m-0 type-supporting text-onSurface-subtle">utility: <code className="font-mono text-xs">max-w-container[-narrow|-wide|-full]</code></p>
         <div className="flex flex-col gap-3">
           {(['narrow', 'default', 'wide', 'full'] as const).map((variant) => {
             const entry = L.container['max-width'][variant];
@@ -105,12 +105,12 @@ export const Container: Story = {
               <div key={variant} className="rounded-md border border-border-subtle bg-surface p-3">
                 <div className="flex items-center gap-3 mb-2">
                   <KeyBadge k={variant} />
-                  <code className="font-mono text-xs text-onSurface-muted">{utility}</code>
+                  <code className="font-mono text-xs text-onSurface-subtle">{utility}</code>
                   <code className="font-mono text-xs text-onSurface">{entry.value}</code>
                 </div>
-                <p className="m-0 text-xs text-onSurface-muted mb-2">{entry.description}</p>
+                <p className="m-0 text-xs text-onSurface-subtle mb-2">{entry.description}</p>
                 {/* 視覚プレビュー: max-width に応じた帯 (story 内で確認できるよう iframe 内に縮尺表示) */}
-                <div className="bg-surface-inset h-4 rounded-sm relative overflow-hidden">
+                <div className="bg-surface-subtle h-4 rounded-sm relative overflow-hidden">
                   <div
                     className="h-full bg-surface-primary rounded-sm"
                     style={{
@@ -140,8 +140,8 @@ export const Content: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">content.max-width (Center の 4 段)</h3>
-        <p className="m-0 text-body-sm text-onSurface-muted">utility: <code className="font-mono text-xs">max-w-content-{'{sm|md|lg|xl}'}</code> / 値は rem (root font-size 追従)</p>
+        <h3 className="type-item-title m-0 text-onSurface">content.max-width (Center の 4 段)</h3>
+        <p className="m-0 type-supporting text-onSurface-subtle">utility: <code className="font-mono text-xs">max-w-content-{'{sm|md|lg|xl}'}</code> / 値は rem (root font-size 追従)</p>
         <div className="flex flex-col gap-3">
           {(['sm', 'md', 'lg', 'xl'] as const).map((variant) => {
             const entry = L.content['max-width'][variant];
@@ -150,13 +150,13 @@ export const Content: Story = {
               <div key={variant} className="rounded-md border border-border-subtle bg-surface p-3">
                 <div className="flex items-center gap-3 mb-2">
                   <KeyBadge k={variant} />
-                  <code className="font-mono text-xs text-onSurface-muted">max-w-content-{variant}</code>
+                  <code className="font-mono text-xs text-onSurface-subtle">max-w-content-{variant}</code>
                   <code className="font-mono text-xs text-onSurface">{entry.value}</code>
-                  <code className="font-mono text-xs text-onSurface-muted">Center max="{variant}"</code>
+                  <code className="font-mono text-xs text-onSurface-subtle">Center max="{variant}"</code>
                 </div>
-                <p className="m-0 text-xs text-onSurface-muted mb-2">{entry.description}</p>
+                <p className="m-0 text-xs text-onSurface-subtle mb-2">{entry.description}</p>
                 {/* 視覚プレビュー: container と同じ 1536px スケールで帯表示 (shell との大小関係が分かる) */}
-                <div className="bg-surface-inset h-4 rounded-sm relative overflow-hidden">
+                <div className="bg-surface-subtle h-4 rounded-sm relative overflow-hidden">
                   <div
                     className="h-full bg-surface-primary rounded-sm"
                     style={{ width: `${Math.min((px / 1536) * 100, 100)}%` }}
@@ -184,8 +184,8 @@ export const Section: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">section.gap (section 間の垂直余白)</h3>
-        <p className="m-0 text-body-sm text-onSurface-muted">utility: <code className="font-mono text-xs">gap-section-{'{sm|md|lg}'}</code> / <code className="font-mono text-xs">space-y-section-{'{sm|md|lg}'}</code></p>
+        <h3 className="type-item-title m-0 text-onSurface">section.gap (section 間の垂直余白)</h3>
+        <p className="m-0 type-supporting text-onSurface-subtle">utility: <code className="font-mono text-xs">gap-section-{'{sm|md|lg}'}</code> / <code className="font-mono text-xs">space-y-section-{'{sm|md|lg}'}</code></p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {(['sm', 'md', 'lg'] as const).map((size) => (
             <div key={size} className="rounded-md border border-border-subtle bg-surface p-4">
@@ -195,7 +195,7 @@ export const Section: Story = {
               </div>
               <div className={`flex flex-col ${SECTION_GAP_CLASS[size]}`}>
                 {[0, 1, 2].map((i) => (
-                  <div key={i} className="bg-surface-inset h-6 rounded-sm" />
+                  <div key={i} className="bg-surface-subtle h-6 rounded-sm" />
                 ))}
               </div>
             </div>
@@ -204,8 +204,8 @@ export const Section: Story = {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">section.padding-y (section 自体の上下 padding)</h3>
-        <p className="m-0 text-body-sm text-onSurface-muted">utility: <code className="font-mono text-xs">py-section-{'{sm|md|lg}'}</code></p>
+        <h3 className="type-item-title m-0 text-onSurface">section.padding-y (section 自体の上下 padding)</h3>
+        <p className="m-0 type-supporting text-onSurface-subtle">utility: <code className="font-mono text-xs">py-section-{'{sm|md|lg}'}</code></p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {(['sm', 'md', 'lg'] as const).map((size) => (
             <div key={size} className="rounded-md border border-border-subtle bg-surface">
@@ -213,7 +213,7 @@ export const Section: Story = {
                 <KeyBadge k={size} />
                 <code className="font-mono text-xs text-onSurface">{L.section['padding-y'][size].value}</code>
               </div>
-              <div className={`px-4 ${SECTION_PADDING_Y_CLASS[size]} bg-surface-inset`}>
+              <div className={`px-4 ${SECTION_PADDING_Y_CLASS[size]} bg-surface-subtle`}>
                 <div className="bg-surface-primary h-8 rounded-sm" />
               </div>
             </div>
@@ -237,59 +237,59 @@ export const Grid: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">grid.columns (カラム数)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">grid.columns (カラム数)</h3>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
             <div key={bp} className="flex items-center gap-4 py-2 px-3 rounded-md border border-border-subtle bg-surface">
               <KeyBadge k={bp} />
               <code className="font-mono text-xs text-onSurface">{L.grid.columns[bp].value} cols</code>
-              <span className="text-xs text-onSurface-muted">{L.grid.columns[bp].description}</span>
+              <span className="text-xs text-onSurface-subtle">{L.grid.columns[bp].description}</span>
             </div>
           ))}
         </div>
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">grid.gutter (カラム間 gap)</h3>
+        <h3 className="type-item-title m-0 text-onSurface">grid.gutter (カラム間 gap)</h3>
         <div className="flex flex-col gap-2">
           {(['mobile', 'tablet', 'desktop'] as const).map((bp) => (
             <div key={bp} className="flex items-center gap-4 py-2 px-3 rounded-md border border-border-subtle bg-surface">
               <KeyBadge k={bp} />
               <code className="font-mono text-xs text-onSurface">{L.grid.gutter[bp].value}</code>
-              <span className="text-xs text-onSurface-muted">{L.grid.gutter[bp].description}</span>
+              <span className="text-xs text-onSurface-subtle">{L.grid.gutter[bp].description}</span>
             </div>
           ))}
         </div>
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="text-heading-sm m-0 text-onSurface">grid-base 実例</h3>
-        <p className="m-0 text-body-sm text-onSurface-muted">
+        <h3 className="type-item-title m-0 text-onSurface">grid-base 実例</h3>
+        <p className="m-0 type-supporting text-onSurface-subtle">
           viewport を狭めて columns が切替わるのを確認できる。子要素の <code className="font-mono text-xs">col-span-N</code> も合わせて responsive prefix で指定。
         </p>
 
-        <div className="text-xs text-onSurface-muted mt-2">例 1: 全幅 1 つ (mobile から desktop まで全幅)</div>
+        <div className="text-xs text-onSurface-subtle mt-2">例 1: 全幅 1 つ (mobile から desktop まで全幅)</div>
         <div className="grid-base">
           <div className="col-span-full bg-surface-primary h-12 rounded-sm flex items-center justify-center text-onSurface-inverse text-xs">col-span-full</div>
         </div>
 
-        <div className="text-xs text-onSurface-muted mt-2">例 2: 2 分割 (mobile では全幅、tablet 以上で 2 等分)</div>
+        <div className="text-xs text-onSurface-subtle mt-2">例 2: 2 分割 (mobile では全幅、tablet 以上で 2 等分)</div>
         <div className="grid-base">
           <div className="col-span-4 md:col-span-4 lg:col-span-6 bg-surface-primary h-12 rounded-sm flex items-center justify-center text-onSurface-inverse text-xs">A</div>
           <div className="col-span-4 md:col-span-4 lg:col-span-6 bg-surface-success h-12 rounded-sm flex items-center justify-center text-onSurface-inverse text-xs">B</div>
         </div>
 
-        <div className="text-xs text-onSurface-muted mt-2">例 3: 3 分割 (mobile では縦並び、desktop で 3 等分)</div>
+        <div className="text-xs text-onSurface-subtle mt-2">例 3: 3 分割 (mobile では縦並び、desktop で 3 等分)</div>
         <div className="grid-base">
           <div className="col-span-4 md:col-span-8 lg:col-span-4 bg-surface-primary h-12 rounded-sm flex items-center justify-center text-onSurface-inverse text-xs">A</div>
           <div className="col-span-4 md:col-span-4 lg:col-span-4 bg-surface-success h-12 rounded-sm flex items-center justify-center text-onSurface-inverse text-xs">B</div>
           <div className="col-span-4 md:col-span-4 lg:col-span-4 bg-surface-warning h-12 rounded-sm flex items-center justify-center text-onSurface-inverse text-xs">C</div>
         </div>
 
-        <div className="text-xs text-onSurface-muted mt-2">例 4: Main + Sidebar (mobile では縦、desktop で 8:4)</div>
+        <div className="text-xs text-onSurface-subtle mt-2">例 4: Main + Sidebar (mobile では縦、desktop で 8:4)</div>
         <div className="grid-base">
           <div className="col-span-4 md:col-span-8 lg:col-span-8 bg-surface-primary h-24 rounded-sm flex items-center justify-center text-onSurface-inverse text-xs">Main (col-span 8)</div>
-          <div className="col-span-4 md:col-span-8 lg:col-span-4 bg-surface-secondary h-24 rounded-sm flex items-center justify-center text-onSurface-primary text-xs">Sidebar (col-span 4)</div>
+          <div className="col-span-4 md:col-span-8 lg:col-span-4 bg-surface-primary-muted h-24 rounded-sm flex items-center justify-center text-onSurface-primary text-xs">Sidebar (col-span 4)</div>
         </div>
       </section>
     </div>

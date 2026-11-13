@@ -190,7 +190,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         className={[
           'fixed inset-auto m-0 w-max max-w-[min(18rem,calc(100vw-2rem))]',
           'rounded-sm bg-surface-neutral-strong text-onSurface-inverse shadow-md',
-          'px-2 py-1 text-caption',
+          'px-2 py-1 type-caption',
           className,
         ].filter(Boolean).join(' ')}
       >

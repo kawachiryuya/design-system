@@ -72,7 +72,7 @@ export const Playground: StoryObj = {
   render: (args) => {
     const { mode, minItemWidth, cols } = args as { mode: 'auto-fit' | 'cols'; minItemWidth: string; cols: number };
     return (
-      <div className="p-4 bg-surface-layer-2">
+      <div className="p-4 bg-surface-subtle">
         {mode === 'cols' ? <Grid cols={cols}>{cards(6)}</Grid> : <Grid minItemWidth={minItemWidth}>{cards(6)}</Grid>}
       </div>
     );
@@ -105,21 +105,21 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-3">
-        <div className="text-xs text-onSurface-muted">反復モード — 同種アイテムを並べる (列数の決め方が違う)</div>
+        <div className="text-xs text-onSurface-subtle">反復モード — 同種アイテムを並べる (列数の決め方が違う)</div>
         <Caption text='auto-fit (minItemWidth="12rem") — 幅で列数が自動 (推奨)'>
-          <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
+          <div className="w-[680px] max-w-full p-3 bg-surface-subtle">
             <Grid minItemWidth="12rem">{cards(5)}</Grid>
           </div>
         </Caption>
         <Caption text="cols={3} — サイズに関わらず厳密に 3 列">
-          <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
+          <div className="w-[680px] max-w-full p-3 bg-surface-subtle">
             <Grid cols={3}>{cards(3)}</Grid>
           </div>
         </Caption>
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="text-xs text-onSurface-muted">placement モード — layout="page" の 12 カラムに Grid.Item span で非対称配置</div>
+        <div className="text-xs text-onSurface-subtle">placement モード — layout="page" の 12 カラムに Grid.Item span で非対称配置</div>
         {([
           { label: '3 / 6 / 3 (aside / main / aside)', spans: [3, 6, 3] },
           { label: '4 / 4 / 4 (3 等分)', spans: [4, 4, 4] },
@@ -128,7 +128,7 @@ export const Overview: Story = {
           { label: '9 / 3', spans: [9, 3] },
         ] as const).map(({ label, spans }) => (
           <Caption key={label} text={label}>
-            <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
+            <div className="w-[680px] max-w-full p-3 bg-surface-subtle">
               <PageRow spans={[...spans]} />
             </div>
           </Caption>
@@ -152,13 +152,13 @@ export const EdgeCases: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <Caption text="minItemWidth でアイテム 2 つ — 余った列は空き (1fr で伸びる)">
-        <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
+        <div className="w-[680px] max-w-full p-3 bg-surface-subtle">
           <Grid minItemWidth="12rem">{cards(2)}</Grid>
         </div>
       </Caption>
 
       <Caption text='layout="page" + start — span 4 を 5 列目から開始 (中央寄せ的配置)'>
-        <div className="w-[680px] max-w-full p-3 bg-surface-layer-2">
+        <div className="w-[680px] max-w-full p-3 bg-surface-subtle">
           <Grid layout="page">
             <Grid.Item span={4} start={5}><Card label="span 4 / start 5" /></Grid.Item>
           </Grid>

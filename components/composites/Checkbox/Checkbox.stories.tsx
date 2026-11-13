@@ -72,7 +72,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">box 状態 × interaction</div>
+        <div className="text-xs text-onSurface-subtle">box 状態 × interaction</div>
         <div className="flex flex-col gap-3">
           <Caption text="Unchecked (default)"><Checkbox label="未選択" /></Caption>
           <Caption text="Checked"><Checkbox label="選択済み" defaultChecked /></Caption>
@@ -90,7 +90,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">error / 付帯要素</div>
+        <div className="text-xs text-onSurface-subtle">error / 付帯要素</div>
         <div className="flex flex-col gap-3">
           <Caption text="Error (errorMessage 必須、aria-invalid 自動付与)">
             <Checkbox label="プライバシーポリシーに同意" error errorMessage="同意が必要です" />

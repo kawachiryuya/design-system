@@ -57,7 +57,7 @@ export const GuidelineToc: React.FC<GuidelineTocProps> = ({ items, title = 'ç›®æ
           key={item.href}
           href={item.href}
           onClick={(e) => handleAnchorClick(e, item.href)}
-          className={`${SBDOCS_CLASS.guidelineTocLink} inline-flex items-center justify-center h-10 px-4 min-w-[6rem] text-sm font-medium rounded-sm border border-border-muted bg-surface hover:bg-surface-inset hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-1 transition-colors`}
+          className={`${SBDOCS_CLASS.guidelineTocLink} inline-flex items-center justify-center h-10 px-4 min-w-[6rem] text-sm font-medium rounded-sm border border-border-subtle bg-surface hover:bg-surface-subtle hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-1 transition-colors`}
         >
           {item.label}
         </a>

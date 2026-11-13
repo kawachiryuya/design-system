@@ -115,8 +115,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <div className="flex items-center gap-3 p-4 rounded-md border border-border-subtle w-64">
   <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="md" status="online" />
   <div className="min-w-0">
-    <p className="text-label text-onSurface truncate">鈴木 花子</p>
-    <p className="text-caption text-onSurface-muted truncate">suzuki@example.com</p>
+    <p className="type-label text-onSurface truncate">鈴木 花子</p>
+    <p className="type-caption text-onSurface-subtle truncate">suzuki@example.com</p>
   </div>
 </div>
 
@@ -131,7 +131,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   ].map(({ src, name }) => (
     <Avatar key={name} src={src} name={name} size="sm" className="ring-2 ring-surface" />
   ))}
-  <span className="w-8 h-8 rounded-full bg-surface-disabled ring-2 ring-surface flex items-center justify-center text-caption text-onSurface font-medium flex-shrink-0">+5</span>
+  <span className="w-8 h-8 rounded-full bg-surface-disabled ring-2 ring-surface flex items-center justify-center type-caption text-onSurface font-medium flex-shrink-0">+5</span>
 </div>
 
 > Team page のレスポンシブメンバーリスト (`grid-base` + `col-span-*`) の例は Layout token のデモなので [Tokens / Layout](?path=/docs/tokens-layout--guideline) を参照。

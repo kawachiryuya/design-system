@@ -127,16 +127,16 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
     const sizeConfig = {
-      sm: { style: 'h-10 pl-3 pr-10 text-sm', iconSize: 'sm' as const, iconRight: 'right-3' },
-      md: { style: 'h-12 pl-3 pr-12 text-base', iconSize: 'sm' as const, iconRight: 'right-3' },
-      lg: { style: 'h-14 pl-4 pr-12 text-lg', iconSize: 'md' as const, iconRight: 'right-4' },
+      sm: { style: 'h-10 pl-3 pr-10 type-supporting', iconSize: 'sm' as const, iconRight: 'right-3' },
+      md: { style: 'h-12 pl-3 pr-12 type-body', iconSize: 'sm' as const, iconRight: 'right-3' },
+      lg: { style: 'h-14 pl-4 pr-12 type-body', iconSize: 'md' as const, iconRight: 'right-4' },
     }[size];
 
     const sizeStyles = sizeConfig.style;
 
     // focus 表現は border 色変化 + inset ring (詳細は Input.tsx 同セクションのコメント参照)
     const stateStyles = error
-      ? 'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted'
+      ? 'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted'
       : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
 
     const selectClasses = [
@@ -195,7 +195,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {children}
           </select>
           {/* カスタム下矢印アイコン */}
-          <span className={`absolute ${sizeConfig.iconRight} top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-muted flex items-center justify-center`}>
+          <span className={`absolute ${sizeConfig.iconRight} top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-subtle flex items-center justify-center`}>
             <Icon name="expand_more" size={sizeConfig.iconSize} />
           </span>
         </div>

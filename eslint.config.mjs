@@ -53,18 +53,34 @@ export default tseslint.config(
           message: 'rgb()/hsl() の任意値 bracket はテンプレートリテラル内でも禁止。semantic token を使う (AGENTS §3)。',
         },
         // primitive hue 直参照 (`bg-teal-500` / `text-neutral-200` 等) 禁止 (AGENTS §3 / スタイリング3規律)。
-        // {utility}-{hue}-{shade} 形を検知。hue は preset が公開する 13 palette。semantic token を使う。
+        // {utility}-{hue}-{shade} 形を検知。hue は preset が公開する 6 palette。semantic token を使う。
         {
           selector:
-            'Literal[value=/(bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(teal|neutral|green|red|orange|blue|yellow|lime|cyan|sky|violet|purple|pink)-[0-9]/]',
+            'Literal[value=/(bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(teal|neutral|green|red|orange|blue)-[0-9]/]',
           message:
-            'primitive hue 直参照 (bg-teal-500 / text-neutral-200 等) は禁止。semantic token (bg-surface-primary / text-onSurface-muted 等) を使う (AGENTS §3 / スタイリング3規律)。',
+            'primitive hue 直参照 (bg-teal-500 / text-neutral-200 等) は禁止。semantic token (bg-surface-primary / text-onSurface-subtle 等) を使う (AGENTS §3 / スタイリング3規律)。',
         },
         {
           selector:
-            'TemplateElement[value.raw=/(bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(teal|neutral|green|red|orange|blue|yellow|lime|cyan|sky|violet|purple|pink)-[0-9]/]',
+            'TemplateElement[value.raw=/(bg|text|border|ring|fill|stroke|from|via|to|divide|decoration|accent|caret|placeholder|outline)-(teal|neutral|green|red|orange|blue)-[0-9]/]',
           message:
             'primitive hue 直参照はテンプレートリテラル内でも禁止。semantic token を使う (AGENTS §3 / スタイリング3規律)。',
+        },
+        // primitive typography 直参照禁止 (#109 Typo-2、AGENTS §3-7): text-{size} / leading-* / tracking-* を
+        // 出荷コンポーネントに書かず、text style `type-{role}` (type-body-md / type-control-sm 等) を使う。
+        // weight の `font-*` は type-* の上書き (Typography の weight prop 等) として許可。
+        // 例外 (Avatar の initials 等) は eslint-disable + 理由コメント。
+        {
+          selector:
+            'Literal[value=/(^|\\s)(text-(xs|sm|md|lg|xl|2xl|3xl|4xl|5xl)|leading-(none|tight|snug|normal|relaxed)|tracking-(tight|normal|wide))(\\s|$)/]',
+          message:
+            'primitive typography 直参照 (text-sm / leading-tight 等) は禁止。text style `type-{role}` (type-body-md / type-control-sm 等) を使う (AGENTS §3-7)。',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/(^|\\s)(text-(xs|sm|md|lg|xl|2xl|3xl|4xl|5xl)|leading-(none|tight|snug|normal|relaxed)|tracking-(tight|normal|wide))(\\s|$)/]',
+          message:
+            'primitive typography 直参照はテンプレートリテラル内でも禁止。text style `type-{role}` を使う (AGENTS §3-7)。',
         },
       ],
     },

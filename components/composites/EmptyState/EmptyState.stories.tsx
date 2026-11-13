@@ -103,7 +103,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm サイドバー/カード内 · md 標準 · lg ヒーロー) — icon/title/description/Button が比例</div>
+        <div className="text-xs text-onSurface-subtle">size (sm サイドバー/カード内 · md 標準 · lg ヒーロー) — icon/title/description/Button が比例</div>
         <div className="flex flex-col gap-4">
           {(['sm', 'md', 'lg'] as const).map((size) => (
             <Caption key={size} text={size}>
@@ -116,7 +116,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">composition (要素の有無、size=md)</div>
+        <div className="text-xs text-onSurface-subtle">composition (要素の有無、size=md)</div>
         <div className="flex flex-col gap-4">
           <Caption text="title のみ">
             <Box><EmptyState title="通知なし" /></Box>

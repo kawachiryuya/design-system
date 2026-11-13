@@ -79,7 +79,7 @@ const spinnerSvgVariants = tv({
     },
     color: {
       primary: 'text-onSurface-primary',
-      neutral: 'text-onSurface-muted',
+      neutral: 'text-onSurface-subtle',
       white:   'text-onSurface-inverse',
     },
   },

@@ -43,9 +43,9 @@ const MockList = ({ count = 20 }: { count?: number }) => (
   <div className="p-4 space-y-2">
     <div className="text-sm font-semibold mb-3">予約一覧 (list pane)</div>
     {Array.from({ length: count }, (_, i) => (
-      <div key={i} className="bg-surface border border-border-default rounded-md p-3 hover:bg-surface-layer-2 cursor-pointer">
+      <div key={i} className="bg-surface border border-border-default rounded-md p-3 hover:bg-surface-subtle cursor-pointer">
         <div className="text-sm font-medium">予約 #{String(i + 1).padStart(3, '0')}</div>
-        <div className="text-xs text-onSurface-muted mt-1">2026/06/{(i % 28) + 1} 東京 → 新大阪</div>
+        <div className="text-xs text-onSurface-subtle mt-1">2026/06/{(i % 28) + 1} 東京 → 新大阪</div>
       </div>
     ))}
   </div>
@@ -56,14 +56,14 @@ const MockDetail = () => (
     <div className="text-lg font-bold">予約詳細 (detail pane)</div>
     <div className="bg-surface border border-border-default rounded-md p-4">
       <div className="text-sm font-medium mb-2">予約番号: RD-001</div>
-      <div className="text-sm text-onSurface-muted">
+      <div className="text-sm text-onSurface-subtle">
         list / detail の独立スクロールを確認できるよう、両 pane を長くしておく。
       </div>
     </div>
     {Array.from({ length: 8 }, (_, i) => (
-      <div key={i} className="bg-surface-layer-2 border border-border-default rounded-md p-4 text-sm">
+      <div key={i} className="bg-surface-subtle border border-border-default rounded-md p-4 text-sm">
         <div className="font-medium mb-1">セクション {i + 1}</div>
-        <div className="text-onSurface-muted">scroll させて確認。</div>
+        <div className="text-onSurface-subtle">scroll させて確認。</div>
       </div>
     ))}
   </div>
@@ -121,7 +121,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6 p-4 max-w-[860px]">
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-muted">listWidth=&quot;280px&quot; (狭め)</span>
+        <span className="text-caption text-onSurface-subtle">listWidth=&quot;280px&quot; (狭め)</span>
         <PanePreview>
           <SplitPane listWidth="280px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
@@ -130,7 +130,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-muted">listWidth=&quot;360px&quot; (default、consumer の標準採用値)</span>
+        <span className="text-caption text-onSurface-subtle">listWidth=&quot;360px&quot; (default、consumer の標準採用値)</span>
         <PanePreview>
           <SplitPane listWidth="360px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
@@ -139,7 +139,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-muted">listWidth=&quot;480px&quot; (広め)</span>
+        <span className="text-caption text-onSurface-subtle">listWidth=&quot;480px&quot; (広め)</span>
         <PanePreview>
           <SplitPane listWidth="480px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
@@ -148,7 +148,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-muted">divider=&#123;false&#125; — 両 pane 間の縦境界線なし</span>
+        <span className="text-caption text-onSurface-subtle">divider=&#123;false&#125; — 両 pane 間の縦境界線なし</span>
         <PanePreview>
           <SplitPane divider={false} height="500px" list={<MockList count={10} />}>
             <MockDetail />
@@ -183,7 +183,7 @@ export const EdgeCases: Story = {
       <Caption text='detail 未選択時 — children に empty state を渡す'>
         <PanePreview>
           <SplitPane height="500px" list={<MockList count={10} />}>
-            <div className="p-6 text-sm text-onSurface-muted">左の一覧から項目を選択してください。</div>
+            <div className="p-6 text-sm text-onSurface-subtle">左の一覧から項目を選択してください。</div>
           </SplitPane>
         </PanePreview>
       </Caption>

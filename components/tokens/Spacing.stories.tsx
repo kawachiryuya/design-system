@@ -40,7 +40,7 @@ export const Scale: Story = {
         return (
           <div key={s.key} className="flex items-center gap-4">
             <div className="w-12 flex-shrink-0 text-right">
-              <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
+              <code className="bg-surface-subtle text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
                 {s.key}
               </code>
             </div>
@@ -49,10 +49,10 @@ export const Scale: Story = {
               style={{ width: Math.max(px, 2) }}
               aria-hidden
             />
-            <span className="font-mono text-xs text-onSurface-muted flex-shrink-0">
+            <span className="font-mono text-xs text-onSurface-subtle flex-shrink-0">
               {s.value}
             </span>
-            <span className="font-mono text-xs text-onSurface-muted">
+            <span className="font-mono text-xs text-onSurface-subtle">
               p-{s.key} / gap-{s.key} / m-{s.key}
             </span>
           </div>

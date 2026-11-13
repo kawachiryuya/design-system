@@ -52,18 +52,18 @@ export const Scale: Story = {
             className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-subtle bg-surface"
             style={{ gridTemplateColumns: '64px 80px 1fr auto' }}
           >
-            <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs text-center">
+            <code className="bg-surface-subtle text-onSurface px-2 py-1 rounded-sm font-mono text-xs text-center">
               {bp.key}:
             </code>
-            <code className="font-mono text-xs text-onSurface-muted">{bp.value}</code>
-            <div className="relative h-5 bg-surface-inset rounded-sm overflow-hidden">
+            <code className="font-mono text-xs text-onSurface-subtle">{bp.value}</code>
+            <div className="relative h-5 bg-surface-subtle rounded-sm overflow-hidden">
               <div
                 className="h-full bg-surface-primary rounded-sm"
                 style={{ width: `${widthPct}%` }}
                 aria-label={`viewport width ${bp.value}`}
               />
             </div>
-            <span className="text-xs text-onSurface-muted">{bp.description}</span>
+            <span className="text-xs text-onSurface-subtle">{bp.description}</span>
           </div>
         );
       })}

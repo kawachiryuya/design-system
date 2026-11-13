@@ -84,7 +84,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm / md / lg)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm / md / lg)</div>
         <div className="flex flex-col gap-4 w-80">
           <Input label="Small (40px)" size="sm" placeholder="密集 UI 用" fullWidth />
           <Input label="Medium (48px)" size="md" placeholder="標準フォーム" fullWidth />
@@ -93,7 +93,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">state (Default / Hover / Focus / Filled / Error / Disabled)</div>
+        <div className="text-xs text-onSurface-subtle">state (Default / Hover / Focus / Filled / Error / Disabled)</div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full w-[40rem] max-w-full">
           <Caption text="Default">
             <Input label="Default" placeholder="入力してください" fullWidth />
@@ -117,7 +117,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">icon (leading / trailing / both)</div>
+        <div className="text-xs text-onSurface-subtle">icon (leading / trailing / both)</div>
         <div className="flex flex-col gap-4 w-80">
           <Input label="検索 (leading)" type="search" placeholder="キーワード" leadingIcon={<Icon name="search" />} fullWidth />
           <Input label="メール (trailing)" type="email" placeholder="example@email.com" trailingIcon={<Icon name="info" />} fullWidth />
@@ -126,7 +126,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">required (* 自動付与) / helpText</div>
+        <div className="text-xs text-onSurface-subtle">required (* 自動付与) / helpText</div>
         <div className="w-80">
           <Input label="ユーザー名" required helpText="3〜16 文字の英数字" placeholder="例: alice123" fullWidth />
         </div>

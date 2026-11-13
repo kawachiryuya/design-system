@@ -22,7 +22,7 @@ const sampleTabs = [
     content: (
       <div className="space-y-2">
         <p className="text-sm text-onSurface">プロジェクトの概要ページです。</p>
-        <p className="text-sm text-onSurface-muted">最終更新: 2026 年 2 月 21 日</p>
+        <p className="text-sm text-onSurface-subtle">最終更新: 2026 年 2 月 21 日</p>
       </div>
     ),
   },

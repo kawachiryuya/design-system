@@ -95,7 +95,7 @@ const LoadingSpinner: React.FC<{ size: number }> = ({ size }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="animate-spin text-onSurface-muted"
+    className="animate-spin text-onSurface-subtle"
     aria-hidden="true"
   >
     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
@@ -194,7 +194,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
     'border-border',
     'bg-surface',
     'text-onSurface',
-    'placeholder:text-onSurface-muted',
+    'placeholder:text-onSurface-subtle',
     'transition-colors',
     'duration-normal',
     'hover:border-border-strong',
@@ -216,7 +216,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
   const leadingClass = [
     'absolute',
     'pointer-events-none',
-    'text-onSurface-muted',
+    'text-onSurface-subtle',
     'flex',
     'items-center',
     'justify-center',
@@ -270,7 +270,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
             onClick={handleClear}
             className={[
               'inline-flex items-center justify-center h-5 w-5 rounded-sm',
-              'text-onSurface-muted hover:text-onSurface hover:bg-state-hover-primary',
+              'text-onSurface-subtle hover:text-onSurface hover:bg-state-hover-primary',
               'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
             ].join(' ')}
           >

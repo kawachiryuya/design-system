@@ -5,12 +5,12 @@
  * 1. tokens/contrast-pairs.json の semantic ペアを WCAG 2 比で判定 (fail → exit 1)。
  *    APCA Lc は参考目標未達を warn 出力 (exit code に影響しない = 設計レンズ)。
  * 2. 階調不変条件 (パレット構造の保証) を検証 (fail → exit 1):
- *    - アンカー: 全色相 (bright-hue 除く) で step 700=白文字≥4.5 / step 500=白≥3:1
+ *    - アンカー: 全色相で step 700=白文字≥4.5 / step 500=白≥3:1
  *    - step 差ルール: bg step ≤100 × text step ≥700 が全色相組合せで ≥4.5
  *    - L 正規化: chromatic の同一 step で OKLCH L 差が閾値内 (override 互換の保証)
- *    - bright-hue: yellow の塗り step (50〜600) + neutral-900 文字 ≥4.5
+ *    - bright-hue: BRIGHT_HUES に登録した hue は上記の例外 (濃色文字前提)。既定パレットには無い (#109 で yellow を削除)
  * 3. 知覚距離 ΔEOK (#58、warn レンズ、exit に影響しない): themeable 色が役割識別可能か
- *    (primary↔status / status 総当たり / secondary↔status を solid 段で)。通常視のみ (CVD は次段)。
+ *    (primary↔status / status 総当たり / primary-muted↔status を solid 段で)。通常視のみ (CVD は次段)。
  *
  * WCAG 比 / OKLCH L / ΔEOK は culori、APCA Lc は apca-w3 に委譲 (自前実装しない)。
  * テーマ切替 (将来ダークモード) のため vars/pairs/colors はオプション引数化。
@@ -21,7 +21,7 @@ import { parse, oklch, wcagContrast, differenceEuclidean } from 'culori';
 import { APCAcontrast, sRGBtoY } from 'apca-w3';
 
 // ── 設定 ──
-const BRIGHT_HUES = ['yellow']; // L 正規化・白文字アンカーの例外 (濃色文字前提、contrast-policy C-7=B)
+const BRIGHT_HUES = []; // L 正規化・白文字アンカーの例外 (濃色文字前提、contrast-policy C-7=B)。#109 で yellow を削除し現在は空。鮮やかな hue を足すときはここに登録する
 const L_NORM_MAX = 0.03;        // chromatic 同一 step の OKLCH L 差の上限 (実測 max 0.023 + 余裕)
 // ΔEOK (OKLab ユークリッド距離) の床 (#58、warn レンズ)。themeable 色の役割識別性を測る。
 // 既定パレット実測由来: gate 候補 (primary↔status / status 総当たり) の観測最小 0.096 (primary↔success) − 余裕。
@@ -106,7 +106,7 @@ for (const s of ['50', '100', '200', '300', '400', '500', '600', '700', '800', '
   const spread = Math.max(...Ls) - Math.min(...Ls);
   if (spread > L_NORM_MAX) inv.push(`L正規化: step ${s} の chromatic L 差 ${spread.toFixed(3)} > ${L_NORM_MAX}`);
 }
-// bright-hue: yellow 塗り step 50〜600 + neutral-900 文字 ≥ 4.5
+// bright-hue: 登録 hue の塗り step 50〜600 + neutral-900 文字 ≥ 4.5 (現在は対象なし)
 const n900 = hex('neutral', '900');
 for (const h of BRIGHT_HUES) for (const s of ['50', '100', '200', '300', '400', '500', '600']) {
   const c = wcag(n900, hex(h, s)); if (c < 4.5) inv.push(`bright-hue: ${h}-${s} + neutral-900 文字 = ${c.toFixed(2)} < 4.5`);
@@ -122,7 +122,7 @@ const STATUS = ['success', 'error', 'warning', 'info'];
 const distPairs = [];
 for (const s of STATUS) distPairs.push(['surface-primary', `surface-${s}`, 'gate候補']); // primary↔status (4)
 for (let i = 0; i < STATUS.length; i++) for (let j = i + 1; j < STATUS.length; j++) distPairs.push([`surface-${STATUS[i]}`, `surface-${STATUS[j]}`, 'gate候補']); // status 総当たり (6)
-for (const s of STATUS) distPairs.push(['surface-secondary', `surface-${s}`, 'warn']); // secondary↔status (4、severity 低)
+for (const s of STATUS) distPairs.push(['surface-primary-muted', `surface-${s}`, 'warn']); // primary-muted↔status (4、severity 低)
 const deltaWarns = [];
 let deltaMin = Infinity;
 for (const [a, b, tier] of distPairs) {
@@ -141,7 +141,7 @@ for (const [label, usage, ratio, lcStr, verdict] of rows) {
   console.log(`${pad(label, 40)} ${pad(usage, 10)} ${pad(ratio, 6)} ${pad(lcStr, 7)} ${verdict}`);
 }
 console.log('─'.repeat(72));
-console.log(`不変条件: アンカー / step差(min ${sdMin === Infinity ? '-' : sdMin.toFixed(2)}) / L正規化 / bright-hue`);
+console.log(`不変条件: アンカー / step差(min ${sdMin === Infinity ? '-' : sdMin.toFixed(2)}) / L正規化`);
 
 if (warns.length) {
   console.log(`\n⚠ APCA Lc 注意 (${warns.length}件、AA 適合・知覚レンズ、exit には影響しない):`);

@@ -62,7 +62,7 @@ ActionBar が消すのは「判断」ではなく「**判断のブレと、判�
 <DoDontExample
   label="DOM順は優先度昇順 (primary を最後) に置く"
   doExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3 w-[480px]">
       <ActionBar>
         <Button variant="tertiary">キャンセル</Button>
         <Button variant="primary">保存</Button>
@@ -71,7 +71,7 @@ ActionBar が消すのは「判断」ではなく「**判断のブレと、判�
   }
   doCaption="優先度昇順で置くと、横では primary が右端・縦では最下に来る。order CSS 不要で DOM=視覚=tab 順が一致する。"
   dontExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3 w-[480px]">
       <ActionBar>
         <Button variant="primary">保存</Button>
         <Button variant="tertiary">キャンセル</Button>
@@ -84,7 +84,7 @@ ActionBar が消すのは「判断」ではなく「**判断のブレと、判�
 <DoDontExample
   label="primary は 1 つに絞る"
   doExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3 w-[480px]">
       <ActionBar>
         <Button variant="secondary">下書き保存</Button>
         <Button variant="primary">公開する</Button>
@@ -93,7 +93,7 @@ ActionBar が消すのは「判断」ではなく「**判断のブレと、判�
   }
   doCaption="primary は 1 つ。階層が立ち、ユーザーは「次の一手」を迷わない。"
   dontExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3 w-[480px]">
       <ActionBar>
         <Button variant="primary">下書き保存</Button>
         <Button variant="primary">公開する</Button>
@@ -106,7 +106,7 @@ ActionBar が消すのは「判断」ではなく「**判断のブレと、判�
 <DoDontExample
   label="終端画面は align=center"
   doExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3 w-[480px]">
       <ActionBar orientation="horizontal" align="center">
         <Button variant="secondary">ホームに戻る</Button>
         <Button variant="primary">予約詳細を見る</Button>
@@ -115,7 +115,7 @@ ActionBar が消すのは「判断」ではなく「**判断のブレと、判�
   }
   doCaption="予約完了など中央寄せの終端画面では align=center。コンテンツの中心線にアクションが揃う。"
   dontExample={
-    <div className="bg-surface-layer-2 border border-dashed border-border-subtle p-3 w-[480px]">
+    <div className="bg-surface-subtle border border-dashed border-border-subtle p-3 w-[480px]">
       <ActionBar orientation="horizontal" align="end">
         <Button variant="secondary">ホームに戻る</Button>
         <Button variant="primary">予約詳細を見る</Button>

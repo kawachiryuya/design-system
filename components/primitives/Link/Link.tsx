@@ -111,7 +111,7 @@ const linkVariants = tv({
     color: {
       primary: '!text-onSurface-primary hover:bg-state-hover-primary active:bg-state-active-primary',
       neutral: '!text-onSurface hover:bg-state-hover active:bg-state-active',
-      muted:   '!text-onSurface-muted hover:bg-state-hover active:bg-state-active',
+      muted:   '!text-onSurface-subtle hover:bg-state-hover active:bg-state-active',
     },
     size: {
       sm: 'text-sm',

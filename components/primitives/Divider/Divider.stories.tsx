@@ -37,9 +37,9 @@ export const Playground: Story = {
   decorators: [
     (Story) => (
       <div className="w-80 flex flex-col gap-3">
-        <span className="text-sm text-onSurface-muted">上のコンテンツ</span>
+        <span className="text-sm text-onSurface-subtle">上のコンテンツ</span>
         <Story />
-        <span className="text-sm text-onSurface-muted">下のコンテンツ</span>
+        <span className="text-sm text-onSurface-subtle">下のコンテンツ</span>
       </div>
     ),
   ],
@@ -73,7 +73,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8 w-96">
       <div className="flex flex-col gap-3">
-        <span className="text-xs text-onSurface-muted">horizontal × weight</span>
+        <span className="text-xs text-onSurface-subtle">horizontal × weight</span>
         <Caption text="thin (1px)">
           <Divider weight="thin" />
         </Caption>
@@ -86,13 +86,13 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs text-onSurface-muted">vertical × weight (固定高さの flex 内)</span>
+        <span className="text-xs text-onSurface-subtle">vertical × weight (固定高さの flex 内)</span>
         <div className="flex items-center gap-4 h-8">
-          <span className="text-sm text-onSurface-muted">利用規約</span>
+          <span className="text-sm text-onSurface-subtle">利用規約</span>
           <Divider orientation="vertical" weight="thin" />
-          <span className="text-sm text-onSurface-muted">プライバシー</span>
+          <span className="text-sm text-onSurface-subtle">プライバシー</span>
           <Divider orientation="vertical" weight="normal" />
-          <span className="text-sm text-onSurface-muted">お問合せ</span>
+          <span className="text-sm text-onSurface-subtle">お問合せ</span>
         </div>
       </div>
     </div>
@@ -112,9 +112,9 @@ export const EdgeCases: Story = {
   },
   render: () => (
     <div className="flex items-stretch gap-4 h-24 w-96 border border-dashed border-border-subtle p-3 rounded">
-      <div className="flex-1 flex items-center justify-center bg-surface-layer-2 rounded text-sm text-onSurface-muted">左パネル</div>
+      <div className="flex-1 flex items-center justify-center bg-surface-subtle rounded text-sm text-onSurface-subtle">左パネル</div>
       <Divider orientation="vertical" weight="normal" />
-      <div className="flex-1 flex items-center justify-center bg-surface-layer-2 rounded text-sm text-onSurface-muted">右パネル</div>
+      <div className="flex-1 flex items-center justify-center bg-surface-subtle rounded text-sm text-onSurface-subtle">右パネル</div>
     </div>
   ),
 };

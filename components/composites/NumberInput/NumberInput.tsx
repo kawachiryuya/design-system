@@ -122,7 +122,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const buttonClasses = [
     sizeStyles.button,
     'h-full flex items-center justify-center transition-colors',
-    'text-onSurface-muted hover:text-onSurface hover:bg-state-hover-primary',
+    'text-onSurface-subtle hover:text-onSurface hover:bg-state-hover-primary',
     'disabled:text-onSurface-disabled disabled:cursor-not-allowed disabled:hover:bg-transparent',
     'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
   ].join(' ');

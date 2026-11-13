@@ -27,7 +27,6 @@ palette の各 step は共通のコントラスト役割を持つ ([Tokens / Col
 - **白文字 solid 面 = step 700** (全 hue で白文字 4.5:1 の普遍アンカー)。role 色は step 600 を使う (teal / cyan のみ 700)
 - **非テキスト (アイコン・境界) = step 500 以上** (白に対し 3:1)
 - 有彩色は同一 step の知覚明度 (OKLCH L) を揃えてあり、`bg≤100 × text≥700` は全 hue で 4.5:1 を満たす。この性質は `check:contrast` の不変条件として固定されている (override で崩すと CI が fail する)
-- **bright-hue (yellow)** は L 正規化の例外で濃色文字前提 (step 50〜600 = 濃色文字 / 700〜900 = 白文字)
 
 ## Do / Don't
 

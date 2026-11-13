@@ -42,11 +42,11 @@ export const BorderRadius: Story = {
             }}
           />
           <div className="text-center flex flex-col gap-1">
-            <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
+            <code className="bg-surface-subtle text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
               {r.key}
             </code>
-            <span className="text-xs font-mono text-onSurface-muted">{r.value}</span>
-            <span className="text-xs font-mono text-onSurface-muted">{r.tw}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">{r.value}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">{r.tw}</span>
           </div>
         </div>
       ))}

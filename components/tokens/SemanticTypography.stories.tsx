@@ -51,22 +51,22 @@ const StyleMeta: React.FC<{ name: string; twClass: string; spec: StyleSpec }> = 
 }) => (
   <div className="flex flex-col gap-1 mt-3 text-xs font-mono">
     <code className="font-semibold text-onSurface">{name}</code>
-    <code className="text-onSurface-muted">{twClass}</code>
-    <code className="text-onSurface-muted">
+    <code className="text-onSurface-subtle">{twClass}</code>
+    <code className="text-onSurface-subtle">
       font-size: <span className="text-onSurface">{formatRef(spec['font-size'].value)}</span>
     </code>
     {spec['font-weight'] && (
-      <code className="text-onSurface-muted">
+      <code className="text-onSurface-subtle">
         font-weight: <span className="text-onSurface">{formatRef(spec['font-weight'].value)}</span>
       </code>
     )}
     {spec['line-height'] && (
-      <code className="text-onSurface-muted">
+      <code className="text-onSurface-subtle">
         line-height: <span className="text-onSurface">{formatRef(spec['line-height'].value)}</span>
       </code>
     )}
     {spec['letter-spacing'] && (
-      <code className="text-onSurface-muted">
+      <code className="text-onSurface-subtle">
         letter-spacing: <span className="text-onSurface">{formatRef(spec['letter-spacing'].value)}</span>
       </code>
     )}
@@ -111,7 +111,7 @@ export const Catalog: Story = {
     <div className="flex flex-col gap-6 max-w-prose">
       {ENTRIES.map((e) => (
         <div key={e.name} className="border border-border-subtle rounded-md p-4 bg-surface">
-          <p className={`m-0 ${e.twClass} ${e.muted ? 'text-onSurface-muted' : 'text-onSurface'}`}>
+          <p className={`m-0 ${e.twClass} ${e.muted ? 'text-onSurface-subtle' : 'text-onSurface'}`}>
             {e.sample}
           </p>
           <StyleMeta name={e.name} twClass={e.twClass} spec={e.spec} />

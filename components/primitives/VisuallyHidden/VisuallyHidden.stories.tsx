@@ -35,11 +35,11 @@ export const Playground: Story = {
   decorators: [
     (Story) => (
       <div className="flex flex-col gap-2">
-        <p className="text-sm text-onSurface-muted">
+        <p className="text-sm text-onSurface-subtle">
           下の <code>VisuallyHidden</code> はブラウザに見えないが、VoiceOver / NVDA 等では読み上げられる:
         </p>
         <Story />
-        <p className="text-sm text-onSurface-muted">↑ ここに非表示テキスト</p>
+        <p className="text-sm text-onSurface-subtle">↑ ここに非表示テキスト</p>
       </div>
     ),
   ],

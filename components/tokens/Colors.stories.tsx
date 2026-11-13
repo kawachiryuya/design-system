@@ -20,13 +20,6 @@ const PALETTE_LABELS: Record<string, string> = {
   red: 'Red',
   orange: 'Orange',
   blue: 'Blue',
-  yellow: 'Yellow',
-  lime: 'Lime',
-  cyan: 'Cyan',
-  sky: 'Sky',
-  violet: 'Violet',
-  purple: 'Purple',
-  pink: 'Pink',
 };
 
 type Palette = { name: string; label: string; shades: Record<string, string> };
@@ -48,10 +41,6 @@ const ALL_PALETTES: Record<string, Palette> = Object.fromEntries(
     ]),
 );
 
-/** semantic 層で参照しない補助 palette (30° 刻みで hue wheel を埋める、下流 product 用) */
-const EXTRA_PALETTES: Palette[] = ['yellow', 'lime', 'cyan', 'sky', 'violet', 'purple', 'pink']
-  .map((k) => ALL_PALETTES[k])
-  .filter(Boolean);
 
 function isDark(hex: string): boolean {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -167,9 +156,6 @@ export const Catalog: Story = {
     <div className="flex flex-col gap-6 min-w-[640px]">
       <BaseRow />
       {HUE_PALETTES.map((palette) => (
-        <PaletteStrip key={palette.name} palette={palette} />
-      ))}
-      {EXTRA_PALETTES.map((palette) => (
         <PaletteStrip key={palette.name} palette={palette} />
       ))}
     </div>

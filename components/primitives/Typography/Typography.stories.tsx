@@ -96,7 +96,7 @@ export const Overview: Story = {
 
       {/* color — semantic 軸 */}
       <div className="flex flex-col gap-1">
-        <div className="text-xs text-onSurface-muted">color</div>
+        <div className="text-xs text-onSurface-subtle">color</div>
         {(['default', 'subdued', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info'] as const).map((color) => (
           <Typography key={color} variant="body" color={color}>{color} — テキストカラーのサンプル</Typography>
         ))}
@@ -104,7 +104,7 @@ export const Overview: Story = {
 
       {/* weight — variant デフォルトの上書き */}
       <div className="flex flex-col gap-1">
-        <div className="text-xs text-onSurface-muted">weight (variant デフォルトを上書き)</div>
+        <div className="text-xs text-onSurface-subtle">weight (variant デフォルトを上書き)</div>
         <div className="flex flex-wrap gap-4 items-baseline">
           {(['normal', 'medium', 'semibold', 'bold'] as const).map((weight) => (
             <Typography key={weight} variant="h4" weight={weight}>{weight}</Typography>

@@ -36,7 +36,7 @@ type Story = StoryObj<typeof Center>;
 export const Playground: Story = {
   decorators: [
     (Story) => (
-      <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
+      <div className="w-full bg-surface-subtle border border-dashed border-border-subtle p-4">
         <Story />
       </div>
     ),
@@ -44,7 +44,7 @@ export const Playground: Story = {
   render: (args) => (
     <Center {...args}>
       <div className="bg-surface border border-border-default rounded-md p-6 text-center">
-        <div className="text-onSurface-muted text-sm">この外側の dashed が親、内側の box が Center 内</div>
+        <div className="text-onSurface-subtle text-sm">この外側の dashed が親、内側の box が Center 内</div>
         <div className="text-onSurface mt-2 font-medium">max: {args.max}</div>
       </div>
     </Center>
@@ -79,7 +79,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <Caption text="max=sm — 448px / Login form / Onboarding">
-        <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
+        <div className="w-full bg-surface-subtle border border-dashed border-border-subtle p-4">
           <Center max="sm">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               フォーム想定の単列コンテンツ
@@ -89,7 +89,7 @@ export const Overview: Story = {
       </Caption>
 
       <Caption text="max=md — 768px / Article 本文 / FAQ (測度最適)">
-        <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
+        <div className="w-full bg-surface-subtle border border-dashed border-border-subtle p-4">
           <Center max="md">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               本文として読みやすい幅 (1 行 65 文字前後)
@@ -99,7 +99,7 @@ export const Overview: Story = {
       </Caption>
 
       <Caption text="max=lg — 896px / Help / 内側 grid">
-        <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
+        <div className="w-full bg-surface-subtle border border-dashed border-border-subtle p-4">
           <Center max="lg">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               内側に 2 col grid 等を持つ反復構造
@@ -109,7 +109,7 @@ export const Overview: Story = {
       </Caption>
 
       <Caption text="max=xl — 1024px / Landing / Card grid">
-        <div className="w-full bg-surface-layer-2 border border-dashed border-border-subtle p-4">
+        <div className="w-full bg-surface-subtle border border-dashed border-border-subtle p-4">
           <Center max="xl">
             <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
               Landing hero / 最大 3 col の card grid
@@ -134,7 +134,7 @@ export const EdgeCases: Story = {
     },
   },
   render: () => (
-    <div className="w-64 bg-surface-layer-2 border border-dashed border-border-subtle p-4 mx-auto">
+    <div className="w-64 bg-surface-subtle border border-dashed border-border-subtle p-4 mx-auto">
       <Center max="xl">
         <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
           親が 256px、Center max=xl (1024) でも 256px に収まる

@@ -87,7 +87,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">size (sm 40px / md 48px / lg 56px、md 以上で WCAG 2.5.5 達成)</div>
+        <div className="text-xs text-onSurface-subtle">size (sm 40px / md 48px / lg 56px、md 以上で WCAG 2.5.5 達成)</div>
         <div className="flex flex-col gap-4 w-64">
           <Select size="sm" label="sm (40px)" placeholder="選択...">
             {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
@@ -102,7 +102,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">states</div>
+        <div className="text-xs text-onSurface-subtle">states</div>
         <div className="flex flex-col gap-4 w-64">
           <Caption text="Default">
             <Select label="都道府県" placeholder="選択...">

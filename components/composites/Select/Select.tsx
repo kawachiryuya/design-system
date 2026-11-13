@@ -136,7 +136,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     // focus 表現は border 色変化 + inset ring (詳細は Input.tsx 同セクションのコメント参照)
     const stateStyles = error
-      ? 'border-border-error-emphasis focus:border-border-error-emphasis focus:ring-border-error bg-surface-error-muted'
+      ? 'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted'
       : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
 
     const selectClasses = [
@@ -195,7 +195,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {children}
           </select>
           {/* カスタム下矢印アイコン */}
-          <span className={`absolute ${sizeConfig.iconRight} top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-muted flex items-center justify-center`}>
+          <span className={`absolute ${sizeConfig.iconRight} top-1/2 -translate-y-1/2 pointer-events-none text-onSurface-subtle flex items-center justify-center`}>
             <Icon name="expand_more" size={sizeConfig.iconSize} />
           </span>
         </div>

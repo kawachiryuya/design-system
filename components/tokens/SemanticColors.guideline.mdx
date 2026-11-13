@@ -15,7 +15,7 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 |---|---|---|
 | **bg** | ページ最下層の背景 | `bg-background` |
 | **surface** | カード / モーダル / 役割色の塗り | `bg-surface` / `bg-surface-success` |
-| **on** | surface 上に載せるテキスト色 | `text-onSurface` / `text-onSurface-muted` |
+| **onSurface** | surface 上に載せるテキスト色 | `text-onSurface` / `text-onSurface-subtle` |
 | **border** | ボーダー色 | `border-border` / `border-border-subtle` |
 | **state** | hover / active のオーバーレイ | `bg-state-hover` / `bg-state-hover-primary` |
 
@@ -26,9 +26,9 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 token の一覧は各 story で確認できる:
 
 - [Background](?path=/story/tokens-color-semantic--background) — ページ最下層の中性 canvas
-- [Surface](?path=/story/tokens-color-semantic--surface) — カード / モーダル / 役割色の塗り (18 token)
-- [Text (on)](?path=/story/tokens-color-semantic--text) — surface 上に載せる文字色 (10 token)
-- [Border](?path=/story/tokens-color-semantic--border) — ボーダー色 (13 token)
+- [Surface](?path=/story/tokens-color-semantic--surface) — カード / モーダル / 役割色の塗り (17 token)
+- [Text (onSurface)](?path=/story/tokens-color-semantic--text) — surface 上に載せる文字色 (9 token)
+- [Border](?path=/story/tokens-color-semantic--border) — ボーダー色 (12 token)
 - [State (overlay)](?path=/story/tokens-color-semantic--state) — hover / active のオーバーレイ (6 token)
 - [Container Pairs](?path=/story/tokens-color-semantic--container-pairs) — 機能色 (success / error / warning / info) の組合せパターン
 
@@ -39,16 +39,15 @@ token の一覧は各 story で確認できる:
 | やりたいこと | 使う token |
 |---|---|
 | 普通のカードの背景 | `bg-surface` |
-| カードの中に入れ子のセクション | `bg-surface-layer-2` |
-| 入力フィールドの背景 (凹み) | `bg-surface-inset` |
+| カードの中に入れ子の区画 | `bg-surface-subtle` |
 | Modal の背景マスク | `bg-surface-overlay` |
 | Primary Button | `bg-surface-primary` + `text-onSurface-inverse` |
 | 通常テキスト | `text-onSurface` |
-| 補助テキスト (placeholder / caption) | `text-onSurface-muted` |
+| 補助テキスト (placeholder / caption) | `text-onSurface-subtle` |
 | 区切り線 | `border-border-subtle` |
-| Alert 成功 (落ち着いた領域) | `bg-surface-success-muted` + `text-onSurface-success` + `border-border-success-subtle` |
+| Alert 成功 (落ち着いた領域) | `bg-surface-success-muted` + `text-onSurface-success` + `border-border-success-muted` |
 | Badge 成功 solid (主張) | `bg-surface-success` + `text-onSurface-inverse` |
-| Badge 成功 outline | `border-border-success-emphasis` + `text-onSurface-success` |
+| Badge 成功 outline | `border-border-success-strong` + `text-onSurface-success` |
 | 色付き背景上の hover | `bg-state-hover` |
 | 白系背景上の brand hover | `bg-state-hover-primary` |
 

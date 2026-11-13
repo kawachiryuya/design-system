@@ -39,7 +39,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       { label: '記事タイトル' },
     ]} />
   }
-  doCaption="最後の項目は href を省略し、自動的に `aria-current='page'` + 視覚的に弱め (text-onSurface-muted) になる。「今ここ」を表現する慣習。"
+  doCaption="最後の項目は href を省略し、自動的に `aria-current='page'` + 視覚的に弱め (text-onSurface-subtle) になる。「今ここ」を表現する慣習。"
   dontExample={
     <Breadcrumb items={[
       { label: 'ホーム', href: '/' },
@@ -73,7 +73,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="2 段の浅い階層では使わない (省略可)"
   doExample={
-    <div className="text-sm text-onSurface-muted">
+    <div className="text-sm text-onSurface-subtle">
       (2 段の階層は h1 ページ見出しで十分。Breadcrumb は使わない)
       <h1 className="text-heading-md text-onSurface mt-1">設定</h1>
     </div>

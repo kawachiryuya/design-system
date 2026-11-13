@@ -160,7 +160,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           {title}
         </p>
         {description && (
-          <p className={['text-onSurface-muted max-w-sm', s.desc].join(' ')}>
+          <p className={['text-onSurface-subtle max-w-sm', s.desc].join(' ')}>
             {description}
           </p>
         )}

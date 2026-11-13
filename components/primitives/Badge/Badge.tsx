@@ -47,7 +47,7 @@ const badgeVariants = tv({
     { appearance: 'solid', variant: 'info',    class: 'bg-surface-info text-onSurface-inverse' },
     // soft: 薄い背景 + variant 色のテキスト
     { appearance: 'soft', variant: 'neutral', class: 'bg-surface-disabled text-onSurface' },
-    { appearance: 'soft', variant: 'primary', class: 'bg-surface-secondary text-onSurface-primary' },
+    { appearance: 'soft', variant: 'primary', class: 'bg-surface-primary-muted text-onSurface-primary' },
     { appearance: 'soft', variant: 'success', class: 'bg-surface-success-muted text-onSurface-success' },
     { appearance: 'soft', variant: 'error',   class: 'bg-surface-error-muted text-onSurface-error' },
     { appearance: 'soft', variant: 'warning', class: 'bg-surface-warning-muted text-onSurface-warning' },
@@ -55,10 +55,10 @@ const badgeVariants = tv({
     // outline: 枠線のみ + variant 色のテキスト
     { appearance: 'outline', variant: 'neutral', class: 'border border-border-strong text-onSurface' },
     { appearance: 'outline', variant: 'primary', class: 'border border-border-focus text-onSurface-primary' },
-    { appearance: 'outline', variant: 'success', class: 'border border-border-success-emphasis text-onSurface-success' },
-    { appearance: 'outline', variant: 'error',   class: 'border border-border-error-emphasis text-onSurface-error' },
-    { appearance: 'outline', variant: 'warning', class: 'border border-border-warning-emphasis text-onSurface-warning' },
-    { appearance: 'outline', variant: 'info',    class: 'border border-border-info-emphasis text-onSurface-info' },
+    { appearance: 'outline', variant: 'success', class: 'border border-border-success-strong text-onSurface-success' },
+    { appearance: 'outline', variant: 'error',   class: 'border border-border-error-strong text-onSurface-error' },
+    { appearance: 'outline', variant: 'warning', class: 'border border-border-warning-strong text-onSurface-warning' },
+    { appearance: 'outline', variant: 'info',    class: 'border border-border-info-strong text-onSurface-info' },
   ],
   defaultVariants: {
     variant: 'neutral',

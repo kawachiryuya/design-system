@@ -4,7 +4,7 @@ import React from 'react';
  * Caption — Storybook Story 内で各サブ例にラベルを添える補助コンポーネント。
  *
  * `.stories.tsx` の States / EdgeCases で「これは Hover のサンプル」「これは fullWidth」のような
- * 短いキャプションをサブ例の上に添える用途で使う。`text-xs text-onSurface-muted` の小さな
+ * 短いキャプションをサブ例の上に添える用途で使う。`text-xs text-onSurface-subtle` の小さな
  * グレーテキスト + 下にコンテンツを縦に並べる構造で、視覚カタログを読みやすくする。
  *
  * @example
@@ -30,7 +30,7 @@ export interface CaptionProps {
 
 export const Caption: React.FC<CaptionProps> = ({ text, children }) => (
   <div className="flex flex-col gap-1 items-start">
-    <span className="text-xs text-onSurface-muted">{text}</span>
+    <span className="text-xs text-onSurface-subtle">{text}</span>
     {children}
   </div>
 );

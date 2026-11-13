@@ -38,10 +38,10 @@ export const Values: Story = {
           className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-subtle bg-surface"
           style={{ gridTemplateColumns: '180px 60px 80px 1fr' }}
         >
-          <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
+          <code className="bg-surface-subtle text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
             opacity-{e.key}
           </code>
-          <code className="font-mono text-xs text-onSurface-muted">{e.value}</code>
+          <code className="font-mono text-xs text-onSurface-subtle">{e.value}</code>
           <div
             className="w-12 h-8 rounded-sm bg-surface-primary"
             style={{ opacity: e.value }}
@@ -49,7 +49,7 @@ export const Values: Story = {
           />
           <div className="flex flex-col gap-1">
             <span className="text-sm text-onSurface">{e.description}</span>
-            <span className="text-xs text-onSurface-muted">使用: {e.usedBy}</span>
+            <span className="text-xs text-onSurface-subtle">使用: {e.usedBy}</span>
           </div>
         </div>
       ))}

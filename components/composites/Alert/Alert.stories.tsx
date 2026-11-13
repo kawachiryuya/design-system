@@ -76,7 +76,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">variant (success / error / warning / info / neutral)</div>
+        <div className="text-xs text-onSurface-subtle">variant (success / error / warning / info / neutral)</div>
         <div className="flex flex-col gap-3 w-96 max-w-full">
           <Alert variant="success" title="完了">操作が正常に完了しました。</Alert>
           <Alert variant="error" title="エラー">入力内容に誤りがあります。確認してください。</Alert>
@@ -87,7 +87,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-muted">構成 (本文のみ / タイトル付き / hideIcon / dismissible) + close hover/focus</div>
+        <div className="text-xs text-onSurface-subtle">構成 (本文のみ / タイトル付き / hideIcon / dismissible) + close hover/focus</div>
         <div className="flex flex-col gap-4 w-96 max-w-full">
           <Caption text="Default (本文のみ)">
             <Alert variant="info">一般的なお知らせメッセージ。</Alert>

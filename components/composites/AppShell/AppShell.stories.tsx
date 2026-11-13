@@ -58,9 +58,9 @@ const MockSidebar = () => (
   <div className="w-56 shrink-0 border-r border-border-subtle bg-surface sticky top-0 h-screen px-2">
     <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar (w-56)</div>
     <nav className="px-2 flex flex-col gap-1">
-      <a href="#" className="px-3 py-2 rounded hover:bg-surface-inset text-sm">ホーム</a>
-      <a href="#" className="px-3 py-2 rounded hover:bg-surface-inset text-sm">予約一覧</a>
-      <a href="#" className="px-3 py-2 rounded hover:bg-surface-inset text-sm">マイページ</a>
+      <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">ホーム</a>
+      <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">予約一覧</a>
+      <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">マイページ</a>
     </nav>
   </div>
 );
@@ -77,7 +77,7 @@ const MockBottomNav = () => (
 
 const MockSubBar = ({ title }: { title: string }) => (
   <div className="hidden lg:block border-b border-border-subtle bg-surface px-container py-3">
-    <div className="text-xs text-onSurface-muted">パンくず &gt; {title}</div>
+    <div className="text-xs text-onSurface-subtle">パンくず &gt; {title}</div>
     <div className="font-bold text-lg">{title}</div>
   </div>
 );
@@ -85,7 +85,7 @@ const MockSubBar = ({ title }: { title: string }) => (
 // AppShell が `<footer>` landmark を提供するので、中身は素の要素で渡す (二重に `<footer>` しない)。
 // 帯は内容カラム全幅、内側の読み幅は px-container で軽く絞る (consumer は Section/Center で組む)。
 const MockFooter = () => (
-  <div className="bg-surface border-t border-border-subtle px-container py-4 text-xs text-onSurface-muted">
+  <div className="bg-surface border-t border-border-subtle px-container py-4 text-xs text-onSurface-subtle">
     <div className="flex flex-wrap gap-4">
       <span>サービス紹介</span>
       <span>ヘルプ</span>
@@ -96,9 +96,9 @@ const MockFooter = () => (
 );
 
 const MockContent = ({ children }: { children?: React.ReactNode }) => (
-  <div className="bg-surface-layer-2 border border-dashed border-border-subtle rounded-md p-4 min-h-[200px]">
+  <div className="bg-surface-subtle border border-dashed border-border-subtle rounded-md p-4 min-h-[200px]">
     {children ?? (
-      <div className="text-sm text-onSurface-muted">
+      <div className="text-sm text-onSurface-subtle">
         ここが children (= main 内コンテンツ)。Storybook 用に dashed border で可視化。
       </div>
     )}
@@ -165,7 +165,7 @@ export const Overview: Story = {
       {/* contentMax 比較は固定幅 1400px フレームで横並び (狭い canvas は内側 overflow-x-auto で横スクロール) */}
       <div className="flex flex-col gap-6 overflow-x-auto">
         <div className="flex flex-col gap-1.5 w-[1400px]">
-          <span className="text-caption text-onSurface-muted">{'contentMax="narrow" (= max-w-container-narrow 768px) — 読み列が中央に絞られる'}</span>
+          <span className="text-caption text-onSurface-subtle">{'contentMax="narrow" (= max-w-container-narrow 768px) — 読み列が中央に絞られる'}</span>
           <ShellPreview className="w-[1400px]">
             <AppShell
               contentMax="narrow"
@@ -180,7 +180,7 @@ export const Overview: Story = {
         </div>
 
         <div className="flex flex-col gap-1.5 w-[1400px]">
-          <span className="text-caption text-onSurface-muted">{'contentMax="wide" (= max-w-container-wide 1536px) — 読み列が右 pane いっぱいまで広がる'}</span>
+          <span className="text-caption text-onSurface-subtle">{'contentMax="wide" (= max-w-container-wide 1536px) — 読み列が右 pane いっぱいまで広がる'}</span>
           <ShellPreview className="w-[1400px]">
             <AppShell
               contentMax="wide"
@@ -214,7 +214,7 @@ export const EdgeCases: Story = {
       <Caption text='layout="full" — full-bleed 背景 (Section) + 中央読み列 (Center)。背景が main 端まで届く'>
         <ShellPreview>
           <AppShell sidebar={<MockSidebar />} layout="full">
-            <Section padding="md" className="bg-surface-secondary">
+            <Section padding="md" className="bg-surface-primary-muted">
               <Center max="md">
                 <div className="bg-surface border border-border-default rounded-md p-4 text-sm">
                   背景 (Section) は main の端まで full-bleed、コンテンツ (Center max=md) は中央に絞られる。

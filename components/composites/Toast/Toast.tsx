@@ -67,7 +67,7 @@ const variantConfig: Record<ToastVariant, {
   role: 'status' | 'alert';
 }> = {
   success: {
-    container: 'bg-surface-success-muted border border-border-success-subtle text-onSurface-success',
+    container: 'bg-surface-success-muted border border-border-success-muted text-onSurface-success',
     icon: 'text-onSurface-success',
     closeBtn: 'text-onSurface-success hover:bg-state-hover',
     iconName: 'check_circle',
@@ -75,7 +75,7 @@ const variantConfig: Record<ToastVariant, {
     role: 'status',
   },
   error: {
-    container: 'bg-surface-error-muted border border-border-error-subtle text-onSurface-error',
+    container: 'bg-surface-error-muted border border-border-error-muted text-onSurface-error',
     icon: 'text-onSurface-error',
     closeBtn: 'text-onSurface-error hover:bg-state-hover',
     iconName: 'error',
@@ -83,7 +83,7 @@ const variantConfig: Record<ToastVariant, {
     role: 'alert',
   },
   warning: {
-    container: 'bg-surface-warning-muted border border-border-warning-subtle text-onSurface-warning',
+    container: 'bg-surface-warning-muted border border-border-warning-muted text-onSurface-warning',
     icon: 'text-onSurface-warning',
     closeBtn: 'text-onSurface-warning hover:bg-state-hover',
     iconName: 'warning',
@@ -91,7 +91,7 @@ const variantConfig: Record<ToastVariant, {
     role: 'status',
   },
   info: {
-    container: 'bg-surface-info-muted border border-border-info-subtle text-onSurface-info',
+    container: 'bg-surface-info-muted border border-border-info-muted text-onSurface-info',
     icon: 'text-onSurface-info',
     closeBtn: 'text-onSurface-info hover:bg-state-hover',
     iconName: 'info',
@@ -99,9 +99,9 @@ const variantConfig: Record<ToastVariant, {
     role: 'status',
   },
   neutral: {
-    container: 'bg-surface-layer-2 border border-border-subtle text-onSurface',
-    icon: 'text-onSurface-muted',
-    closeBtn: 'text-onSurface-muted hover:bg-state-hover',
+    container: 'bg-surface-subtle border border-border-subtle text-onSurface',
+    icon: 'text-onSurface-subtle',
+    closeBtn: 'text-onSurface-subtle hover:bg-state-hover',
     iconName: 'info',
     ariaLive: 'polite',
     role: 'status',

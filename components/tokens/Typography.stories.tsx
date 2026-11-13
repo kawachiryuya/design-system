@@ -44,7 +44,7 @@ const BODY_SAMPLE =
   'このデザインシステムはReact・TypeScript・Tailwind CSSを使用して構築されています。一貫したUI品質と開発体験を提供します。';
 
 const KeyBadge: React.FC<{ k: string }> = ({ k }) => (
-  <code className="bg-surface-inset text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
+  <code className="bg-surface-subtle text-onSurface px-1.5 py-0.5 rounded-sm font-mono text-xs inline-block">
     {k}
   </code>
 );
@@ -66,8 +66,8 @@ export const FontSizes: Story = {
         >
           <div className="w-20 flex-shrink-0 flex flex-col gap-1">
             <KeyBadge k={size.key} />
-            <span className="text-xs font-mono text-onSurface-muted">{size.value}</span>
-            <span className="text-xs font-mono text-onSurface-muted">text-{size.key}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">{size.value}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">text-{size.key}</span>
           </div>
           <span className="text-onSurface leading-tight" style={{ fontSize: size.value }}>
             {SAMPLE}
@@ -95,8 +95,8 @@ export const FontWeights: Story = {
         >
           <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
             <KeyBadge k={weight.key} />
-            <span className="text-xs font-mono text-onSurface-muted">{weight.value}</span>
-            <span className="text-xs font-mono text-onSurface-muted">font-{weight.key}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">{weight.value}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">font-{weight.key}</span>
           </div>
           <span
             className="text-onSurface"
@@ -127,8 +127,8 @@ export const LineHeights: Story = {
         >
           <div className="mb-3 flex gap-2 items-center">
             <KeyBadge k={lh.key} />
-            <span className="text-xs font-mono text-onSurface-muted">{lh.value}</span>
-            <span className="text-xs font-mono text-onSurface-muted">leading-{lh.key}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">{lh.value}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">leading-{lh.key}</span>
           </div>
           <p className="m-0 text-sm text-onSurface" style={{ lineHeight: lh.value }}>
             {BODY_SAMPLE}
@@ -156,8 +156,8 @@ export const LetterSpacings: Story = {
         >
           <div className="w-[120px] flex-shrink-0 flex flex-col gap-1">
             <KeyBadge k={ls.key} />
-            <span className="text-xs font-mono text-onSurface-muted">{ls.value}</span>
-            <span className="text-xs font-mono text-onSurface-muted">tracking-{ls.key}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">{ls.value}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">tracking-{ls.key}</span>
           </div>
           <span className="text-xl text-onSurface" style={{ letterSpacing: ls.value }}>
             {SAMPLE}
@@ -182,12 +182,12 @@ export const FontFamilies: Story = {
         <div key={ff.key} className="p-5 rounded-md border border-border-subtle bg-surface">
           <div className="mb-3 flex gap-2 items-center">
             <KeyBadge k={ff.key} />
-            <span className="text-xs font-mono text-onSurface-muted">font-{ff.key}</span>
+            <span className="text-xs font-mono text-onSurface-subtle">font-{ff.key}</span>
           </div>
           <p className="m-0 mb-2 text-xl text-onSurface" style={{ fontFamily: ff.value }}>
             {SAMPLE}
           </p>
-          <p className="m-0 text-xs font-mono text-onSurface-muted break-all">{ff.value}</p>
+          <p className="m-0 text-xs font-mono text-onSurface-subtle break-all">{ff.value}</p>
         </div>
       ))}
     </div>

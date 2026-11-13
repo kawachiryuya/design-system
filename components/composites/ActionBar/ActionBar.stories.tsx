@@ -40,7 +40,7 @@ type Story = StoryObj<typeof ActionBar>;
 
 /** ActionBar の幅 = @container の幅。Controls 探索を分かりやすくするため枠付きの中幅で包む。 */
 const Frame = ({ children, width = 'w-full max-w-md' }: { children: React.ReactNode; width?: string }) => (
-  <div className={[width, 'bg-surface-layer-2 border border-dashed border-border-subtle rounded-md p-4'].join(' ')}>
+  <div className={[width, 'bg-surface-subtle border border-dashed border-border-subtle rounded-md p-4'].join(' ')}>
     {children}
   </div>
 );
@@ -109,7 +109,7 @@ export const Overview: Story = {
         <div className="flex flex-col gap-2">
           {(['end', 'center', 'start', 'between'] as const).map((a) => (
             <div key={a} className="flex items-center gap-2">
-              <div className="w-28 shrink-0 text-xs text-onSurface-muted font-mono">align={a}</div>
+              <div className="w-28 shrink-0 text-xs text-onSurface-subtle font-mono">align={a}</div>
               <Frame width="w-[360px]">
                 <ActionBar orientation="horizontal" align={a}>
                   <Button variant="secondary">戻る</Button>

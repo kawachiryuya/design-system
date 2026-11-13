@@ -23,7 +23,7 @@ export type TypographyVariant =
 
 /**
  * テキストカラー（semantic-colors.json の onSurface 系を反映）。
- * 階層軸 (default / subdued / muted) は Polaris 流の 3 段 (token は on.default / on.soft / on.muted)、
+ * 階層軸は token では default / subtle の 2 段 (onSurface.default / onSurface.subtle)。prop 値 `subdued` / `muted` はどちらも subtle、
  * 役割 (primary / success / error / warning / info / disabled / inverse) は状態色。
  * `primary` は brand 色テキスト (リンク等) で、階層軸とは別軸。
  * 全ての色は白背景に対して WCAG AA (4.5:1、disabled は対比要件免除) を満たす。
@@ -158,9 +158,9 @@ const typographyVariants = tv({
     },
     color: {
       default:  'text-onSurface',
-      // prop 値 `subdued` は token `on.soft` (階層 default / soft / muted の中段) に写す (#109 判断 1a)
-      subdued:  'text-onSurface-soft',
-      muted:    'text-onSurface-muted',
+      // 文字階層は default / subtle の 2 段 (#109)。旧 prop 値 `subdued` / `muted` はどちらも subtle に写す (rename・非推奨化は別途)
+      subdued:  'text-onSurface-subtle',
+      muted:    'text-onSurface-subtle',
       disabled: 'text-onSurface-disabled',
       primary:  'text-onSurface-primary',
       success:  'text-onSurface-success',

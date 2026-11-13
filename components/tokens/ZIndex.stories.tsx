@@ -40,13 +40,13 @@ export const Layers: Story = {
           className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-subtle bg-surface"
           style={{ gridTemplateColumns: '140px 80px 1fr' }}
         >
-          <code className="bg-surface-inset text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
+          <code className="bg-surface-subtle text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
             z-{l.key}
           </code>
-          <code className="font-mono text-xs text-onSurface-muted">{l.value}</code>
+          <code className="font-mono text-xs text-onSurface-subtle">{l.value}</code>
           <div className="flex flex-col gap-1">
             <span className="text-sm text-onSurface">{l.description}</span>
-            <span className="text-xs text-onSurface-muted">例: {l.example}</span>
+            <span className="text-xs text-onSurface-subtle">例: {l.example}</span>
           </div>
         </div>
       ))}

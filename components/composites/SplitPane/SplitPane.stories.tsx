@@ -121,7 +121,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6 p-4 max-w-[860px]">
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-subtle">listWidth=&quot;280px&quot; (狭め)</span>
+        <span className="type-caption text-onSurface-subtle">listWidth=&quot;280px&quot; (狭め)</span>
         <PanePreview>
           <SplitPane listWidth="280px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
@@ -130,7 +130,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-subtle">listWidth=&quot;360px&quot; (default、consumer の標準採用値)</span>
+        <span className="type-caption text-onSurface-subtle">listWidth=&quot;360px&quot; (default、consumer の標準採用値)</span>
         <PanePreview>
           <SplitPane listWidth="360px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
@@ -139,7 +139,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-subtle">listWidth=&quot;480px&quot; (広め)</span>
+        <span className="type-caption text-onSurface-subtle">listWidth=&quot;480px&quot; (広め)</span>
         <PanePreview>
           <SplitPane listWidth="480px" height="500px" list={<MockList count={10} />}>
             <MockDetail />
@@ -148,7 +148,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-caption text-onSurface-subtle">divider=&#123;false&#125; — 両 pane 間の縦境界線なし</span>
+        <span className="type-caption text-onSurface-subtle">divider=&#123;false&#125; — 両 pane 間の縦境界線なし</span>
         <PanePreview>
           <SplitPane divider={false} height="500px" list={<MockList count={10} />}>
             <MockDetail />

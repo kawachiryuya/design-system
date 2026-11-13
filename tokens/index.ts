@@ -21,7 +21,7 @@ export const COLORS = TOKENS.color;
 export const SPACING = TOKENS.spacing;
 /** Typography（font-size / weight / line-height / letter-spacing / family） */
 export const TYPOGRAPHY = TOKENS.typography;
-/** Typography semantic aliases（heading / body / label / caption） */
+/** Typography semantic aliases（title 系 / body / control / label / caption） */
 export const TYPOGRAPHY_SEMANTIC = TOKENS['typography-semantic'];
 /** Box shadows（elevation） */
 export const SHADOWS = TOKENS.shadow;

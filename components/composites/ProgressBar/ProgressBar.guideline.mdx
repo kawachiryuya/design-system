@@ -112,11 +112,11 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 **ステップ進捗バー（4 ステップ）** — `value = (current-1)/(steps-1)*100` でステップ位置を `size="sm"` のバーで示し、下にステップラベルを並べる。
 
 <div className="w-80 space-y-4">
-  <p className="text-body-sm text-onSurface-subtle">ステップ 2/4: <strong>プラン選択</strong></p>
+  <p className="type-supporting text-onSurface-subtle">ステップ 2/4: <strong>プラン選択</strong></p>
   <ProgressBar value={33.3} size="sm" color="primary" />
   <div className="flex justify-between">
     {['基本情報','プラン選択','支払い','確認'].map((s, i) => (
-      <span key={s} className={`text-caption font-medium ${i + 1 <= 2 ? 'text-onSurface-primary' : 'text-onSurface-subtle'}`}>{s}</span>
+      <span key={s} className={`type-caption font-medium ${i + 1 <= 2 ? 'text-onSurface-primary' : 'text-onSurface-subtle'}`}>{s}</span>
     ))}
   </div>
 </div>

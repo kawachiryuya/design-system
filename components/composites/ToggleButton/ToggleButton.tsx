@@ -63,7 +63,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
 
     const classes = [
       'inline-flex items-center justify-center',
-      'w-10 h-10 rounded text-body-sm font-medium transition-colors',
+      'w-10 h-10 rounded type-control-sm transition-colors',
       'focus:outline-none focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus',
       stateStyles,
       className,

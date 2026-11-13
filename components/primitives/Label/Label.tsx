@@ -65,17 +65,17 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
  * required を優先するフォールバックを JSX 側で実装。
  */
 const labelVariants = tv({
-  base: ['inline-flex', 'items-center', 'gap-1', 'font-normal', 'leading-tight', 'select-none'],
+  base: ['inline-flex', 'items-center', 'gap-1', 'select-none'],
   variants: {
     // size は semantic typography token に対応:
-    // - sm: text-caption (12px regular)
-    // - md: text-body-sm (14px regular)
-    // - lg: text-body-md (16px regular)
-    // Label.base の font-normal を維持するため text-label (medium) は使わず body-sm 経由で regular に
+    // - sm: type-caption (12px regular)
+    // - md: type-supporting (14px regular)
+    // - lg: type-body (16px regular)
+    // Label は regular (type-label は medium なので使わず、caption / supporting / body で regular に)
     size: {
-      sm: 'text-caption',
-      md: 'text-body-sm',
-      lg: 'text-body-md',
+      sm: 'type-caption',
+      md: 'type-supporting',
+      lg: 'type-body',
     },
     disabled: {
       true:  'text-onSurface-disabled cursor-not-allowed',
@@ -116,7 +116,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         {/* 必須マーク (required と optional は排他的。required を優先) */}
         {required && !optional && (
           <span
-            className="text-onSurface-error font-normal"
+            className="text-onSurface-error"
             aria-label="必須"
           >
             *
@@ -125,7 +125,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
 
         {/* 任意マーク。`text-onSurface-subtle` で AA 4.5:1 (4.69:1) を確保 */}
         {optional && !required && (
-          <span className="text-onSurface-subtle font-normal text-caption">
+          <span className="text-onSurface-subtle type-caption">
             （任意）
           </span>
         )}

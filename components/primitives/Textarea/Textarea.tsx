@@ -107,8 +107,7 @@ const textareaVariants = tv({
     'placeholder:text-onSurface-subtle',
     'px-3',
     'py-2',
-    'text-md',
-    'leading-normal',
+    'type-body',
     // transition-colors のみ (詳細は Input.tsx 同セクションのコメント参照)
     'transition-colors',
     'duration-normal',
@@ -186,7 +185,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               {label}
             </Label>
             {showCounter && (
-              <span className={`text-caption ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-subtle'}`}>
+              <span className={`type-caption ${isOverLimit ? 'text-onSurface-error font-medium' : 'text-onSurface-subtle'}`}>
                 {currentLength ?? 0}/{maxLength}
               </span>
             )}

@@ -24,12 +24,12 @@ import { Meta } from '@storybook/addon-docs/blocks';
 │  下流 product で意図のままブランド override 可能 │
 │                                                  │
 │  例: color.surface.primary  →  color.primary.700 │
-│      typography-semantic.heading.xl → font-size.4xl  │
+│      typography-semantic.page-title → font-size.3xl  │
 └──────────────────────────────────────────────────┘
                   ↓ Style Dictionary build
 ┌─ Tailwind utility classes ──────────────────────┐
 │  bg-surface-primary / text-onSurface-subtle      │
-│  gap-component-md / text-heading-xl 等           │
+│  gap-component-md / type-page-title 等           │
 └──────────────────────────────────────────────────┘
 ```
 
@@ -55,7 +55,7 @@ semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;
 | カテゴリ | Primitive | Semantic | 備考 |
 |---|---|---|---|
 | **Color** | [Tokens/Color/Primitive](?path=/story/tokens-color-primitive--catalog) | [Tokens/Color/Semantic](?path=/docs/tokens-color-semantic--guideline) | bg / surface / onSurface / border / state の 5 軸 + Container Pairs |
-| **Typography** | [Tokens/Typography/Primitive](?path=/story/tokens-typography-primitive--font-sizes) | [Tokens/Typography/Semantic](?path=/story/tokens-typography-semantic--catalog) | heading / body / label / caption |
+| **Typography** | [Tokens/Typography/Primitive](?path=/story/tokens-typography-primitive--font-sizes) | [Tokens/Typography/Semantic](?path=/story/tokens-typography-semantic--catalog) | heading / body / control / label / caption の text style (`type-*`) |
 | **Spacing** | [Tokens/Spacing](?path=/story/tokens-spacing--scale) | (semantic 層なし) | 数値スケールで `p-4` `gap-2` 等を直接引く運用。component 内部余白で使う |
 | **Layout** | (primitive 層なし) | [Tokens/Layout](?path=/docs/tokens-layout--guideline) | page-level layout frame token (container / section / grid)。multi-product で大外レイアウトを統一管理 |
 | **Radius** | [Tokens/Radius](?path=/story/tokens-radius--border-radius) | (semantic 層なし) | `radius.none / sm / md / lg / full` を直接利用 (`md = default`、bare `rounded` ≒ `rounded-md`) |

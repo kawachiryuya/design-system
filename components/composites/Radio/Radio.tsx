@@ -233,7 +233,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
       className={`border-0 p-0 m-0 ${className}`}
       aria-describedby={describedBy}
     >
-      <legend className="text-label text-onSurface mb-2">
+      <legend className="type-label text-onSurface mb-2">
         {legend}
         {required && (
           <span className="ml-1 text-onSurface-error" aria-label="必須">*</span>

@@ -359,6 +359,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - **生 hex / 色 bracket 禁止** (§3): 出荷される component 実装 (`components/**/*.tsx`。stories / tokens カタログ / `.storybook` 設定は対象外) の `className` 等に `#xxxxxx` / `[#xxx]` / `[rgb(...)]` / `[hsl(...)]` を書くと error。semantic token を使う。**spacing/サイズ bracket (`w-[44px]`) は意図的利用のため対象外**
 - **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-subtle` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
 - **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
+- **primitive typography 直参照禁止** (#109 Typo-2): 出荷コンポーネントに `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error。semantic の text style `type-{role}` (`type-section-title` / `type-body` / `type-supporting` / `type-control-md` / `type-label` / `type-caption`。見出しは hero / page / section / item の役割名、本文は body (16) / supporting (14) の 2 つ。size + 行間 + weight + 字間を 1 クラスで持つ、preset が components 層に生成) を使う。weight の `font-{weight}` は type-* の上書き (Typography の weight prop 等) として可。例外は container 比で決まる文字 (Avatar の initials) のみで、理由付き `eslint-disable`
 - **書いた utility は CSS を生成していなければならない** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)、lint ではなく verify の check): 出荷コンポーネントの string literal 内の utility 候補を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラス (= preset に写像が無い / token 名と違う / Tailwind 既定が上書きで消えている) があれば error。`border-border-default` (#107) / `text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の `bg-success-500` (#109) の再発防止。動的に組み立てるクラスは検査できないので、`${}` を含む template は skip、意図的な例外は同じ行に `utility-ignore: <理由>`
 - **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
 - **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
@@ -789,15 +790,15 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 | 区分 | 閾値 | 使用可能な場所 |
 |---|---|---|
 | 合格 | ≥ 4.5:1 | 全テキスト |
-| 条件付き | ≥ 3:1 | heading lg 以上 / 太字 18.66px 以上 / アイコン・グラフィック・UI 境界線 / 装飾・ロゴ・disabled |
+| 条件付き | ≥ 3:1 | title 系 text style (全段 bold 20px 以上) / 太字 18.66px 以上 / アイコン・グラフィック・UI 境界線 / 装飾・ロゴ・disabled |
 | 不合格 | < 3:1 | 使用不可 (装飾・ロゴ・disabled を除く) |
 
 **APCA Lc 参考目標 (警告基準であり、ゲートではない)**:
 
 | タイポトークン | APCA Lc 参考目標 |
 |---|---|
-| body md 以下 | Lc 75 以上 |
-| body lg / heading md 以上 | Lc 60 以上 |
+| body / supporting / label / control | Lc 75 以上 |
+| title 系 (hero / page / section / item) | Lc 60 以上 |
 | caption / 補助テキスト | Lc 60 以上 (太字推奨) |
 | 非テキスト | Lc 45 以上 |
 

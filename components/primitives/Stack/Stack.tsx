@@ -54,7 +54,7 @@ export type StackAlign = 'start' | 'center' | 'end' | 'stretch';
  * @example
  *   // heading と本文ブロック間 (xl = 24px)
  *   <Stack gap="xl">
- *     <Typography variant="h2">...</Typography>
+ *     <Typography variant="sectionTitle">...</Typography>
  *     <p>...</p>
  *   </Stack>
  */

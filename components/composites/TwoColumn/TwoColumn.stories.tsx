@@ -97,7 +97,7 @@ export const Overview: Story = {
     <div className="flex flex-col gap-8 max-w-[960px]">
       {(['6/6', '7/5', '8/4', '9/3'] as const).map((s) => (
         <div key={s} className="flex flex-col gap-1.5">
-          <span className="text-caption text-onSurface-subtle font-mono">split=&quot;{s}&quot;</span>
+          <span className="type-caption text-onSurface-subtle font-mono">split=&quot;{s}&quot;</span>
           <div className="p-3 bg-surface-subtle rounded-md">
             <TwoColumn split={s} sidebar={<Sidebar />}>
               <Main />

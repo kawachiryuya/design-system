@@ -76,8 +76,8 @@ export const Overview: Story = {
         aria-label="アカウントメニュー"
       >
         <div className="flex flex-col gap-2 min-w-[12rem]">
-          <p className="text-label font-medium text-onSurface">山田 太郎</p>
-          <p className="text-caption text-onSurface-subtle">taro@example.com</p>
+          <p className="type-label font-medium text-onSurface">山田 太郎</p>
+          <p className="type-caption text-onSurface-subtle">taro@example.com</p>
           <hr className="border-border-subtle" />
           <Button variant="tertiary" size="sm">プロフィール</Button>
           <Button variant="tertiary" size="sm">設定</Button>

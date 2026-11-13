@@ -25,7 +25,7 @@ const meta: Meta<typeof Typography> = {
     },
     color: {
       control: 'select',
-      options: ['default', 'subdued', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info', 'inherit'],
+      options: ['default', 'subtle', 'disabled', 'primary', 'success', 'error', 'warning', 'info', 'inherit'],
     },
     weight: { control: 'select', options: [undefined, 'normal', 'medium', 'bold'] },
     truncate: { control: 'boolean' },
@@ -52,7 +52,7 @@ export const Playground: Story = {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`as` で指定した HTML 要素が実際にレンダリングされることを play test で保証 (この例では `<h3>` タグ + text-heading-lg スタイル)。',
+        story: 'Controls から props を切り替えて props 単位の挙動を確認する起点。`as` で指定した HTML 要素が実際にレンダリングされることを play test で保証 (この例では `<h3>` タグ + type-heading-lg スタイル)。',
       },
     },
   },
@@ -97,7 +97,7 @@ export const Overview: Story = {
       {/* color — semantic 軸 */}
       <div className="flex flex-col gap-1">
         <div className="text-xs text-onSurface-subtle">color</div>
-        {(['default', 'subdued', 'muted', 'disabled', 'primary', 'success', 'error', 'warning', 'info'] as const).map((color) => (
+        {(['default', 'subtle', 'disabled', 'primary', 'success', 'error', 'warning', 'info'] as const).map((color) => (
           <Typography key={color} variant="body" color={color}>{color} — テキストカラーのサンプル</Typography>
         ))}
       </div>

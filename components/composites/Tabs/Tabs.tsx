@@ -181,7 +181,7 @@ export const Tabs: React.FC<TabsProps> = ({
     const isActive = tab.id === currentId;
 
     return [
-      'relative px-4 py-2 text-label transition-colors duration-normal',
+      'relative px-4 py-2 type-label transition-colors duration-normal',
       'focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus',
       'whitespace-nowrap',
       tab.disabled
@@ -218,7 +218,7 @@ export const Tabs: React.FC<TabsProps> = ({
               <span className="flex items-center gap-1">
                 {tab.label}
                 {tab.badge !== undefined && (
-                  <span className="text-caption font-medium px-1.5 py-0.5 rounded-sm min-w-5 text-center leading-none bg-surface-disabled text-onSurface-subtle">
+                  <span className="type-caption font-medium px-1.5 py-0.5 rounded-sm min-w-5 text-center bg-surface-disabled text-onSurface-subtle">
                     {tab.badge}
                   </span>
                 )}

@@ -133,7 +133,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
   const sizeStyles = {
     sm: {
       container: 'h-8',
-      input: 'text-sm pl-8 pr-8',
+      input: 'type-body-sm pl-8 pr-8',
       icon: 'left-2',
       trailing: 'right-2',
       iconSize: 'sm' as const,
@@ -141,7 +141,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
     },
     md: {
       container: 'h-10',
-      input: 'text-md pl-8 pr-10',
+      input: 'type-body-md pl-8 pr-10',
       icon: 'left-2',
       trailing: 'right-3',
       iconSize: 'sm' as const,
@@ -149,7 +149,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
     },
     lg: {
       container: 'h-12',
-      input: 'text-lg pl-10 pr-12',
+      input: 'type-body-lg pl-10 pr-12',
       icon: 'left-3',
       trailing: 'right-3',
       iconSize: 'md' as const,

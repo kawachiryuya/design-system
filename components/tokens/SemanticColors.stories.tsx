@@ -276,7 +276,7 @@ const PairRow: React.FC<{ pair: PairRole }> = ({ pair }) => {
 
   return (
     <section className="border border-border-subtle rounded-md p-4 bg-surface flex flex-col gap-3">
-      <h4 className="text-heading-sm m-0 text-onSurface">{label} ({role})</h4>
+      <h4 className="type-heading-sm m-0 text-onSurface">{label} ({role})</h4>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">

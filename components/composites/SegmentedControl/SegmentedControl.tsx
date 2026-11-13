@@ -78,7 +78,7 @@ export const SegmentedControl = <T extends string | number>({
   'aria-label': ariaLabel,
 }: SegmentedControlProps<T>) => {
   // h-10 (40px) = Material 3 segmented button 標準値。filter bar / view mode switcher 用途
-  const segmentSizeStyle = 'h-10 px-3 text-sm';
+  const segmentSizeStyle = 'h-10 px-3 type-control-sm';
 
   const btnRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -126,7 +126,7 @@ export const SegmentedControl = <T extends string | number>({
             // focus ring の色は selected 時は白 (teal bg との contrast 確保)、非 selected は teal。
             className={[
               segmentSizeStyle,
-              'inline-flex items-center justify-center border rounded-sm font-medium whitespace-nowrap transition-colors',
+              'inline-flex items-center justify-center border rounded-sm whitespace-nowrap transition-colors',
               'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset',
               isSelected
                 ? 'bg-surface-primary border-transparent text-onSurface-inverse focus-visible:ring-surface'

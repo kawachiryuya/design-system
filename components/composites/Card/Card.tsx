@@ -230,7 +230,7 @@ export const Card: React.FC<CardProps> & {
 const CardHeader: React.FC<CardHeaderProps> = ({ divider = false, className = '', children }) => (
   <div className={[
     // semantic typography 明示 (旧 font-medium のみだと font-size 継承で曖昧)
-    'px-4 py-3 text-body-md font-bold text-onSurface',
+    'px-4 py-3 type-body-md font-bold text-onSurface',
     divider ? 'border-b border-border-subtle' : '',
     className,
   ].filter(Boolean).join(' ')}>

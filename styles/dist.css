@@ -22,4 +22,7 @@
 @import "./components.css";
 
 @tailwind base;
+/* text style `type-{role}` (preset が addComponents で生成、#109 Typo-2)。utilities より前に置き、
+ * `font-bold` 等の weight 上書き (utilities 層) が後勝ちする順序にする。 */
+@tailwind components;
 @tailwind utilities;

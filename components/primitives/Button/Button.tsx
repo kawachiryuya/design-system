@@ -77,7 +77,7 @@ interface ButtonRegularProps extends ButtonBaseProps {
    * 例: 「購入する / ¥1,200」「予約する / 残り3席」のように、主アクションに付随する
    * 数値・補足情報を 1 つの押下対象に集約したい時に使う。
    *
-   * - `text-xs`(sm/md) / `text-sm`(lg) で主ラベルより一段小さく、階層化は font-size のみで作る (opacity は当てない — 価格・残数など読ませたい情報なのでフル不透明)
+   * - `type-caption`(sm/md) / `type-body-sm`(lg) で主ラベルより一段小さく、階層化は font-size のみで作る (opacity は当てない — 価格・残数など読ませたい情報なのでフル不透明)
    * - 全 size で描画される（`min-h` は最小値なので、2 行になると縦に伸びるだけで潰れない）
    * - icon と共存可。アイコンは 2 行ブロック全体の左右に配置される
    */
@@ -151,7 +151,6 @@ const buttonVariants = tv({
     'inline-flex',
     'items-center',
     'justify-center',
-    'font-medium',
     'transition-all',
     'duration-normal', // 200ms (tokens/animation.json)
     'focus:outline-none',
@@ -219,9 +218,9 @@ const buttonVariants = tv({
     },
     size: {
       // 文字サイズと gap だけ。高さ・余白・角丸は iconOnly との compoundVariants で
-      sm: 'text-sm gap-1',
-      md: 'text-md gap-2',
-      lg: 'text-lg gap-2',
+      sm: 'type-control-sm gap-1',
+      md: 'type-control-md gap-2',
+      lg: 'type-control-lg gap-2',
     },
     iconOnly: {
       true: 'rounded-full',
@@ -352,9 +351,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // 主ラベルと description の間は gap-0.5 (2px) で詰まりすぎないようにする。
     const showDescription = Boolean(description);
     const labelBlock = showDescription ? (
-      <span className="inline-flex flex-col items-center leading-tight gap-0.5">
+      <span className="inline-flex flex-col items-center gap-0.5">
         <span>{children}</span>
-        <span className={size === 'lg' ? 'text-sm' : 'text-xs'}>{description}</span>
+        <span className={size === 'lg' ? 'type-body-sm' : 'type-caption'}>{description}</span>
       </span>
     ) : (
       children

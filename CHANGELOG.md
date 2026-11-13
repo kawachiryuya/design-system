@@ -14,6 +14,13 @@
 
 ### ⚠ BREAKING CHANGES
 
+- **Semantic typography を text style `type-{role}` に (size + 行間 + weight + 字間を 1 クラスで)、`control.sm/md/lg` を追加、primitive typography の直参照を lint で禁止 (#109 順番 4 / Typo-2)**:
+  - **`text-heading-*` / `text-body-*` / `text-label` / `text-caption` → `type-heading-*` / `type-body-*` / `type-label` / `type-caption`** (utility rename、silent break)。旧 utility は size + 行間だけだったが、新 `type-*` は weight も含む (preset が components 層に生成。`font-*` で上書き可)
+  - **`type-control-{sm,md,lg}` を追加** (14 / 16 / 18px、medium、行間 tight)。Button / SegmentedControl / Pagination / ToggleButton / NumberInput のラベル用。Input / Select / SearchBar / Textarea / Link / Divider / Label の文字は `type-body-*`
+  - **lint**: 出荷コンポーネントで `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error (hue 直参照と同じ仕組み)。例外は Avatar の initials (理由付き `eslint-disable`)
+  - **Typography `color="subdued"` / `"muted"` → `"subtle"`、Link `color="muted"` → `"subtle"`** (prop 値の削除、型で検出できる)
+  - 視覚変化 (行間の正規化): Alert / Toast のタイトル (snug 1.35 → 1.5) と本文 (relaxed 1.75 → 1.5)、Label (tight 1.25 → 1.5 / caption 1.5)、Button の description (caption 1.5)、Tabs の件数 badge (none → 1.5)、Textarea の文字カウンタ (medium → regular)、EmptyState のタイトル (lg は heading-sm 20px bold、sm / md は body + bold)
+  - Migration: `sed -i -E 's/\btext-(heading-|body-|label\b|caption\b)/type-\1/g'`。primitive の `text-{size}` は役割に応じて `type-body-*` (本文・入力) か `type-control-*` (操作部品) に手で置き換え。`color="subdued|muted"` → `"subtle"`
 - **Typography primitive の整理: font-size `base` → `md`、font-weight から `semibold` を削除、見出しを全段 bold に (#109 順番 4 / Typo-1)**:
   - **`text-base` → `text-md`** (utility rename、silent break)。16px を Tailwind 慣習の `base` ではなく size 名 (sm / md / lg) と揃えた `md` で呼ぶ。`text-base` は `check:utilities` が「存在しないクラス」として弾く
   - **`font-semibold` を削除** (utility / token `font-weight.semibold` / Typography `weight="semibold"`)。和文の system font (Yu Gothic は Medium / Bold、Meiryo は Regular / Bold) では 600 が 700 に丸められ、bold との差が存在しないため。3 段 (regular / medium / bold) に

@@ -127,9 +127,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     // 明示的 height でタッチターゲットを保証（WCAG 2.5.5 AAA: 44px）
     const sizeConfig = {
-      sm: { style: 'h-10 pl-3 pr-10 text-sm', iconSize: 'sm' as const, iconRight: 'right-3' },
-      md: { style: 'h-12 pl-3 pr-12 text-md', iconSize: 'sm' as const, iconRight: 'right-3' },
-      lg: { style: 'h-14 pl-4 pr-12 text-lg', iconSize: 'md' as const, iconRight: 'right-4' },
+      sm: { style: 'h-10 pl-3 pr-10 type-body-sm', iconSize: 'sm' as const, iconRight: 'right-3' },
+      md: { style: 'h-12 pl-3 pr-12 type-body-md', iconSize: 'sm' as const, iconRight: 'right-3' },
+      lg: { style: 'h-14 pl-4 pr-12 type-body-lg', iconSize: 'md' as const, iconRight: 'right-4' },
     }[size];
 
     const sizeStyles = sizeConfig.style;

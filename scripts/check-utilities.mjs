@@ -51,7 +51,7 @@ const sbCss = compile('tailwind.config.cjs', '.storybook/tailwind.css');
 // ── utility 候補の判定 ──
 const PREFIX =
   'bg|text|border|border-[xytblrse]|ring|ring-offset|divide|outline|placeholder|fill|stroke|accent|caret|decoration|' +
-  'shadow|rounded|rounded-[tblrse]|rounded-[tb][lr]|z|opacity|gap|gap-[xy]|space-[xy]|font|leading|tracking|duration|ease';
+  'shadow|rounded|rounded-[tblrse]|rounded-[tb][lr]|z|opacity|gap|gap-[xy]|space-[xy]|font|leading|tracking|duration|ease|type';
 const CANDIDATE = new RegExp(`^(?:[a-z0-9\\-\\[\\]&>*~+()=.":]+:)*-?(?:${PREFIX})-[A-Za-z0-9\\-\\[\\]\\/.%#(),_]+$`);
 const isCandidate = (tok) => CANDIDATE.test(tok) && !tok.includes('${');
 const cssHas = (css, cls) => css.includes('.' + cls.replace(/([^A-Za-z0-9_-])/g, '\\$1'));

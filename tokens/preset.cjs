@@ -34,17 +34,19 @@ const screens = { ...t.screens, shell: t.screens.lg, cols: t.screens.lg };
 const splitFontFamily = (s) =>
   typeof s === 'string' ? s.split(/\s*,\s*/) : s;
 
-// typography-semantic を Tailwind の theme.fontSize 形式に変換。
-// 各 leaf は { 'font-size', 'line-height', 'letter-spacing' (任意) } のオブジェクト。
-// font-weight はキーに含まれていても Tailwind の fontSize には注入しない
-// (variant の weight 上書きを font-* ユーティリティで効かせるため)。
-// ネストキーは kebab で連結: heading.display → 'heading-display'
+// typography-semantic → `.type-{role}` の合成クラス (text style、#109 Typo-2)。
+// 各 leaf { font-size, font-weight, line-height, letter-spacing? } を 1 クラスにまとめる。
+// ネストキーは kebab で連結: heading.display → 'type-heading-display'、control.md → 'type-control-md'。
+// components 層 (addComponents) に置くので、utilities 層の `font-bold` 等で weight だけを上書きできる
+// (Typography の weight prop)。出荷コンポーネントは primitive の text-{size} / leading-* / tracking-* を
+// 直接書かず、必ずこの type-* を使う (eslint で禁止、AGENTS §3-7)。
 const flattenSemanticTypo = (node, prefix = '', out = {}) => {
   if (node && typeof node === 'object' && node['font-size']) {
-    const opts = {};
-    if (node['line-height'])    opts.lineHeight    = String(node['line-height']);
-    if (node['letter-spacing']) opts.letterSpacing = String(node['letter-spacing']);
-    out[prefix.replace(/-$/, '')] = [node['font-size'], opts];
+    const decl = { fontSize: String(node['font-size']) };
+    if (node['line-height'])    decl.lineHeight    = String(node['line-height']);
+    if (node['font-weight'])    decl.fontWeight    = String(node['font-weight']);
+    if (node['letter-spacing']) decl.letterSpacing = String(node['letter-spacing']);
+    out[`.type-${prefix.replace(/-$/, '')}`] = decl;
     return out;
   }
   if (node && typeof node === 'object') {
@@ -54,9 +56,7 @@ const flattenSemanticTypo = (node, prefix = '', out = {}) => {
   }
   return out;
 };
-const semanticTypo = t['typography-semantic']
-  ? flattenSemanticTypo(t['typography-semantic'])
-  : {};
+const typeStyles = t['typography-semantic'] ? flattenSemanticTypo(t['typography-semantic']) : {};
 
 /**
  * Spacing 名を Tailwind utility 名に変換する。
@@ -130,11 +130,6 @@ module.exports = {
       // 例: `focus-visible:ring-focus focus-visible:ring-offset-focus`
       ringWidth:       { focus: t['focus-ring'].width  },
       ringOffsetWidth: { focus: t['focus-ring'].offset },
-      // Semantic typography (heading / body / label / caption)
-      // 例: <p className="text-heading-xl">…</p>
-      // 注: font-weight は意図的に含めない (variant の weight 上書きを font-* で効かせるため)
-      fontSize: semanticTypo,
-
       // ── Semantic color tokens (WHERE × WHAT) ──
       // CSS 変数経由で resolve（実体は tokens/build/variables.css）
       backgroundColor: {
@@ -260,6 +255,13 @@ module.exports = {
           },
         },
       });
+    }),
+    // ── Semantic typography: `.type-{role}` (heading / body / control / label / caption) ──
+    // 例: <p className="type-body-md">…</p> / <h2 className="type-heading-md">…</h2>
+    // size + line-height + weight (+ 字間) をセットで持つ text style。components 層なので
+    // `type-heading-md font-normal` のように weight だけ utility で上書きできる。
+    plugin(function ({ addComponents }) {
+      addComponents(typeStyles);
     }),
     plugin(function ({ addUtilities }) {
       addUtilities({

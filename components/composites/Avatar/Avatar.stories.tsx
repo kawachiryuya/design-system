@@ -73,7 +73,7 @@ export const Overview: Story = {
           {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
             <div key={size} className="flex flex-col items-center gap-2">
               <Avatar size={size} name="田中 太郎" src={IMG} />
-              <span className="text-caption text-onSurface-subtle font-mono">{size}</span>
+              <span className="type-caption text-onSurface-subtle font-mono">{size}</span>
             </div>
           ))}
         </div>
@@ -93,7 +93,7 @@ export const Overview: Story = {
           {(['online', 'offline', 'busy', 'away'] as const).map((status) => (
             <div key={status} className="flex flex-col items-center gap-1">
               <Avatar size="lg" name="田中 太郎" status={status} src={IMG} />
-              <span className="text-caption text-onSurface-subtle font-mono">{status}</span>
+              <span className="type-caption text-onSurface-subtle font-mono">{status}</span>
             </div>
           ))}
         </div>

@@ -74,7 +74,7 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
     // pill より控えめ、Badge / Button と integrate しやすい)。focus は Input family と
     // 揃え inset 1px ring (border 色変化 + inset ring で「フォーカス時の厚み」表現)。
     const classes = [
-      'inline-flex items-center gap-1 px-3 h-8 rounded-md border text-label transition-colors whitespace-nowrap',
+      'inline-flex items-center gap-1 px-3 h-8 rounded-md border type-label transition-colors whitespace-nowrap',
       'focus:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-border-focus',
       'disabled:opacity-disabled disabled:cursor-not-allowed',
       stateClasses,

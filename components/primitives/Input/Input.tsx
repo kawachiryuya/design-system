@@ -149,9 +149,9 @@ const inputVariants = tv({
   ],
   variants: {
     size: {
-      sm: 'h-10 text-sm',
-      md: 'h-12 text-md',
-      lg: 'h-14 text-lg',
+      sm: 'h-10 type-body-sm',
+      md: 'h-12 type-body-md',
+      lg: 'h-14 type-body-lg',
     },
     error: {
       true:  'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted',

@@ -165,7 +165,7 @@ export const Overview: Story = {
       {/* contentMax 比較は固定幅 1400px フレームで横並び (狭い canvas は内側 overflow-x-auto で横スクロール) */}
       <div className="flex flex-col gap-6 overflow-x-auto">
         <div className="flex flex-col gap-1.5 w-[1400px]">
-          <span className="text-caption text-onSurface-subtle">{'contentMax="narrow" (= max-w-container-narrow 768px) — 読み列が中央に絞られる'}</span>
+          <span className="type-caption text-onSurface-subtle">{'contentMax="narrow" (= max-w-container-narrow 768px) — 読み列が中央に絞られる'}</span>
           <ShellPreview className="w-[1400px]">
             <AppShell
               contentMax="narrow"
@@ -180,7 +180,7 @@ export const Overview: Story = {
         </div>
 
         <div className="flex flex-col gap-1.5 w-[1400px]">
-          <span className="text-caption text-onSurface-subtle">{'contentMax="wide" (= max-w-container-wide 1536px) — 読み列が右 pane いっぱいまで広がる'}</span>
+          <span className="type-caption text-onSurface-subtle">{'contentMax="wide" (= max-w-container-wide 1536px) — 読み列が右 pane いっぱいまで広がる'}</span>
           <ShellPreview className="w-[1400px]">
             <AppShell
               contentMax="wide"

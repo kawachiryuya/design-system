@@ -25,7 +25,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 タイポグラフィヒエラルキーを実装したテキストコンポーネント。**設計の核** は `variant` (視覚スタイル) と `as` (HTML 意味論) の分離。`variant="h2" as="h3"` のように「見た目は大きいが文書構造上は小さい」を表現できる polymorphic 設計で、文書アウトラインとビジュアル階層を独立に扱える。
 
-`variant` は font-size + line-height + デフォルト font-weight を 1 トークンに集約しているため、`text-heading-xl` のような semantic typography token に対応する。weight は `variant` のデフォルトを `weight` prop で後勝ち上書きできる。
+`variant` は font-size + line-height + デフォルト font-weight を 1 トークンに集約しているため、`type-heading-xl` のような semantic typography token に対応する。weight は `variant` のデフォルトを `weight` prop で後勝ち上書きできる。
 
 ---
 

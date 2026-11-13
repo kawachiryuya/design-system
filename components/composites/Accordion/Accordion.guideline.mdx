@@ -72,7 +72,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="2〜3 項目しかないなら Accordion を使わない"
   doExample={
     <div className="text-sm">
-      <h3 className="text-heading-sm text-onSurface mb-2">配送について</h3>
+      <h3 className="type-heading-sm text-onSurface mb-2">配送について</h3>
       <p className="text-onSurface-subtle leading-relaxed">標準で平日 1〜3 日でお届けします。詳細は配送ページをご覧ください。</p>
     </div>
   }
@@ -124,16 +124,16 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <div className="w-full max-w-container-narrow">
   <div className="space-y-section-sm">
     <div>
-      <h2 className="text-heading-lg text-onSurface m-0">よくあるご質問</h2>
-      <p className="text-body-md text-onSurface-subtle mt-1">サービス利用について多く寄せられるご質問にお答えします。</p>
+      <h2 className="type-heading-lg text-onSurface m-0">よくあるご質問</h2>
+      <p className="type-body-md text-onSurface-subtle mt-1">サービス利用について多く寄せられるご質問にお答えします。</p>
     </div>
     <Accordion
       type="multiple"
       defaultOpenIds={['p1']}
       items={[
-        { id: 'p1', title: '予約のキャンセルはいつまで可能ですか？', content: <p className="text-body-sm leading-relaxed">出発時刻の 1 時間前までキャンセル可能です。それ以降はキャンセル料が発生します。長文コンテンツも panel 内で自然に折り返します。</p> },
-        { id: 'p2', title: '会員登録は無料ですか？', content: <p className="text-body-sm">はい、完全に無料でご利用いただけます。</p> },
-        { id: 'p3', title: '予約確認メールが届きません', content: <p className="text-body-sm">迷惑メールフォルダをご確認ください。</p> },
+        { id: 'p1', title: '予約のキャンセルはいつまで可能ですか？', content: <p className="type-body-sm leading-relaxed">出発時刻の 1 時間前までキャンセル可能です。それ以降はキャンセル料が発生します。長文コンテンツも panel 内で自然に折り返します。</p> },
+        { id: 'p2', title: '会員登録は無料ですか？', content: <p className="type-body-sm">はい、完全に無料でご利用いただけます。</p> },
+        { id: 'p3', title: '予約確認メールが届きません', content: <p className="type-body-sm">迷惑メールフォルダをご確認ください。</p> },
       ]}
     />
   </div>

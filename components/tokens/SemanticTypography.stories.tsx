@@ -7,7 +7,7 @@ import typographyTokens from '../../tokens/source/typography.json';
  *
  * 入力: `tokens/source/typography.json` の `typography-semantic` セクション
  * (heading.{display,xl,lg,md,sm} / body.{lg,md,sm} / label / caption)。
- * 表示: 実テキストを対応する Tailwind class (`text-heading-xl` 等) で render。
+ * 表示: 実テキストを対応する Tailwind class (`type-heading-xl` 等) で render。
  */
 const meta: Meta = {
   title: 'Tokens/Typography/Semantic',
@@ -31,6 +31,7 @@ type StyleSpec = {
 const SEMANTIC = (typographyTokens as any)['typography-semantic'] as {
   heading: Record<string, StyleSpec>;
   body: Record<string, StyleSpec>;
+  control: Record<string, StyleSpec>;
   label: StyleSpec;
   caption: StyleSpec;
 };
@@ -41,6 +42,7 @@ const formatRef = (v: string): string =>
 const HEADING_SAMPLE = '見出しテキスト · The quick brown fox';
 const BODY_SAMPLE =
   'デザインシステムは React・TypeScript・Tailwind CSS を使って構築されています。一貫した UI 品質と開発体験を提供します。';
+const CONTROL_SAMPLE = '予約する';
 const LABEL_SAMPLE = 'フォーム入力ラベル';
 const CAPTION_SAMPLE = '© 2026 design-system · 最終更新: 2026-06-04';
 
@@ -85,18 +87,24 @@ type Entry = {
 const ENTRIES: Entry[] = [
   ...(['display', 'xl', 'lg', 'md', 'sm'] as const).map((k) => ({
     name: `heading.${k}`,
-    twClass: `text-heading-${k}`,
+    twClass: `type-heading-${k}`,
     spec: SEMANTIC.heading[k],
     sample: HEADING_SAMPLE,
   })),
   ...(['lg', 'md', 'sm'] as const).map((k) => ({
     name: `body.${k}`,
-    twClass: `text-body-${k}`,
+    twClass: `type-body-${k}`,
     spec: SEMANTIC.body[k],
     sample: BODY_SAMPLE,
   })),
-  { name: 'label', twClass: 'text-label', spec: SEMANTIC.label, sample: LABEL_SAMPLE },
-  { name: 'caption', twClass: 'text-caption', spec: SEMANTIC.caption, sample: CAPTION_SAMPLE, muted: true },
+  ...(['sm', 'md', 'lg'] as const).map((k) => ({
+    name: `control.${k}`,
+    twClass: `type-control-${k}`,
+    spec: SEMANTIC.control[k],
+    sample: CONTROL_SAMPLE,
+  })),
+  { name: 'label', twClass: 'type-label', spec: SEMANTIC.label, sample: LABEL_SAMPLE },
+  { name: 'caption', twClass: 'type-caption', spec: SEMANTIC.caption, sample: CAPTION_SAMPLE, muted: true },
 ];
 
 export const Catalog: Story = {

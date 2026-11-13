@@ -109,13 +109,13 @@ const DefaultIcon = () => (
   </svg>
 );
 
-// title は font-size を primitive (text-md/lg/xl) のまま、weight は font-bold で
-// 統一 (semantic typography は text-heading-X が 20px+ で base/lg と一致しないため不採用)。
+// title は size 段ごとに semantic (body-md / body-lg は font-bold 上書き、lg は heading-sm)
+// 統一 (semantic typography は type-heading-X が 20px+ で base/lg と一致しないため不採用)。
 // desc は semantic body-X に揃える。
 const sizeConfig = {
-  sm: { icon: 'w-12 h-12', title: 'text-md', desc: 'text-body-sm', gap: 'gap-2', py: 'py-6' },
-  md: { icon: 'w-16 h-16', title: 'text-lg',   desc: 'text-body-sm', gap: 'gap-3', py: 'py-10' },
-  lg: { icon: 'w-24 h-24', title: 'text-xl',   desc: 'text-body-md', gap: 'gap-4', py: 'py-16' },
+  sm: { icon: 'w-12 h-12', title: 'type-body-md font-bold', desc: 'type-body-sm', gap: 'gap-2', py: 'py-6' },
+  md: { icon: 'w-16 h-16', title: 'type-body-lg font-bold', desc: 'type-body-sm', gap: 'gap-3', py: 'py-10' },
+  lg: { icon: 'w-24 h-24', title: 'type-heading-sm', desc: 'type-body-md', gap: 'gap-4', py: 'py-16' },
 };
 
 /**
@@ -156,7 +156,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       </div>
 
       <div className={['flex flex-col', size === 'sm' ? 'gap-1' : 'gap-2'].join(' ')}>
-        <p className={['font-bold text-onSurface', s.title].join(' ')}>
+        <p className={['text-onSurface', s.title].join(' ')}>
           {title}
         </p>
         {description && (

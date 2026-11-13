@@ -3,7 +3,7 @@
  *
  * ## なぜ必要か
  * 既定の tailwind-merge は **Tailwind 標準スケール (text-sm / ring-2 / bg-red-500 等)**
- * しか認識しないため、本リポの semantic utility (`text-heading-display` / `ring-focus`
+ * しか認識しないため、本リポの semantic utility (`type-heading-display` / `ring-focus`
  * / `ring-border-focus` 等) を **同じ前置詞の競合** と誤判定して片方を drop する。
  *
  * 例: tv() の出力で
@@ -15,7 +15,7 @@
  * ## 解決
  * `extendTailwindMerge` で custom utility を **正しい classGroup に明示登録** する。
  *
- * - `font-size` group → text-heading-* / text-body-* / text-label / text-caption
+ * - `font-size` group → type-heading-* / type-body-* / type-label / type-caption
  * - `ring-w` group → ring-focus
  * - `ring-color` group → ring-border-focus / ring-border-error
  *   (ring-current は Tailwind 既定で対応済み)

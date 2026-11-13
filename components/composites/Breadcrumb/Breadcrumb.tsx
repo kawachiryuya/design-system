@@ -117,14 +117,14 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               {isCurrent ? (
                 <span
                   aria-current="page"
-                  className="text-body-sm text-onSurface-subtle truncate max-w-[200px]"
+                  className="type-body-sm text-onSurface-subtle truncate max-w-[200px]"
                 >
                   {item.label}
                 </span>
               ) : (
                 <a
                   href={item.href}
-                  className="text-body-sm text-onSurface hover:text-onSurface-primary hover:underline transition-colors
+                  className="type-body-sm text-onSurface hover:text-onSurface-primary hover:underline transition-colors
                     focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus rounded-sm
                     truncate max-w-[200px]"
                 >

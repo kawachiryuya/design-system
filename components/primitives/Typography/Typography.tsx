@@ -23,15 +23,14 @@ export type TypographyVariant =
 
 /**
  * テキストカラー（semantic-colors.json の onSurface 系を反映）。
- * 階層軸は token では default / subtle の 2 段 (onSurface.default / onSurface.subtle)。prop 値 `subdued` / `muted` はどちらも subtle、
+ * 階層軸は default / subtle の 2 段 (onSurface.default / onSurface.subtle)、
  * 役割 (primary / success / error / warning / info / disabled / inverse) は状態色。
  * `primary` は brand 色テキスト (リンク等) で、階層軸とは別軸。
  * 全ての色は白背景に対して WCAG AA (4.5:1、disabled は対比要件免除) を満たす。
  */
 export type TypographyColor =
   | 'default'
-  | 'subdued'
-  | 'muted'
+  | 'subtle'
   | 'disabled'
   | 'primary'
   | 'success'
@@ -145,22 +144,21 @@ const typographyVariants = tv({
   base: '',
   variants: {
     variant: {
-      display:   'text-heading-display font-bold',
-      h1:        'text-heading-xl font-bold',
-      h2:        'text-heading-lg font-bold',
-      h3:        'text-heading-md font-bold',
-      h4:        'text-heading-sm font-bold',
-      'body-lg': 'text-body-lg font-normal',
-      body:      'text-body-md font-normal',
-      'body-sm': 'text-body-sm font-normal',
-      label:     'text-label font-medium',
-      caption:   'text-caption font-normal',
+      // weight は type-* (text style) に含まれる。weight prop の font-* が utilities 層で後勝ちする
+      display:   'type-heading-display',
+      h1:        'type-heading-xl',
+      h2:        'type-heading-lg',
+      h3:        'type-heading-md',
+      h4:        'type-heading-sm',
+      'body-lg': 'type-body-lg',
+      body:      'type-body-md',
+      'body-sm': 'type-body-sm',
+      label:     'type-label',
+      caption:   'type-caption',
     },
     color: {
       default:  'text-onSurface',
-      // 文字階層は default / subtle の 2 段 (#109)。旧 prop 値 `subdued` / `muted` はどちらも subtle に写す (rename・非推奨化は別途)
-      subdued:  'text-onSurface-subtle',
-      muted:    'text-onSurface-subtle',
+      subtle:   'text-onSurface-subtle',
       disabled: 'text-onSurface-disabled',
       primary:  'text-onSurface-primary',
       success:  'text-onSurface-success',

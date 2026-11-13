@@ -129,7 +129,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       'bg-center',
       'bg-no-repeat',
       'transition-all',
-      'duration-150',
+      'duration-normal',
       'focus:outline-none',
       'focus-visible:ring-focus',
       'focus-visible:ring-offset-focus',

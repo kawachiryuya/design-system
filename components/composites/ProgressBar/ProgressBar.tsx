@@ -121,7 +121,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     'h-full',
     'rounded-full',
     'transition-all',
-    'duration-300',
+    'duration-slow',
     colorStyles[color],
     indeterminate
       ? 'animate-[indeterminate_1.5s_ease-in-out_infinite]'

@@ -122,13 +122,8 @@ export const AsIs: Story = {
       <div className="flex flex-col gap-2">
         <h1 className="text-lg font-bold text-onSurface">DDR-1 ホバー：今のまま</h1>
         <p className="text-sm text-onSurface-muted">
-          コミット 6004e4c 時点の部品をそのまま並べている。部品には手を入れていない。Toast の閉じるボタンは Alert
+          コミット 64626a7 時点の部品をそのまま並べている。部品には手を入れていない。Toast の閉じるボタンは Alert
           と同じ指定 (黒 8%) のため省いた。
-        </p>
-        <p className="text-sm text-onSurface-muted">
-          並べて分かったこと：Input・Textarea・FilterChip・ToggleButton 未選択 は、通常時の枠線が文字色 (ほぼ黒)
-          で出ていて、ホバーで逆に薄くなる。通常時の指定 `border-border-default` に対応するクラスが生成されていないため
-          (生成されるのは `border-border`)。Select と SearchBar は `border-border` を使っていて、意図どおり濃くなる。
         </p>
         <Header />
       </div>

@@ -31,6 +31,9 @@
 
     { "fg": "border-default", "bg": "surface-default", "usage": "decorative", "note": "分離線・罫線 (純装飾、WCAG 1.4.11 例外)。識別は label/focus で担保" },
     { "fg": "border-subtle", "bg": "surface-default", "usage": "decorative", "note": "淡い分離線 (純装飾)" },
-    { "fg": "on-surface-disabled", "bg": "surface-disabled", "usage": "decorative", "note": "disabled (WCAG 1.4.3 免除)" }
+    { "fg": "on-surface-disabled", "bg": "surface-disabled", "usage": "decorative", "note": "disabled (WCAG 1.4.3 免除)" },
+    { "fg": "surface-neutral", "bg": "surface-default", "usage": "non-text", "note": "状態を示す中性の塗り (Switch off の track / Avatar offline / Badge dot) on 白" },
+    { "fg": "border-strong", "bg": "surface-default", "usage": "non-text", "note": "常時表示の部品境界 (Checkbox / Radio の未選択の枠 / Badge outline neutral) on 白" },
+    { "fg": "on-surface-default", "bg": "surface-neutral-muted", "usage": "body", "note": "Badge soft neutral" }
   ]
 }

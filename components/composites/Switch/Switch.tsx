@@ -102,6 +102,8 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     const switchState = checked ? 'checked' : 'unchecked';
 
     // Track 48×24, thumb 20×20, 片側 gap 2px (off→on: 26px 移動)
+    // off の track は surface.neutral (neutral.400 = UI 境界の床 3:1、#109 Color-5)。輪郭案・薄い塗り案も試作したが、
+    // 「灰色の塗り + 白いつまみ」の従来形を採用 (Chromatic baseline の見た目を維持、色だけ床に合わせる)
     const trackClasses =
       'relative inline-flex flex-shrink-0 w-12 h-6 rounded-full transition-colors duration-normal cursor-pointer ' +
       'focus:outline-none focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus ' +

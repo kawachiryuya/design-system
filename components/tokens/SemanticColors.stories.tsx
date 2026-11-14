@@ -89,7 +89,7 @@ const SURFACE_ORDER = [
   'error', 'error-muted',
   'warning', 'warning-muted',
   'info', 'info-muted',
-  'disabled', 'skeleton', 'neutral', 'neutral-strong',
+  'disabled', 'skeleton', 'neutral', 'neutral-muted', 'neutral-strong',
 ];
 
 const SurfaceCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entry }) => (

@@ -176,12 +176,12 @@ const buttonVariants = tv({
         'disabled:active:shadow-none',
       ],
       // 白背景 + 緑文字 → primary 色味の hover overlay
-      // border: brand-coupled outline (Badge outline-primary と統一、AGENTS.md §3-1 準拠)
+      // border: brand の枠線 border.primary-strong (塗りと同じ teal.600。Badge outline-primary / FilterChip active と統一)
       secondary: [
         'bg-surface',
         'text-onSurface-primary',
         'border',
-        'border-border-focus',
+        'border-border-primary-strong',
         'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-primary)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-primary)]',

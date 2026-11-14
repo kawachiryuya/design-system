@@ -122,15 +122,15 @@ export const SegmentedControl = <T extends string | number>({
             onKeyDown={(e) => handleKeyDown(e, index)}
             // inline-flex items-center justify-center で label 内コンテンツ (icon + text 等) を縦中央配置。
             // selected 時も border を残す (border-transparent) ことで高さを揃え layout shift 防止。
-            // 非 selected hover に bg-state-hover-primary (8% teal) で branded feedback。
+            // 非 selected hover は bg-state-hover-primary (8% teal) のみ (枠線は変えない)、selected hover は黒 8% の inset (ホバーの規則 AGENTS §3-2)。
             // focus ring の色は selected 時は白 (teal bg との contrast 確保)、非 selected は teal。
             className={[
               segmentSizeStyle,
               'inline-flex items-center justify-center border rounded-sm whitespace-nowrap transition-colors',
               'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset',
               isSelected
-                ? 'bg-surface-primary border-transparent text-onSurface-inverse focus-visible:ring-surface'
-                : 'bg-surface border-border-subtle text-onSurface hover:border-border-strong hover:bg-state-hover-primary focus-visible:ring-border-focus',
+                ? 'bg-surface-primary border-transparent text-onSurface-inverse hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)] active:shadow-[inset_0_0_0_9999px_var(--color-state-active)] focus-visible:ring-surface'
+                : 'bg-surface border-border-subtle text-onSurface hover:bg-state-hover-primary active:bg-state-active-primary focus-visible:ring-border-focus',
             ].join(' ')}
           >
             {item.label}

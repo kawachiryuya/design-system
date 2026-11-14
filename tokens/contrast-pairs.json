@@ -21,6 +21,7 @@
 
     { "fg": "on-surface-subtle", "bg": "surface-default", "usage": "non-text", "note": "icon (text-onSurface-subtle) on 白" },
     { "fg": "border-focus", "bg": "surface-default", "usage": "non-text", "note": "focus ring / focused input border" },
+    { "fg": "border-primary-strong", "bg": "surface-default", "usage": "non-text", "note": "brand の枠線 (Button secondary / Badge outline primary / FilterChip active)" },
     { "fg": "border-success-strong", "bg": "surface-default", "usage": "non-text" },
     { "fg": "border-error-strong", "bg": "surface-default", "usage": "non-text" },
     { "fg": "border-warning-strong", "bg": "surface-default", "usage": "non-text" },

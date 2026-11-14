@@ -67,8 +67,8 @@ export interface FilterChipProps extends Omit<React.ButtonHTMLAttributes<HTMLBut
 export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
   ({ active = false, iconLeft, iconRight, children, className = '', disabled, ...props }, ref) => {
     const stateClasses = active
-      ? 'border-border-focus bg-surface-primary-muted text-onSurface-primary'
-      : 'border-border-default bg-surface text-onSurface hover:border-border-strong hover:bg-state-hover-primary';
+      ? 'border-border-primary-strong bg-surface-primary-muted text-onSurface-primary'
+      : 'border-border-default bg-surface text-onSurface hover:bg-state-hover-primary active:bg-state-active-primary';
 
     // h-8 (32px) = Material 3 filter chip 標準値、rounded-md = Polaris 流 (Material 3 の
     // pill より控えめ、Badge / Button と integrate しやすい)。focus は Input family と

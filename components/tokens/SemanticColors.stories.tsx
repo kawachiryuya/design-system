@@ -166,6 +166,7 @@ export const Text: Story = {
 
 const BORDER_ORDER = [
   'subtle', 'default', 'strong',
+  'primary-strong',
   'success-muted', 'success-strong',
   'error-muted', 'error-strong',
   'warning-muted', 'warning-strong',
@@ -189,7 +190,7 @@ export const Border: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'ボーダー色。強度軸 (`subtle`/`default`/`strong`/`emphasis`) → 機能色 × 強度 → `focus` の順。`focus` はキーボード focus リング兼 brand selected 状態。',
+        story: 'ボーダー色。中性の強度軸 (`subtle`/`default`/`strong`) → brand (`primary-strong`、塗りと同じ 600) → 機能色 × 強度 → `focus` の順。`focus` はキーボード focus リング兼 brand selected 状態 (700)。',
       },
     },
   },

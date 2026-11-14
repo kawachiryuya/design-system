@@ -62,8 +62,9 @@ export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorEle
    */
   color?: LinkColor;
   /**
-   * アンダーライン表示タイミング。a11y のため `none` は `color` で十分な区別ができる場合のみ。
-   * @default 'hover'
+   * アンダーライン表示タイミング。既定は常時 (本文中のリンクを色だけで区別しないため)。
+   * `hover` / `none` はナビゲーション等、位置や周辺でリンクと分かる場所に限る。
+   * @default 'always'
    */
   underline?: LinkUnderline;
   /**
@@ -110,8 +111,9 @@ const linkVariants = tv({
   variants: {
     color: {
       primary: '!text-onSurface-primary hover:bg-state-hover-primary active:bg-state-active-primary',
-      neutral: '!text-onSurface hover:bg-state-hover active:bg-state-active',
-      subtle:  '!text-onSurface-subtle hover:bg-state-hover active:bg-state-active',
+      // ホバーは色を問わず白地の規則 (brand 8%)、文字色は変えない (AGENTS §3-2)
+      neutral: '!text-onSurface hover:bg-state-hover-primary active:bg-state-active-primary',
+      subtle:  '!text-onSurface-subtle hover:bg-state-hover-primary active:bg-state-active-primary',
     },
     size: {
       sm: 'type-supporting',
@@ -134,7 +136,7 @@ const linkVariants = tv({
   defaultVariants: {
     color: 'primary',
     size: 'md',
-    underline: 'hover',
+    underline: 'always',
     disabled: false,
   },
 });

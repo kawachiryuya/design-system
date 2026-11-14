@@ -9,11 +9,21 @@
 
 ### Added
 
+- **ホバーの規則を 1 文に統一し、無反応だった Checkbox / Radio / Switch にホバーを追加** (#109 順番 5 / DDR-1、AGENTS §3-2): 白地 → brand 8% (`state.hover-primary`) / エラー系 → error 8% / 濃い塗り・役割色の面 → 黒 8%。例外は入力欄 (枠線を一段濃く) のみ。小さい部品は外側 4px の輪 (`hover:shadow-[0_0_0_4px_…]`)。影はホバーに使わない
+- **`border.primary-strong` (teal.600)** を追加: brand の枠線 (Button secondary / Badge outline primary / FilterChip active)。塗り (`surface.primary`) と同じ段で、`border.focus` (700) は focus ring 専用に。theme contract の任意層、contrast-pairs に non-text ペアを登録
 - **`Tokens/Color/Regression` swatch story (Chromatic 専用、`diffThreshold: 0`)** (#109 Color-4、§9-4): primitive 全段 + semantic 全 token を文字なしの平坦な色面で並べ、閾値 0 で撮る。Chromatic の既定閾値では token 値の微調整 (#115 の brand 変更、RGB +22) が部品の snapshot で「unchanged」に吸収され検出できなかった盲点への対策。consumer 影響なし。
 - **テーマ契約の manifest `tokens/theme-contract.json` と `check:theme-contract`** (#109 Color-3、§3-8 / §10-6 (b)): semantic color token 45 個を required (`surface.primary` の 1 色) / optional (status 一式・brand 連動の文字 / 縁 / overlay・`primary-muted`) / fixed (中性の canvas / 文字 / 境界 / state / disabled / skeleton) の 3 層に振り分けた。`verify` に組み込んだ check が「全 token がどれか 1 層にちょうど 1 回」を保証するので、token を足すときは層を決めて manifest にも追記する。テーマ値の検証 (多テーマの contrast / 距離) は未作成。consumer 影響なし。
 
 ### ⚠ BREAKING CHANGES
 
+- **ホバー表現の統一 (視覚変化、#109 DDR-1)**:
+  - **`state.hover-primary` / `active-primary` の色が teal.700 → teal.600 由来に** (primary と同じ色。少し明るい薄緑)
+  - **Link の `underline` 既定が `hover` → `always`** (API の既定値変更)。本文中のリンクを色だけで区別しないため。ナビゲーション等で下線を出したくない場所は `underline="hover"` / `"none"` を明示する。Breadcrumb のリンクも常時下線になり、ホバーはブランド色化 + 下線 → 面を重ねる (brand 8%) に
+  - **Link `color="neutral" | "subtle"` のホバーが黒 8% → brand 8%**、**DropdownMenu の項目のホバーが黒 8% → brand 8%**、**Tabs のホバーが文字色の変化 → brand 8% の面**
+  - **ToggleButton 未選択 / FilterChip / SegmentedControl 未選択のホバーで枠線を濃くしなくなった** (1 部品 1 表現)。SegmentedControl 選択中にホバー (黒 8%) が付いた。**NumberInput / SearchBar のボタンのホバーで文字色を変えなくなった**
+  - **Card (clickable / href) のホバーが影 → brand 8% の面に** (`hover:shadow-md` 削除。影は浮いている層にだけ使う)
+  - **Button secondary / Badge outline primary / FilterChip active の枠線が teal.700 → teal.600** (`border-border-focus` → `border-border-primary-strong`)。`border.focus` は focus ring 専用に
+  - Migration: Link の下線を以前どおりにするなら `underline="hover"` を明示。枠線 token を直接使っていた場合は `border-border-focus` のうち「枠線」の用途だけ `border-border-primary-strong` に
 - **Semantic typography を text style `type-{role}` に (size + 行間 + weight + 字間を 1 クラスで)、`control.sm/md/lg` を追加、primitive typography の直参照を lint で禁止 (#109 順番 4 / Typo-2)**:
   - **`text-heading-*` / `text-body-*` / `text-label` / `text-caption` → `type-*` text style** (utility rename、silent break)。旧 utility は size + 行間だけだったが、新 `type-*` は weight も含む (preset が components 層に生成。`font-*` で上書き可)
   - **見出しは size 名 (`heading.{display,xl,lg,md,sm}` 5 段) から「どこの見出しか」の役割名 4 つに**: `hero-title` (48px) / `page-title` (30px) / `section-title` (24px) / `item-title` (20px)。全段 bold。**36px (旧 `heading.xl`) は削除** (page と hero の間に役割がない)。CSS 変数も `--typography-semantic-heading-*` → `--typography-semantic-{hero,page,section,item}-title-*`

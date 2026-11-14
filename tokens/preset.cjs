@@ -191,6 +191,8 @@ module.exports = {
           default:  'var(--color-border-default)',
           subtle:   'var(--color-border-subtle)',
           strong:   'var(--color-border-strong)',
+          // brand の枠線 (塗り surface.primary と同じ 600)。Button secondary / Badge outline primary / FilterChip active。focus ring は border-focus (700)
+          'primary-strong': 'var(--color-border-primary-strong)',
           // role × 強度: {role}-muted (薄い面 surface.{role}-muted の縁) / {role}-strong (強い枠: validation / Badge outline)
           'success-muted':  'var(--color-border-success-muted)',
           'success-strong': 'var(--color-border-success-strong)',

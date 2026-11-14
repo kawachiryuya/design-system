@@ -27,7 +27,7 @@ const meta: Meta<typeof Link> = {
     children: 'リンクテキスト',
     color: 'primary',
     size: 'md',
-    underline: 'hover',
+    underline: 'always',
   },
 };
 
@@ -62,7 +62,7 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '視覚回帰用の総覧。color (primary/neutral/subtle) / size (sm/md/lg) / state (Default/Hover/Focus/Active/Disabled) / underline (always/hover/none) / external (外部アイコン) を 1 枚に集約。',
+        story: '視覚回帰用の総覧。color (primary/neutral/subtle) / size (sm/md) / state (Default/Hover/Focus/Active/Disabled) / underline (always/hover/none、既定は always) / external (外部アイコン) を 1 枚に集約。',
       },
     },
     pseudo: {

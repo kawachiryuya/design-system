@@ -45,7 +45,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
   ({ selected = false, disabled = false, children, className = '', ...props }, ref) => {
     // hover / active は Button と同じく inset shadow で state-layer overlay を重ねる。
     // bg の色に応じて overlay の色味を選ぶ (Button primary / secondary の pattern と整合):
-    // - default (白 bg): state-hover-primary (8% teal) で branded な薄ティール tint
+    // - default (白 bg): state-hover-primary (8% teal) を重ねる。枠線は変えない (1 部品 1 表現、ホバーの規則 AGENTS §3-2)
     // - selected (teal bg): state-hover (8% black) で明確な darken
     const stateStyles = disabled
       ? 'bg-surface-disabled text-onSurface-disabled cursor-not-allowed'
@@ -56,7 +56,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
             'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
           ].join(' ')
         : [
-            'bg-surface border border-border-default text-onSurface hover:border-border-strong',
+            'bg-surface border border-border-default text-onSurface',
             'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-primary)]',
             'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-primary)]',
           ].join(' ');

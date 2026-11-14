@@ -34,7 +34,7 @@ import {
  * - Chromatic の撮影対象外 (検討用の画面で、視覚回帰の基準にしない)。
  */
 const meta: Meta = {
-  title: 'Trials/DDR-1 Hover',
+  title: '検討/DDR-1 ホバー',
   parameters: {
     layout: 'padded',
     chromatic: { disableSnapshot: true },

@@ -21,10 +21,10 @@ import {
  * - 作業中に全体を見比べる story は Hover.stories.tsx (今のまま / 作り分け)。こちらは決めた後に残す写真の元
  * - 1 枚で読めるように、写真の中に 問い / DDR の番号 / 決めた日 / 列の意味 / 採った・捨てた の印を持つ
  * - 載せるのは、その論点で差が出る部品だけ。幅は固定 (PR の中やスマホで読める大きさ)
- * - 部品本体は触らず、案の列に上書き CSS を当てて見せる。写真は shots/ に置き、タグ trial/DDR-1 で固める
+ * - 部品本体は触らず、案の列に上書き CSS を当てて見せる。写真は shots/ に置き、検討の PR (閉じた PR) で残す
  */
 const meta: Meta = {
-  title: 'Trials/DDR-1 Hover/決めた記録',
+  title: '検討/DDR-1 ホバー/決めた記録',
   parameters: {
     layout: 'padded',
     chromatic: { disableSnapshot: true },

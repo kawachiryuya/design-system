@@ -17,7 +17,8 @@
 
 ### ⚠ BREAKING CHANGES
 
-- **`surface.neutral` / `border.strong` を neutral.400 → neutral.500 に (視覚変化、#109 Color-5)**: どちらも「状態を示す塗り」「常時表示の部品境界」で WCAG 1.4.11 の 3:1 が要るが、neutral.400 は白地に 2.5:1 で不合格だった (500 は 5.7:1)。Switch の off の track・Avatar offline・Badge の neutral dot、Checkbox / Radio の未選択の枠・Input / Select / Textarea / NumberInput / SearchBar の hover 枠・Badge outline neutral が一段濃くなる。`check:contrast` に non-text ペアとして登録し再発を防ぐ。コード変更は不要
+- **primitive `neutral.400` を #A3A3A3 → #8C8C8C に (視覚変化、#109 Color-5)**: `surface.neutral` (Switch off / Avatar offline / Badge dot) と `border.strong` (Checkbox / Radio の未選択の枠、Input 等の hover 枠、Badge outline neutral) が参照する段で、「状態を示す塗り」「常時表示の部品境界」として WCAG 1.4.11 の 3:1 が要るが 2.5:1 で不合格だった。400 を「UI の境界が成立する最も明るい灰色」(3.36:1) に合わせ、500 (#666、文字用 5.7:1) は据え置き。`onSurface.disabled` (neutral.400) も同じ分だけ濃くなる (免除対象、可読性は上がる)。`check:contrast` に non-text ペアとして登録し再発を防ぐ。コード変更は不要
+- **Switch の off を「灰色の塗り」から「薄い塗り + 2px の輪郭 + 灰色のつまみ」に (視覚変化、#109 Color-5)**: 48×24 の面を灰色で埋めず、輪郭 (`border.strong`、3:1) とつまみ (`surface.neutral`) が状態を担う。on は不変。DOM / data 属性は不変
 - **ホバー表現の統一 (視覚変化、#109 DDR-1)**:
   - **`state.hover-primary` / `active-primary` の色が teal.700 → teal.600 由来に** (primary と同じ色。少し明るい薄緑)
   - **Link の `underline` 既定が `hover` → `always`** (API の既定値変更)。本文中のリンクを色だけで区別しないため。ナビゲーション等で下線を出したくない場所は `underline="hover"` / `"none"` を明示する。Breadcrumb のリンクも常時下線になり、ホバーはブランド色化 + 下線 → 面を重ねる (brand 8%) に

@@ -237,7 +237,7 @@ Material 3 の Container ペア (`{role}` + `on-{role}` + `{role}-container` + `
 - `surface.skeleton` (loader、text なし)
 
 **Status indicator は text counterpart 不要** (小さな塗り、テキストを載せない):
-- `surface.neutral` (offline / off 等、success/error/warning と並列の status。Switch の off のつまみも)。状態を示す塗りなので白地に 3:1 以上。**neutral.400 = UI の境界が成立する最も明るい灰色 (3:1 の床)、neutral.500 = 文字が成立する最も明るい灰色 (4.5:1 の床)** と段の役割を固定する (neutral は chromatic の L 正規化の対象外で、この 2 つの床で段を決める)
+- `surface.neutral` (offline / off 等、success/error/warning と並列の status。Switch の off の track も)。状態を示す塗りなので白地に 3:1 以上。**neutral.400 = UI の境界が成立する最も明るい灰色 (3:1 の床)、neutral.500 = 文字が成立する最も明るい灰色 (4.5:1 の床)** と段の役割を固定する (neutral は chromatic の L 正規化の対象外で、この 2 つの床で段を決める)
 - 中性の薄い面は `surface.neutral-muted` (neutral.100、Badge soft neutral)。`surface.disabled` と同値でも用途が違うので借りない (無効でないものに disabled の token を使わない)
 
 **実装例** (Alert success が Container ペアパターンに合致):

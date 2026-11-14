@@ -84,9 +84,14 @@
         "description": "スケルトンローディング"
       },
       "neutral": {
-        "value": "{color.neutral.400}",
+        "value": "{color.neutral.500}",
         "type": "color",
-        "description": "Status 軸の中性 (success/error/warning と並列、offline / off などの状態 marker)。中間グレーで visible、inset の薄グレーとは設計目的が違う"
+        "description": "Status 軸の中性 (success/error/warning と並列、offline / off などの状態 marker、Switch の off の track)。状態を示す UI 部品なので白地に 3:1 以上 (neutral.500 = 5.7:1。400 は 2.5:1 で不合格、#109 Color-5)"
+      },
+      "neutral-muted": {
+        "value": "{color.neutral.100}",
+        "type": "color",
+        "description": "中性の薄い面 (Badge soft neutral 等)。success-muted 等と並ぶ役割色 muted の中性版。surface.disabled と同値だが用途が違う (無効ではない) ので別 token (#109 Color-5)"
       },
       "neutral-strong": {
         "value": "{color.neutral.700}",
@@ -153,9 +158,9 @@
         "description": "標準ボーダー"
       },
       "strong": {
-        "value": "{color.neutral.400}",
+        "value": "{color.neutral.500}",
         "type": "color",
-        "description": "強調ボーダー (hover 時の枠線の濃化等)。中性の最も強い段"
+        "description": "強調ボーダー (Checkbox / Radio の未選択の枠、Input の hover 枠、Badge outline neutral)。常時表示の部品境界なので白地に 3:1 以上 (neutral.500 = 5.7:1。400 は 2.5:1 で不合格、#109 Color-5)"
       },
       "primary-strong": {
         "value": "{color.teal.600}",

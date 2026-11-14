@@ -156,6 +156,7 @@ module.exports = {
           disabled:  'var(--color-surface-disabled)',
           skeleton:  'var(--color-surface-skeleton)',
           neutral:        'var(--color-surface-neutral)',
+          'neutral-muted':  'var(--color-surface-neutral-muted)',
           'neutral-strong': 'var(--color-surface-neutral-strong)',
         },
         state: {

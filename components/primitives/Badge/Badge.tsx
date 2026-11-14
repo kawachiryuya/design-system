@@ -46,7 +46,7 @@ const badgeVariants = tv({
     { appearance: 'solid', variant: 'warning', class: 'bg-surface-warning text-onSurface-inverse' },
     { appearance: 'solid', variant: 'info',    class: 'bg-surface-info text-onSurface-inverse' },
     // soft: 薄い背景 + variant 色のテキスト
-    { appearance: 'soft', variant: 'neutral', class: 'bg-surface-disabled text-onSurface' },
+    { appearance: 'soft', variant: 'neutral', class: 'bg-surface-neutral-muted text-onSurface' },
     { appearance: 'soft', variant: 'primary', class: 'bg-surface-primary-muted text-onSurface-primary' },
     { appearance: 'soft', variant: 'success', class: 'bg-surface-success-muted text-onSurface-success' },
     { appearance: 'soft', variant: 'error',   class: 'bg-surface-error-muted text-onSurface-error' },

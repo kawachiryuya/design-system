@@ -341,83 +341,108 @@ export const AsIsMenu: Story = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 作り分ける: 今のまま / 案 A / 案 B を 1 ページに並べる (#109 順番 5)。
+// 作り分ける: 今のまま / 案 C を 1 ページに並べる (#109 順番 5)。
 //
-// 軸 = 部品の「形」3 分類 (塗りのある面 / 押せる文字 / 入力欄)。案 A と B は「押せる文字」と Card の
-// 扱いだけが違い、面と入力欄は A / B 共通の新ルール。
-// 本体の部品には手を入れず、各案の列に <style> で上書き CSS を当てて見せる (検討用の仮実装)。
-// 強制ホバーは addon が一致要素に付ける .pseudo-hover クラスにも効くよう、:hover と併記している。
+// 案 C = 「薄緑で揃える」。規則は 1 文: 白地 → ブランド 8% / エラー系 → エラー 8% / 濃い塗り・役割色の面 → 黒 8%。
+// 入力欄 (Input / Select / Textarea) だけは「枠線を一段濃く」。小さい部品 (Checkbox / Radio / Switch) は
+// ブランド 8% の輪 (比較用に「中を塗る」も並べる)。Card は影をやめてブランド 8% (比較用に 4% も並べる)。
+// リンクは下線を常時に (比較列に通常状態を置く)。
+// 本体の部品には手を入れず、案の列に <style> で上書き CSS を当てて見せる (検討用の仮実装)。
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * 案ごとの上書き CSS。[data-plan] は A / B 共通、[data-plan="a"] / [data-plan="b"] は差分。
- * 書き方: [セレクタ (hover 抜き) の配列, 宣言]。`:hover` 版と `.pseudo-hover` 版 (addon が強制時に付けるクラス) を
- * 別々のルールとして出す。`:is(:hover, .pseudo-hover)` のように 1 つにまとめると addon の書き換えが壊れる。
+ * 案ごとの上書き CSS。書き方: [セレクタ (hover 抜き) の配列, 宣言]。`:hover` 版と `.pseudo-hover` 版
+ * (addon が強制時に付けるクラス) を別々のルールとして出す。`:is(:hover, .pseudo-hover)` のように
+ * 1 つにまとめると addon の書き換えが壊れる。
+ * [data-plan="c"] が案 C、[data-plan="c2"] は比較列 (別の作り方)、[data-plan="c-rest"] は案 C の通常状態。
  */
 const PLAN_RULES: [string[], string][] = [
-  // ── A / B 共通: 塗りのある面は「重ねる」。色は前景の役割で決まる (中性の文字・濃い塗り → 黒 8%) ──
-  [['[data-plan][data-part="pagination"] button:not([aria-current])'], 'background-color: var(--color-state-hover) !important;'],
-  [['[data-plan][data-part="pagination"] button[aria-current]'], 'box-shadow: inset 0 0 0 9999px var(--color-state-hover) !important;'],
-  [['[data-plan][data-part="accordion"] button'], 'background-color: var(--color-state-hover) !important;'],
+  // ── 白地の面: ブランド 8% (primary = teal.600 由来。今の state.hover-primary は 700 由来) ──
   [
     [
-      '[data-plan][data-part="chip"] button',
-      '[data-plan][data-part="segmented"] button[aria-checked="false"]',
-      '[data-plan][data-part="toggle"] button[aria-pressed="false"]',
+      '[data-plan^="c"][data-part="button-brand"] button',
+    ],
+    'box-shadow: inset 0 0 0 9999px var(--c-hover) !important;',
+  ],
+  [
+    [
+      '[data-plan^="c"][data-part="pagination"] button:not([aria-current])',
+      '[data-plan^="c"][data-part="accordion"] button',
+      '[data-plan^="c"][data-part="number"] button',
+      '[data-plan^="c"][data-part="search"] button',
+    ],
+    'background-color: var(--c-hover) !important; color: var(--color-on-surface-subtle) !important;',
+  ],
+  [
+    [
+      '[data-plan^="c"][data-part="chip"] button',
+      '[data-plan^="c"][data-part="segmented"] button[aria-checked="false"]',
+      '[data-plan^="c"][data-part="toggle"] button[aria-pressed="false"]',
     ],
     // 枠線は変えない (1 部品 1 表現)
-    'background-color: var(--color-state-hover) !important; border-color: var(--color-border-default) !important; box-shadow: none !important;',
+    'background-color: var(--c-hover) !important; border-color: var(--color-border-default) !important; box-shadow: none !important;',
   ],
-  [['[data-plan][data-part="segmented"] button[aria-checked="true"]'], 'box-shadow: inset 0 0 0 9999px var(--color-state-hover) !important;'],
+  // ── 濃い塗り: 黒 8% (選択中にも反応を付ける) ──
   [
-    ['[data-plan][data-part="number"] button', '[data-plan][data-part="search"] button'],
-    // 文字色は変えない
-    'background-color: var(--color-state-hover) !important; color: var(--color-on-surface-subtle) !important;',
+    ['[data-plan^="c"][data-part="pagination"] button[aria-current]', '[data-plan^="c"][data-part="segmented"] button[aria-checked="true"]'],
+    'box-shadow: inset 0 0 0 9999px var(--color-state-hover) !important;',
   ],
-  // ── A / B 共通: 入力欄は「枠線を濃くする」。Checkbox / Radio にも適用、Switch の track は面として重ねる ──
+  // ── 押せる文字: 文字色は変えず、ブランド 8% の pill。下線はリンクの既定 (常時) ──
+  [['[data-plan^="c"][data-part="link"] a'], 'background-color: var(--c-hover) !important;'],
   [
-    ['[data-plan][data-part="checkbox"] input:not(:checked)', '[data-plan][data-part="radio"] input:not(:checked)'],
-    'border-color: var(--color-on-surface-default) !important;',
-  ],
-  [['[data-plan][data-part="switch"] [role="switch"]'], 'box-shadow: inset 0 0 0 9999px var(--color-state-hover) !important;'],
-  // ── 案 A: 押せる文字にも「重ねる」(薄い pill)。Card も面として黒 8% ──
-  [
-    ['[data-plan="a"][data-part="breadcrumb"] a'],
-    'color: var(--color-on-surface-default) !important; background-color: var(--color-state-hover) !important; box-shadow: 0 0 0 4px var(--color-state-hover) !important; border-radius: 4px;',
+    ['[data-plan^="c"][data-part="breadcrumb"] a'],
+    'color: var(--color-on-surface-default) !important; background-color: var(--c-hover) !important; box-shadow: 0 0 0 4px var(--c-hover) !important; border-radius: 4px;',
   ],
   [
-    ['[data-plan="a"][data-part="tabs"] [role="tab"]:not([aria-selected="true"])'],
-    'background-color: var(--color-state-hover) !important; color: var(--color-on-surface-subtle) !important;',
+    ['[data-plan^="c"][data-part="tabs"] [role="tab"]:not([aria-selected="true"])'],
+    'background-color: var(--c-hover) !important; color: var(--color-on-surface-subtle) !important;',
   ],
-  [['[data-plan="a"][data-part="card"] [role="button"]'], 'box-shadow: inset 0 0 0 9999px var(--color-state-hover) !important;'],
-  // ── 案 B: 押せる文字は文字で反応 (リンクは下線、タブは文字色)。pill は出さない。Card は影のまま ──
-  [['[data-plan="b"][data-part="link"] a'], 'background-color: transparent !important;'],
-  [['[data-plan="b"][data-part="link-subtle"] a'], 'background-color: transparent !important; color: var(--color-on-surface-default) !important;'],
-  // ブランド色には変えない。下線だけ
-  [['[data-plan="b"][data-part="breadcrumb"] a'], 'color: var(--color-on-surface-default) !important;'],
+  // ── 小さい部品: 案 C = ブランド 8% の輪 (外側 4px) / 比較 c2 = 中を塗る ──
+  [
+    [
+      '[data-plan="c"][data-part="checkbox"] input:not(:checked)',
+      '[data-plan="c"][data-part="radio"] input:not(:checked)',
+      '[data-plan="c"][data-part="switch"] [role="switch"]',
+    ],
+    'box-shadow: 0 0 0 4px var(--c-hover) !important;',
+  ],
+  [
+    ['[data-plan="c2"][data-part="checkbox"] input:not(:checked)', '[data-plan="c2"][data-part="radio"] input:not(:checked)'],
+    'background-color: var(--c-hover) !important;',
+  ],
+  [['[data-plan="c2"][data-part="switch"] [role="switch"]'], 'box-shadow: inset 0 0 0 9999px var(--c-hover) !important;'],
+  // ── 大きい面: 影をやめてブランド 8% (案 C) / 4% (比較 c2) ──
+  [['[data-plan="c"][data-part="card"] [role="button"]'], 'box-shadow: inset 0 0 0 9999px var(--c-hover) !important;'],
+  [['[data-plan="c2"][data-part="card"] [role="button"]'], 'box-shadow: inset 0 0 0 9999px var(--c-hover-half) !important;'],
 ];
 
-const PLAN_CSS = PLAN_RULES.map(([sels, decl]) =>
-  [`${sels.map((s) => `${s}:hover`).join(', ')} { ${decl} }`, `${sels.map((s) => `${s}.pseudo-hover`).join(', ')} { ${decl} }`].join('\n')
-).join('\n');
+const PLAN_CSS = [
+  // 案 C の色: primary (teal.600) 由来の 8% / 4%
+  `[data-plan] { --c-hover: color-mix(in srgb, var(--color-surface-primary) 8%, transparent); --c-hover-half: color-mix(in srgb, var(--color-surface-primary) 4%, transparent); }`,
+  // 比較列「案 C の通常」: リンクの下線を常時に (ホバー無し)
+  `[data-plan="c-rest"][data-part="link"] a, [data-plan="c-rest"][data-part="breadcrumb"] a { text-decoration-line: underline !important; text-underline-offset: 2px; }`,
+  ...PLAN_RULES.map(([sels, decl]) =>
+    [`${sels.map((s) => `${s}:hover`).join(', ')} { ${decl} }`, `${sels.map((s) => `${s}.pseudo-hover`).join(', ')} { ${decl} }`].join('\n')
+  ),
+].join('\n');
 
-type PlanRow = { part: string; name: string; render: () => React.ReactNode };
+/** 比較列の種類: 無し / 別の作り方 (c2、ホバー) / 案 C の通常状態 (c-rest、ホバー無し)。 */
+type Compare = { plan: 'c2' | 'c-rest'; label: string } | undefined;
+type PlanRow = { part: string; name: string; compare?: Compare; render: () => React.ReactNode };
 
-const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string }; rows: PlanRow[] }[] = [
+const PLAN_ROWS: { title: string; rule: string; rows: PlanRow[] }[] = [
   {
-    title: '1. 塗りのある面',
-    rule: {
-      common:
-        '「重ねる」に統一。色は部品の前景の役割で決める: ブランド色の文字 → ブランド色 8% / エラー色の文字 → エラー色 8% / 中性の文字・濃い塗り → 黒 8%。枠線や文字色は同時に変えない (1 部品 1 表現)。',
-    },
+    title: '1. 白地の面 → ブランド 8% / 濃い塗り・役割色の面 → 黒 8% / エラー系 → エラー 8%',
+    rule:
+      '色を重ねる 1 本に統一。白地の上はすべてブランド 8% (primary = teal.600 由来。今の state.hover-primary は 700 由来なので少し明るくなる)。枠線や文字色は同時に変えない (1 部品 1 表現)。選択中の濃い塗りにも黒 8% で反応を付ける。',
     rows: [
-      { part: 'button', name: 'Button primary', render: () => <Button variant="primary">予約する</Button> },
-      { part: 'button', name: 'Button secondary', render: () => <Button variant="secondary">戻る</Button> },
-      { part: 'button', name: 'Button tertiary', render: () => <Button variant="tertiary">キャンセル</Button> },
-      { part: 'button', name: 'Button destructive', render: () => <Button variant="destructive">削除する</Button> },
+      { part: 'button-dark', name: 'Button primary (黒 8%、変更なし)', render: () => <Button variant="primary">予約する</Button> },
+      { part: 'button-brand', name: 'Button secondary (ブランド 8%、600 由来に)', render: () => <Button variant="secondary">戻る</Button> },
+      { part: 'button-brand', name: 'Button tertiary (同上)', render: () => <Button variant="tertiary">キャンセル</Button> },
+      { part: 'button-error', name: 'Button destructive (エラー 8%、変更なし)', render: () => <Button variant="destructive">削除する</Button> },
       {
         part: 'toggle',
-        name: 'ToggleButton 未選択 (黒 8% に、枠線は変えない)',
+        name: 'ToggleButton 未選択 (枠線は変えない)',
         render: () => (
           <ToggleButton selected={false} onClick={noop}>
             13
@@ -426,17 +451,17 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
       },
       {
         part: 'pagination',
-        name: 'Pagination (ブランド 8% → 黒 8%、選択中にも黒 8%)',
+        name: 'Pagination (選択中にも黒 8%)',
         render: () => <Pagination currentPage={2} totalPages={5} onPageChange={noop} />,
       },
       {
         part: 'accordion',
-        name: 'Accordion の見出し (ブランド 8% → 黒 8%)',
+        name: 'Accordion の見出し',
         render: () => <Accordion items={[{ id: 'p', title: 'よくある質問', content: '中身' }]} />,
       },
       {
         part: 'chip',
-        name: 'FilterChip (黒 8% に、枠線は変えない)',
+        name: 'FilterChip (枠線は変えない)',
         render: () => (
           <FilterChip iconRight={<Icon name="expand_more" size="sm" />} onClick={noop}>
             並び順: 出発時刻順
@@ -445,7 +470,7 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
       },
       {
         part: 'segmented',
-        name: 'SegmentedControl (未選択は黒 8%、選択中にも黒 8%)',
+        name: 'SegmentedControl (未選択は枠線を変えない、選択中は黒 8%)',
         render: () => (
           <SegmentedControl
             items={[
@@ -460,17 +485,17 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
       },
       {
         part: 'number',
-        name: 'NumberInput の増減ボタン (黒 8%、文字色は変えない / 枠は入力欄の規則)',
+        name: 'NumberInput の増減ボタン (文字色は変えない / 枠は入力欄の規則)',
         render: () => <NumberInput value={2} onChange={noop} min={0} max={9} label="人数" />,
       },
       {
         part: 'search',
-        name: 'SearchBar のクリアボタン (黒 8%、文字色は変えない)',
+        name: 'SearchBar のクリアボタン (文字色は変えない)',
         render: () => <SearchBar value="新大阪" onChange={noop} placeholder="駅名を検索" />,
       },
       {
         part: 'alert',
-        name: 'Alert の閉じるボタン (変更なし)',
+        name: 'Alert の閉じるボタン (役割色の面なので黒 8%、変更なし)',
         render: () => (
           <Alert variant="info" onClose={noop}>
             お知らせの本文。
@@ -480,17 +505,15 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
     ],
   },
   {
-    title: '2. 押せる文字',
-    rule: {
-      common: 'ここだけ A / B で分かれる。',
-      a: '案 A: 文字にも「重ねる」。薄い pill (黒 8% / ブランド 8%) を出し、リンクの下線はそのまま。文字色は変えない。',
-      b: '案 B: 文字は文字で反応する。リンクは下線 (pill は出さない)、タブは文字色を濃く。Breadcrumb もブランド色には変えず下線だけ。',
-    },
+    title: '2. 押せる文字 → 下線は常時、ホバーは白地の面と同じブランド 8%',
+    rule:
+      'リンクの下線を既定で常時に (Link の underline 既定を hover → always、Breadcrumb も。現在地は下線なしで区別)。ホバーは文字色を変えず、面と同じブランド 8% の pill。Tabs も文字色でなく pill。比較列はホバー無しの通常状態 (下線が常時出ている見え方)。',
     rows: [
-      { part: 'link', name: 'Link primary', render: () => <Link href="#">会社概要</Link> },
+      { part: 'link', name: 'Link primary', compare: { plan: 'c-rest', label: '通常 (下線常時)' }, render: () => <Link href="#">会社概要</Link> },
       {
         part: 'link',
-        name: 'Link neutral',
+        name: 'Link neutral (黒 8% → ブランド 8%)',
+        compare: { plan: 'c-rest', label: '通常 (下線常時)' },
         render: () => (
           <Link href="#" color="neutral">
             利用規約
@@ -498,8 +521,9 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
         ),
       },
       {
-        part: 'link-subtle',
-        name: 'Link subtle (B は文字色も濃く)',
+        part: 'link',
+        name: 'Link subtle (黒 8% → ブランド 8%)',
+        compare: { plan: 'c-rest', label: '通常 (下線常時)' },
         render: () => (
           <Link href="#" color="subtle">
             プライバシーポリシー
@@ -508,7 +532,8 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
       },
       {
         part: 'breadcrumb',
-        name: 'Breadcrumb のリンク',
+        name: 'Breadcrumb のリンク (ブランド色に変えず pill)',
+        compare: { plan: 'c-rest', label: '通常 (下線常時)' },
         render: () => (
           <Breadcrumb
             items={[
@@ -521,7 +546,7 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
       },
       {
         part: 'tabs',
-        name: 'Tabs 未選択',
+        name: 'Tabs 未選択 (文字色 → pill)',
         render: () => (
           <Tabs
             ariaLabel="Tabs"
@@ -537,11 +562,9 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
     ],
   },
   {
-    title: '3. 入力欄',
-    rule: {
-      common:
-        '「枠線を濃くする」に統一。Input / Select / Textarea は今のまま。無反応だった Checkbox / Radio にも枠線の変化を足し、Switch の track は面として黒 8% を重ねる。',
-    },
+    title: '3. 入力欄 → 枠線を一段濃く (変更なし) / 小さい部品 → ブランド 8% の輪',
+    rule:
+      'Input / Select / Textarea は「入力できる場所」の表現として枠線のまま (塗ると選択済みに見える)。無反応だった Checkbox / Radio / Switch は、箱が小さく中に重ねられないので外側 4px の輪で重ねる。比較列は「中を塗る」(Switch の灰色 track では見えない)。',
     rows: [
       { part: 'input', name: 'Input (変更なし)', render: () => <Input label="メールアドレス" placeholder="example@email.com" /> },
       {
@@ -554,30 +577,35 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
           </Select>
         ),
       },
-      { part: 'checkbox', name: 'Checkbox (枠線を濃く)', render: () => <Checkbox label="利用規約に同意する" /> },
+      {
+        part: 'checkbox',
+        name: 'Checkbox',
+        compare: { plan: 'c2', label: '比較: 中を塗る' },
+        render: () => <Checkbox label="利用規約に同意する" />,
+      },
       {
         part: 'radio',
-        name: 'Radio (枠線を濃く)',
+        name: 'Radio',
+        compare: { plan: 'c2', label: '比較: 中を塗る' },
         render: () => <Radio name="plan-radio" value="card" label="クレジットカード" />,
       },
       {
         part: 'switch',
-        name: 'Switch (track に黒 8%)',
+        name: 'Switch',
+        compare: { plan: 'c2', label: '比較: track の中を塗る' },
         render: () => <Switch label="メール通知" checked={false} onChange={noop} />,
       },
     ],
   },
   {
-    title: '4. 大きい面 (Card)',
-    rule: {
-      common: '面の中でも大きいものを例外にするかの判断材料。',
-      a: '案 A: 面の規則どおり黒 8% を重ねる (影は出さない)。',
-      b: '案 B: 大きい面は例外として影で浮かせる (今のまま)。',
-    },
+    title: '4. 大きい面 (Card) → 影をやめてブランド 8%',
+    rule:
+      '影は浮いている層 (Modal / Popover / Menu / Tooltip / Toast、Card elevated) の高さの表現にだけ使い、ホバーには使わない。広い面で 8% が強ければ「大きい面は半分」の token を足す選択肢として 4% を比較列に置く。',
     rows: [
       {
         part: 'card',
         name: 'Card (押せるもの)',
+        compare: { plan: 'c2', label: '比較: 4%' },
         render: () => (
           <Card variant="outlined" clickable onClick={noop}>
             <Card.Body>
@@ -591,17 +619,17 @@ const PLAN_ROWS: { title: string; rule: { common: string; a?: string; b?: string
 ];
 
 const PlanHeader: React.FC = () => (
-  <div className="grid grid-cols-[180px_repeat(4,1fr)] gap-3 text-xs font-bold text-onSurface-subtle">
+  <div className="grid grid-cols-[200px_repeat(4,1fr)] gap-3 text-xs font-bold text-onSurface-subtle">
     <div>部品</div>
     <div>通常</div>
     <div>今のまま (ホバー)</div>
-    <div className="text-onSurface">案 A (ホバー)</div>
-    <div className="text-onSurface">案 B (ホバー)</div>
+    <div className="text-onSurface">案 C (ホバー)</div>
+    <div>比較 (行ごとに内容が違う)</div>
   </div>
 );
 
-const PlanRowView: React.FC<PlanRow> = ({ part, name, render }) => (
-  <div className="grid grid-cols-[180px_repeat(4,1fr)] gap-3 items-center py-4">
+const PlanRowView: React.FC<PlanRow> = ({ part, name, compare, render }) => (
+  <div className="grid grid-cols-[200px_repeat(4,1fr)] gap-3 items-center py-4">
     <div className="text-xs font-bold text-onSurface">{name}</div>
     <div className="min-w-0" data-part={part}>
       {render()}
@@ -609,22 +637,29 @@ const PlanRowView: React.FC<PlanRow> = ({ part, name, render }) => (
     <div className="min-w-0" data-part={part} data-force-hover>
       {render()}
     </div>
-    <div className="min-w-0 border-l border-border-subtle pl-3" data-part={part} data-plan="a" data-force-hover>
+    <div className="min-w-0 border-l border-border-subtle pl-3" data-part={part} data-plan="c" data-force-hover>
       {render()}
     </div>
-    <div className="min-w-0 border-l border-border-subtle pl-3" data-part={part} data-plan="b" data-force-hover>
-      {render()}
+    <div className="min-w-0 border-l border-border-subtle pl-3 flex flex-col gap-1">
+      {compare ? (
+        <>
+          <div className="text-xs text-onSurface-subtle">{compare.label}</div>
+          <div data-part={part} data-plan={compare.plan} {...(compare.plan === 'c-rest' ? {} : { 'data-force-hover': true })}>
+            {render()}
+          </div>
+        </>
+      ) : null}
     </div>
   </div>
 );
 
 export const Plans: Story = {
-  name: '作り分け (案 A / 案 B)',
+  name: '作り分け (案 C)',
   parameters: {
     docs: {
       description: {
         story:
-          '軸 = 部品の形 (塗りのある面 / 押せる文字 / 入力欄)。面と入力欄は A / B 共通の新ルール、押せる文字と Card だけ A (重ねる) / B (文字は文字で、Card は影) で分かれる。部品本体は触らず、各案の列に上書き CSS を当てて見せている。',
+          '案 C = 薄緑で揃える。規則は「白地 → ブランド 8% / エラー系 → エラー 8% / 濃い塗り・役割色の面 → 黒 8%」の 1 文。入力欄だけ枠線、小さい部品は輪、Card は影をやめる、リンクは下線常時。部品本体は触らず、案の列に上書き CSS を当てて見せている。比較列には別の作り方 (中を塗る / 4%) と案 C の通常状態 (下線常時) を置く。',
       },
     },
     pseudo: { hover: ['[data-force-hover] *'] },
@@ -633,10 +668,11 @@ export const Plans: Story = {
     <div className="flex flex-col gap-10 max-w-[1440px] bg-surface p-6">
       <style>{PLAN_CSS}</style>
       <div className="flex flex-col gap-2">
-        <h1 className="type-item-title text-onSurface">DDR-1 ホバー：作り分け</h1>
+        <h1 className="type-item-title text-onSurface">DDR-1 ホバー：作り分け (案 C「薄緑で揃える」)</h1>
         <p className="type-supporting text-onSurface-subtle">
-          軸は部品の形。<strong>面</strong>は「重ねる」(色は前景の役割で決まる)、<strong>入力欄</strong>は「枠線を濃くする」で A / B 共通。
-          <strong>押せる文字</strong>と <strong>Card</strong> だけが A / B で分かれる。右の 2 列 (縦線の右側) が案。
+          規則は 1 文: <strong>白地 → ブランド 8% / エラー系 → エラー 8% / 濃い塗り・役割色の面 → 黒 8%</strong>。
+          例外は入力欄 (枠線を一段濃く) だけ。小さい部品は輪で、Card は影をやめて同じ規則に入れる。リンクの下線は常時にする。
+          縦線の右側が案 C と比較列。
         </p>
         <PlanHeader />
       </div>
@@ -644,9 +680,7 @@ export const Plans: Story = {
         <section key={sec.title} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <h2 className="type-body font-bold text-onSurface">{sec.title}</h2>
-            <p className="text-xs text-onSurface-subtle m-0">{sec.rule.common}</p>
-            {sec.rule.a && <p className="text-xs text-onSurface m-0">{sec.rule.a}</p>}
-            {sec.rule.b && <p className="text-xs text-onSurface m-0">{sec.rule.b}</p>}
+            <p className="text-xs text-onSurface-subtle m-0">{sec.rule}</p>
           </div>
           <div className="flex flex-col divide-y divide-border-subtle border-y border-border-subtle">
             {sec.rows.map((r) => (

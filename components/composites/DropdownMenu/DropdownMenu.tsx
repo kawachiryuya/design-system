@@ -284,7 +284,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 ? 'text-onSurface-disabled cursor-not-allowed'
                 : item.destructive
                   ? 'text-onSurface-error hover:bg-state-hover-error focus:bg-state-hover-error cursor-pointer'
-                  : 'text-onSurface hover:bg-state-hover focus:bg-state-hover cursor-pointer',
+                  : 'text-onSurface hover:bg-state-hover-primary focus:bg-state-hover-primary cursor-pointer',
             ].join(' ')}
           >
             {item.icon && <span className="flex-shrink-0 inline-flex">{item.icon}</span>}

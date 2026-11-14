@@ -270,7 +270,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
             onClick={handleClear}
             className={[
               'inline-flex items-center justify-center h-5 w-5 rounded-sm',
-              'text-onSurface-subtle hover:text-onSurface hover:bg-state-hover-primary',
+              'text-onSurface-subtle hover:bg-state-hover-primary active:bg-state-active-primary',
               'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
             ].join(' ')}
           >

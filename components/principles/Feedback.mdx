@@ -8,7 +8,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ## 原則
 
-1. **すべての操作に即時の反応**: hover / focus / active の状態変化で「押せる/押した」を返す。100ms 以内の反応が体感の即時性を作る。
+1. **すべての操作に即時の反応**: hover / focus / active の状態変化で「押せる/押した」を返す。100ms 以内の反応が体感の即時性を作る。ホバーの表現は 1 規則に揃える: 白地はブランド色 8%、エラー系はエラー色 8%、濃い塗りは黒 8% を重ねる。入力欄だけ枠線を濃くし、影はホバーに使わない。
 2. **待ち時間は進行を可視化**: 即座に終わらない処理は `<Spinner>` (短い不定) / `<ProgressBar>` (進捗あり) / `<Skeleton>` (コンテンツの形) で「進行中」を示す。無反応の空白を作らない。
 3. **結果は適切なチャンネルで**: 一時的な成功通知は `<Toast>`、画面内の定常的なお知らせは `<Alert>`、致命的な確認は `<Modal>`。重要度で使い分ける ([Semantic Colors](?path=/docs/principles-color-semantic-colors--docs))。
 4. **支援技術にも届ける**: 視覚的フィードバックは live region / role で SR にも通知する ([Screen Readers](?path=/docs/principles-foundation-accessibility-screen-readers--docs))。

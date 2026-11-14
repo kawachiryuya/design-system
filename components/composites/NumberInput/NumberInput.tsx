@@ -117,12 +117,12 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   }[size];
 
   // disabled state は色ベース (Button と同じ精神、bg 強い場合の半透明問題を回避)。
-  // hover overlay は state-hover-primary (8% teal) で branded、白 bg 上で薄ティール tint。
+  // hover overlay は state-hover-primary (8% teal) のみ。文字色は変えない (1 部品 1 表現、ホバーの規則 AGENTS §3-2)。
   // focus-visible ring は ring-inset で container border 内側に表示。
   const buttonClasses = [
     sizeStyles.button,
     'h-full flex items-center justify-center transition-colors',
-    'text-onSurface-subtle hover:text-onSurface hover:bg-state-hover-primary',
+    'text-onSurface-subtle hover:bg-state-hover-primary active:bg-state-active-primary',
     'disabled:text-onSurface-disabled disabled:cursor-not-allowed disabled:hover:bg-transparent',
     'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
   ].join(' ');

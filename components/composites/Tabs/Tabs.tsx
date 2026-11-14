@@ -188,7 +188,7 @@ export const Tabs: React.FC<TabsProps> = ({
         ? 'text-onSurface-disabled cursor-not-allowed'
         : isActive
           ? 'text-onSurface-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-surface-primary after:rounded-full'
-          : 'text-onSurface-subtle hover:text-onSurface',
+          : 'text-onSurface-subtle rounded-sm hover:bg-state-hover-primary active:bg-state-active-primary',
     ].join(' ');
   };
 

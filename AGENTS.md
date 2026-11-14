@@ -182,6 +182,17 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 
 旧 `state.hover-on-X` 命名は、「on-」が「X 背景の上に」と読まれる紛らわしさを解消するため `state.hover-X` に統一済 (CHANGELOG 軸 5)。
 
+**ホバーの規則 (DDR-1、#109)** — ホバーの表現はシステム全体で 1 文に揃える。**押せるものにだけ**付ける (`aria-current` の Pagination のような押せない要素には付けない):
+
+- **白地 → brand 8%** (`state.hover-primary`、active は 12%)。Secondary / Tertiary Button・Pagination・Accordion・FilterChip・Segmented 未選択・メニュー項目・Link (色を問わず)・Breadcrumb・Tabs・Card。文字色・枠線は**同時に変えない** (1 部品 1 表現)
+- **エラー系 → error 8%** (`state.hover-error`)。Destructive Button・削除のメニュー項目
+- **濃い塗り・役割色の面 → 黒 8%** (`state.hover`)。Primary Button・選択中の Toggle / Segmented・Alert / Toast の閉じるボタン
+- **例外は入力欄だけ**: Input / Select / Textarea / NumberInput の枠は「枠線を一段濃く」(`hover:border-border-strong`)。塗ると選択済みに見えるため
+- **小さい部品** (Checkbox / Radio / Switch) は中に重ねられないので**外側 4px の輪** (`hover:shadow-[0_0_0_4px_var(--color-state-hover-primary)]`)
+- **影はホバーに使わない** (影は Modal / Popover / Toast / Card elevated のような「浮いている層」の高さ表現)
+- 重ね方の実装: 下地に `bg-*` があり hover で置換したくない面は `shadow-[inset_0_0_0_9999px_var(--color-state-*)]` (Button)、resting shadow を持ちうる面は `after:` 擬似要素 (Card)、それ以外は `hover:bg-state-*`。見え方は同じで、どれでもよい
+- リンクの下線は**常時** (`Link` の `underline` 既定 = `always`、Breadcrumb も)。ホバーは下線を足すのではなく上の規則で面を重ねる
+
 **3-3. `bg.default` は brand から独立した中性 canvas**
 
 `bg.default` は `color.neutral.50` を参照し、brand 色 (teal) からは独立。理由: 下流 product が brand を別 hue に変えても bg は中性のまま保たれ、product 共通の「中立的ページ canvas」を提供できるため。

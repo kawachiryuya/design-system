@@ -157,6 +157,11 @@
         "type": "color",
         "description": "強調ボーダー (hover 時の枠線の濃化等)。中性の最も強い段"
       },
+      "primary-strong": {
+        "value": "{color.teal.600}",
+        "type": "color",
+        "description": "brand の枠線 (Button secondary / Badge outline primary / FilterChip active)。塗り (surface.primary) と同じ teal.600 で、文字 (onSurface.primary = 700) より一段明るい。focus ring は border.focus (700) のまま"
+      },
       "success-muted": {
         "value": "{color.green.200}",
         "type": "color",
@@ -207,7 +212,7 @@
       "hover": {
         "value": "rgba(0, 0, 0, 0.08)",
         "type": "color",
-        "description": "中性 hover overlay (8% black)。色付き背景・透明背景どちらに重ねても汎用的に機能。Primary Button (teal bg) 等で利用"
+        "description": "中性 hover overlay (8% black)。濃い塗り (Primary Button / 選択中の Toggle・Segmented) と役割色の面 (Alert・Toast の閉じるボタン) に重ねる。白地には使わず state.hover-primary を使う (ホバーの規則、AGENTS §3-2)"
       },
       "active": {
         "value": "rgba(0, 0, 0, 0.12)",
@@ -215,19 +220,19 @@
         "description": "中性 active overlay (12% black)"
       },
       "hover-primary": {
-        "value": "color-mix(in srgb, {color.teal.700} 8%, transparent)",
+        "value": "color-mix(in srgb, {color.teal.600} 8%, transparent)",
         "type": "color",
-        "description": "白系背景に brand (teal.700) 色味を重ねる hover (Secondary/Tertiary Button 等)"
+        "description": "白地のホバー。brand (surface.primary と同じ teal.600) の 8% を重ねる。白地の押せるもの全般 (Secondary / Tertiary Button、Pagination、Accordion、FilterChip、メニュー項目、Link、Tabs、Card、Checkbox / Radio / Switch の輪)"
       },
       "active-primary": {
-        "value": "color-mix(in srgb, {color.teal.700} 12%, transparent)",
+        "value": "color-mix(in srgb, {color.teal.600} 12%, transparent)",
         "type": "color",
-        "description": "白系背景に brand (teal.700) 色味を重ねる active"
+        "description": "白地の active (押下)。brand (teal.600) の 12%"
       },
       "hover-error": {
         "value": "color-mix(in srgb, {color.red.600} 8%, transparent)",
         "type": "color",
-        "description": "白系背景に error (red.600) 色味を重ねる hover (Destructive Button 等)"
+        "description": "エラー系 (Destructive Button / 削除のメニュー項目 / error 状態の Checkbox・Radio の輪) のホバー。error (red.600) の 8%"
       },
       "active-error": {
         "value": "color-mix(in srgb, {color.red.600} 12%, transparent)",

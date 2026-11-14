@@ -54,7 +54,7 @@ const badgeVariants = tv({
     { appearance: 'soft', variant: 'info',    class: 'bg-surface-info-muted text-onSurface-info' },
     // outline: 枠線のみ + variant 色のテキスト
     { appearance: 'outline', variant: 'neutral', class: 'border border-border-strong text-onSurface' },
-    { appearance: 'outline', variant: 'primary', class: 'border border-border-focus text-onSurface-primary' },
+    { appearance: 'outline', variant: 'primary', class: 'border border-border-primary-strong text-onSurface-primary' },
     { appearance: 'outline', variant: 'success', class: 'border border-border-success-strong text-onSurface-success' },
     { appearance: 'outline', variant: 'error',   class: 'border border-border-error-strong text-onSurface-error' },
     { appearance: 'outline', variant: 'warning', class: 'border border-border-warning-strong text-onSurface-warning' },

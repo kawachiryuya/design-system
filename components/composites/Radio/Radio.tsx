@@ -157,7 +157,15 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       error
         ? 'border-border-error-strong focus-visible:ring-border-error checked:bg-surface-error checked:border-border-error-strong'
         : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-border-focus',
-      disabled ? 'opacity-disabled cursor-not-allowed' : '',
+      // ホバー: 小さい部品なので外側 4px の輪 (白地の規則 brand 8%、error は error 8%)。checked の塗りには黒 8% の inset (AGENTS §3-2)
+      disabled
+        ? 'opacity-disabled cursor-not-allowed'
+        : [
+            error
+              ? 'hover:shadow-[0_0_0_4px_var(--color-state-hover-error)]'
+              : 'hover:shadow-[0_0_0_4px_var(--color-state-hover-primary)]',
+            'checked:hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
+          ].join(' '),
     ]
       .filter(Boolean)
       .join(' ');

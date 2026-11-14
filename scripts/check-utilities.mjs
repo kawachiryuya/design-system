@@ -9,7 +9,7 @@
  *
  * 仕組み: Tailwind は content に現れたクラスだけを生成するので、「source に書かれているのに出力 CSS に
  * 無いクラス」= 認識されなかったクラス。2 系統を別々に突き合わせる:
- *   (1) 出荷コンポーネント (components/**\/*.tsx、stories / tokens カタログ / trials 除く)
+ *   (1) 出荷コンポーネント (components/**\/*.tsx、stories / tokens カタログ / explorations 除く)
  *       ↔ 配信 CSS (tailwind.dist.config.cjs) — string literal 内の utility 候補を全走査
  *   (2) Storybook 側 (stories / .storybook / mdx) ↔ Storybook CSS (tailwind.config.cjs)
  *       — className 属性の中だけを走査 (token カタログの 'font-size' 等のキー文字列や mdx 散文を除く)
@@ -85,7 +85,7 @@ const scan = (files, css, extract) => {
   return { missing, checked };
 };
 
-const shipped = glob('components/**/*.tsx', [/\.stories\.tsx$/, /^components\/tokens\//, /^components\/trials\//]);
+const shipped = glob('components/**/*.tsx', [/\.stories\.tsx$/, /^components\/tokens\//, /^components\/explorations\//]);
 const storybook = [
   ...glob('components/**/*.stories.tsx'),
   ...glob('components/**/*.mdx'),

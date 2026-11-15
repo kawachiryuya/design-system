@@ -9,7 +9,7 @@ import { Caption } from '@sb-blocks/Caption';
  * SegmentedControl stories — VR 集約モデル (§5-3)
  *
  * 3 節構成: Playground / Overview / EdgeCases。
- * 状態 (selected/unselected) × interaction (hover/focus は pseudo 強制) + icon ラベルを Overview に集約。
+ * 状態 (selected/unselected、何も選ばれていない) × interaction (hover/focus は pseudo 強制) + icon ラベルを Overview に集約。
  * 多数セグメントの固定幅オーバーフローは width 依存の構造ケースなので EdgeCases。
  * 号車選択 / 2 択 / ダッシュボード期間切替等の usage は guideline の「使用例」へ移設。
  * variant / size prop は無し (40px 1 サイズ統一)。
@@ -82,7 +82,7 @@ export const Overview: Story = {
     },
     docs: {
       description: {
-        story: '視覚回帰用の総覧。selected + unselected を内包した control と、hover / focus-visible (pseudo 強制)、icon ラベル (表示モード等) を集約。',
+        story: '視覚回帰用の総覧。selected + unselected を内包した control、何も選ばれていない control (先頭の未選択が Tab の止まり先になり、フォーカスの輪の検査が未選択の輪を見る)、hover / focus-visible (pseudo 強制)、icon ラベル (表示モード等) を集約。',
       },
     },
   },
@@ -92,6 +92,12 @@ export const Overview: Story = {
         <SegmentedControl
           items={[{ value: 'a', label: 'A (selected)' }, { value: 'b', label: 'B' }]}
           value="a" onChange={() => {}} aria-label="states demo"
+        />
+      </Caption>
+      <Caption text="未選択 (value がどの項目とも一致しない。先頭が Tab の止まり先)">
+        <SegmentedControl
+          items={[{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }]}
+          value="" onChange={() => {}} aria-label="unselected demo"
         />
       </Caption>
       <Caption text="Hover (pseudo 強制)">

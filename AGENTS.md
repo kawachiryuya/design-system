@@ -809,9 +809,11 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 **原則**: disabled 状態の意図的低コントラストは WCAG 1.4.3 が免除するため恒久例外でよい。それ以外の違反は「直す」が既定で、例外は finding として明示し追跡する。
 
-**フォーカスの輪の検査** (#139、[`.storybook/focus-ring-check.ts`](./.storybook/focus-ring-check.ts)): 同じステップで、出荷する部品の story (`Primitives/*` / `Composites/*`) の中を **Tab キーで順に進み**、フォーカスが来た要素ごとに描画後の outline を見る。合格は「実線・2px 以上・色が `border.focus`、または濃い塗りの内側 (outline-offset が負) の `onSurface.inverse`」(§3-2「フォーカスの規則」)。lint (§3-7) は書き方を縛るだけなので、こちらで「フォーカスが来るのに何も出ない」「ブラウザ任せの輪 (`outline-style: auto`)」「決めた色以外の輪」を捕まえる。
+**フォーカスの輪の検査** (#139、[`.storybook/focus-ring-check.ts`](./.storybook/focus-ring-check.ts)): 同じステップで、出荷する部品の story (`Primitives/*` / `Composites/*`) について、(1) **検査を始めた時点でフォーカスがある要素** (部品がプログラムから移したフォーカス。Shift を押してキーボードで操作した状態にしてから見る) と、(2) 文書の先頭から **Tab キーで順に来る要素** の、描画後の outline を見る。合格は「実線・2px 以上・色が `border.focus`、または濃い塗りの内側 (outline-offset が負) の `onSurface.inverse`」(§3-2「フォーカスの規則」)。lint (§3-7) は書き方を縛るだけなので、こちらで「フォーカスが来るのに何も出ない」「ブラウザ任せの輪 (`outline-style: auto`)」「決めた色以外の輪」を捕まえる。
 
-- **範囲に入れていないもの**: (1) 矢印キーで中を動く部品 (Tabs のタブ / DropdownMenu の項目 / SegmentedControl / Radio) は、Tab で来る 1 つ (選択中など) だけを見る。残りの項目は同じクラスの要素なので、1 つで代表させる。(2) 押して開く overlay は、トリガーを押す操作をしない。開いた状態は Overview が `open` / `defaultOpen` で静的に描いている分 (Modal / Popover / DropdownMenu / Tooltip) だけを見る。(3) Tokens / Principles は UI ではないので見ない
+- **矢印キーで中を動く部品** (Tabs のタブ / DropdownMenu の項目 / SegmentedControl / Radio): 検査は Tab で来る 1 つ (選択中など) だけを見る。矢印キーでだけ来る項目は、Tab で来る項目と同じクラスなら代表させてよい。**形が違う項目は、それが Tab で来る状態を story に用意する** (SegmentedControl: 選択中は `focus-ring-on-fill`、未選択は `focus-ring-inset`。何も選ばれていないと先頭の未選択が Tab の止まり先になるので、Overview にその行を置いている)
+- **overlay**: 検査はトリガーを押して開く操作をしない。見るのは story が開いた状態で描いている分だけ: Overview が `open` / `defaultOpen` で描いているもの (Modal / Popover / DropdownMenu / Tooltip の中の要素) と、play の最後に開いたまま残したもの。**Tab の順に入らないプログラムからのフォーカスは、開いたまま残して (1) で見せる** (Popover: 中に押せるものが無いとパネル自体にフォーカスが移る。Playground の play が最後にキーボードで開いて残す。クリックの後のプログラムからのフォーカスは `:focus-visible` にならないことがあるので、キーボードで開く)
+- **範囲に入れていないもの**: Tokens / Principles (UI ではない)。Tab で 1 つも要素に来ない story (表示だけの部品) は何も見ずに通る
 - **例外**: `FOCUS_RING_EXEMPT` ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts)) に component 単位で理由付きで列挙する (`TODO(focus):` 付きは既知 finding)。story 単位は `parameters.focusRing = { disable: true }` (理由コメント必須)
 
 ### 8-5. コントラスト基準 (WCAG 2 床 + APCA レンズ)

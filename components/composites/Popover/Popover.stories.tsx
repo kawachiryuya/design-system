@@ -9,7 +9,8 @@ import { Button } from '../../primitives/Button';
  * 構成: Playground / Overview。
  * top-layer の popover は同時に 1 つしか開けないため、Overview は代表 1 枚 (rich content + arrow) を
  * `open` 固定で凍結する。placement (top/bottom/left/right と flip/shift) / controlled API は
- * Playground (撮影外) + guideline で確認。
+ * Playground (撮影外) + guideline で確認。Playground の play は最後にキーボードで開いたまま残す
+ * (中に押せるものが無いパネル自体のフォーカスを、test-runner のフォーカスの輪の検査が見る、AGENTS §8-4)。
  * variant / size prop は無し。
  */
 const meta: Meta<typeof Popover> = {
@@ -27,7 +28,7 @@ export const Playground: Story = {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'トリガー click で開閉し、aria-expanded の連動と top-layer dialog の表示を play test で保証 (Esc / 外側クリックの light-dismiss は native popover に委譲)。placement / controlled もここで確認。',
+        story: 'トリガー click で開閉し、aria-expanded の連動と top-layer dialog の表示を play test で保証 (Esc / 外側クリックの light-dismiss は native popover に委譲)。最後にキーボードで開き、中に押せるものが無いのでパネル自体にフォーカスが来ることを確かめ、開いたまま残す (フォーカスの輪の検査がパネルの輪を見る、AGENTS §8-4)。placement / controlled もここで確認。',
       },
     },
   },
@@ -52,6 +53,16 @@ export const Playground: Story = {
     // 閉じる: トリガー再 click で toggle close。
     await userEvent.click(trigger);
     await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+
+    // キーボードで開く: 中に押せるものが無いので、パネル自体 (tabIndex=-1) にフォーカスが移る。
+    // Tab の順には入らないので、開いたまま残して test-runner のフォーカスの輪の検査 (AGENTS §8-4) に
+    // 「始めた時点のフォーカス」として見せる。キーボードで開くのは、クリックの後のプログラムからの
+    // フォーカスは :focus-visible にならないことがあるため。
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+    await waitFor(() => expect(panel).toHaveFocus());
+    await expect(panel.matches(':focus-visible')).toBe(true);
   },
 };
 

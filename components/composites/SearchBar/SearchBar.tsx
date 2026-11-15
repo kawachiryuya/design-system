@@ -186,7 +186,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
     className,
   ].join(' ');
 
-  // Input / Select と統一: border 色変化 + inset ring (1px) で focus 表現、hover で border 濃化
+  // Input / Select と同じ: フォーカスは外側 2px＋すき間 2px (枠線の色は変えない)、hover で border 濃化
   const inputClass = [
     'w-full',
     'rounded-sm',
@@ -198,11 +198,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
     'transition-colors',
     'duration-normal',
     'hover:border-border-strong',
-    'focus:outline-none',
-    'focus:border-border-focus',
-    'focus:ring-1',
-    'focus:ring-inset',
-    'focus:ring-border-focus',
+    'focus-ring',
     'disabled:bg-surface-disabled',
     'disabled:text-onSurface-disabled',
     'disabled:cursor-not-allowed',
@@ -271,7 +267,8 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
             className={[
               'inline-flex items-center justify-center h-5 w-5 rounded-sm',
               'text-onSurface-subtle hover:bg-state-hover-primary active:bg-state-active-primary',
-              'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
+              // 入力欄の枠の中に詰まっているので、輪は内側 (AGENTS §3-2「フォーカスの規則」)
+              'transition-colors focus-ring-inset',
             ].join(' ')}
           >
             <Icon name="close" size={s.iconSize} />

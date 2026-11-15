@@ -100,7 +100,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **native `popover="auto"`**: top-layer 表示 / 外側クリック・Esc での light-dismiss をブラウザ標準に委ねる (自前の outside-click 監視より堅牢)
 - **`role="dialog"` + `aria-label`**: パネルの用途を SR に伝える。見出しが無い場合は `aria-label` を指定する
 - **トリガーの ARIA を自動付与**: `aria-haspopup="dialog"` / `aria-expanded` (開閉に連動) / `aria-controls` (パネル id)
-- **フォーカス管理**: 開くとパネル内の最初の focusable (無ければパネル本体) へ移動。閉じると trigger へ戻す (外側の別コントロールを押して閉じた場合は focus を奪わない)
+- **フォーカス管理**: 開くとパネル内の最初の focusable (無ければパネル本体) へ移動。閉じると trigger へ戻す (外側の別コントロールを押して閉じた場合は focus を奪わない)。パネル本体にフォーカスが来たときは、キーボード操作なら内側 2px の輪 (`focus-ring-inset`) を出す (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **非モーダル**: focus trap は張らない。背景操作をブロックしたい確認は `<Modal>` を使う
 - **アニメーション**: `prefers-reduced-motion` は preset でグローバル対応済 (個別対応不要)
 

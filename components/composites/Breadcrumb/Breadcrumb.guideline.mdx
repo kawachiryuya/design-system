@@ -129,7 +129,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`<ol>` 構造**: 順序付きリストで階層を表現。SR は「1/4 ホーム、2/4 ブログ…」のように読み上げる
 - **`aria-current="page"`**: 最後の項目 (現在ページ) に自動付与。SR で「現在ページ」と読まれる
 - **separator は装飾**: `aria-hidden="true"` 相当の処理 (Icon / span)。SR には読まれず項目だけが伝わる
-- **link focus ring**: `focus-visible:ring-focus` でキーボード focus を明示
+- **フォーカスの輪**: リンクにキーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`)。輪は区切りの「>」にほぼ接する (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **truncate**: `max-w-[200px]` でラベルが長くても折り返さず省略。tooltip 検討余地あり (将来)
 
 ---

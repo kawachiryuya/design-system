@@ -149,7 +149,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`role="region" aria-labelledby`**: 展開されたコンテンツは region として、trigger が見出し相当 (`aria-labelledby` で関連付け)
 - **キーボード操作**: `Tab` で trigger 間移動、`Enter` / `Space` で開閉発火 (button 標準)
 - **`aria-disabled` + `disabled`**: 無効項目は両方付与。クリック不可で SR にも「無効」が伝わる
-- **focus ring**: 現実装は color-based、将来 `ring-focus` 統一予定
+- **フォーカスの輪**: 見出しは項目の枠の中に詰まっているので内側 2px (`focus-ring-inset`)。輪の角は枠の角丸に沿わせる (開いているときは上の 2 隅) (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **タッチターゲット**: trigger は p-4 (16px padding) で十分な大きさ。WCAG 2.5.5 達成
 
 ---

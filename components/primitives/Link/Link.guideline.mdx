@@ -135,7 +135,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`disabled`**: `aria-disabled="true"` + `href` 削除でフォーカス移動を防ぐ
 - **外部リンク**: `rel="noopener noreferrer"` を自動付与 (タブナビゲーション攻撃 / 性能影響の防止)
 - **外部アイコン**: `aria-label="外部リンク"` 付きで描画、SR にも「外部リンク」が伝わる
-- **フォーカス可視化**: `focus-visible:ring-2` でキーボード操作を明示
+- **フォーカスの輪**: キーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`) (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **リンクテキスト**: 「こちら」「クリック」を避け、遷移先が分かる言葉に (SR の「リンク一覧」機能で意味が取れる)
 - **色覚多様性**: 既定は常時下線 (`underline="always"`)。`hover` / `none` は周辺と区別が付くナビゲーション等に限定し、本文中では使わない
 

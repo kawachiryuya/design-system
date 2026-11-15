@@ -195,7 +195,8 @@ export const Popover: React.FC<PopoverProps> = ({
           'fixed inset-auto m-0 w-max max-w-[min(20rem,calc(100vw-2rem))]',
           'bg-surface text-onSurface rounded-md border border-border-subtle shadow-lg',
           'p-4 type-supporting',
-          'focus:outline-none',
+          // 中に押せるものが無いとパネル自体にフォーカスが来る。来たときは内側 2px の輪 (キーボードのときだけ、AGENTS §3-2「フォーカスの規則」)
+          'focus-ring-inset',
           className,
         ].filter(Boolean).join(' ')}
       >

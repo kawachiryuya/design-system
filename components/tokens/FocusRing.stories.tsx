@@ -1,4 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Button } from '../primitives/Button';
+import { Input } from '../primitives/Input';
+import { Link } from '../primitives/Link';
+import { SegmentedControl } from '../composites/SegmentedControl';
+import { Tabs } from '../composites/Tabs';
 
 const meta: Meta = {
   title: 'Tokens/Focus Ring',
@@ -13,8 +18,23 @@ export default meta;
 type Story = StoryObj;
 
 const TOKENS = [
-  { key: 'width',  utility: 'ring-focus',        value: '2px', description: 'リング太さ。WCAG 2.4.11 (3:1 視認性) を満たす' },
-  { key: 'offset', utility: 'ring-offset-focus', value: '2px', description: '要素境界とリング間の隙間。要素の角丸感を保つ' },
+  {
+    name: 'focus-ring',
+    value: '外側 / 2px / すき間 2px / border.focus',
+    description: '既定。外側に輪を出す余地がある部品 (Button / Link / 入力欄 / Checkbox 等)',
+  },
+  {
+    name: 'focus-ring-inset',
+    value: '内側 / 2px / border.focus',
+    description: '枠の中に詰まっている・端で切れる要素 (NumberInput の ± / Tabs のタブ / メニューの項目 / フォーカスが来るだけの領域)',
+  },
+  {
+    name: 'focus-ring-on-fill',
+    value: '縁から 2px 内側 / 2px / onSurface.inverse (白)',
+    description: '濃い塗りの内側 (SegmentedControl の選択中)',
+  },
+  { name: '--focus-ring-width', value: '2px', description: '輪の太さ。3 つの形で共通' },
+  { name: '--focus-ring-offset', value: '2px', description: '外側の輪と要素のすき間 (塗らない = 下の面の色が見える)' },
 ];
 
 export const Tokens: Story = {
@@ -22,7 +42,7 @@ export const Tokens: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'リング太さ + offset の semantic 値。色は `border-focus` (semantic-colors) と組合せて使う。',
+        story: 'フォーカスの輪の 3 つの形 (utility) と、それが読む CSS 変数。どの部品にどの形かの正本は AGENTS.md §3-2「フォーカスの規則」。',
       },
     },
   },
@@ -30,13 +50,11 @@ export const Tokens: Story = {
     <div className="flex flex-col gap-2">
       {TOKENS.map((e) => (
         <div
-          key={e.key}
+          key={e.name}
           className="grid items-center gap-4 py-3 px-4 rounded-md border border-border-subtle bg-surface"
-          style={{ gridTemplateColumns: '200px 80px 1fr' }}
+          style={{ gridTemplateColumns: '200px 260px 1fr' }}
         >
-          <code className="bg-surface-subtle text-onSurface px-2 py-1 rounded-sm font-mono text-xs">
-            {e.utility}
-          </code>
+          <code className="bg-surface-subtle text-onSurface px-2 py-1 rounded-sm font-mono text-xs">{e.name}</code>
           <code className="font-mono text-xs text-onSurface-subtle">{e.value}</code>
           <span className="text-sm text-onSurface">{e.description}</span>
         </div>
@@ -49,29 +67,35 @@ export const Samples: Story = {
   parameters: {
     docs: {
       description: {
-        story: '強制的にリングを出した状態。Tab キーで実際にフォーカスする挙動は各 component の Overview story 参照。',
+        story: '本物の部品にフォーカスを強制表示した見本。外側 (Button / Input / Link) / 内側 (Tabs のタブ) / 濃い塗りの内側 (SegmentedControl の選択中)。',
       },
+    },
+    pseudo: {
+      focusVisible: ['#fr-samples button', '#fr-samples input', '#fr-samples a', '#fr-samples [role="tab"]:nth-of-type(2)'],
     },
   },
   render: () => (
-    <div className="flex gap-6 flex-wrap p-6 bg-background rounded-md">
-      <button
-        type="button"
-        className="ring-focus ring-offset-focus ring-border-focus px-4 py-3 rounded-md bg-surface-primary text-onSurface-inverse text-sm font-medium"
-      >
-        Button (primary)
-      </button>
-      <input
-        type="text"
-        defaultValue="Input (focused)"
-        className="ring-focus ring-offset-focus ring-border-focus px-3 py-2 rounded-sm border border-border-default text-sm"
+    <div id="fr-samples" className="flex gap-8 flex-wrap items-center p-6 bg-background rounded-md">
+      <Button variant="primary">予約する</Button>
+      <Input label="氏名" placeholder="山田 太郎" />
+      <Link href="#sample">会社概要</Link>
+      <Tabs
+        ariaLabel="見本のタブ"
+        defaultActiveId="a"
+        tabs={[
+          { id: 'a', label: '概要', content: null },
+          { id: 'b', label: '設定', content: null },
+        ]}
       />
-      <a
-        href="#sample"
-        className="ring-focus ring-offset-focus ring-border-focus px-2 py-1 rounded-sm !text-onSurface-primary !underline text-sm"
-      >
-        Link (focused)
-      </a>
+      <SegmentedControl
+        items={[
+          { value: 'list', label: 'リスト' },
+          { value: 'grid', label: 'グリッド' },
+        ]}
+        value="list"
+        onChange={() => {}}
+        aria-label="表示モード"
+      />
     </div>
   ),
 };

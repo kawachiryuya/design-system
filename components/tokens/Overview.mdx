@@ -64,7 +64,7 @@ semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;
 | **Breakpoints** | [Tokens/Breakpoints](?path=/story/tokens-breakpoints--catalog) | (semantic 層なし) | mobile-first 前提、`sm:` で tablet+ に widening。Tailwind 標準と同値 |
 | **Z-Index** | (primitive 層なし) | [Tokens/Z-Index](?path=/story/tokens-z-index--catalog) | 7 layer (`dropdown / sticky / overlay / modal / popover / toast / tooltip`) |
 | **Opacity** | (primitive 層なし) | [Tokens/Opacity](?path=/story/tokens-opacity--catalog) | 意味付け 4 値 (`disabled / muted / spinner-track / spinner-spin`) |
-| **Focus Ring** | (primitive 層なし) | [Tokens/Focus Ring](?path=/story/tokens-focus-ring--tokens) | `ring-focus` (2px) / `ring-offset-focus` (2px)。a11y semantic。色は `border-focus` と組合せる |
+| **Focus Ring** | (primitive 層なし) | [Tokens/Focus Ring](?path=/story/tokens-focus-ring--tokens) | `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` (太さ 2px / すき間 2px)。色は `border-focus`。どの部品にどの形かは AGENTS.md §3-2「フォーカスの規則」 |
 
 Spacing は component 内部余白のための数値スケールで、page-level の layout frame (大外 padding / section 間隔 / 12-col grid) は **Layout token** が担当します ([Tokens/Layout](?path=/docs/tokens-layout--guideline) 参照)。
 

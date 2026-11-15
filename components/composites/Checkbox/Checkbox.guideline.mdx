@@ -153,7 +153,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`aria-invalid` + `aria-describedby`**: error / helpText / errorMessage と関連付け自動
 - **`aria-checked="mixed"`** (indeterminate 時): browser が自動付与
 - **キーボード操作**: `Tab` で focus、`Space` でトグル (browser 標準)
-- **focus ring**: `focus-visible:ring-focus` で keyboard focus 時のみリング
+- **フォーカスの輪**: キーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`)。エラーでも輪の色は `border.focus` (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **タッチターゲット**: 20×20px (1 サイズ運用)。input 自体は 20px だが `<Label htmlFor>` でラベルもクリック領域、ラベル含めて WCAG 2.5.5 (44×44px) を達成
 - **ラベルクリック**: `<Label htmlFor>` でラベルクリックでもトグル
 

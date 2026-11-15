@@ -109,7 +109,15 @@ module.exports = {
     // source token の構造は手を加えず、Tailwind 側で DEFAULT エイリアスを足す形に統一。
     // 利用側: `shadow` ≒ `shadow-md`、`rounded` ≒ `rounded-md` で動く。
     boxShadow:    { ...t.shadow, DEFAULT: t.shadow.md },
-    borderRadius: { ...t.radius, DEFAULT: t.radius.md },
+    // inner-*: 枠線 1px (Tailwind の `border`) の内側の角丸。丸い枠の中に詰まった要素
+    // (Accordion の見出し / NumberInput の ±) の角を枠に沿わせ、内側のフォーカスの輪が枠の丸みで欠けないようにする (DDR-2 #131)。
+    // 1px は部品の枠線の太さ (border width の token は無いので、ここ 1 か所にだけ置く)。
+    borderRadius: {
+      ...t.radius,
+      DEFAULT: t.radius.md,
+      'inner-sm': `calc(${t.radius.sm} - 1px)`,
+      'inner-md': `calc(${t.radius.md} - 1px)`,
+    },
     screens,
     transitionDuration: t.duration,
     transitionTimingFunction: t.easing,
@@ -127,11 +135,9 @@ module.exports = {
       // 例: `<button className="opacity-disabled">`、SVG `<circle className="opacity-spinner-track" />`
       opacity: t.opacity,
 
-      // ── Focus ring (a11y semantic) ──
-      // ring-width / ring-offset-width を semantic 化。
-      // 例: `focus-visible:ring-focus focus-visible:ring-offset-focus`
-      ringWidth:       { focus: t['focus-ring'].width  },
-      ringOffsetWidth: { focus: t['focus-ring'].offset },
+      // ── Focus ring ──
+      // フォーカスの輪は box-shadow (ring) でなく outline で描く。utility は下の plugins の
+      // `.focus-ring` / `.focus-ring-inset` / `.focus-ring-on-fill` (DDR-2 #131、AGENTS §3-2「フォーカスの規則」)。
       // ── Semantic color tokens (WHERE × WHAT) ──
       // CSS 変数経由で resolve（実体は tokens/build/variables.css）
       backgroundColor: {
@@ -267,6 +273,38 @@ module.exports = {
     // `type-section-title font-normal` のように weight だけ utility で上書きできる。
     plugin(function ({ addComponents }) {
       addComponents(typeStyles);
+    }),
+    // ── フォーカスの輪: `.focus-ring` / `.focus-ring-inset` / `.focus-ring-on-fill` (DDR-2 #131) ──
+    // 規則 (正本は AGENTS §3-2「フォーカスの規則」): 輪は border.focus の 2px。外側に出す余地があれば
+    // 「外側＋すき間 2px」(focus-ring)、無ければ「内側」(focus-ring-inset)。濃い塗りの内側は白で、縁から 2px 内側 (focus-ring-on-fill)。
+    // - 出る条件 (:focus-visible) を class の中に持つ。部品は `focus-visible:` を付けずに 1 つ書くだけ。
+    //   文字の入力欄はブラウザがクリックでも :focus-visible にするので、入力欄は「クリックでも出る」。
+    // - outline で描く: すき間を塗らない (下の面の色が見える)、ホバーの box-shadow と別の層、
+    //   forced-colors (Windows ハイコントラスト) でも消えない。
+    // - 値は CSS 変数 (--focus-ring-width / --focus-ring-offset / --color-border-focus) 経由で、利用側が上書きできる。
+    plugin(function ({ addComponents }) {
+      const width = 'var(--focus-ring-width)';
+      const offset = 'var(--focus-ring-offset)';
+      addComponents({
+        '.focus-ring': {
+          '&:focus-visible': {
+            outline: `${width} solid var(--color-border-focus)`,
+            outlineOffset: offset,
+          },
+        },
+        '.focus-ring-inset': {
+          '&:focus-visible': {
+            outline: `${width} solid var(--color-border-focus)`,
+            outlineOffset: `calc(-1 * ${width})`,
+          },
+        },
+        '.focus-ring-on-fill': {
+          '&:focus-visible': {
+            outline: `${width} solid var(--color-on-surface-inverse)`,
+            outlineOffset: `calc(-1 * (${width} + ${offset}))`,
+          },
+        },
+      });
     }),
     plugin(function ({ addUtilities }) {
       addUtilities({

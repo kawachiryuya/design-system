@@ -153,9 +153,8 @@ const buttonVariants = tv({
     'justify-center',
     'transition-all',
     'duration-normal', // 200ms (tokens/animation.json)
-    'focus:outline-none',
-    'focus-visible:ring-focus',
-    'focus-visible:ring-offset-focus',
+    // フォーカス: 外側 2px＋すき間 2px (AGENTS §3-2「フォーカスの規則」)。エラー系 (destructive) も色は border.focus
+    'focus-ring',
     'disabled:cursor-not-allowed',
     'active:scale-[0.98]',
     'disabled:active:scale-100',
@@ -167,7 +166,6 @@ const buttonVariants = tv({
       primary: [
         'bg-surface-primary',
         'text-onSurface-inverse',
-        'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
         'disabled:bg-surface-disabled',
@@ -182,7 +180,6 @@ const buttonVariants = tv({
         'text-onSurface-primary',
         'border',
         'border-border-primary-strong',
-        'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-primary)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-primary)]',
         'disabled:text-onSurface-disabled',
@@ -194,7 +191,6 @@ const buttonVariants = tv({
       tertiary: [
         'bg-transparent',
         'text-onSurface-primary',
-        'focus-visible:ring-border-focus',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-primary)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-primary)]',
         'disabled:text-onSurface-disabled',
@@ -207,7 +203,6 @@ const buttonVariants = tv({
         'text-onSurface-error',
         'border',
         'border-border-error-strong',
-        'focus-visible:ring-border-error',
         'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover-error)]',
         'active:shadow-[inset_0_0_0_9999px_var(--color-state-active-error)]',
         'disabled:text-onSurface-disabled',

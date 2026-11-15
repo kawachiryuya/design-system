@@ -144,7 +144,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`aria-pressed`**: `active` prop の値が `aria-pressed` 属性として反映。SR は「並び順: 出発時刻順 押下」のように選択状態を読み上げる
 - **iconOnly + `aria-label`**: テキストなしで使う場合 (Modal 起動 chip 等) は `aria-label` で操作意図を必ず示す
 - **キーボード操作**: `Tab` で focus、`Enter` / `Space` で onClick 発火 (button 標準)
-- **focus ring**: `border-focus` 色 + `ring-focus` (2px) でフォーカス時のキーボード可視化
+- **フォーカスの輪**: キーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`)。枠線の色は変えない (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **タッチターゲット**: h-9 (36px)。WCAG 2.5.5 (44×44px) には未到達だが、フィルターバー用途では小型化が一般的。密集レイアウト時は `gap-2` 以上を確保
 - **disabled**: `disabled` 属性 + `opacity-60` でクリック不可を視覚化。理由 (在庫なし等) は周囲のラベルで補強する
 

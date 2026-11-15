@@ -230,7 +230,8 @@ const ToastBody: React.FC<ToastContent & {
           onClick={onClose}
           className={[
             'absolute top-4 right-4 inline-flex items-center justify-center h-5 w-5 rounded',
-            'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-current focus-visible:ring-offset-focus',
+            // フォーカスの輪は面の色に合わせず border.focus の一色、すき間は塗らない (AGENTS §3-2「フォーカスの規則」)
+            'transition-colors focus-ring',
             config.closeBtn,
           ].join(' ')}
         >

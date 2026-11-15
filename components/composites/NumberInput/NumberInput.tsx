@@ -118,13 +118,15 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   // disabled state は色ベース (Button と同じ精神、bg 強い場合の半透明問題を回避)。
   // hover overlay は state-hover-primary (8% teal) のみ。文字色は変えない (1 部品 1 表現、ホバーの規則 AGENTS §3-2)。
-  // focus-visible ring は ring-inset で container border 内側に表示。
+  // フォーカスは枠の中に詰まっているので内側 2px (AGENTS §3-2「フォーカスの規則」)。
+  // 枠の左の角に接する − のボタンは、枠の角丸に沿わせる (rounded-l-inner-sm、輪の角が枠の丸みからはみ出さないように)。
+  // ＋は枠の右端に接していない (枠は幅いっぱいに広がる) ので四角のまま。
   const buttonClasses = [
     sizeStyles.button,
     'h-full flex items-center justify-center transition-colors',
     'text-onSurface-subtle hover:bg-state-hover-primary active:bg-state-active-primary',
     'disabled:text-onSurface-disabled disabled:cursor-not-allowed disabled:hover:bg-transparent',
-    'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset focus-visible:ring-border-focus',
+    'focus-ring-inset',
   ].join(' ');
 
   // container は Input / Select と整合する bg-surface。disabled でないときは hover で border 濃化
@@ -152,7 +154,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={disabled || atMin}
-          className={buttonClasses}
+          className={`${buttonClasses} rounded-l-inner-sm`}
           aria-label={decrementLabel}
         >
           <Icon name="remove" size="sm" color="inherit" />

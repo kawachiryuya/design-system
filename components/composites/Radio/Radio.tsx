@@ -151,12 +151,10 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
       'bg-surface',
       'transition-all',
       'duration-normal',
-      'focus:outline-none',
-      'focus-visible:ring-focus',
-      'focus-visible:ring-offset-focus',
+      'focus-ring', // 外側 2px＋すき間 2px。エラーでも色は border.focus (AGENTS §3-2「フォーカスの規則」)
       error
-        ? 'border-border-error-strong focus-visible:ring-border-error checked:bg-surface-error checked:border-border-error-strong'
-        : 'border-border-strong focus-visible:ring-border-focus checked:bg-surface-primary checked:border-border-focus',
+        ? 'border-border-error-strong checked:bg-surface-error checked:border-border-error-strong'
+        : 'border-border-strong checked:bg-surface-primary checked:border-border-focus',
       // ホバー: 小さい部品なので外側 4px の輪 (白地の規則 brand 8%、error は error 8%)。checked の塗りには黒 8% の inset (AGENTS §3-2)
       disabled
         ? 'opacity-disabled cursor-not-allowed'

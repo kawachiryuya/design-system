@@ -3,23 +3,15 @@
  *
  * ## なぜ必要か
  * 既定の tailwind-merge は **Tailwind 標準スケール (text-sm / ring-2 / bg-red-500 等)**
- * しか認識しないため、本リポの semantic utility (`type-hero-title` / `ring-focus`
- * / `ring-border-focus` 等) を **同じ前置詞の競合** と誤判定して片方を drop する。
- *
- * 例: tv() の出力で
- *   `'focus-visible:ring-focus focus-visible:ring-border-focus'`
- * が
- *   `'focus-visible:ring-border-focus'` (ring-focus が drop)
- * になり、focus 時にリング太さが当たらず細い緑 border だけが見える症状。
+ * しか認識しないため、本リポの semantic utility を知らないと、競合する class を両方残したり、
+ * 同じ前置詞の別物と誤判定して片方を drop したりする。
  *
  * ## 解決
  * `extendTailwindMerge` で custom utility を **正しい classGroup に明示登録** する。
  *
  * - `font-size` group → type-*-title / type-body / type-supporting / type-label / type-caption
- * - `ring-w` group → ring-focus
- * - `ring-color` group → ring-border-focus / ring-border-error
- *   (ring-current は Tailwind 既定で対応済み)
- * - `ring-offset-w` group → ring-offset-focus
+ * - `focus-ring` group → focus-ring / focus-ring-inset / focus-ring-on-fill (フォーカスの輪の形、DDR-2 #131)。
+ *   同じ群なので、利用側が className で別の形を渡すと部品の既定の形を置き換える (両方は残らない)
  *
  * 新しい semantic utility を増やすときは、ここの classGroups にも追記すること。
  */
@@ -44,19 +36,7 @@ export const tv = createTV({
             ],
           },
         ],
-        'ring-w': [{ ring: ['focus'] }],
-        'ring-color': [
-          {
-            ring: [
-              'border-focus',
-              'border-error',
-              'border-success',
-              'border-warning',
-              'border-info',
-            ],
-          },
-        ],
-        'ring-offset-w': [{ 'ring-offset': ['focus'] }],
+        'focus-ring': ['focus-ring', { 'focus-ring': ['inset', 'on-fill'] }],
       },
     },
   },

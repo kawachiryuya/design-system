@@ -195,6 +195,21 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 - 重ね方の実装: 下地に `bg-*` があり hover で置換したくない面は `shadow-[inset_0_0_0_9999px_var(--color-state-*)]` (Button)、resting shadow を持ちうる面は `after:` 擬似要素 (Card)、それ以外は `hover:bg-state-*`。見え方は同じで、どれでもよい
 - リンクの下線は**常時** (`Link` の `underline` 既定 = `always`、Breadcrumb も)。ホバーは下線を足すのではなく上の規則で面を重ねる
 
+**フォーカスの規則 (DDR-2、#131)** — フォーカスの輪は **`border.focus` の 2px**。**外側に出す余地があれば「外側＋すき間 2px」、無ければ「内側」**。**フォーカスが来る所には必ず出す**。キーボードで操作する人が、どの面の上でも「今どこにいるか」をすぐ見つけられ、ホバー・選択中・エラーと見分けが付くことが目的:
+
+- **形は utility で選ぶ** (preset が生成。出る条件 `:focus-visible` を中に持つので、部品は `focus-visible:` を付けずに 1 つ書くだけ):
+  - `focus-ring` — **外側 2px＋すき間 2px** (既定)。Button・Link・入力欄 (Input / Textarea / Select / SearchBar の入力欄)・Checkbox・Radio・Switch・Card (押せるもの)・Pagination・Breadcrumb・ToggleButton・FilterChip・Alert / Toast の閉じる
+  - `focus-ring-inset` — **内側 2px**。外側に余地が無い (枠の中に詰まっている・端で切れる) 要素: NumberInput の ±・SegmentedControl の未選択・SearchBar のクリア・Accordion の見出し・Tabs のタブ・DropdownMenu の項目、と**フォーカスが来るだけの領域** (Tabs のパネル・SplitPane の領域・中に押せるものが無い Popover のパネル)
+  - `focus-ring-on-fill` — **濃い塗りの内側**。白 (`onSurface.inverse`) で、縁から 2px 内側 (塗り → 白い輪 → 塗り)。白い輪は塗りに挟まれないと白地に溶けるため。今は SegmentedControl の選択中だけ
+- **色は `border.focus` の一色**。エラー時 (Button destructive / エラーの Checkbox・Radio・入力欄) も、Alert・Toast の閉じるも同じ。輪は「今ここ」だけを表し、エラーは枠線と文言で表す。**すき間は塗らない** (下の面の色が見える。outline で描くので自然にそうなる)
+- **入力欄も例外にしない**: 外側の輪で、フォーカスで枠線の色は変えない (エラーの赤い枠線と輪が別々に見える)。文字の入力欄はブラウザがクリックでも `:focus-visible` にするので、入力欄はクリックでも出る
+- **フォーカスは輪だけ、ホバーは塗りだけ** (メニューの項目など矢印キーで動くものも)。塗り＝ポインタ、輪＝キーボードの現在地
+- **フォーカスが来るだけの領域**は、内側に輪が入るだけの余白を持たせる (中身を輪に重ねない。Tabs のパネル 16px、SplitPane の領域 8px)
+- **内側の輪の角は、接している枠の角丸に沿わせる** (`rounded-inner-sm` / `rounded-inner-md` = 枠の角丸 − 枠線 1px)。Accordion の見出し・NumberInput の −
+- **ホバーと重なったときは何も足さない** (フォーカスの輪が上。すき間にホバーの色が見える)
+- **書かない**: `focus:outline-none` / `focus-visible:ring-*` / `ring-offset-*` / `focus:bg-*` / `focus:border-*` などの直書き (lint が弾く、§3-7)。輪の見た目を product で変えるときは CSS 変数 (`--focus-ring-width` / `--focus-ring-offset` / `--color-border-focus`) を上書きする
+- 目標: WCAG 2.4.13 (Focus Appearance、AAA) 相当を目安にする (準拠は名乗らない)。AA の 2.4.7 (見える) と 1.4.11 (非テキスト 3:1) は必ず満たす (`border.focus` × 各下地を `check:contrast` が検査)
+
 **3-3. `bg.default` は brand から独立した中性 canvas**
 
 `bg.default` は `color.neutral.50` を参照し、brand 色 (teal) からは独立。理由: 下流 product が brand を別 hue に変えても bg は中性のまま保たれ、product 共通の「中立的ページ canvas」を提供できるため。
@@ -264,7 +279,7 @@ Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `gre
 
 - `z-index`: `dropdown / sticky / overlay / modal / popover / toast / tooltip` の 7 layer。`z-modal` のように使う (`z-50` 等の Tailwind 既定は並存するが新規利用は避ける)
 - `opacity`: `disabled / muted / spinner-track / spinner-spin` の意味付き 4 値。`opacity-disabled` のように使う
-- `focus-ring`: `ring-focus` (width=2px) / `ring-offset-focus` (offset=2px)。色は `border-focus` (semantic-colors) と組合せる: `focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus`
+- `focus-ring`: `width` (2px) / `offset` (2px)。CSS 変数 `--focus-ring-width` / `--focus-ring-offset` として出し、utility `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` が色 (`border.focus` / `onSurface.inverse`) と組み合わせて読む。どの部品にどの形かは §3-2「フォーカスの規則」
 
 **なぜ semantic-only か** (≠ color/spacing の 2 層構成): これらは **palette 的に再利用される primitive 層が概念上存在しない** ため。
 - `z-index = 1000` という値自体は意味を持たず「modal レイヤ」という役割名で初めて意図が立つ。`z-index.layer-1: 1000 → z-modal: layer-1` のような primitive を挟むと中継が無価値
@@ -374,6 +389,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-subtle` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
 - **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
 - **primitive typography 直参照禁止** (#109 Typo-2): 出荷コンポーネントに `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error。semantic の text style `type-{role}` (`type-section-title` / `type-body` / `type-supporting` / `type-control-md` / `type-label` / `type-caption`。見出しは hero / page / section / item の役割名、本文は body (16) / supporting (14) の 2 つ。size + 行間 + weight + 字間を 1 クラスで持つ、preset が components 層に生成) を使う。weight の `font-{weight}` は type-* の上書き (Typography の weight prop 等) として可。例外は container 比で決まる文字 (Avatar の initials) のみで、理由付き `eslint-disable`
+- **フォーカスの表現は `focus-ring*` だけ** (DDR-2 #131): 出荷コンポーネントに `outline-none`・`focus:` / `focus-visible:` 付きの `ring-*` / `outline-*` / `border-*` / `bg-*` / `shadow-*`・`ring-inset`・`ring-offset-*` を書くと error。`focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` のどれか 1 つを使う (§3-2「フォーカスの規則」)。フォーカスと関係ない ring (Avatar の `ring-2 ring-surface`) は対象外
 - **書いた utility は CSS を生成していなければならない** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)、lint ではなく verify の check): 出荷コンポーネントの string literal 内の utility 候補を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラス (= preset に写像が無い / token 名と違う / Tailwind 既定が上書きで消えている) があれば error。対象は色・タイポ・枠・影・角丸に加え、余白・寸法・位置 (`p*` / `m*` / `w` / `h` / `min-*` / `max-*` / `size` / `inset` / `top` 等、#125)。spacing はトークンのスケールで上書きしているので、スケールに無い段 (`w-56` 等) は生成されない。Tailwind 既定の `px` も同じ理由で無い (`mt-px` は書けない。1px が要るときは `mt-[1px]`)。`border-border-default` (#107) / `text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の `bg-success-500` (#109) の再発防止。動的に組み立てるクラスは検査できないので、`${}` を含む template は skip、意図的な例外は同じ行に `utility-ignore: <理由>`
 - **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
 - **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
@@ -756,7 +772,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 ### 8-1. 基本前提
 
-- **フォーカスリング**: `focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-border-focus` を Primitive に標準装備。`outline: none` 単独は禁止 (フォーカスインジケータ削除 = WCAG 2.4.7 違反)
+- **フォーカスの輪**: フォーカスが来る要素には必ず `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` のどれかを付ける (どれかは §3-2「フォーカスの規則」)。`outline: none` で消すだけの指定は禁止 (フォーカスインジケータ削除 = WCAG 2.4.7 違反、lint が弾く)
 - **最小タッチターゲット**: 44x44px (WCAG 2.5.5 AAA)、隣接要素との間隔 8px+
 - **セマンティック HTML**: `<button>` / `<a>` / `<label>` を Primitive 内で適切に使用
 - **aria 属性**: 状態を持つコンポーネント (Tabs, Pagination, Switch 等) は aria-* を実装済み
@@ -771,7 +787,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 ### 8-3. フォーカス管理
 
-- **インジケータ**: 2px outline / コントラスト比 3:1+ (WCAG 2.4.11)、全 focusable で統一
+- **インジケータ**: 2px の outline、下地との差 3:1 以上 (WCAG 1.4.11)。太さは 2.4.13 (AAA) 相当を目安にする。形は 3 つで、どれを使うかは §3-2「フォーカスの規則」。2.4.11 (AA) は「フォーカスが隠れない」(sticky ヘッダー等で覆わない)
 - **トラップ (Modal)**: ネイティブ `<dialog>.showModal()` を使えばブラウザ標準でトラップ + Esc close + 閉じ後 trigger 復帰。自前 modal は同等の挙動を実装
 - **動的コンテンツ追加時**: 追加要素に focus 移動 (例: 検索結果リスト)
 - **動的コンテンツ削除時**: 削除アイテムの **論理的な次** (なければ前) に focus 移動。`<body>` 戻りを避ける

@@ -127,7 +127,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`aria-current="page"`**: 現在ページの button に付与。SR は「現在のページ、5 ページ目」と読む
 - **`aria-label` 個別化**: 各 button に「5 ページ目」「次のページ」「前のページ」「最初のページ」「最後のページ」と明示的に
 - **disabled**: 最初 / 最後で前 / 次ボタンが disabled になり、SR にも伝わる
-- **focus ring**: `focus-visible:ring-focus` でキーボード focus を明示
+- **フォーカスの輪**: キーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`)。輪は隣のボタンの縁に届く (実際に出るのは 1 つだけ) (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **キーボード操作**: `Tab` で button 移動、`Enter` / `Space` で発火 (button 標準)。矢印キーでの page 内移動は未実装 (将来検討)
 - **タッチターゲット**: sm (28px) / md (32px) / lg (40px)。WCAG 2.5.5 (44×44px) は lg で達成。dense UI で sm を使う場合は隣接 button の余白に注意
 

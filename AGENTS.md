@@ -505,9 +505,9 @@ Composite → components/composites/ComponentName/
 - **ReactNode prop (`icon` 等) は `argTypes` の `mapping` で Controls 化** (ラベル → 実要素)。`control: false` で逃げず、Playground で全パターンを再現可能にする (参照: Button の `icon` mapping)
 - 色・余白はハードコードせず Tokens (semantic Tailwind ユーティリティ) を参照
 
-**節省略の判断**: Playground / Overview は**絶対省略しない**。EdgeCases は文脈依存の崩れが無ければ省略可。
+**節省略の判断**: Playground / Overview は**絶対省略しない**。EdgeCases は文脈依存の崩れが無ければ省略可。唯一の例外は見えない部品の `VisuallyHidden` で、撮るものが無いので Playground のみ。
 
-> **旧構造からの移行は完了済み**: 旧モデルは Variants / Sizes / States / WithIcon / WithDescription のカタログ群を個別 VR していた。全 45 部品 (Primitive 17 / Composite 28) がこの 3 節に移行済みで、旧節名の story は残っていない。新しく作らない。`check:conventions` は移行中に両構造を許容していた名残で、旧節名も順序の検査上は通る。
+> **旧構造からの移行は完了済み**: 旧モデルは Variants / Sizes / States / WithIcon / WithDescription のカタログ群を個別 VR していた。全 45 部品 (Primitive 17 / Composite 28) がこの 3 節に移行済みで (Playground のみの `VisuallyHidden` を除く)、旧節名の story は残っていない。新しく作らない。`check:conventions` は移行中に両構造を許容していた名残で、旧節名も順序の検査上は通る。
 
 参考実装: [`components/primitives/Button/Button.stories.tsx`](./components/primitives/Button/Button.stories.tsx)
 
@@ -766,7 +766,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 - すべてのインタラクティブ要素は **Tab / Shift+Tab / Enter / Space / Escape** で操作可能
 - `tabindex` は **0 または -1 のみ**。`1` 以上は予測不能のため禁止。視覚順序と DOM 順序を一致させ tabindex で順序制御しない
-- ↑↓←→ での内部移動: Tabs / Radio / Menu 等の同列要素を持つ composite で実装 (各 component の guideline のアクセシビリティ節に操作を書き、Playground の play test で確かめる)
+- ↑↓←→ での内部移動: Tabs / Radio / Menu 等の同列要素を持つ composite で実装 (各 component の guideline のアクセシビリティ節に操作を書く。自前で実装している部品 (Tabs / DropdownMenu / SegmentedControl) は Playground の play test で確かめる。ネイティブの radio に任せている Radio は対象外)
 - ヘッダーの大きいページでは「メインコンテンツへスキップ」を `<a href="#main">` で先頭に置く
 
 ### 8-3. フォーカス管理

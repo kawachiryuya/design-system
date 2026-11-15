@@ -57,7 +57,7 @@ export const Playground: Story = {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls の `padding` を切り替えて上下余白 (py-section) の差を確認。Section は full-width、横幅は内側 Center が絞る。dashed の親が Section の領域 (= 画面端まで full-width)。',
+        story: 'Controls の `padding` を切り替えて上下余白 (py-section-*) の差を確認。Section は full-width、横幅は内側 Center が絞る。dashed の親が Section の領域 (= 画面端まで full-width)。',
       },
     },
   },

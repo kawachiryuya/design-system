@@ -93,7 +93,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | 3 | **Overview** | props で作れるパターン (variant × state / size / icon 等) を 1 枚に並べた総覧。Hover / Focus / Active は `storybook-addon-pseudo-states` で強制表示 |
 | 4 | **EdgeCases** | Controls では再現できない構造的なケース (特殊なマークアップ / コンテナ幅 / 複数インスタンス等)。該当が無ければ省略 |
 
-Playground と Overview は省略しない、というのが規約です。詳細は [AGENTS.md §5-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-3-storiestsx-の規約--vr-集約モデル-固定-3-節) を参照。
+Playground と Overview は省略しない、というのが規約です (唯一の例外は見えない部品の VisuallyHidden で、撮るものが無いので Playground のみ)。詳細は [AGENTS.md §5-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-3-storiestsx-の規約--vr-集約モデル-固定-3-節) を参照。
 
 参考実装: [Button.stories.tsx](https://github.com/kawachiryuya/design-system/blob/main/components/primitives/Button/Button.stories.tsx)
 

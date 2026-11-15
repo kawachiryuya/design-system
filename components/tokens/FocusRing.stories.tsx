@@ -49,7 +49,7 @@ export const Samples: Story = {
   parameters: {
     docs: {
       description: {
-        story: '強制的にリングを出した状態。Tab キーで実際にフォーカスする挙動は各 component の States story 参照。',
+        story: '強制的にリングを出した状態。Tab キーで実際にフォーカスする挙動は各 component の Overview story 参照。',
       },
     },
   },

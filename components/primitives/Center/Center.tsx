@@ -10,7 +10,7 @@ import { tv } from '../../_internal/tv';
  * - `lg` — 896px。やや広い反復構造 (Help / 内側に grid を持つもの)。
  * - `xl` — 1024px。marketing section (Landing hero / Card grid 等)。
  *
- * Shell-level の max-width (AppShell の `max-w-container-default = 1280px`) とは別軸。
+ * Shell-level の max-width (AppShell の `max-w-container` = 1280px) とは別軸。
  * Center は content-level の単列センタリング専用 primitive。
  *
  * 値は layout token `--layout-content-max-width-*` (rem 基準) を参照する。

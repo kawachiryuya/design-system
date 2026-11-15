@@ -22,8 +22,8 @@ const FORWARDREF_ALLOWLIST = new Set(['Stack', 'Cluster', 'Center', 'Divider', '
 
 // 標準ストーリー節の正準順序 (§5-3)。これ以外の節 (InitialFocus 等) は無視し、存在する節の相対順序のみ検査。
 // VR 集約モデル (§5-3): 正準は Playground → Overview → EdgeCases。
-// Variants/Sizes/States/WithIcon/WithDescription は旧カタログで、Overview への移行途中の
-// コンポーネントにのみ残る (移行完了で消える)。移行中の順序を保つため当面リストに残す。
+// Variants/Sizes/States/WithIcon/WithDescription は旧カタログの名残。全部品の移行は完了済みで
+// 該当する story は無いが、順序の検査上は通るようリストに残している (AGENTS §5-3)。
 const SECTION_ORDER = ['Docs', 'Playground', 'Overview', 'Variants', 'Sizes', 'States', 'WithIcon', 'WithDescription', 'EdgeCases'];
 
 // JSDoc 必須から除外する普遍プロップ (自明・定型のため description 不要)。

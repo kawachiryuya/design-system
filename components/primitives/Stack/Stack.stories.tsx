@@ -78,7 +78,7 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'gap (5 段) と align (cross-axis) を集約。`xs/sm/md/lg` は form / list 内部、`xl` は段落間 / 大ブロック間。page 内の section 分割は Stack でなく <Section> (py-section) を使う。',
+        story: 'gap (5 段) と align (cross-axis) を集約。`xs/sm/md/lg` は form / list 内部、`xl` は段落間 / 大ブロック間。page 内の section 分割は Stack でなく <Section> (py-section-*) を使う。',
       },
     },
   },

@@ -138,7 +138,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | max-width で中央寄せ | `<Center>` | Center は単列 horizontal centering、Cluster は children の inline 並び |
 | 折り返さない horizontal | plain `flex items-center gap-N` | Cluster の wrap は無効化できない (定義的特徴)、non-wrap には不適 |
 | Tabs / SegmentedControl | `<Tabs>` / `<SegmentedControl>` (既存 composite) | active state 等の振る舞いを伴う UI は専用 composite に |
-| 2 列以上の grid | `<TwoColumn>` (Phase B 予定) / `grid grid-cols-*` | Cluster は単一行 (折り返しはあるが grid ではない)、2col 構造は別 |
+| 2 列以上の grid | `<TwoColumn>` / `grid grid-cols-*` | Cluster は単一行 (折り返しはあるが grid ではない)、2col 構造は別 |
 
 ---
 
@@ -190,7 +190,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ### Cluster を内部で使う代表的なコンポーネント / 使い方
 
-- AppShell (Phase B) の **Header menu / BottomNav button 列**
+- AppShell の **Header menu / BottomNav button 列**
 - Footer の utility link 列 (regulation / privacy / contact)
 - `<FilterChip>` の group (折り返しで複数 chip を並べる)
 - 記事メタ情報 (date / read time / view count を icon + label で並べる)

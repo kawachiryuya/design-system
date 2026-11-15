@@ -59,12 +59,15 @@ White / Black から各 hue palette まで全 6 palette + 2 base 色を横スト
 
 ## 下流 product での色の override
 
-brand を変えるときは semantic 変数を直接 override する (テーマ契約は semantic 層、AGENTS §3-8)。既定パレットと同じ幾何で済む単一ブランドなら primitive 変数 1 行の override でも全 chain が追従する:
+brand を変えるときは semantic 変数を直接 override する (テーマ契約は semantic 層、AGENTS §3-8)。brand に関わる semantic (`surface.primary` / `surface.primary-muted` / `border.primary-strong` / `onSurface.primary` / `border.focus` / `state.hover-primary` / `state.active-primary`) をそろえて上書きする (例は [Introduction](?path=/docs/introduction--docs) の「Token 値を product 全体で override」)。
+
+既定パレットと同じ幾何で済む単一ブランドなら、primitive の teal を上書きするショートカットもある。brand の semantic は teal の 3 段を参照しているので、3 段をそろえる (1 段だけだと、その段を参照する token だけが変わる):
 
 ```css
 :root {
-  --color-surface-primary: #5B4C99;      /* semantic を直接 (推奨) */
-  /* または --color-teal-600: #5B4C99;  primitive 経由のショートカット */
+  --color-teal-50:  …;  /* → surface.primary-muted */
+  --color-teal-600: …;  /* → surface.primary, border.primary-strong, state.hover/active-primary */
+  --color-teal-700: …;  /* → onSurface.primary, border.focus */
 }
 ```
 

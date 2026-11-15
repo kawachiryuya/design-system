@@ -1,0 +1,95 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Composites/Overview" />
+
+# Composites Overview
+
+**Composite** は、複数の HTML 要素 / Primitive を組み合わせたり、状態や振る舞いを持ったりするコンポーネント群です。まず [Primitive](?path=/docs/primitives-overview--docs) で表現できないかを確認し、足りない場合に Composite を使います。
+
+---
+
+## Composite の定義
+
+次のいずれかを満たすものが Composite です ([AGENTS.md §2](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#primitive-vs-composite) 参照):
+
+- **構造**: 複数の HTML 要素 / Primitive を組み合わせる (例: Switch の `<Label>` + `<button>`)
+- **状態**: 状態管理を持つ (例: Modal の open / close、CheckboxGroup の group state)
+- **振る舞い**: focus trap / portal / animation / overlay 等を持つ
+
+---
+
+## 28 コンポーネント一覧
+
+用途別に 6 グループに分けて掲載します。各コンポーネントの詳細は Guideline ページを参照してください。
+
+### Form (入力)
+
+| Component | 役割 |
+|---|---|
+| [Checkbox](?path=/docs/composites-checkbox--guideline) | 複数選択 / 単独の ON・OFF。`CheckboxGroup` でグループ化 |
+| [Radio](?path=/docs/composites-radio--guideline) | 複数の選択肢から 1 つを排他選択。`RadioGroup` でラップして使う |
+| [Switch](?path=/docs/composites-switch--guideline) | 即座に反映される設定のオン / オフ (`role="switch"`) |
+| [Select](?path=/docs/composites-select--guideline) | ネイティブ `<select>` のラッパー。多数の選択肢から 1 つを選ぶ |
+| [NumberInput](?path=/docs/composites-numberinput--guideline) | `+` / `−` ボタン付きの数値入力 (stepper) |
+| [SearchBar](?path=/docs/composites-searchbar--guideline) | 検索専用入力。アイコン + クリア + ローディング |
+| [SegmentedControl](?path=/docs/composites-segmentedcontrol--guideline) | 2〜5 個の排他的な選択肢を横並びで常に表示 |
+
+### Action (操作)
+
+| Component | 役割 |
+|---|---|
+| [ActionBar](?path=/docs/composites-actionbar--guideline) | 複数の Button からなるアクション群のレスポンシブ配置 |
+| [ToggleButton](?path=/docs/composites-togglebutton--guideline) | オン / オフの選択状態を持つボタン (`aria-pressed`) |
+| [FilterChip](?path=/docs/composites-filterchip--guideline) | 絞り込み・並び替えの操作を 1 行に並べる chip 風ボタン |
+| [DropdownMenu](?path=/docs/composites-dropdownmenu--guideline) | トリガーから開くアクションメニュー (Menu Button パターン) |
+
+### Navigation (移動)
+
+| Component | 役割 |
+|---|---|
+| [Tabs](?path=/docs/composites-tabs--guideline) | 同じ階層の中での表示切替 |
+| [Breadcrumb](?path=/docs/composites-breadcrumb--guideline) | 階層構造の現在位置を示す。最後の項目は `aria-current="page"` |
+| [Pagination](?path=/docs/composites-pagination--guideline) | 長いリストをページ分割して移動する番号ナビゲーション |
+
+### Display (表示)
+
+| Component | 役割 |
+|---|---|
+| [Card](?path=/docs/composites-card--guideline) | 見出し / 本文 / フッターを持つ汎用コンテナ (`Card.Header` 等) |
+| [Accordion](?path=/docs/composites-accordion--guideline) | 必要な項目だけ開いて読ませる折りたたみ式リスト |
+| [Avatar](?path=/docs/composites-avatar--guideline) | ユーザー・組織を表す小さなアイコン。画像 → イニシャル → プレースホルダー |
+| [EmptyState](?path=/docs/composites-emptystate--guideline) | データなし・検索結果ゼロ等の「何もない状態」を埋める |
+
+### Feedback / Overlay (通知・重ねる表示)
+
+| Component | 役割 |
+|---|---|
+| [Alert](?path=/docs/composites-alert--guideline) | ページ上に表示し続けるインラインの通知 |
+| [Toast](?path=/docs/composites-toast--guideline) | 操作直後の一時的な通知 (`useToast()`) |
+| [ProgressBar](?path=/docs/composites-progressbar--guideline) | 進捗の表示 (determinate / indeterminate) |
+| [Modal](?path=/docs/composites-modal--guideline) | ネイティブ `<dialog>` ベースのモーダルダイアログ |
+| [Popover](?path=/docs/composites-popover--guideline) | トリガーの近くに浮かせる非モーダルの補助情報・軽い操作 |
+| [Tooltip](?path=/docs/composites-tooltip--guideline) | hover / focus で出す短い補足テキスト |
+
+### Layout (配置)
+
+| Component | 役割 |
+|---|---|
+| [AppShell](?path=/docs/composites-appshell--guideline) | ページ全体の骨格。mobile と PC で構造が変わる |
+| [TwoColumn](?path=/docs/composites-twocolumn--guideline) | main + sidebar の 2 列。mobile では縦積み |
+| [SplitPane](?path=/docs/composites-splitpane--guideline) | 固定幅の list + 流動の detail (master-detail) |
+| [Grid](?path=/docs/composites-grid--guideline) | 反復 (カード集) と非均等配置のグリッド |
+
+---
+
+## 標準ストーリー構造
+
+Story の節構成 (Guideline / Playground / Overview / EdgeCases) は Primitive と共通です。[Primitives/Overview の標準ストーリー構造](?path=/docs/primitives-overview--docs) と [AGENTS.md §5-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-3-storiestsx-の規約--vr-集約モデル-固定-3-節) を参照してください。
+
+---
+
+## 参照リソース
+
+- 実装規約の SSoT: [AGENTS.md §5](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-コンポーネント実装規約-新規既存共通)
+- 設計戦略 (なぜこの構造か): [design-system-strategy.md](https://github.com/kawachiryuya/design-system/blob/main/design-system-strategy.md)
+- Tokens (色 / 余白 / 型 / 影 など): [Tokens/Overview](?path=/docs/tokens-overview--docs)

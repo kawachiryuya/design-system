@@ -29,7 +29,7 @@ const config: StorybookConfig = {
       },
     },
     '@storybook/addon-mcp',
-    // States story で Hover/Focus/Active を強制表示するため (個別 story の
+    // Overview story で Hover/Focus/Active を強制表示するため (個別 story の
     // parameters.pseudo で hover/focus/active を指定する)
     'storybook-addon-pseudo-states',
   ],

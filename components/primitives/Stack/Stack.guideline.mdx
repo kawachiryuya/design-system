@@ -80,7 +80,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       </Section>
     </div>
   }
-  doCaption="page-level の section リズムは <Section> の padding 所有 (py-section) が担う。隣接 section の padding が積み上がり予測可能。`<section>` 意味タグも自動。"
+  doCaption="page-level の section リズムは <Section> の padding 所有 (py-section-*) が担う。隣接 section の padding が積み上がり予測可能。`<section>` 意味タグも自動。"
   dontExample={
     <div className="w-72 bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Stack gap="xl">
@@ -152,9 +152,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| 横並び (アイコン + テキスト等) | `<Cluster>` (Phase A 予定) / `flex items-center gap-*` | Stack は垂直専用、horizontal + wrap は Cluster の責務 |
+| 横並び (アイコン + テキスト等) | `<Cluster>` / `flex items-center gap-*` | Stack は垂直専用、horizontal + wrap は Cluster の責務 |
 | 1 要素を中央寄せ (max-width 制約) | `<Center>` | Center は単列の水平センタリング、Stack は内部の垂直 spacing 担当 |
-| page-level の section 分割 | `<Section>` (`py-section`) | Section が padding を所有しページ構造のリズムを担う。Stack は「グループ内」専用 |
+| page-level の section 分割 | `<Section>` (`py-section-*`) | Section が padding を所有しページ構造のリズムを担う。Stack は「グループ内」専用 |
 | 2 列以上の grid | `<TwoColumn>` / `<Grid>` | Stack は単列、複数 col は別 composite |
 
 ---

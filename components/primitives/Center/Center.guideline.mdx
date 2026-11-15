@@ -149,10 +149,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| ページ全体の左右余白を作る | `<AppShell>` (Phase B 予定) / `max-w-container-default` utility | Shell-level の 1280px max-width は AppShell の責務、Center は content-level |
-| 2 列 (main + sidebar) レイアウト | `<TwoColumn>` (Phase B 予定) | Center は単列専用、複数 col 配置は別 composite |
-| 内側要素の垂直 spacing | `<Stack>` (Phase A 予定) / `space-y-*` utility | Center は spacing を持たない、垂直方向は Stack に委譲 |
-| アイコン + テキスト等の inline 配置 | `<Cluster>` (Phase A 予定) / `flex items-center gap-*` | Center は block 単列、inline 配置は別 primitive |
+| ページ全体の左右余白を作る | `<AppShell>` / `max-w-container` utility | Shell-level の 1280px max-width は AppShell の責務、Center は content-level |
+| 2 列 (main + sidebar) レイアウト | `<TwoColumn>` | Center は単列専用、複数 col 配置は別 composite |
+| 内側要素の垂直 spacing | `<Stack>` / `space-y-*` utility | Center は spacing を持たない、垂直方向は Stack に委譲 |
+| アイコン + テキスト等の inline 配置 | `<Cluster>` / `flex items-center gap-*` | Center は block 単列、inline 配置は別 primitive |
 
 ---
 
@@ -174,7 +174,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ### Center を内部で使う代表的なコンポーネント / 使い方
 
-- `<AppShell>` (Phase B) の main slot 内 — page-level の単列コンテンツに使う
+- `<AppShell>` の main slot 内 — page-level の単列コンテンツに使う
 - Login / Signup / Settings — `max="sm"` + `className="py-12"`
 - Article / FAQ / 規約 — `as="article"` + `max="md"`
 - Help (内側 grid 反復) — `max="lg"` + 内側 `grid-cols-2`

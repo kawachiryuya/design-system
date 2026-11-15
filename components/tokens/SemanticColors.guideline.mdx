@@ -19,6 +19,8 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 | **border** | ボーダー色 | `border-border` / `border-border-subtle` |
 | **state** | hover / active のオーバーレイ | `bg-state-hover` / `bg-state-hover-primary` |
 
+`bg` だけは token 名と utility 名が対応していない。token は `bg.default` (CSS 変数 `--color-bg-default`) だが、utility を他のカテゴリと同じ規則で作ると `bg-bg` と二重になるため、`bg-background` という名前にしている (preset の `backgroundColor.background`)。
+
 ---
 
 ## カタログ

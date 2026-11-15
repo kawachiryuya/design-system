@@ -73,10 +73,9 @@ const tailwindSpacing = Object.fromEntries(
 module.exports = {
   theme: {
     // ── Core (overrides Tailwind defaults) ──
-    // `px` (1px) は spacing スケールの段ではなく、光学的な位置合わせ (`mt-px`) と罫線の重ね (`-mb-px`) のための
-    // 髪の毛 1 本ぶんの値。token には持たず、Tailwind 既定の `px` だけをここで残す (theme.spacing の上書きで
-    // 落ちていて、`mt-px` / `-mb-px` が CSS を生成していなかった #125)。
-    spacing: { ...tailwindSpacing, px: '1px' },
+    // Tailwind 既定の `px` (1px) はここで落ちる。`mt-px` / `-mb-px` は CSS を生成しない (check:utilities が弾く、#125)。
+    // 1px が要るときは `mt-[1px]` と値を書く。
+    spacing: tailwindSpacing,
     colors: {
       // Primitive palette は **hue 名** で表現 (2 層アーキテクチャの純度を保つため)。
       // brand / 機能色の役割名は semantic-colors.json (surface.primary / onSurface.success 等)

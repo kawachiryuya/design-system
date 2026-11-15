@@ -135,7 +135,7 @@ export const Alert: React.FC<AlertProps> = ({
       ].join(' ')}
     >
       {!hideIcon && (
-        <span className={['flex-shrink-0 flex', title ? 'mt-px' : 'mt-[2.5px]', config.icon].join(' ')}>
+        <span className={['flex-shrink-0 flex', title ? '' : 'mt-[2.5px]', config.icon].join(' ')}>
           <Icon name={config.iconName} size="sm" />
         </span>
       )}

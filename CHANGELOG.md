@@ -81,6 +81,7 @@
 
 ### Fixed
 
+- **CI の検査の一覧を `verify` に一本化** (#125 G-2): CI が検査を 1 つずつ並べていて、`verify` に足した検査 (`check:utilities` / `check:preset-deps` / `check:theme-contract`) が CI に入らないままになっていた。CI は `npm run verify` を呼ぶだけにし、検査の一覧は `package.json` の 1 か所にした。「いつ、何が動くか」を README にまとめた。consumer 影響なし
 - **テーマ契約の manifest `tokens/theme-contract.json` がリポジトリに入っていなかった** (#125 G-1): `.gitignore` の `tokens/*.json` (生成物の除外) に当たり、一度もコミットされていなかった。そのため `npm run verify` が最後の `check:theme-contract` で失敗し、`prepublishOnly` (= verify) を通る publish もできない状態だった。`.gitignore` に例外を足し、manifest を §3-8 の層の定義から作り直した (required 1 / optional 29 / fixed 17)。`check:theme-contract` を CI にも足した。consumer 影響なし
 - **Alert / Toast / Tabs の効いていなかった `mt-px` / `-mb-px` を削除** (#125): preset が `theme.spacing` を上書きしていて Tailwind 既定の `px` が無く、CSS が生成されていなかった。見た目は今のまま (指定を外しただけ)。効かせる案は、Alert / Toast はアイコンが 1px 下がって下にずれて見え、Tabs はタブ列がスクロール領域から 1px はみ出して縦に動くため採らなかった
 - **`check:utilities` が余白・寸法・位置のクラスを見ていなかった** (#125、§3-7): `p*` / `m*` / `w` / `h` / `min-*` / `max-*` / `size` / `inset` / `top` 等を対象に追加。story の `w-56` / `w-28` / `pb-56` (スケールに無い値) もスケールの値に直した

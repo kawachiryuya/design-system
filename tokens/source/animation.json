@@ -18,15 +18,15 @@
     }
   },
   "easing": {
-    "ease-out": {
+    "out": {
       "value": "cubic-bezier(0, 0, 0.2, 1)",
       "type": "cubicBezier"
     },
-    "ease-in": {
+    "in": {
       "value": "cubic-bezier(0.4, 0, 1, 1)",
       "type": "cubicBezier"
     },
-    "ease-in-out": {
+    "in-out": {
       "value": "cubic-bezier(0.4, 0, 0.2, 1)",
       "type": "cubicBezier"
     },

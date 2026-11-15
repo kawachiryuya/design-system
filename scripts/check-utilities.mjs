@@ -29,8 +29,16 @@ import path from 'node:path';
 const ROOT = process.cwd();
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 const isFile = (p) => fs.statSync(path.join(ROOT, p)).isFile();
-const glob = (pattern, ignore = []) =>
-  fs.globSync(pattern, { cwd: ROOT }).filter((f) => isFile(f) && !ignore.some((re) => re.test(f))).sort();
+// `<dir>/**/*<suffix>` 形のパターンだけを扱う。fs.globSync は Node 22 以降で、CI (Node 20) に無い (#125)
+const glob = (pattern, ignore = []) => {
+  const [dir, tail] = pattern.split('/**/');
+  const suffix = tail.replace(/^\*/, '');
+  return fs
+    .readdirSync(path.join(ROOT, dir), { recursive: true })
+    .map((f) => path.posix.join(dir, String(f).split(path.sep).join('/')))
+    .filter((f) => f.endsWith(suffix) && isFile(f) && !ignore.some((re) => re.test(f)))
+    .sort();
+};
 
 // ── CSS を 2 系統コンパイル ──
 const compile = (config, input) => {

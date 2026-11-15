@@ -55,8 +55,8 @@ const MockHeader = () => (
 );
 
 const MockSidebar = () => (
-  <div className="w-56 shrink-0 border-r border-border-subtle bg-surface sticky top-0 h-screen px-2">
-    <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar (w-56)</div>
+  <div className="w-64 shrink-0 border-r border-border-subtle bg-surface sticky top-0 h-screen px-2">
+    <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar (w-64)</div>
     <nav className="px-2 flex flex-col gap-1">
       <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">ホーム</a>
       <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">予約一覧</a>
@@ -262,7 +262,7 @@ export const EdgeCases: Story = {
             className="!min-h-full"
             header={<MockHeader />}
             sidebar={
-              <div className="w-56 shrink-0 h-full border-r border-border-subtle bg-surface px-2">
+              <div className="w-64 shrink-0 h-full border-r border-border-subtle bg-surface px-2">
                 <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar</div>
                 <nav className="px-2 flex flex-col gap-1">
                   <span className="px-3 py-2 rounded text-sm">ホーム</span>

@@ -200,7 +200,7 @@ const ToastBody: React.FC<ToastContent & {
         config.container,
       ].join(' ')}
     >
-      <span className={['flex-shrink-0 mt-px flex', config.icon].join(' ')}>
+      <span className={['flex-shrink-0 flex', config.icon].join(' ')}>
         <Icon name={config.iconName} size="sm" />
       </span>
 
@@ -220,8 +220,8 @@ const ToastBody: React.FC<ToastContent & {
 
       {/* 閉じるボタンは absolute 配置 (Alert と同じ pattern)。
           Toast は description のみ (type-supporting) と title 付き両方で使われる。
-          top-4 + mt-px (= 17px) で左 icon span (同じ y=17 offset) と左右対称にし、
-          icon center y=27 を description (leading-relaxed glyph center y≈27) /
+          top-4 (= 16px) で左 icon span (同じ y=16 offset) と左右対称にし、
+          icon center y=26 を description (leading-relaxed glyph center y≈27) /
           title (leading-snug glyph center y≈25.6) いずれにも近づける。 */}
       {onClose && (
         <button
@@ -229,7 +229,7 @@ const ToastBody: React.FC<ToastContent & {
           aria-label="閉じる"
           onClick={onClose}
           className={[
-            'absolute top-4 right-4 mt-px inline-flex items-center justify-center h-5 w-5 rounded',
+            'absolute top-4 right-4 inline-flex items-center justify-center h-5 w-5 rounded',
             'transition-colors focus:outline-none focus-visible:ring-focus focus-visible:ring-current focus-visible:ring-offset-focus',
             config.closeBtn,
           ].join(' ')}

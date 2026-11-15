@@ -73,6 +73,8 @@ const tailwindSpacing = Object.fromEntries(
 module.exports = {
   theme: {
     // ── Core (overrides Tailwind defaults) ──
+    // Tailwind 既定の `px` (1px) はここで落ちる。`mt-px` / `-mb-px` は CSS を生成しない (check:utilities が弾く、#125)。
+    // 1px が要るときは `mt-[1px]` と値を書く。
     spacing: tailwindSpacing,
     colors: {
       // Primitive palette は **hue 名** で表現 (2 層アーキテクチャの純度を保つため)。

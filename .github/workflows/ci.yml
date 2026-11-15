@@ -57,6 +57,13 @@ jobs:
       - name: Check doc §refs (§5-5-1)
         run: npm run check:refs
 
+      # verify には入っていたが CI で走っていなかった (#125)。存在しないクラスと preset の依存漏れを PR で止める
+      - name: Check utilities
+        run: npm run check:utilities
+
+      - name: Check preset deps
+        run: npm run check:preset-deps
+
       - name: Build library (tsc + dist styles.css / A2 #57)
         run: npm run build
 

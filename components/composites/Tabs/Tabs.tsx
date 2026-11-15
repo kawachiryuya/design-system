@@ -199,7 +199,7 @@ export const Tabs: React.FC<TabsProps> = ({
         <div
           role="tablist"
           aria-label={ariaLabel}
-          className="flex -mb-px"
+          className="flex"
         >
           {tabs.map((tab, index) => (
             <button

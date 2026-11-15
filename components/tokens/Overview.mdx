@@ -15,25 +15,25 @@ import { Meta } from '@storybook/addon-docs/blocks';
 │  値そのものを定義する数値・色値のレイヤ          │
 │  プロダクトに依存しない、変更で全体に影響         │
 │                                                  │
-│  例: color.primary.700  →  "#006F50"             │
-│      spacing.4          →  "16px"                │
+│  例: color.teal.600         →  "#008555"         │
+│      spacing.4              →  "16px"            │
 └──────────────────────────────────────────────────┘
                   ↓ Style Dictionary が参照
 ┌─ Semantic ──────────────────────────────────────┐
 │  「役割名」で参照する意味付けのレイヤ            │
 │  下流 product で意図のままブランド override 可能 │
 │                                                  │
-│  例: color.surface.primary  →  color.primary.700 │
+│  例: color.surface.primary  →  color.teal.600    │
 │      typography-semantic.page-title → font-size.3xl  │
 └──────────────────────────────────────────────────┘
                   ↓ Style Dictionary build
 ┌─ Tailwind utility classes ──────────────────────┐
 │  bg-surface-primary / text-onSurface-subtle      │
-│  gap-component-md / type-page-title 等           │
+│  p-4 / type-page-title 等                        │
 └──────────────────────────────────────────────────┘
 ```
 
-semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;color.primary.700&#125;</code>` のように curly brace で primitive を指します。Storybook 上では読みやすさのため `→` で表記しています。
+semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;color.teal.600&#125;</code>` のように curly brace で primitive を指します。Storybook 上では読みやすさのため `→` で表記しています。
 
 ---
 
@@ -42,9 +42,9 @@ semantic 層の元データでは Style Dictionary の参照記法 `<code>&#123;
 | 場面 | 使うレイヤ | 例 |
 |---|---|---|
 | **コンポーネント実装** (大半のケース) | **Semantic** | `bg-surface-primary` / `text-onSurface-subtle` |
-| 既存 semantic に該当がないが汎用パレットから引きたい | (新しい) Semantic を追加 | `bg-surface-tertiary` を新設 |
-| product 側でブランドカラーを変えたい | Semantic を override | `surface-primary` を別 hex に |
-| 拡張・整理のため palette 全体を見たい | **Primitive** で参照 | `primary.50〜900` を確認 |
+| 既存 semantic に該当がないが汎用パレットから引きたい | (新しい) Semantic を追加 | `surface.{role}` を新設し、テーマ契約の層も決める |
+| product 側でブランドカラーを変えたい | Semantic を override | `--color-surface-primary` を別の色に |
+| 拡張・整理のため palette 全体を見たい | **Primitive** で参照 | `teal.50〜900` を確認 |
 
 **禁則**: 実装で `bg-teal-700` のような **primitive 直参照は禁止** ([AGENTS.md §3 トークン参照ルール](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-トークン参照ルール) 参照)。理由は下流 product のブランド override が効かなくなるため。
 

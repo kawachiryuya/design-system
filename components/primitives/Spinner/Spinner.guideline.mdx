@@ -60,17 +60,17 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="color は背景に合わせて選ぶ"
   doExample={
-    <div className="bg-teal-700 p-3 rounded">
+    <div className="bg-surface-primary p-3 rounded">
       <Spinner size="md" color="white" />
     </div>
   }
   doCaption="primary 背景 (濃い緑) の上には white を使うと十分なコントラストが取れる。"
   dontExample={
-    <div className="bg-teal-700 p-3 rounded">
+    <div className="bg-surface-primary p-3 rounded">
       <Spinner size="md" color="primary" />
     </div>
   }
-  dontCaption="primary 背景に primary 色の Spinner だと回転しているのが見えない (色が混ざる)。"
+  dontCaption="primary 背景に primary 色の Spinner だと回転しているのがほとんど見えない (色が混ざる)。"
 />
 
 <DoDontExample

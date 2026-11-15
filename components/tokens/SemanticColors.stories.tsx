@@ -23,7 +23,7 @@ type Story = StoryObj;
 type Entry = { value: string; type: string; description?: string };
 const SC = semanticColors.color as Record<string, Record<string, Entry>>;
 
-/** `{color.primary.700}` → `primary.700`、`rgba(...)` 等はそのまま */
+/** `{color.teal.600}` → `teal.600`、`rgba(...)` 等はそのまま */
 const formatValue = (v: string): string =>
   v.startsWith('{') ? v.slice(1, -1).replace(/^color\./, '') : v;
 
@@ -31,9 +31,12 @@ const formatValue = (v: string): string =>
 const tw = (prefix: string, key: string): string =>
   key === 'default' ? prefix : `${prefix}-${key}`;
 
-/** group の subset を抽出 (順序は keys の通り、未定義 key はスキップ) */
+/**
+ * group の全 token を並べる。順序は keys の通りで、keys に無い token は末尾に足す
+ * (並び順の配列に足し忘れても story から消えない)。keys に有って JSON に無いものはスキップ。
+ */
 const pick = (group: Record<string, Entry>, keys: string[]) =>
-  keys
+  [...keys, ...Object.keys(group).filter((k) => !keys.includes(k))]
     .filter((k) => group[k] !== undefined)
     .map((key) => ({
       key,
@@ -119,7 +122,7 @@ export const Surface: Story = {
   ),
 };
 
-// ── Text (on) ────────────────────────────────────────────────
+// ── Text (onSurface) ────────────────────────────────────────────────
 
 const ON_ORDER = [
   'default', 'subtle',
@@ -147,11 +150,11 @@ const OnTextCard: React.FC<{ entry: ReturnType<typeof pick>[number] }> = ({ entr
 };
 
 export const Text: Story = {
-  name: 'Text (on)',
+  name: 'Text (onSurface)',
   parameters: {
     docs: {
       description: {
-        story: 'surface に載せるテキスト色。階層 (`default`/`soft`/`muted`) → 役割 (`primary`/`success`/...) → 状態 (`disabled`/`inverse`) の順。`inverse` は色付き背景に載せる白文字。',
+        story: 'surface に載せるテキスト色。階層 (`default`/`subtle`) → 役割 (`primary`/`success`/...) → 状態 (`disabled`/`inverse`) の順。`inverse` は色付き背景に載せる白文字。',
       },
     },
   },

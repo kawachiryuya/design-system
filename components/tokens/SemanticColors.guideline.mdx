@@ -7,7 +7,7 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 
 ## 概要
 
-実装ではこの semantic 層の token (`bg-surface-*` / `text-onSurface-*` / `border-border-*` / `bg-state-*`) を使う。Primitive (`teal.700` 等) を直接書かないことで、下流 product が brand 色を変えても自動連動する。
+実装ではこの semantic 層の token (`bg-surface-*` / `text-onSurface-*` / `border-border-*` / `bg-state-*`) を使う。Primitive (`teal.600` 等) を直接書かないことで、下流 product が brand 色を変えても自動連動する。
 
 5 つのカテゴリ:
 
@@ -26,9 +26,9 @@ import * as SemanticColorsStories from './SemanticColors.stories';
 token の一覧は各 story で確認できる:
 
 - [Background](?path=/story/tokens-color-semantic--background) — ページ最下層の中性 canvas
-- [Surface](?path=/story/tokens-color-semantic--surface) — カード / モーダル / 役割色の塗り (17 token)
+- [Surface](?path=/story/tokens-color-semantic--surface) — カード / モーダル / 役割色の塗り (18 token)
 - [Text (onSurface)](?path=/story/tokens-color-semantic--text) — surface 上に載せる文字色 (9 token)
-- [Border](?path=/story/tokens-color-semantic--border) — ボーダー色 (12 token)
+- [Border](?path=/story/tokens-color-semantic--border) — ボーダー色 (13 token)
 - [State (overlay)](?path=/story/tokens-color-semantic--state) — hover / active のオーバーレイ (6 token)
 - [Container Pairs](?path=/story/tokens-color-semantic--container-pairs) — 機能色 (success / error / warning / info) の組合せパターン
 

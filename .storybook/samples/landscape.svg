@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
-  <!-- Storybook 用のサンプル画像 (自作)。雪を頂いた山並みの風景。外部画像に依存しないため同梱 (#125 F-1) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="none">
+  <!-- Storybook 用のサンプル画像 (自作)。雪を頂いた山並みの風景。外部画像に依存しないため同梱 (#125 F-1)。
+       preserveAspectRatio="none": SVG 自身が縦横比を保つと Image の objectFit="fill" が歪まず contain と同じに見えるため、写真と同じく枠に合わせて伸縮させる -->
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#7FB6E6"/>

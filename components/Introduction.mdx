@@ -55,12 +55,14 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 戦略文書 `design-system-strategy.md` で定義した 2 層構成です。Atomic Design の「依存方向の制約」を継承しつつ、分類の曖昧さを排除しています。
 
-- **Primitives**：単一のHTML要素をラップした最小部品。他のコンポーネントを import しない。
+- **Primitives**：単一のHTML要素をラップした最小部品。他の Primitive は import してよい（例：Input・Textarea が Label を、Link・Image が Icon を使う）。Composite は import しない。
 - **Composites**：Primitives を組み合わせた複合コンポーネント。Primitives のみ import 可。
 - **プロダクト層**：すべてを import 可。本リポジトリ外（別プロダクトリポ）で管理。
 
+依存は下から上への一方向に流し、循環させない。Primitive どうしの import でも循環は作らない。
+
 ```
-Primitives    他のコンポーネントを import しない
+Primitives    他の Primitive のみ import 可（循環させない）
     ↑
 Composites    Primitives のみ import 可
     ↑

@@ -89,7 +89,7 @@ export const Overview: Story = {
         <div className="flex flex-wrap gap-6">
           {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((g) => (
             <Caption key={g} text={`gap=${g}`}>
-              <div className="w-56 bg-surface-subtle border border-dashed border-border-subtle p-3">
+              <div className="w-64 bg-surface-subtle border border-dashed border-border-subtle p-3">
                 <Stack gap={g}>
                   <Item>A</Item>
                   <Item>B</Item>

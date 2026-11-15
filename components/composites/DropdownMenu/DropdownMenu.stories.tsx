@@ -87,7 +87,7 @@ export const Overview: Story = {
     },
   },
   render: () => (
-    <div className="p-8 pb-56 flex justify-center">
+    <div className="p-8 pb-64 flex justify-center">
       <DropdownMenu
         trigger={<Button variant="secondary">操作</Button>}
         placement="bottom"

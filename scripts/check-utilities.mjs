@@ -14,7 +14,8 @@
  *   (2) Storybook 側 (stories / .storybook / mdx) ↔ Storybook CSS (tailwind.config.cjs)
  *       — className 属性の中だけを走査 (token カタログの 'font-size' 等のキー文字列や mdx 散文を除く)
  *
- * 対象 utility は色・タイポ・余白・枠・影・角丸・z・opacity・duration・easing の接頭辞 (下記 PREFIX)。
+ * 対象 utility は色・タイポ・余白 (gap / padding / margin)・寸法 (w / h / min / max / size)・位置 (inset / top 等)・
+ * 枠・影・角丸・z・opacity・duration・easing の接頭辞 (下記 PREFIX)。
  * 動的なクラス (`${...}` を含む template) は検査不能なので skip。行に `utility-ignore` を含めると
  * その行は対象外 (理由を同じ行に書く)。
  *
@@ -51,10 +52,17 @@ const sbCss = compile('tailwind.config.cjs', '.storybook/tailwind.css');
 // ── utility 候補の判定 ──
 const PREFIX =
   'bg|text|border|border-[xytblrse]|ring|ring-offset|divide|outline|placeholder|fill|stroke|accent|caret|decoration|' +
-  'shadow|rounded|rounded-[tblrse]|rounded-[tb][lr]|z|opacity|gap|gap-[xy]|space-[xy]|font|leading|tracking|duration|ease|type';
+  'shadow|rounded|rounded-[tblrse]|rounded-[tb][lr]|z|opacity|gap|gap-[xy]|space-[xy]|font|leading|tracking|duration|ease|type|' +
+  // 余白・寸法・位置 (#125)。spacing スケールに無い値 (`mt-px` / `w-56` 等) も黙って落ちる
+  'p[xytrblse]?|m[xytrblse]?|w|h|min-[wh]|max-[wh]|size|basis|inset|inset-[xy]|top|right|bottom|left|start|end|translate-[xy]';
 const CANDIDATE = new RegExp(`^(?:[a-z0-9\\-\\[\\]&>*~+()=.":]+:)*-?(?:${PREFIX})-[A-Za-z0-9\\-\\[\\]\\/.%#(),_]+$`);
-const isCandidate = (tok) => CANDIDATE.test(tok) && !tok.includes('${');
-const cssHas = (css, cls) => css.includes('.' + cls.replace(/([^A-Za-z0-9_-])/g, '\\$1'));
+// floating-ui の placement ('top-start' / 'bottom-end') や Toast の position ('top-right' / 'bottom-center') は
+// utility と同じ形の文字列だが class ではない
+const PLACEMENT = /^(top|right|bottom|left)-(start|end|left|right|center)$/;
+const isCandidate = (tok) => CANDIDATE.test(tok) && !tok.includes('${') && !PLACEMENT.test(tok);
+// Tailwind はカンマを `\\2c ` (コードポイント表記) で出すので、そこだけ別に置換する (`max-w-[min(18rem,calc(…))]`)
+const cssHas = (css, cls) =>
+  css.includes('.' + cls.replace(/([^A-Za-z0-9_-])/g, (m) => (m === ',' ? '\\2c ' : '\\' + m)));
 const isCommentLine = (l) => /^\s*(\/\/|\*|\/\*)/.test(l);
 
 /** string literal ('…' / "…" / `…`) の中身を列挙 */

@@ -573,7 +573,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 #### 5-5-1. CI が保証する (機械的に弾く)
 
-| 項目 | 担保する CI ステップ |
+CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workflows/ci.yml))。**検査を足すときは `package.json` の `verify` に足す** (CI の設定に個別に並べない。並べていた頃、`verify` に足した検査が CI に入らないままになった #125)。Storybook のテストと配布物のビルドだけは `verify` の外で、CI が別のステップとして走らせる。いつ何が動くかの見取り図は [`README.md`](./README.md) の「いつ、何が動くか」。
+
+| 項目 | 担保する検査 (`verify` の中、または CI の別ステップ) |
 |---|---|
 | 型が通る (`tsc --noEmit` クリーン) | **Typecheck** (`npm run typecheck`) |
 | 色・余白が semantic Tokens 参照 (生 hex / 色 bracket 不使用)、`components/` で `@/` import 不使用、react-hooks / storybook 規約 | **Lint** (`npm run lint`、§3-7) |

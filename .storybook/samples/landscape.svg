@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <!-- Storybook 用のサンプル画像 (自作)。雪を頂いた山並みの風景。外部画像に依存しないため同梱 (#125 F-1) -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7FB6E6"/>
+      <stop offset="1" stop-color="#DCEBF7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1260" cy="190" r="80" fill="#FFF4C7"/>
+  <polygon points="0,700 260,330 420,520 640,220 900,600 1100,380 1320,560 1600,300 1600,900 0,900" fill="#5E7A93"/>
+  <polygon points="640,220 575,320 615,305 650,345 690,300 720,320" fill="#FFFFFF"/>
+  <polygon points="260,330 215,395 250,385 275,410 300,385" fill="#FFFFFF"/>
+  <polygon points="1600,300 1520,400 1555,390 1600,420" fill="#FFFFFF"/>
+  <polygon points="1100,380 1050,450 1085,440 1110,465 1140,440" fill="#FFFFFF"/>
+  <polygon points="0,780 300,600 560,720 820,560 1120,740 1380,620 1600,700 1600,900 0,900" fill="#3F5E4A"/>
+  <rect y="840" width="1600" height="60" fill="#2F4A39"/>
+</svg>

@@ -3,6 +3,7 @@ import * as ImageStories from './Image.stories';
 import { Image } from './Image';
 import { DoDontExample } from '@sb-blocks/DoDontExample';
 import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+import { SAMPLE_LANDSCAPE } from '@sb-blocks/sampleImages';
 
 {/*
   Meta of={ImageStories} で Image.stories.tsx の Docs ページ本体としてこの mdx を使用する。
@@ -42,13 +43,13 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="意味のある画像には説明的な alt を書く"
   doExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="雪を頂いた山岳地帯の風景" aspectRatio="video" rounded="md" />
+      <Image src={SAMPLE_LANDSCAPE} alt="雪を頂いた山岳地帯の風景" aspectRatio="video" rounded="md" />
     </div>
   }
   doCaption="画像の内容を伝える alt を書く。SR ユーザー / 読み込み失敗時のテキストブラウザ / Google 画像検索の全てに役立つ。"
   dontExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="画像" aspectRatio="video" rounded="md" />
+      <Image src={SAMPLE_LANDSCAPE} alt="画像" aspectRatio="video" rounded="md" />
     </div>
   }
   dontCaption="「画像」「写真」のような汎用語を alt に書くと SR ユーザーに情報が伝わらない。"
@@ -58,13 +59,13 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label='装飾画像には alt="" を明示的に渡す'
   doExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="" aspectRatio="wide" rounded="md" />
+      <Image src={SAMPLE_LANDSCAPE} alt="" aspectRatio="wide" rounded="md" />
     </div>
   }
   doCaption='alt="" で role="presentation" が自動付与され、SR から無視される。ヒーロー画像や装飾的な背景画像など、隣接テキストで意味が完結する画像で使う。'
   dontExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="装飾的な背景画像" aspectRatio="wide" rounded="md" />
+      <Image src={SAMPLE_LANDSCAPE} alt="装飾的な背景画像" aspectRatio="wide" rounded="md" />
     </div>
   }
   dontCaption="装飾画像に意味のある alt を付けると SR で冗長な読み上げが発生する。装飾なら空文字を明示する。"
@@ -74,13 +75,13 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="aspectRatio を指定して layout shift を防ぐ"
   doExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="風景" aspectRatio="video" />
+      <Image src={SAMPLE_LANDSCAPE} alt="風景" aspectRatio="video" />
     </div>
   }
   doCaption="aspectRatio を指定すると container 側で先に枠を確保し、画像読み込み完了でレイアウトがズレない (CLS スコア改善)。"
   dontExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="風景" aspectRatio="auto" />
+      <Image src={SAMPLE_LANDSCAPE} alt="風景" aspectRatio="auto" />
     </div>
   }
   dontCaption="aspectRatio=auto で img の自然なサイズに任せると、読み込み完了の瞬間に高さが変わり layout shift が起きる。"
@@ -90,13 +91,13 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="Above-the-fold 画像は lazy=false に"
   doExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="ヒーロー画像" aspectRatio="wide" lazy={false} />
+      <Image src={SAMPLE_LANDSCAPE} alt="ヒーロー画像" aspectRatio="wide" lazy={false} />
     </div>
   }
   doCaption="LCP (Largest Contentful Paint) になるヒーロー画像は lazy=false で eager 読み込み。lazy だと LCP が遅れる。"
   dontExample={
     <div className="w-48">
-      <Image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop" alt="ヒーロー画像" aspectRatio="wide" />
+      <Image src={SAMPLE_LANDSCAPE} alt="ヒーロー画像" aspectRatio="wide" />
     </div>
   }
   dontCaption="デフォルト lazy=true のままだと above-the-fold 画像でも viewport に入ってから読み込み開始し、LCP が遅れる。"

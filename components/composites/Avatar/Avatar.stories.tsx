@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Avatar } from './Avatar';
 import { Caption } from '@sb-blocks/Caption';
+import { SAMPLE_AVATARS } from '@sb-blocks/sampleImages';
 
 /**
  * Avatar stories — VR 集約モデル (§5-3)
@@ -30,7 +31,8 @@ const meta: Meta<typeof Avatar> = {
 export default meta;
 type Story = StoryObj<typeof Avatar>;
 
-const IMG = 'https://i.pravatar.cc/150?img=7';
+// サンプル画像は同梱の人型シルエット (人物写真・外部の画像サービスを使わない、#125 F-1)
+const IMG = SAMPLE_AVATARS[0];
 
 // ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 

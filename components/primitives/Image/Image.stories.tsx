@@ -2,9 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { Image } from './Image';
 import { Caption } from '@sb-blocks/Caption';
+import { SAMPLE_LANDSCAPE, SAMPLE_AVATARS } from '@sb-blocks/sampleImages';
 
-const SAMPLE_IMG = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop';
-const PORTRAIT_IMG = 'https://i.pravatar.cc/300?img=47';
+// サンプル画像は同梱の SVG (外部の画像サービスに依存しない、#125 F-1)
+const SAMPLE_IMG = SAMPLE_LANDSCAPE;
+const PORTRAIT_IMG = SAMPLE_AVATARS[0];
 const BROKEN_IMG = 'https://invalid-url.example.com/image.jpg';
 
 /**
@@ -29,7 +31,7 @@ const meta: Meta<typeof Image> = {
   },
   args: {
     src: SAMPLE_IMG,
-    alt: '山の風景写真',
+    alt: '山の風景',
     aspectRatio: 'video',
     objectFit: 'cover',
     rounded: 'none',
@@ -57,7 +59,7 @@ export const Playground: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const img = canvas.getByAltText('山の風景写真');
+    const img = canvas.getByAltText('山の風景');
     await expect(img).toBeInTheDocument();
   },
 };

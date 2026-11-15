@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <!-- Storybook 用のサンプル画像 (自作)。人物写真の代わりの人型シルエット (#125 F-1) -->
+  <rect width="300" height="300" fill="#CFE3F5"/>
+  <circle cx="150" cy="118" r="56" fill="#4A6A8A"/>
+  <path d="M40,300 C40,214 92,186 150,186 C208,186 260,214 260,300 Z" fill="#4A6A8A"/>
+</svg>

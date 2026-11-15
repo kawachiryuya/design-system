@@ -17,6 +17,11 @@
 
 ### ⚠ BREAKING CHANGES
 
+- **easing の token key を `ease-out` / `ease-in` / `ease-in-out` → `out` / `in` / `in-out` に (utility・CSS 変数・TS の rename、silent break、#125 D-7)**: key が `ease-` で始まっていたため utility が `ease-ease-out` と二重になっていた。Tailwind 標準と同じ `ease-out` で書けるようにした。`linear` はそのまま。値は変わらない。出荷する部品は easing の utility を使っていないので `dist/styles.css` は変わらない
+  - utility: `ease-ease-out` → `ease-out`、`ease-ease-in` → `ease-in`、`ease-ease-in-out` → `ease-in-out` (preset を継承している利用側)
+  - CSS 変数: `--easing-ease-out` → `--easing-out` (`-in` / `-in-out` も同様)
+  - TS: `EASING['ease-out']` → `EASING.out`、`EASING['ease-in']` → `EASING.in`、`EASING['ease-in-out']` → `EASING['in-out']`
+  - Migration: `sed -i -E -e 's/ease-ease-(in-out|out|in)/ease-\1/g' -e 's/--easing-ease-(in-out|out|in)/--easing-\1/g' -e "s/EASING\['ease-(out|in)'\]/EASING.\1/g" -e "s/EASING\['ease-in-out'\]/EASING['in-out']/g" <files>`
 - **Principles の Iconography / Imagery を `Principles/Typography/` から `Principles/Visual/` に移した (Storybook URL の変更、silent break、#125 D-6)**: アイコンと画像は文字組みではなく、Color や Typography と並ぶ見た目の要素のため。サイドバーでは Typography の後に `Visual` 群を置いた。リポジトリ内のリンクは追従済み
   - `?path=/docs/principles-typography-iconography--docs` → `principles-visual-iconography--docs`
   - `?path=/docs/principles-typography-imagery--docs` → `principles-visual-imagery--docs`

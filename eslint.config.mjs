@@ -83,17 +83,19 @@ export default tseslint.config(
             'primitive typography 直参照はテンプレートリテラル内でも禁止。text style `type-{role}` を使う (AGENTS §3-7)。',
         },
         // フォーカスの表現は utility `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` だけで書く (DDR-2 #131、AGENTS §3-7)。
-        // outline-none での消去、focus: / focus-visible: での ring / outline / 枠線 / 塗り / 影の直書き、ring-inset / ring-offset-* を弾く。
+        // outline-none での消去、フォーカスの variant での ring / outline / 枠線 / 塗り / 影の直書き、ring-inset / ring-offset-* を弾く。
+        // フォーカスの variant = focus: / focus-visible: / focus-within: と、その peer- / group- 版 (名前付き `group-focus/name:` も)、
+        // arbitrary variant の `[&:focus-visible]:` 等 (#139)。
         // (Avatar の `ring-2 ring-surface` のようなフォーカスと関係ない ring は対象外)
         {
           selector:
-            'Literal[value=/(^|\\s|:)(focus|focus-visible):(ring|outline|border|bg|shadow)|(^|\\s|:)outline-none|(^|\\s|:)ring-(inset|offset)/]',
+            'Literal[value=/(^|\\s|:)((peer|group)-)?focus(-visible|-within)?(\\x2F[\\w-]+)?:(ring|outline|border|bg|shadow)|\\[[^\\]\\s]*:focus[^\\]\\s]*\\]:(ring|outline|border|bg|shadow)|(^|\\s|:)outline-none|(^|\\s|:)ring-(inset|offset)/]',
           message:
-            'フォーカスの表現は focus-ring / focus-ring-inset / focus-ring-on-fill のどれか 1 つで書く (outline-none・focus: での ring / 枠線 / 塗りの直書き・ring-inset・ring-offset-* は禁止、AGENTS §3-7)。',
+            'フォーカスの表現は focus-ring / focus-ring-inset / focus-ring-on-fill のどれか 1 つで書く (outline-none・focus: / focus-visible: / focus-within: とその peer- / group- 版での ring / 枠線 / 塗りの直書き・ring-inset・ring-offset-* は禁止、AGENTS §3-7)。',
         },
         {
           selector:
-            'TemplateElement[value.raw=/(^|\\s|:)(focus|focus-visible):(ring|outline|border|bg|shadow)|(^|\\s|:)outline-none|(^|\\s|:)ring-(inset|offset)/]',
+            'TemplateElement[value.raw=/(^|\\s|:)((peer|group)-)?focus(-visible|-within)?(\\x2F[\\w-]+)?:(ring|outline|border|bg|shadow)|\\[[^\\]\\s]*:focus[^\\]\\s]*\\]:(ring|outline|border|bg|shadow)|(^|\\s|:)outline-none|(^|\\s|:)ring-(inset|offset)/]',
           message:
             'フォーカスの表現はテンプレートリテラル内でも focus-ring / focus-ring-inset / focus-ring-on-fill のどれか 1 つで書く (AGENTS §3-7)。',
         },

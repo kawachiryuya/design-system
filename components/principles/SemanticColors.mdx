@@ -24,18 +24,18 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 palette の各 step は共通のコントラスト役割を持つ ([Tokens / Color / Primitive の階調設計](?path=/docs/tokens-color-primitive--guideline) に役割表)。semantic 側はこれに従って step を選ぶ:
 
-- **白文字 solid 面 = step 700** (全 hue で白文字 4.5:1 の普遍アンカー)。role 色は step 600 を使う (teal / cyan のみ 700)
+- **role 色の塗り (白文字を載せる面) = step 600** (有彩色の全 hue で白文字 4.5:1 以上。brand の `surface.primary` も 600)。step 700 は全 hue で白文字 4.5:1 を満たす普遍アンカーで、白地のテキスト (`onSurface.{role}`) に使う
 - **非テキスト (アイコン・境界) = step 500 以上** (白に対し 3:1)
 - 有彩色は同一 step の知覚明度 (OKLCH L) を揃えてあり、`bg≤100 × text≥700` は全 hue で 4.5:1 を満たす。この性質は `check:contrast` の不変条件として固定されている (override で崩すと CI が fail する)
 
 ## Do / Don't
 
 - **Do**: エラーを `text-onSurface-error` + `<Icon name="error">` + 文言の三重で示す。
-- **Do**: brand を変えたい下流は `--color-teal-700` を override し、semantic チェーン全体を追従させる。
+- **Do**: brand を変えたい下流は semantic 変数 (`--color-surface-primary` 等) を override する (テーマ契約は semantic 層)。primitive で済ませるなら、semantic が参照している段 (`--color-teal-50` / `-600` / `-700`) をそろえて override する。
 - **Do**: 鮮オレンジに白文字を載せる CTA は **orange-600/700** (濃色シフト) を使う。鮮オレンジの**アイコン・グラフ**は orange-500 を非テキスト (3:1) として使う。
 - **Don't**: `bg-red-500` を直書きする (override 不可・lint エラー)。
 - **Don't**: 「赤い」だけでエラーを表現する (色覚特性のあるユーザーに伝わらない)。
-- **Don't**: **orange-500 + 白文字を本文サイズ**に使う (3.75 で AA 未満)。「APCA を通るから」を根拠に AA 未満ペアを本文に使う。
+- **Don't**: **orange-500 + 白文字を本文サイズ**に使う (3.67 で AA 未満)。「APCA を通るから」を根拠に AA 未満ペアを本文に使う。
 
 > **ダークモード (将来方針)**: WCAG 2 は暗色ペアのコントラストを過大評価する傾向がある。ダークパレット設計時は APCA を主指針に昇格し、`check:contrast` にテーマ別ペアセットを追加する (contrast-policy C-5)。
 

@@ -136,25 +136,27 @@ tokens/preset.cjs                  ← Tailwind preset、各 PJ tailwind.config.
 
 ```jsonc
 // ✅ OK
-"surface": { "primary": { "value": "{color.teal.700}" } }
+"surface": { "primary": { "value": "{color.teal.600}" } }
 // ❌ NG
-"surface": { "primary": { "value": "#006F50" } }
+"surface": { "primary": { "value": "#008555" } }
 ```
 
 理由: 生 hex は下流 product が hue palette (`teal` 等) を override しても connect しない (silent link)。`{color.X.Y}` で参照しておけば下流の override に自動追従する。**2026-06-04 以降、`bg.default` も含めて semantic は全て primitive 経由**。
 
-**ランタイム連動**: Style Dictionary は `outputReferences: true` (style-dictionary.config.js) で primitive 参照を build 時に解決せず `var(--color-teal-700)` として CSS 出力する。これにより **下流 product は CSS 変数を 1 行 override するだけで全 semantic chain に伝播** (再 build 不要):
+**ランタイム連動**: Style Dictionary は `outputReferences: true` (style-dictionary.config.js) で primitive 参照を build 時に解決せず `var(--color-teal-600)` として CSS 出力する。これにより **下流 product は primitive の CSS 変数を override するだけで、それを参照する semantic chain に伝播** (再 build 不要)。brand の semantic は teal の 3 段を参照しているので、brand を変えるには 3 段をそろえて上書きする:
 
 ```css
 /* product 側 */
 :root {
-  --color-teal-700: #5B4C99;  /* brand を violet 系に変更 */
+  --color-teal-50:  …;  /* → surface.primary-muted */
+  --color-teal-600: …;  /* → surface.primary, border.primary-strong, state.hover/active-primary */
+  --color-teal-700: …;  /* → onSurface.primary, border.focus */
 }
-/* → --color-surface-primary, --color-on-surface-primary, --color-border-focus,
-       --color-state-hover-primary 等が自動的に violet ベースに切り替わる */
 ```
 
-> **注: primitive override は generator 領域のショートカット**。上記の `--color-teal-700` 直接 override は「既定パレットと同じ幾何 (10 段・L 正規化・step→role アンカー) を流用してよい」単一ブランド向けの簡便法。真のマルチブランド・テーマ契約は **semantic 層 (§3-8 / #59)** に置く: ブランドは `--color-surface-primary` 等の semantic トークンを直接供給し、primitive ramp は契約でなく「種色から準拠 ramp を作る任意の generator」の領域に格下げする。
+1 段だけ (例: `--color-teal-700`) を上書きすると、その段を参照する token だけが変わる (700 なら文字とフォーカスだけで、塗りは変わらない)。
+
+> **注: primitive override は generator 領域のショートカット**。上記の teal 段の直接 override は「既定パレットと同じ幾何 (10 段・L 正規化・step→role アンカー) を流用してよい」単一ブランド向けの簡便法。真のマルチブランド・テーマ契約は **semantic 層 (§3-8 / #59)** に置く: ブランドは `--color-surface-primary` 等の semantic トークンを直接供給し、primitive ramp は契約でなく「種色から準拠 ramp を作る任意の generator」の領域に格下げする。
 
 **3-2. 透過オーバーレイは `color-mix()` で primitive と連動させる**
 
@@ -163,11 +165,11 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 ```jsonc
 // ✅ OK
 "hover-primary": {
-  "value": "color-mix(in srgb, {color.teal.700} 8%, transparent)"
+  "value": "color-mix(in srgb, {color.teal.600} 8%, transparent)"
 }
-// ❌ NG (旧バージョンのハードコード、teal.700 変更時に手動更新必要)
+// ❌ NG (旧バージョンのハードコード、teal.600 変更時に手動更新必要)
 "hover-primary": {
-  "value": "rgba(0, 111, 80, 0.08)"
+  "value": "rgba(0, 133, 85, 0.08)"
 }
 ```
 
@@ -226,7 +228,7 @@ Material 3 の Container ペア (`{role}` + `on-{role}` + `{role}-container` + `
 
 | Role | Intense (solid) | Text on intense | Container (soft) | Text on container |
 |---|---|---|---|---|
-| Brand (Primary) | `surface.primary` (teal.700) | `onSurface.inverse` (white) | `surface.primary-muted` (teal.50) | `onSurface.primary` (teal.700) |
+| Brand (Primary) | `surface.primary` (teal.600) | `onSurface.inverse` (white) | `surface.primary-muted` (teal.50) | `onSurface.primary` (teal.700) |
 | Success | `surface.success` (green.600) | `onSurface.inverse` (white) | `surface.success-muted` (green.50) | `onSurface.success` (green.700) |
 | Error | `surface.error` (red.600) | `onSurface.inverse` (white) | `surface.error-muted` (red.50) | `onSurface.error` (red.700) |
 | Warning | `surface.warning` (orange.600) | `onSurface.inverse` (white) | `surface.warning-muted` (orange.50) | `onSurface.warning` (orange.700) |

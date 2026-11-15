@@ -64,6 +64,9 @@ jobs:
       - name: Check preset deps
         run: npm run check:preset-deps
 
+      - name: Check theme contract
+        run: npm run check:theme-contract
+
       - name: Build library (tsc + dist styles.css / A2 #57)
         run: npm run build
 

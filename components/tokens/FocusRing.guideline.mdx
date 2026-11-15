@@ -7,43 +7,35 @@ import * as FocusRingStories from './FocusRing.stories';
 
 ## 概要
 
-a11y 上重要なフォーカスリングを semantic 化。下流 product で `tailwind.config.js` の token override で一括変更可能。色は別 token (`border-focus`) と組合せて使う。
-
-利用 utility (組合せ):
+キーボードで操作する人が「今どこにいるか」を見つけるための輪。形は 3 つの utility (`focus-ring` / `focus-ring-inset` / `focus-ring-on-fill`) で、部品はどれか 1 つを書くだけ。輪が出る条件 (`:focus-visible`) は utility の中に入っている。太さとすき間は CSS 変数 (`--focus-ring-width` / `--focus-ring-offset`)、色は `border.focus` で、下流 product は CSS 変数の上書きで一括変更できる。
 
 ```html
-focus-visible:ring-focus focus-visible:ring-offset-focus focus-visible:ring-border-focus
+<button class="focus-ring">…</button>          <!-- 外側 (既定) -->
+<button class="focus-ring-inset">…</button>    <!-- 内側 -->
+<button class="focus-ring-on-fill">…</button>  <!-- 濃い塗りの内側 -->
 ```
 
 ---
 
 ## カタログ
 
-- [Tokens (width / offset)](?path=/story/tokens-focus-ring--tokens) — リング太さと offset の semantic 値の一覧
-- [Samples](?path=/story/tokens-focus-ring--samples) — Button / Input / Link で強制 focus を当てた視覚サンプル
+- [Tokens (width / offset)](?path=/story/tokens-focus-ring--tokens) — 3 つの形と、それが読む CSS 変数の一覧
+- [Samples](?path=/story/tokens-focus-ring--samples) — 本物の部品にフォーカスを強制表示した見本 (外側 / 内側 / 濃い塗りの内側)
 
 ---
 
 ## 設計方針
 
-- **width / offset を semantic 化**: `ring-2` / `ring-offset-2` の数値直書きを避け、`ring-focus` / `ring-offset-focus` で意図を表現
-- **色は border-focus (semantic-colors) を使う**: 色変更は別 token、太さは別 token、で関心分離
-- **primitive 層を持たない**: 1〜2 値しかなく palette 化に意味がないため。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)
-
----
-
-## どの component で outer ring を使うか
-
-| 要素 | focus 表現 |
-|---|---|
-| **Button / Link / Radio / Checkbox / Switch / Tabs / Pagination / ToggleButton** | **outer ring** (offset 付き) |
-| **Input / Textarea / Select** | border 色変化 + inset ring (border ベースの form control 専用パターン) |
-
-input 系が outer ring を使わない理由: ブラウザの UA heuristic で click 時にも `:focus-visible` がマッチする問題を回避するため。border 強調で focus を表現。
+- **どの部品にどの形かの正本は AGENTS.md §3-2「フォーカスの規則」** (DDR-2、#131)。ここには写さない
+- **形は名前で選ぶ**: 部品に数値 (`ring-2` / `outline-offset-2` 等) や出る条件 (`focus-visible:`) を書かせない。lint が `focus-ring*` 以外のフォーカスの指定を弾く (AGENTS §3-7)
+- **outline で描く**: すき間を塗らない (下の面の色が見える)。ホバーの box-shadow と別の層になる。Windows のハイコントラスト (forced-colors) でも消えない
+- **太さは 2px**: WCAG 2.4.13 (Focus Appearance、AAA) 相当を目安にする (準拠は名乗らない)。AA の 2.4.7 (見える) と 1.4.11 (3:1) は必ず満たす (`check:contrast` が `border.focus` × 各下地を検査)
+- **primitive 層を持たない**: 値が 2 つしかなく palette 化に意味がないため。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)
 
 ---
 
 ## 関連
 
+- [AGENTS.md §3-2「フォーカスの規則」](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md) — どの部品にどの形か (正本)
 - [Tokens/Color/Semantic - Border](?path=/docs/tokens-color-semantic--border) — `border-focus` の色定義
 - [AGENTS.md §3-4 semantic-only スケール](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)

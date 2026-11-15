@@ -151,7 +151,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 - **`+` / `−` の aria-label**: デフォルトは「増やす」「減らす」。複数 NumberInput が並ぶ場合は文脈を入れた個別ラベルに (`decrementLabel` / `incrementLabel`)
 - **境界で自動 disabled**: `value <= min` で `−` ボタン disabled、`value >= max` で `+` ボタン disabled。SR は「ボタン、無効」と読み上げる
-- **キーボード操作**: `Tab` で `−` → `+` の順に focus、`Enter` / `Space` で発火 (button 標準)。フォーカス時は `focus:` 系で可視化 (現実装は color-only、将来 ring-focus へ統一予定)
+- **キーボード操作**: `Tab` で `−` → `+` の順に focus、`Enter` / `Space` で発火 (button 標準)。キーボードでフォーカスしたときは、枠の中に詰まっているので内側 2px の輪 (`focus-ring-inset`。− は枠の角丸に沿わせる) (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **タッチターゲット**: sm (40px) / md (48px)。md 以上で WCAG 2.5.5 達成。連打して値を増減することが多いため、密集 UI でも md 推奨
 
 ---

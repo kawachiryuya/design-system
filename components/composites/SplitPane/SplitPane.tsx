@@ -99,9 +99,10 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
   return (
     <div data-ds-root {...rest} className={containerClass} style={mergedStyle}>
       {/* 独立スクロールする pane はキーボードでもスクロールできるよう tabindex=0 を付与
-          (WCAG 2.1.1 / axe scrollable-region-focusable)。 */}
-      <div tabIndex={0} className="cols:pr-8 cols:overflow-y-auto">{list}</div>
-      <div tabIndex={0} className="cols:pl-8 cols:overflow-y-auto">{children}</div>
+          (WCAG 2.1.1 / axe scrollable-region-focusable)。フォーカスが来たら内側 2px の輪を出し、
+          輪と中身が重ならないよう内側に余白 (p-2) を持たせる (AGENTS §3-2「フォーカスの規則」、#136 で止め方を見直し予定)。 */}
+      <div tabIndex={0} className="focus-ring-inset p-2 cols:pr-8 cols:overflow-y-auto">{list}</div>
+      <div tabIndex={0} className="focus-ring-inset p-2 cols:pl-8 cols:overflow-y-auto">{children}</div>
     </div>
   );
 };

@@ -127,10 +127,10 @@ export const SegmentedControl = <T extends string | number>({
             className={[
               segmentSizeStyle,
               'inline-flex items-center justify-center border rounded-sm whitespace-nowrap transition-colors',
-              'focus:outline-none focus-visible:ring-focus focus-visible:ring-inset',
+              // フォーカス: 横スクロールの箱 (overflow-x-auto) の中なので内側。選択中は濃い塗りの内側に白 (AGENTS §3-2「フォーカスの規則」)
               isSelected
-                ? 'bg-surface-primary border-transparent text-onSurface-inverse hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)] active:shadow-[inset_0_0_0_9999px_var(--color-state-active)] focus-visible:ring-surface'
-                : 'bg-surface border-border-subtle text-onSurface hover:bg-state-hover-primary active:bg-state-active-primary focus-visible:ring-border-focus',
+                ? 'bg-surface-primary border-transparent text-onSurface-inverse hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)] active:shadow-[inset_0_0_0_9999px_var(--color-state-active)] focus-ring-on-fill'
+                : 'bg-surface border-border-subtle text-onSurface hover:bg-state-hover-primary active:bg-state-active-primary focus-ring-inset',
             ].join(' ')}
           >
             {item.label}

@@ -142,7 +142,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **`aria-pressed`**: `selected` prop の値が `aria-pressed` 属性として反映。SR は「2 を押下」のように選択状態を読み上げる
 - **`type="button"`**: form 内でも submit を発火しない (デフォルト挙動)
 - **キーボード操作**: `Tab` で focus、`Enter` / `Space` で onClick 発火 (button 標準)
-- **focus ring**: `focus-visible:ring-focus` で keyboard focus のみリング表示 (click 後は出さない)
+- **フォーカスの輪**: キーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`、クリックでは出ない) (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **disabled 時の aria-label 補足**: 「なぜ disabled か」を `aria-label="座席 1B 予約済み"` のように補強する
 - **タッチターゲット**: w-10 h-10 = 40px。WCAG 2.5.5 (44×44px) には未到達のため、密集レイアウト時は周囲に余白を確保するか、外側を wrap してタップ範囲を広げる
 

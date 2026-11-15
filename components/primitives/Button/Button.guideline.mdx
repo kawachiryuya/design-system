@@ -150,7 +150,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 - **キーボード**: `Tab` でフォーカス移動、`Enter` / `Space` でクリック
 - **状態**: `disabled` 時は DOM 上も `disabled` 属性、`isLoading` 時も `disabled` でクリック不能化
-- **フォーカス可視化**: `focus-visible:ring-2` で2px のリングを標準装備
+- **フォーカスの輪**: キーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`)。destructive も輪の色は `border.focus` (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **タッチターゲット**: `size="md"` / `large` で WCAG 2.5.5 (44x44px) を満たす。`size="sm"` は密度の高い一覧 UI に限定する
 - **icon-only**: `aria-label` を型レベルで必須化済 (`<Button iconOnly icon={...} aria-label="閉じる" />`)
 

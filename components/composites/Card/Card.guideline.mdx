@@ -181,7 +181,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 - **clickable / onClick**: `role="button"` 自動付与、`tabindex=0`、Enter / Space で発火
 - **href**: `<a>` タグでレンダリング、ブラウザ標準の link 挙動
-- **focus ring**: clickable / href 時に `focus-visible:ring-focus`
+- **フォーカスの輪**: clickable / href 時に、外側 2px＋すき間 2px (`focus-ring`) (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **Header / Body / Footer の意味付け**: 各 div は role を持たない (article 等で wrap するのは利用側の責任)
 - **重要: card 内に link / button がある場合**: card 自身を clickable にしない (nested interactive 違反)。card 内の link / button のみ interactive にする
 - **hover 表現**: bg-state-hover の neutral overlay、AA contrast 保持

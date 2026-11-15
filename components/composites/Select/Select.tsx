@@ -134,10 +134,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     const sizeStyles = sizeConfig.style;
 
-    // focus 表現は border 色変化 + inset ring (詳細は Input.tsx 同セクションのコメント参照)
     const stateStyles = error
-      ? 'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted'
-      : 'border-border hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface';
+      ? 'border-border-error-strong bg-surface-error-muted'
+      : 'border-border hover:border-border-strong bg-surface';
 
     const selectClasses = [
       'block',
@@ -146,12 +145,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       'text-onSurface',
       'appearance-none',
       'cursor-pointer',
-      // transition-colors のみ (詳細は Input.tsx 同セクションのコメント参照)
       'transition-colors',
       'duration-normal',
-      'focus:outline-none',
-      'focus:ring-1',
-      'focus:ring-inset',
+      'focus-ring', // 外側 2px＋すき間 2px。枠線の色は変えない (AGENTS §3-2「フォーカスの規則」)
       'w-full',
       disabled ? 'opacity-disabled cursor-not-allowed bg-surface-disabled' : '',
       sizeStyles,

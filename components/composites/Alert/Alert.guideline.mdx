@@ -180,7 +180,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **コントラスト**: variant ごとの背景 (`surface.X-muted`) と文字 (`onSurface.X`) の組み合わせで WCAG AA を満たす設計
 - **閉じるボタン**:
   - `aria-label="閉じる"` を必ず付与 (icon-only の SR 文言)
-  - フォーカスリングは `focus-visible:ring-focus` + `ring-current` で variant 色に追従
+  - フォーカスの輪は variant の色に合わせず `border.focus` の一色、外側 2px＋すき間 2px (`focus-ring`)。すき間は塗らないので面の色が見える (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
   - `Tab` でフォーカス、`Enter` / `Space` で発火 (button 標準挙動)
 - **キーボード操作**: `Tab` で閉じるボタンと内部 Link / Button にフォーカスが移動。Alert 自体は focusable ではない
 

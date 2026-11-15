@@ -103,10 +103,7 @@ const linkVariants = tv({
     'py-0.5',
     'transition-colors',
     'duration-normal',
-    'focus:outline-none',
-    'focus-visible:ring-focus',
-    'focus-visible:ring-border-focus',
-    'focus-visible:ring-offset-focus',
+    'focus-ring', // 外側 2px＋すき間 2px (AGENTS §3-2「フォーカスの規則」)
   ],
   variants: {
     color: {

@@ -128,6 +128,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 - **WAI-ARIA APG Menu Button 準拠**: トリガー `aria-haspopup="menu"` / `aria-expanded` / `aria-controls`、パネル `role="menu"`、各項目 `role="menuitem"`
 - **キーボード操作**: 開くと最初の有効項目へフォーカス。`↑` `↓` で項目移動 (disabled をスキップ)、`Home` / `End` で先頭 / 末尾、`Enter` / `Space` で実行、`Esc` / `Tab` で閉じて trigger にフォーカスを戻す
+- **フォーカスの輪**: 項目のフォーカスは輪だけ (内側 2px、`focus-ring-inset`、キーボードのときだけ)。塗りはホバーだけで、ホバーと見分けが付く (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **typeahead**: 項目名の先頭文字を入力すると一致項目へジャンプ (`label` が文字列でない場合は `textValue` を指定)
 - **roving tabindex**: アクティブな項目のみ `tabIndex=0`。メニュー全体で Tab 1 ストップ
 - **light-dismiss**: native `popover="auto"` により外側クリック / Esc で閉じる

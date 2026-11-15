@@ -110,7 +110,7 @@ type _InternalInputProps = InputBaseProps & {
  *
  * - base: 全 variant 共通 (border / bg / placeholder / transition / focus / disabled)
  * - variants.size: 高さ + テキストサイズ (パディングは compound で決定)
- * - variants.error: 通常 (border-border) vs エラー (border-error + bg-error-muted + focus 色)
+ * - variants.error: 通常 (border-border) vs エラー (border-error + bg-error-muted)
  * - variants.fullWidth: w-full の付与
  * - variants.hasLeadingIcon / hasTrailingIcon: padding 計算用 (見た目に直接影響しない)
  * - compoundVariants: size × hasLeadingIcon / hasTrailingIcon で左右の padding を決定
@@ -124,25 +124,12 @@ const inputVariants = tv({
     'bg-surface',
     'text-onSurface',
     'placeholder:text-onSurface-subtle',
-    // transition-colors のみ (transition-all だと box-shadow も transition 対象になり、
-    // CSS の `inset` キーワードが discrete (連続補間不可) なため inset ring が
-    // 「一瞬 outside + offset gap」を経由して切り替わるチラつきが出る)。
-    // border 色は smooth、inset ring は瞬時に出る挙動が最もクリーン
     'transition-colors',
     'duration-normal',
-    'focus:outline-none',
-    // input/textarea/select の focus 表現は **border 色変化 + inset ring** の組合せ。
-    // - border-width は 1px 固定 (focus で変えない) → layout/height シフト一切なし
-    // - focus で内側に 1px の ring (ring-1 + ring-inset) を追加 → 視覚的に 2px の
-    //   太さ感が出て色変化と合わせて視認性向上
-    // - outer ring (offset 付き) は使わない:
-    //   - Material Design 3 / Carbon / Polaris 等の主流 DS と同じパターン
-    //   - Chrome の UA heuristic で input click が focus-visible マッチする問題を回避
-    // - 色覚多様性配慮: border-border-focus は WCAG 1.4.11 (3:1) を満たす semantic 色
-    // (Button / Radio / Switch 等の **border を持たない or 小さな塗り図形** な
-    //  component は引き続き outer ring を使う、要素の構造に応じた使い分け)
-    'focus:ring-1',
-    'focus:ring-inset',
+    // フォーカス: ほかの部品と同じ「外側 2px＋すき間 2px」。枠線の色は変えない (エラーの赤い枠線と輪が別々に見える)。
+    // 文字の入力欄はブラウザがクリックでも :focus-visible にするので、クリックでも出る。
+    // 規則の正本は AGENTS §3-2「フォーカスの規則」(DDR-2 #131)
+    'focus-ring',
     'disabled:opacity-disabled',
     'disabled:cursor-not-allowed',
     'disabled:bg-surface-disabled',
@@ -154,8 +141,8 @@ const inputVariants = tv({
       lg: 'h-14 type-body',
     },
     error: {
-      true:  'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus',
+      true:  'border-border-error-strong bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong',
     },
     fullWidth: {
       true:  'w-full',

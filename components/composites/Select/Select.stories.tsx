@@ -74,9 +74,8 @@ export const Playground: Story = {
 
 export const Overview: Story = {
   parameters: {
-    // Select は focus-visible でなく focus: で ring を出す (Input.tsx と同方式) → pseudo は focus を強制
     pseudo: {
-      focus: ['#sel-focus select'],
+      focusVisible: ['#sel-focus select'],
     },
     docs: {
       description: {
@@ -130,7 +129,7 @@ export const Overview: Story = {
               <option value="jp">日本</option>
             </Select>
           </Caption>
-          <Caption text="Focus (pseudo 強制、focus: で border + inset ring)">
+          <Caption text="Focus (pseudo 強制)">
             <div id="sel-focus">
               <Select label="フォーカス中" placeholder="選択...">
                 {prefectures.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}

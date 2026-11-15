@@ -129,7 +129,9 @@ export const Accordion = ({
               aria-disabled={item.disabled}
               disabled={item.disabled}
               onClick={() => !item.disabled && toggle(item.id)}
-              className="w-full flex items-center gap-3 p-4 text-left hover:bg-state-hover-primary transition-colors disabled:opacity-disabled disabled:cursor-not-allowed focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus focus-visible:ring-inset"
+              // フォーカス: 項目の枠 (rounded-md overflow-hidden) の中に詰まっているので内側 2px。
+              // 輪の角が枠の丸みで欠けないよう、枠の内側の角丸に沿わせる (開いているときは上の 2 隅だけ)。AGENTS §3-2「フォーカスの規則」
+              className="w-full flex items-center gap-3 p-4 text-left hover:bg-state-hover-primary transition-colors disabled:opacity-disabled disabled:cursor-not-allowed focus-ring-inset rounded-inner-md data-[state=open]:rounded-b-none"
             >
               <Icon
                 name={isOpen ? 'expand_less' : 'expand_more'}

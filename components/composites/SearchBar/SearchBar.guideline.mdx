@@ -172,7 +172,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   - `Escape`: 内容クリア + blur
   - browser 標準の編集操作
 - **クリアボタンの aria-label**: 「検索をクリア」固定
-- **focus 表現**: border 色変化 + inset ring (input ベースの form control 共通パターン)
+- **フォーカスの輪**: 入力欄は外側 2px＋すき間 2px (`focus-ring`、枠線の色は変えない。文字の入力欄なのでクリックでも出る)。クリアボタンは入力欄の枠の中なので内側 2px (`focus-ring-inset`) (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **タッチターゲット**: sm (32px) / md (40px) / lg (48px)。lg で WCAG 2.5.5 (44×44px) 達成
 
 ---

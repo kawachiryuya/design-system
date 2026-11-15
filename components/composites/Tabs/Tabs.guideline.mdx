@@ -186,7 +186,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **キーボード操作 (既定 = automatic activation)**: `← → ↑ ↓` 矢印で隣のタブへ移動 = **即時選択** (disabled スキップ)、`Home` / `End` で先頭/末尾、`Enter` / `Space` でも選択
 - **`activationMode="manual"` (遅延ロード panel 向け)**: 矢印移動が即選択だと、panel が遅延ロード / 通信を伴う場合に矢印連打のたび fetch が走る。`activationMode="manual"` にすると矢印は **focus のみ移動**し、`Enter` / `Space` で選択確定する (WAI-ARIA APG の manual activation)。重い panel では manual を推奨
 - **不正な activeId のフォールバック**: controlled で `tabs` に無い `activeId` が来た場合は `tabs[0]` にフォールバック (開発時は console.warn)。全 panel が消える事故を防ぐ
-- **focus ring**: `focus-visible:ring-focus` でキーボード focus 時のみリング表示
+- **フォーカスの輪**: タブは内側 2px (`focus-ring-inset`、タブ列は横スクロールの箱の中で外側の輪は上下が切れるため)。パネルも Tab で止まるので内側 2px を出し、輪と中身が重ならないよう内側に 16px の余白を持つ (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **無効タブ**: native `disabled` 属性のみ付与 (支援技術に「無効」が伝わり、矢印移動・Tab からもスキップされる)
 - **タッチターゲット**: タブの padding は px-4 py-2 (16px+8px)。WCAG 2.5.5 (44×44px) は label の長さ次第。極小ラベルでは余白を追加検討
 

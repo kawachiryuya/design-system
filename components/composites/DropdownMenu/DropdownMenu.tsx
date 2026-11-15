@@ -264,7 +264,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
           // popover で top-layer。UA の中央寄せを打ち消し floating-ui が left/top を設定。
           'fixed inset-auto m-0 min-w-[12rem] max-w-[min(20rem,calc(100vw-2rem))]',
           'bg-surface text-onSurface rounded-md border border-border-subtle shadow-lg',
-          'py-1 focus:outline-none',
+          'py-1',
           className,
         ].filter(Boolean).join(' ')}
       >
@@ -279,12 +279,13 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             onClick={() => selectAt(index)}
             className={[
               'flex w-full items-center gap-2 px-3 py-2 text-left type-supporting transition-colors',
-              'focus:outline-none',
+              // フォーカスは輪だけ (内側 2px、キーボードのときだけ)。塗りはホバーだけ (AGENTS §3-2「フォーカスの規則」)
+              'focus-ring-inset',
               item.disabled
                 ? 'text-onSurface-disabled cursor-not-allowed'
                 : item.destructive
-                  ? 'text-onSurface-error hover:bg-state-hover-error focus:bg-state-hover-error cursor-pointer'
-                  : 'text-onSurface hover:bg-state-hover-primary focus:bg-state-hover-primary cursor-pointer',
+                  ? 'text-onSurface-error hover:bg-state-hover-error cursor-pointer'
+                  : 'text-onSurface hover:bg-state-hover-primary cursor-pointer',
             ].join(' ')}
           >
             {item.icon && <span className="flex-shrink-0 inline-flex">{item.icon}</span>}

@@ -182,7 +182,8 @@ export const Tabs: React.FC<TabsProps> = ({
 
     return [
       'relative px-4 py-2 type-label transition-colors duration-normal',
-      'focus:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus',
+      // タブ列は横スクロールの箱 (overflow-x-auto) の中で、外側の輪は上下が切れるので内側 (AGENTS §3-2「フォーカスの規則」)
+      'focus-ring-inset',
       'whitespace-nowrap',
       tab.disabled
         ? 'text-onSurface-disabled cursor-not-allowed'
@@ -237,7 +238,9 @@ export const Tabs: React.FC<TabsProps> = ({
           aria-labelledby={`${uid}-tab-${tab.id}`}
           hidden={tab.id !== currentId}
           tabIndex={0}
-          className="focus:outline-none pt-4"
+          // パネルは Tab で止まる (#136 で見直し予定)。来たときは内側 2px の輪を出し、
+          // 輪と中身が重ならないよう内側に余白を持たせる (16px = タブの文字と頭がそろう)
+          className="focus-ring-inset p-4"
         >
           {tab.id === currentId && tab.content}
         </div>

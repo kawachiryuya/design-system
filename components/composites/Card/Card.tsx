@@ -188,9 +188,9 @@ export const Card: React.FC<CardProps> & {
     paddingStyles[padding],
     // hover は影でなく、白地の規則どおり brand 8% を重ねる (ホバーの規則 AGENTS §3-2。影は浮いている層の高さ表現にだけ使う)。
     // 下地の shadow (elevated) を消さないよう、inset shadow ではなく after 擬似要素の state layer で重ねる。
-    // focus に ring-offset-focus を追加し Button family と整合。
+    // フォーカスは外側 2px＋すき間 2px (AGENTS §3-2「フォーカスの規則」)。
     isInteractive
-      ? 'relative cursor-pointer after:pointer-events-none after:absolute after:inset-0 after:transition-colors after:duration-normal hover:after:bg-state-hover-primary active:after:bg-state-active-primary focus-visible:outline-none focus-visible:ring-focus focus-visible:ring-border-focus focus-visible:ring-offset-focus'
+      ? 'relative cursor-pointer after:pointer-events-none after:absolute after:inset-0 after:transition-colors after:duration-normal hover:after:bg-state-hover-primary active:after:bg-state-active-primary focus-ring'
       : '',
     isLink ? 'block no-underline text-inherit' : '',
     className,

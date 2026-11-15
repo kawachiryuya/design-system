@@ -95,7 +95,7 @@ type _InternalTextareaProps = TextareaBaseProps & {
 
 /**
  * Textarea のスタイル定義 — `tailwind-variants` で error × fullWidth × resize × disabled を
- * 宣言的に保持。Input と同じ borderr/focus パターンだが、高さは rows 属性で制御するため
+ * 宣言的に保持。Input と同じ border / focus パターンだが、高さは rows 属性で制御するため
  * size variant は持たない。
  */
 const textareaVariants = tv({
@@ -108,18 +108,14 @@ const textareaVariants = tv({
     'px-3',
     'py-2',
     'type-body',
-    // transition-colors のみ (詳細は Input.tsx 同セクションのコメント参照)
     'transition-colors',
     'duration-normal',
-    'focus:outline-none',
-    // focus 表現は border 色変化 + inset ring (詳細は Input.tsx 同セクションのコメント参照)
-    'focus:ring-1',
-    'focus:ring-inset',
+    'focus-ring', // 外側 2px＋すき間 2px。枠線の色は変えない (AGENTS §3-2「フォーカスの規則」)
   ],
   variants: {
     error: {
-      true:  'border-border-error-strong focus:border-border-error-strong focus:ring-border-error bg-surface-error-muted',
-      false: 'border-border-default hover:border-border-strong focus:border-border-focus focus:ring-border-focus bg-surface',
+      true:  'border-border-error-strong bg-surface-error-muted',
+      false: 'border-border-default hover:border-border-strong bg-surface',
     },
     fullWidth: {
       true:  'w-full',

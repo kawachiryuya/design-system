@@ -71,11 +71,11 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
       : 'border-border-default bg-surface text-onSurface hover:bg-state-hover-primary active:bg-state-active-primary';
 
     // h-8 (32px) = Material 3 filter chip 標準値、rounded-md = Polaris 流 (Material 3 の
-    // pill より控えめ、Badge / Button と integrate しやすい)。focus は Input family と
-    // 揃え inset 1px ring (border 色変化 + inset ring で「フォーカス時の厚み」表現)。
+    // pill より控えめ、Badge / Button と integrate しやすい)。フォーカスは外側に輪を出す余地があるので、
+    // ほかの部品と同じ「外側 2px＋すき間 2px」(AGENTS §3-2「フォーカスの規則」)。
     const classes = [
       'inline-flex items-center gap-1 px-3 h-8 rounded-md border type-label transition-colors whitespace-nowrap',
-      'focus:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-border-focus',
+      'focus-ring',
       'disabled:opacity-disabled disabled:cursor-not-allowed',
       stateClasses,
       className,

@@ -3,6 +3,7 @@ import * as AvatarStories from './Avatar.stories';
 import { Avatar } from './Avatar';
 import { DoDontExample } from '@sb-blocks/DoDontExample';
 import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+import { SAMPLE_AVATARS } from '@sb-blocks/sampleImages';
 
 <Meta of={AvatarStories} name="Guideline" />
 
@@ -33,11 +34,11 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="name を必ず指定 (画像があっても)"
   doExample={
-    <Avatar src="https://i.pravatar.cc/150?img=3" name="田中 太郎" />
+    <Avatar src={SAMPLE_AVATARS[0]} name="田中 太郎" />
   }
   doCaption="画像読み込み失敗時のフォールバックでイニシャルが出るうえ、SR では `aria-label` に name が反映される。"
   dontExample={
-    <Avatar src="https://i.pravatar.cc/150?img=3" />
+    <Avatar src={SAMPLE_AVATARS[0]} />
   }
   dontCaption="name 無しだと画像エラー時にプレースホルダーアイコン (汎用) しか出ず、誰のアバターか分からなくなる。SR でも「ユーザーアバター」としか読まれない。"
 />
@@ -113,7 +114,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 **ユーザーカード（avatar + name + email + status）**
 
 <div className="flex items-center gap-3 p-4 rounded-md border border-border-subtle w-64">
-  <Avatar src="https://i.pravatar.cc/150?img=12" name="鈴木 花子" size="md" status="online" />
+  <Avatar src={SAMPLE_AVATARS[1]} name="鈴木 花子" size="md" status="online" />
   <div className="min-w-0">
     <p className="type-label text-onSurface truncate">鈴木 花子</p>
     <p className="type-caption text-onSurface-subtle truncate">suzuki@example.com</p>
@@ -124,9 +125,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 <div className="flex -space-x-3">
   {[
-    { src: 'https://i.pravatar.cc/150?img=1', name: 'Alice' },
-    { src: 'https://i.pravatar.cc/150?img=2', name: 'Bob' },
-    { src: 'https://i.pravatar.cc/150?img=3', name: 'Carol' },
+    { src: SAMPLE_AVATARS[0], name: 'Alice' },
+    { src: SAMPLE_AVATARS[1], name: 'Bob' },
+    { src: SAMPLE_AVATARS[2], name: 'Carol' },
     { name: 'Dave' },
   ].map(({ src, name }) => (
     <Avatar key={name} src={src} name={name} size="sm" className="ring-2 ring-surface" />

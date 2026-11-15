@@ -6,6 +6,9 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
+          // 検討 (DDR の検討ページ) をいちばん上に。検討のプレビューを開く人は検討のページを見に来ていて、
+          // 末尾に置くとスマホではサイドバーの下まで届かず押せなかった (#131)
+          '検討',
           'Introduction',
           'Principles',
           ['Overview', 'Foundation', 'Color', 'Typography', 'Visual', 'Layout', 'Interaction', 'Patterns', '*'],

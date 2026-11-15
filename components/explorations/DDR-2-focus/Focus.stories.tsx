@@ -27,6 +27,7 @@ import {
   Toast,
   ToggleButton,
 } from '../../index';
+import { MOBILE_CSS, PLAN_CSS } from './plan';
 
 /**
  * 検討 (DDR-2): フォーカスの表現は、どの種類の部品にどれを使うか (#131)。
@@ -98,20 +99,22 @@ const Row: React.FC<{
   surface?: string;
   render: () => React.ReactNode;
 }> = ({ name, how, force = 'visible', surface = '', render }) => (
-  <div className="grid grid-cols-[240px_1fr_1fr] gap-6 items-center py-4">
+  <div className="grid grid-cols-1 md:grid-cols-[240px_1fr_1fr] gap-3 md:gap-6 items-center py-4">
     <div className="flex flex-col gap-1">
       <div className="text-sm font-bold text-onSurface">{name}</div>
       {how && <div className="text-xs text-onSurface-subtle">{how}</div>}
     </div>
-    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')}>{render()}</div>
-    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')} data-force-focus={force}>
+    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')} data-col="通常">
+      {render()}
+    </div>
+    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')} data-col="フォーカス" data-force-focus={force}>
       {render()}
     </div>
   </div>
 );
 
 const Header: React.FC<{ third?: string }> = ({ third = 'フォーカス (強制表示)' }) => (
-  <div className="grid grid-cols-[240px_1fr_1fr] gap-6 text-xs font-bold text-onSurface-subtle">
+  <div className="hidden md:grid md:grid-cols-[240px_1fr_1fr] gap-6 text-xs font-bold text-onSurface-subtle">
     <div>部品と、コード上の指定</div>
     <div>通常</div>
     <div>{third}</div>
@@ -171,7 +174,8 @@ export const AsIs: Story = {
     pseudo: PSEUDO,
   },
   render: () => (
-    <div className="flex flex-col gap-10 max-w-[1080px] bg-surface p-6">
+    <div className="flex flex-col gap-10 max-w-[1080px] bg-surface p-4 md:p-6">
+      <style>{MOBILE_CSS}</style>
       <div className="flex flex-col gap-2">
         <h1 className="type-item-title text-onSurface">DDR-2 フォーカス：今のまま</h1>
         <p className="text-sm text-onSurface-subtle">
@@ -445,7 +449,7 @@ export const AsIs: Story = {
         title="ホバーとの重なり"
         note="DDR-1 で決めた「小さい部品のホバーは外側 4px の輪」と、フォーカスの輪が同時に出たとき。右の列はホバーとフォーカスを同時に強制している。"
       >
-        <div className="grid grid-cols-[240px_1fr_1fr_1fr] gap-6 items-center py-4 text-xs font-bold text-onSurface-subtle">
+        <div className="hidden md:grid md:grid-cols-[240px_1fr_1fr_1fr] gap-6 items-center py-4 text-xs font-bold text-onSurface-subtle">
           <div />
           <div>ホバーだけ</div>
           <div>フォーカスだけ</div>
@@ -456,15 +460,15 @@ export const AsIs: Story = {
           { name: 'Radio', render: () => <Radio name="ddr2-radio-hover" value="a" label="選択肢" /> },
           { name: 'Switch', render: () => <Switch label="通知" checked={false} onChange={noop} /> },
         ].map((r) => (
-          <div key={r.name} className="grid grid-cols-[240px_1fr_1fr_1fr] gap-6 items-center py-4">
+          <div key={r.name} className="grid grid-cols-1 md:grid-cols-[240px_1fr_1fr_1fr] gap-3 md:gap-6 items-center py-4">
             <div className="text-sm font-bold text-onSurface">{r.name}</div>
-            <div className="p-3" data-force-hover>
+            <div className="p-3" data-col="ホバーだけ" data-force-hover>
               {r.render()}
             </div>
-            <div className="p-3" data-force-focus="visible">
+            <div className="p-3" data-col="フォーカスだけ" data-force-focus="visible">
               {r.render()}
             </div>
-            <div className="p-3" data-force-hover data-force-focus="visible">
+            <div className="p-3" data-col="ホバー＋フォーカス" data-force-hover data-force-focus="visible">
               {r.render()}
             </div>
           </div>
@@ -475,23 +479,23 @@ export const AsIs: Story = {
         title="Accordion の拡大 (3 の形を確かめる)"
         note="CSS の zoom で拡大している (上段 2 倍、下段 4 倍)。コードどおりなら「内側に白 2px、そのさらに内側に 2px」。"
       >
-        <div className="grid grid-cols-2 gap-6 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
           <div className="flex flex-col gap-2">
             <div className="text-xs font-bold text-onSurface-subtle">通常</div>
-            <div className="w-[220px]" style={{ zoom: 2 }}>
+            <div className="w-[150px] md:w-[220px]" style={{ zoom: 2 }}>
               <Accordion items={[{ id: 'z', title: 'よくある質問', content: '中身' }]} />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <div className="text-xs font-bold text-onSurface-subtle">フォーカス (強制表示)</div>
-            <div className="w-[220px]" style={{ zoom: 2 }} data-force-focus="visible">
+            <div className="w-[150px] md:w-[220px]" style={{ zoom: 2 }} data-force-focus="visible">
               <Accordion items={[{ id: 'z', title: 'よくある質問', content: '中身' }]} />
             </div>
           </div>
         </div>
         <div className="flex flex-col gap-2 py-4">
           <div className="text-xs font-bold text-onSurface-subtle">フォーカス (左上の角を 4 倍)</div>
-          <div className="w-[480px] h-[160px] overflow-hidden border border-border-subtle">
+          <div className="w-full max-w-[480px] h-[160px] overflow-hidden border border-border-subtle">
             <div className="w-[220px]" style={{ zoom: 4 }} data-force-focus="visible">
               <Accordion items={[{ id: 'z', title: 'よくある質問', content: '中身' }]} />
             </div>
@@ -589,83 +593,8 @@ export const AsIsSplitPane: Story = {
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 作り分ける: 案 (#131 「作り分ける案」の表の 1・2・4・5・6・7)。
-//
-// 規則: 輪は必ず 2px 以上。外側に輪を出す余地があれば「外側 2px＋すき間 2px」、無ければ「内側 2px」。
-// 輪の色は border.focus の一色 (濃い塗りの内側に出す輪だけ白)。すき間は塗らず、下の面の色が見える。
-// フォーカスは輪だけ、ホバーは塗りだけ。フォーカスが来る所には必ず輪を出す。
-//
-// 本体の部品には手を入れず、案の列に <style> で上書き CSS を当てて見せる (DDR-1 #123 と同じ、検討用の仮実装)。
-// 輪は box-shadow (ring) でなく outline で描く: outline のすき間は塗られない (下の面が見える) ので
-// 「すき間を塗らない」がそのまま実現でき、box-shadow のホバー (小さい部品の外側 4px) とも別の層になる。
-// 部品が付けている ring は --tw-ring-* を空にして消す (ホバーの影 --tw-shadow は残る)。
-// ─────────────────────────────────────────────────────────────────────────────
 
-/** 状態セレクタを、本物の擬似クラス版と addon の強制クラス版の両方に展開する。 */
-const on = (sels: string[], state: 'focus-visible' | 'focus', suffix = '') =>
-  [...sels.map((s) => `${s}:${state}${suffix}`), ...sels.map((s) => `${s}.pseudo-${state}${suffix}`)].join(',\n');
-
-const NO_RING = '--tw-ring-shadow: 0 0 #0000 !important; --tw-ring-offset-shadow: 0 0 #0000 !important;';
-const OUTER = `outline: 2px solid var(--plan-ring) !important; outline-offset: 2px !important; ${NO_RING}`;
-const INNER = `outline: 2px solid var(--plan-ring) !important; outline-offset: -2px !important; ${NO_RING}`;
-
-/** 文字を入力する欄 (Checkbox / Radio を除く)。 */
-const FIELDS = (scope: string) => [
-  `${scope} input:not([type="checkbox"]):not([type="radio"])`,
-  `${scope} textarea`,
-  `${scope} select`,
-];
-
-const PLAN_CSS = [
-  // 輪の色。既定は border.focus。エラーの色の比較列だけ赤に戻す
-  `[data-plan] { --plan-ring: var(--color-border-focus); }`,
-  `[data-plan][data-plan-color="red"] { --plan-ring: var(--color-border-error-strong); }`,
-
-  // ── 外側に余地がある → 外側 2px＋すき間 2px (キーボードのときだけ) ──
-  `${on(['[data-plan] a', '[data-plan] button', '[data-plan] input[type="checkbox"]', '[data-plan] input[type="radio"]', '[data-plan] [role="button"]'], 'focus-visible')} { ${OUTER} }`,
-
-  // ── 外側に余地が無い (枠の中に詰まっている・端で切れる) → 内側 2px (キーボードのときだけ) ──
-  `${on(
-    [
-      '[data-plan][data-part="number"] button',
-      '[data-plan][data-part="accordion"] button',
-      '[data-plan][data-part="search"] button',
-      '[data-plan] [role="radiogroup"] [role="radio"]',
-      '[data-plan] [role="tab"]',
-      '[data-plan] [role="menuitem"]',
-    ],
-    'focus-visible'
-  )} { ${INNER} }`,
-  // フォーカスが来るだけの領域にも輪 (内側 2px、キーボードのときだけ)
-  `${on(['[data-plan] [role="tabpanel"]', '[data-plan][data-part="splitpane"] [tabindex="0"]', '[data-plan] [role="dialog"]'], 'focus-visible')} { ${INNER} }`,
-  // 濃い塗りの内側に出す輪だけ白 (SegmentedControl の選択中)。-2px だと輪が部品の端に乗り、白地と溶けて
-  // 「部品が小さくなった」ように見えるので、塗りが外側に 2px 残るよう -4px に下げる
-  `${on(['[data-plan] [role="radiogroup"] [role="radio"][aria-checked="true"]'], 'focus-visible')} { outline-color: var(--color-surface-default) !important; outline-offset: -4px !important; }`,
-
-  // ── メニューの項目: フォーカスの塗りを外す (塗りはホバーだけ) ──
-  `[data-plan] [role="menuitem"]:focus:not(:hover), [data-plan] [role="menuitem"].pseudo-focus:not(.pseudo-hover) { background-color: transparent !important; }`,
-
-  // ── 入力欄 案 A: 軸どおり外側 2px＋すき間 2px。クリックでも出す (:focus)。枠線は変えない ──
-  `${on([...FIELDS('[data-plan="p"]'), ...FIELDS('[data-plan="a"]')], 'focus')} { ${OUTER} border-color: var(--color-border-default) !important; }`,
-  `${on([...FIELDS('[data-plan="p"]'), ...FIELDS('[data-plan="a"]')], 'focus', '[aria-invalid="true"]')} { border-color: var(--color-border-error-strong) !important; }`,
-
-  // ── 入力欄 案 B: 入力欄だけ例外。内側 2px＋枠線の色 (エラーのときは枠線は赤のまま) ──
-  `${on(FIELDS('[data-plan="b"]'), 'focus')} { outline: none !important; ${NO_RING} box-shadow: inset 0 0 0 2px var(--plan-ring) !important; border-color: var(--plan-ring) !important; }`,
-  `${on(FIELDS('[data-plan="b"]'), 'focus', '[aria-invalid="true"]')} { border-color: var(--color-border-error-strong) !important; }`,
-
-  // ── 内側の輪の角を、枠の角丸に合わせる版 (data-corner="round") ──
-  // Accordion: 項目の枠は rounded-md (8px) + overflow-hidden。見出しの button を 8 - 1 (枠線) = 7px に
-  `[data-corner="round"][data-part="accordion"] button[data-state="closed"] { border-radius: calc(var(--radius-md) - 1px); }`,
-  `[data-corner="round"][data-part="accordion"] button[data-state="open"] { border-radius: calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0 0; }`,
-  // NumberInput: 枠は rounded-sm (4px)。左端・右端の button を 4 - 1 = 3px に
-  `[data-corner="round"][data-part="number"] button:first-of-type { border-radius: calc(var(--radius-sm) - 1px) 0 0 calc(var(--radius-sm) - 1px); }`,
-  `[data-corner="round"][data-part="number"] button:last-of-type { border-radius: 0 calc(var(--radius-sm) - 1px) calc(var(--radius-sm) - 1px) 0; }`,
-  // Tabs のパネル: 枠は無い。輪だけ rounded-sm に
-  `[data-corner="round"] [role="tabpanel"] { border-radius: var(--radius-sm); }`,
-].join('\n');
-
-const PlanStyle: React.FC = () => <style>{PLAN_CSS}</style>;
+const PlanStyle: React.FC = () => <style>{PLAN_CSS + '\n' + MOBILE_CSS}</style>;
 
 const PLAN_PSEUDO = {
   focusVisible: [
@@ -701,7 +630,7 @@ const PlanRow: React.FC<{
   surface?: string;
   render: () => React.ReactNode;
 }> = ({ name, change, how, force = 'visible', part, plan = 'p', surface = '', render }) => (
-  <div className="grid grid-cols-[220px_1fr_1fr_1fr] gap-6 items-center py-4">
+  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr_1fr_1fr] gap-3 md:gap-6 items-center py-4">
     <div className="flex flex-col gap-1">
       <div className="text-sm font-bold text-onSurface">{name}</div>
       <div className={['text-xs font-bold', change === '変わる' ? 'text-onSurface-primary' : 'text-onSurface-subtle'].join(' ')}>
@@ -709,18 +638,26 @@ const PlanRow: React.FC<{
       </div>
       {how && <div className="text-xs text-onSurface-subtle">{how}</div>}
     </div>
-    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')}>{render()}</div>
-    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')} data-force-focus={force}>
+    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')} data-col="通常">
       {render()}
     </div>
-    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')} data-plan={plan} data-part={part} data-force-focus={force}>
+    <div className={['min-w-0 p-3 rounded-sm', surface].join(' ')} data-col="今のフォーカス" data-force-focus={force}>
+      {render()}
+    </div>
+    <div
+      className={['min-w-0 p-3 rounded-sm', surface].join(' ')}
+      data-col="案のフォーカス"
+      data-plan={plan}
+      data-part={part}
+      data-force-focus={force}
+    >
       {render()}
     </div>
   </div>
 );
 
 const PlanHeader: React.FC<{ cols?: [string, string, string] }> = ({ cols = ['通常', '今のフォーカス', '案のフォーカス'] }) => (
-  <div className="grid grid-cols-[220px_1fr_1fr_1fr] gap-6 text-xs font-bold text-onSurface-subtle">
+  <div className="hidden md:grid md:grid-cols-[220px_1fr_1fr_1fr] gap-6 text-xs font-bold text-onSurface-subtle">
     <div>部品と、案での変化</div>
     {cols.map((c) => (
       <div key={c}>{c}</div>
@@ -756,7 +693,7 @@ export const Plan: Story = {
     pseudo: PLAN_PSEUDO,
   },
   render: () => (
-    <div className="flex flex-col gap-10 max-w-[1240px] bg-surface p-6">
+    <div className="flex flex-col gap-10 max-w-[1240px] bg-surface p-4 md:p-6">
       <PlanStyle />
       <div className="flex flex-col gap-2">
         <h1 className="type-item-title text-onSurface">DDR-2 フォーカス：案</h1>
@@ -1012,7 +949,7 @@ export const Plan: Story = {
             },
             { name: 'Tabs のパネル', part: undefined, force: 'tabpanel' as Force, render: () => <Tabs ariaLabel="Tabs" defaultActiveId="a" tabs={TABS} /> },
           ].map((r) => (
-            <div key={r.name} className="grid grid-cols-[220px_1fr_1fr] gap-6 items-center py-4">
+            <div key={r.name} className="grid grid-cols-1 md:grid-cols-[220px_1fr_1fr] gap-3 md:gap-6 items-center py-4">
               <div className="text-sm font-bold text-onSurface">{r.name}</div>
               <div className="flex flex-col gap-2">
                 <div className="text-xs text-onSurface-subtle">四角のまま</div>
@@ -1028,10 +965,10 @@ export const Plan: Story = {
               </div>
             </div>
           ))}
-          <div className="grid grid-cols-2 gap-6 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
             <div className="flex flex-col gap-2">
               <div className="text-xs font-bold text-onSurface-subtle">Accordion 四角のまま (左上の角を 4 倍)</div>
-              <div className="w-[480px] h-[160px] overflow-hidden border border-border-subtle">
+              <div className="w-full max-w-[480px] h-[160px] overflow-hidden border border-border-subtle">
                 <div className="w-[220px]" style={{ zoom: 4 }} data-plan="p" data-part="accordion" data-force-focus="visible">
                   <Accordion items={[{ id: 'z', title: 'よくある質問', content: '中身' }]} />
                 </div>
@@ -1039,7 +976,7 @@ export const Plan: Story = {
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-xs font-bold text-onSurface-subtle">Accordion 角丸に合わせる (左上の角を 4 倍)</div>
-              <div className="w-[480px] h-[160px] overflow-hidden border border-border-subtle">
+              <div className="w-full max-w-[480px] h-[160px] overflow-hidden border border-border-subtle">
                 <div className="w-[220px]" style={{ zoom: 4 }} data-plan="p" data-part="accordion" data-corner="round" data-force-focus="visible">
                   <Accordion items={[{ id: 'z', title: 'よくある質問', content: '中身' }]} />
                 </div>
@@ -1077,7 +1014,7 @@ export const Plan: Story = {
         title="ホバーとの重なり (案)"
         note="何も足さない。フォーカスの輪 (outline) が上。すき間を塗らないので、すき間にホバーの薄い色 (外側 4px の輪の内側 2px) が見える。"
       >
-        <div className="grid grid-cols-[220px_1fr_1fr_1fr_1fr] gap-6 items-center py-4 text-xs font-bold text-onSurface-subtle">
+        <div className="hidden md:grid md:grid-cols-[220px_1fr_1fr_1fr_1fr] gap-6 items-center py-4 text-xs font-bold text-onSurface-subtle">
           <div />
           <div>今：ホバー＋フォーカス</div>
           <div>案：ホバーだけ</div>
@@ -1089,18 +1026,18 @@ export const Plan: Story = {
           { name: 'Radio', render: () => <Radio name="ddr2-plan-radio-hover" value="a" label="選択肢" /> },
           { name: 'Switch', render: () => <Switch label="通知" checked={false} onChange={noop} /> },
         ].map((r) => (
-          <div key={r.name} className="grid grid-cols-[220px_1fr_1fr_1fr_1fr] gap-6 items-center py-4">
+          <div key={r.name} className="grid grid-cols-1 md:grid-cols-[220px_1fr_1fr_1fr_1fr] gap-3 md:gap-6 items-center py-4">
             <div className="text-sm font-bold text-onSurface">{r.name}</div>
-            <div className="p-3" data-force-hover data-force-focus="visible">
+            <div className="p-3" data-col="今：ホバー＋フォーカス" data-force-hover data-force-focus="visible">
               {r.render()}
             </div>
-            <div className="p-3" data-plan="p" data-force-hover>
+            <div className="p-3" data-col="案：ホバーだけ" data-plan="p" data-force-hover>
               {r.render()}
             </div>
-            <div className="p-3" data-plan="p" data-force-focus="visible">
+            <div className="p-3" data-col="案：フォーカスだけ" data-plan="p" data-force-focus="visible">
               {r.render()}
             </div>
-            <div className="p-3" data-plan="p" data-force-hover data-force-focus="visible">
+            <div className="p-3" data-col="案：ホバー＋フォーカス" data-plan="p" data-force-hover data-force-focus="visible">
               {r.render()}
             </div>
           </div>
@@ -1196,14 +1133,14 @@ export const PlanFields: Story = {
     pseudo: PLAN_PSEUDO,
   },
   render: () => (
-    <div className="flex flex-col gap-10 max-w-[960px] bg-surface p-6">
+    <div className="flex flex-col gap-10 max-w-[960px] bg-surface p-4 md:p-6">
       <PlanStyle />
       {(['name', 'email'] as const).map((target) => (
         <section key={target} className="flex flex-col gap-4">
           <h2 className="type-body font-bold text-onSurface">
             {target === 'name' ? 'ふつうの欄 (氏名) にフォーカス' : 'エラーの欄 (メールアドレス) にフォーカス'}
           </h2>
-          <div className="grid grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div className="flex flex-col gap-3">
               <div className="text-xs font-bold text-onSurface-subtle">案 A：外側 2px＋すき間 2px (枠線は変えない)</div>
               <div data-plan="a">
@@ -1270,20 +1207,20 @@ export const PlanErrorColor: Story = {
       },
     ];
     return (
-      <div className="flex flex-col gap-4 max-w-[1240px] bg-surface p-6">
+      <div className="flex flex-col gap-4 max-w-[1240px] bg-surface p-4 md:p-6">
         <PlanStyle />
         <PlanHeader cols={['今のまま (赤)', '案の形・赤', '案の形・border.focus']} />
         <div className="flex flex-col divide-y divide-border-subtle border-y border-border-subtle">
           {rows.map((r) => (
-            <div key={r.name} className="grid grid-cols-[220px_1fr_1fr_1fr] gap-6 items-center py-4">
+            <div key={r.name} className="grid grid-cols-1 md:grid-cols-[220px_1fr_1fr_1fr] gap-3 md:gap-6 items-center py-4">
               <div className="text-sm font-bold text-onSurface">{r.name}</div>
-              <div className="p-3" data-force-focus={r.force}>
+              <div className="p-3" data-col="今のまま (赤)" data-force-focus={r.force}>
                 {r.render()}
               </div>
-              <div className="p-3" data-plan={r.plan} data-plan-color="red" data-force-focus={r.force}>
+              <div className="p-3" data-col="案の形・赤" data-plan={r.plan} data-plan-color="red" data-force-focus={r.force}>
                 {r.render()}
               </div>
-              <div className="p-3" data-plan={r.plan} data-force-focus={r.force}>
+              <div className="p-3" data-col="案の形・border.focus" data-plan={r.plan} data-force-focus={r.force}>
                 {r.render()}
               </div>
             </div>

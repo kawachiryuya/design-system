@@ -339,7 +339,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - **軸が複数あれば story を分ける**:
   - 例: Typography → `FontSizes` / `FontWeights` / `LineHeights` / `LetterSpacings` / `FontFamilies` の 5 story
   - 例: SemanticColors → `Background` / `Surface` / `Text` / `Border` / `State` / `ContainerPairs` の 6 story
-- **軸が 1 つは 1 story** (`Catalog` 等の名前で 1 つにする)
+- **軸が 1 つは 1 story** (`Catalog` という名前で 1 つにする。どのページでも同じ名前で一覧にたどり着けるように)
   - 例: Spacing / Radius / ZIndex / Opacity / Breakpoints / Colors (Primitive)
 - **特殊な比較 view** は追加 story として持ってよい (例: SemanticColors の `Container Pairs` は機能色の組合せパターン)
 - 各 story に `parameters.docs.description.story` で 1 文の説明 (`.guideline.mdx` の Story 概要欄にも表示される)

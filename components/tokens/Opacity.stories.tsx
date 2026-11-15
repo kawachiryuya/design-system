@@ -21,8 +21,7 @@ const ENTRIES: Entry[] = [
   { key: 'spinner-spin',   value: 0.75, description: 'spinner の回転アーク',                    usedBy: 'Button (loading) / Spinner' },
 ];
 
-export const Values: Story = {
-  name: 'Semantic Opacity',
+export const Catalog: Story = {
   parameters: {
     docs: {
       description: {

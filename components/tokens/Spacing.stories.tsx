@@ -25,7 +25,7 @@ const SPACING_SCALE: SpacingEntry[] = Object.entries(spacingToken.spacing)
   }))
   .sort((a, b) => parseFloat(a.key) - parseFloat(b.key));
 
-export const Scale: Story = {
+export const Catalog: Story = {
   parameters: {
     docs: {
       description: {

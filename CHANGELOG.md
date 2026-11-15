@@ -17,6 +17,17 @@
 
 ### ⚠ BREAKING CHANGES
 
+- **Principles の Iconography / Imagery を `Principles/Typography/` から `Principles/Visual/` に移した (Storybook URL の変更、silent break、#125 D-6)**: アイコンと画像は文字組みではなく、Color や Typography と並ぶ見た目の要素のため。サイドバーでは Typography の後に `Visual` 群を置いた。リポジトリ内のリンクは追従済み
+  - `?path=/docs/principles-typography-iconography--docs` → `principles-visual-iconography--docs`
+  - `?path=/docs/principles-typography-imagery--docs` → `principles-visual-imagery--docs`
+  - Migration: `sed -i -e 's/principles-typography-iconography--/principles-visual-iconography--/g' -e 's/principles-typography-imagery--/principles-visual-imagery--/g' <files>`
+- **Tokens の 5 つの story 名を `Catalog` にそろえた (Storybook URL の変更、silent break、#125 D-3)**: AGENTS.md §3-6 の「軸が 1 つなら `Catalog`」に合わせた。旧 URL は無効になる。リポジトリ内のリンクは追従済み。Shadows (`Elevations` / `TokenValues`) は軸が 2 つなので今のまま
+  - `?path=/story/tokens-breakpoints--scale` → `tokens-breakpoints--catalog`
+  - `?path=/story/tokens-spacing--scale` → `tokens-spacing--catalog`
+  - `?path=/story/tokens-radius--border-radius` → `tokens-radius--catalog`
+  - `?path=/story/tokens-z-index--layers` → `tokens-z-index--catalog`
+  - `?path=/story/tokens-opacity--values` → `tokens-opacity--catalog`
+  - Migration: `sed -i -e 's/tokens-breakpoints--scale/tokens-breakpoints--catalog/g' -e 's/tokens-spacing--scale/tokens-spacing--catalog/g' -e 's/tokens-radius--border-radius/tokens-radius--catalog/g' -e 's/tokens-z-index--layers/tokens-z-index--catalog/g' -e 's/tokens-opacity--values/tokens-opacity--catalog/g' <files>`
 - **primitive `neutral.400` を #A3A3A3 → #8C8C8C に (視覚変化、#109 Color-5)**: `surface.neutral` (Switch off / Avatar offline / Badge dot) と `border.strong` (Checkbox / Radio の未選択の枠、Input 等の hover 枠、Badge outline neutral) が参照する段で、「状態を示す塗り」「常時表示の部品境界」として WCAG 1.4.11 の 3:1 が要るが 2.5:1 で不合格だった。400 を「UI の境界が成立する最も明るい灰色」(3.36:1) に合わせ、500 (#666、文字用 5.7:1) は据え置き。`onSurface.disabled` (neutral.400) も同じ分だけ濃くなる (免除対象、可読性は上がる)。`check:contrast` に non-text ペアとして登録し再発を防ぐ。コード変更は不要
 - **ホバー表現の統一 (視覚変化、#109 DDR-1)**:
   - **`state.hover-primary` / `active-primary` の色が teal.700 → teal.600 由来に** (primary と同じ色。少し明るい薄緑)

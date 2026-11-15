@@ -24,7 +24,7 @@ const LAYERS: Layer[] = [
   { key: 'tooltip',  value: 1600, description: 'tooltip (最後に被さる軽量説明)',                 example: 'icon-only Button の説明 tooltip' },
 ];
 
-export const Layers: Story = {
+export const Catalog: Story = {
   parameters: {
     docs: {
       description: {

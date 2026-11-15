@@ -23,7 +23,7 @@ const RADII: RadiusEntry[] = Object.entries(radiusToken.radius).map(
   }),
 );
 
-export const BorderRadius: Story = {
+export const Catalog: Story = {
   parameters: {
     docs: {
       description: {

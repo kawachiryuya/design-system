@@ -8,7 +8,7 @@ const preview: Preview = {
         order: [
           'Introduction',
           'Principles',
-          ['Overview', 'Foundation', 'Color', 'Typography', 'Layout', 'Interaction', 'Patterns', '*'],
+          ['Overview', 'Foundation', 'Color', 'Typography', 'Visual', 'Layout', 'Interaction', 'Patterns', '*'],
           'Tokens',
           [
             'Overview',

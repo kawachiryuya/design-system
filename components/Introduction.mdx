@@ -14,7 +14,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 初めて見る方は、自分のロールの行から読み始めてください。
 
-- **PM / ディレクター**：まず [Primitives 一覧](?path=/docs/primitives-overview--docs) でどんな部品が揃っているかを把握。サイドバーの **Primitives** / **Composites** カテゴリが全コンポーネントの一覧です。
+- **PM / ディレクター**：まず [Primitives 一覧](?path=/docs/primitives-overview--docs) と [Composites 一覧](?path=/docs/composites-overview--docs) でどんな部品が揃っているかを把握。サイドバーの **Primitives** / **Composites** カテゴリが全コンポーネントの一覧です。
 - **デザイナー**：[Tokens](?path=/docs/tokens-overview--docs) で色・タイポグラフィ・余白の設計値を確認し、各コンポーネントの **Guideline** ([例: Button](?path=/docs/primitives-button--guideline)) の Do / Don't で「いつ使う / 使わない」を掴む。
 - **エンジニア**：下の「Product 側で使う際の setup」で導入手順を、「設計思想：Primitives / Composites と依存ルール」で import 制約を確認。実装規約の詳細はリポジトリ直下の `AGENTS.md`。
 
@@ -36,11 +36,11 @@ import { Meta } from '@storybook/addon-docs/blocks';
     </tr>
     <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Primitives</td>
-      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Button・Input・Badge・Label・VisuallyHidden・Stack・Cluster など、単一HTML要素のラッパーまたは Layout primitive（16コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Button・Input・Badge・Label・VisuallyHidden・Stack・Cluster など、単一HTML要素のラッパーまたは Layout primitive（17コンポーネント）</td>
     </tr>
     <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Composites</td>
-      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Card・Tabs・Modal・Toast・CheckboxGroup・AppShell・TwoColumn など、複数要素を組み合わせた複合コンポーネント（23コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Card・Tabs・Modal・Toast・CheckboxGroup・AppShell・TwoColumn など、複数要素を組み合わせた複合コンポーネント（28コンポーネント）</td>
     </tr>
     <tr>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>[Product名]</td>
@@ -153,8 +153,16 @@ module.exports = {
 
 ```css
 :root {
-  /* brand の色を切り替え (テーマ契約は semantic 層。塗りは surface.primary) */
-  --color-surface-primary: #5B4C99;
+  /* brand の色を切り替え (テーマ契約は semantic 層)。
+     brand に関わる semantic をそろえて上書きする。1 つだけ (例: surface.primary) を
+     上書きすると、そこだけが変わり、残りは既定の teal のまま */
+  --color-surface-primary:       #5B4C99;  /* 塗り (Primary Button 等) */
+  --color-border-primary-strong: #5B4C99;  /* brand の枠線 (塗りと同じ色) */
+  --color-surface-primary-muted: #EEEAFB;  /* brand の薄い面 */
+  --color-on-surface-primary:    #47397A;  /* 白地のリンク・CTA の文字 */
+  --color-border-focus:          #47397A;  /* フォーカスリング */
+  --color-state-hover-primary:  color-mix(in srgb, #5B4C99 8%, transparent);   /* 白地のホバー */
+  --color-state-active-primary: color-mix(in srgb, #5B4C99 12%, transparent);  /* 白地の押下 */
 
   /* 大外 max-width を 1440px に */
   --layout-container-max-width-default: 1440px;

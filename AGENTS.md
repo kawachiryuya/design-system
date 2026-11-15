@@ -457,7 +457,7 @@ themeable トークンを 3 層に分け、機械可読な manifest [`tokens/the
 | ファイル | 担当 |
 |---|---|
 | `ComponentName.tsx` | React 実装 + 全 Props の JSDoc + `@example` (autodocs に流れる) |
-| `ComponentName.stories.tsx` | Storybook Story (**標準 7 節構成** — Docs/Playground/Variants/Sizes/States/WithIcon/EdgeCases) |
+| `ComponentName.stories.tsx` | Storybook Story (**固定 3 節** — Playground / Overview / EdgeCases。Docs は `.guideline.mdx` が兼ねる、§5-3) |
 | `ComponentName.guideline.mdx` | **コンポーネントの Docs ページを兼ねる** (`<Meta of={Stories} name="Guideline" />` で autodocs を置き換え)。テキスト中心の設計指針 |
 | `index.ts` | named export + 型 re-export |
 
@@ -507,7 +507,7 @@ Composite → components/composites/ComponentName/
 
 **節省略の判断**: Playground / Overview は**絶対省略しない**。EdgeCases は文脈依存の崩れが無ければ省略可。
 
-> **移行中の旧構造**: 旧モデルは Variants / Sizes / States / WithIcon / WithDescription のカタログ群を個別 VR していた。これらは Overview (視覚) + guideline.mdx (設計根拠の散文) に集約されるため**段階的に削除**する (1 コンポーネント = 1 PR、§7)。story id の削除は silent break (§10-2) なので CHANGELOG に明記。`check:conventions` は移行中の両構造を許容する。
+> **旧構造からの移行は完了済み**: 旧モデルは Variants / Sizes / States / WithIcon / WithDescription のカタログ群を個別 VR していた。全 45 部品 (Primitive 17 / Composite 28) がこの 3 節に移行済みで、旧節名の story は残っていない。新しく作らない。`check:conventions` は移行中に両構造を許容していた名残で、旧節名も順序の検査上は通る。
 
 参考実装: [`components/primitives/Button/Button.stories.tsx`](./components/primitives/Button/Button.stories.tsx)
 
@@ -594,7 +594,7 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 
 - **API 設計**: props の粒度・命名・discriminated union 等が妥当か。native 要素ファーストか (§5-2)
 - **配置判断**: Primitive / Composite の分類が §2 基準に合うか
-- **標準ストーリー構造**: 節 (Playground / Variants / Sizes / States / WithIcon / EdgeCases) の取捨選択と順序が意図に合うか / `Playground` が `args` 全開放か / Variants・Sizes・States が静的一覧で持たれ、States で `parameters.pseudo` が必要十分か / `tags: ['autodocs']` 不使用 (`.guideline.mdx` が Docs を兼ねる)
+- **標準ストーリー構造** (§5-3): `Playground` が `args` 全開放か / `Overview` が props で作れるパターンを 1 枚に凍結した静的一覧で、Hover / Focus / Active の `parameters.pseudo` が必要十分か / `EdgeCases` に Controls で再現できるもの (長文・`fullWidth` 等) を入れていないか / `tags: ['autodocs']` 不使用 (`.guideline.mdx` が Docs を兼ねる)
 - **Docs 内容**: `.guideline.mdx` が `<Meta of={...} name="Guideline" />` + 直下に `<GuidelineToc>` を持ち、`## Do / Don't` に **3〜5 ペア**の `<DoDontExample>` (**本物のコンポーネント**描画) があり、各 `dontCaption` に「なぜ Don't か」の理由があるか / 各 story の `parameters.docs.description.story` 一行説明が的確か
 - **UX 妥当性**: 実際の利用文脈で迷わず使えるか、Do/Don't が現実の誤用を捉えているか
 
@@ -633,7 +633,7 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 
 ## 7. 既存コンポーネントの標準ストーリー構造への移行手順
 
-§5 の規約を **既存コンポーネントに後追いで適用** するときの手順。
+§5 の規約を **既存コンポーネントに後追いで適用** するときの手順。全 45 部品は §5-3 の 3 節構成に移行済みなので、今後は外から持ち込んだ部品を規約に合わせるとき等に使う。
 
 リファレンスは [`components/primitives/Button/`](./components/primitives/Button/) 一式。迷ったら Button をコピーして当てはめる。
 
@@ -653,12 +653,11 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 
 | 観察 | アクション |
 |---|---|
-| variant prop あり | Variants 節を作る |
-| size prop あり | Sizes 節を作る |
-| icon prop あり | WithIcon 節を作る |
-| 非 interactive (Badge / Skeleton 系) | States 節を省略可 (理由を冒頭 docstring に明記) |
+| variant / size / icon prop あり | Overview にそれぞれの並びを置く (variant × state のマトリクス + size + icon) |
+| interactive (押せる・選べる) | Overview に Hover / Focus / Active の列を置く (`parameters.pseudo`) |
+| 非 interactive (Badge / Skeleton 系) | Overview に state の列を置かない |
 | iconOnly のようなテキスト省略モード | discriminated union で `aria-label` を型レベル必須化 ([`Button.tsx`](./components/primitives/Button/Button.tsx) の `ButtonIconOnlyProps` パターン) |
-| 該当 prop なし | 節をまるごと省略 (順序は維持) |
+| Controls で再現できない構造的なケースが無い | EdgeCases を省略 |
 
 ### 7-3. `.tsx` のリファクタ (必要時のみ)
 
@@ -676,9 +675,10 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 - `tags: ['autodocs']` を削除
 - `argTypes.description` を削除 (JSDoc が SSoT)
 - Playground に `play` で最小限の動作テスト (`click → onClick.toHaveBeenCalled` 等)
-- States 節は `parameters.pseudo: { hover: ['#id'], focusVisible: ['#id'], active: ['#id'] }` で擬似状態を強制表示
+- Playground に `parameters.chromatic.disableSnapshot = true`
+- Overview の Hover / Focus / Active の列は `parameters.pseudo: { hover: ['#id'], focusVisible: ['#id'], active: ['#id'] }` で擬似状態を強制表示
 
-**EdgeCases に入れる候補**: `fullWidth + 長文 (折返し)` / `fullWidth + 長文 + 内側 span で truncate` / 短文 (min-width 確認) / 多言語 / icon-only モード時の長文 aria-label を視覚カタログに併記。`whitespace-nowrap` 単独などの「単なる崩れ」は入れない。
+**EdgeCases に入れる候補** (§5-3 の境界に従う): 内側 span で truncate する特殊マークアップ / コンテナ幅に依存する崩れ (固定幅で見せる) / 複数インスタンス・item 数に依存する配置 / 段落内の inline 配置。長文の折返し・`fullWidth` のように Controls で出せるものと、SR 専用の長い aria-label のような非視覚のものは入れない。`whitespace-nowrap` 単独などの「単なる崩れ」も入れない。
 
 ### 7-5. `.guideline.mdx` の作成 / 書き直し
 
@@ -705,8 +705,8 @@ npm run storybook
 http://localhost:6006 で目視確認:
 
 - [ ] サイドバーから旧「Docs」ノードが消え、「Guideline」が代わりに表示
-- [ ] story の順序が Playground → Variants → Sizes → States → WithIcon → EdgeCases (該当節のみ)
-- [ ] States story で Hover/Focus/Active が **マウス操作なしで** 強制表示されている
+- [ ] story の順序が Playground → Overview → EdgeCases (EdgeCases は該当時のみ)
+- [ ] Overview で Hover/Focus/Active が **マウス操作なしで** 強制表示されている
 - [ ] Guideline ページの ArgTypes 表に props と JSDoc description が並ぶ
 - [ ] DoDontExample (緑/赤バー) が表示
 - [ ] a11y addon タブで violation 0
@@ -732,7 +732,7 @@ http://localhost:6006 で目視確認:
 
 ### 7-10. VR 集約モデルへの移行手順 (Playground / Overview / EdgeCases)
 
-旧カタログ構造 (§7-2〜7-9 で移行したもの) を **VR 集約モデル (§5-3)** へ移す手順。**1 コンポーネント = 1 PR**、primitives → composites の順。参照実装は [`components/primitives/Button/`](./components/primitives/Button/) 一式 (先行移行済み)。
+旧カタログ構造 (Variants / Sizes / States / WithIcon) を **VR 集約モデル (§5-3)** へ移した手順。全 45 部品で移行済みで、記録として残す。**1 コンポーネント = 1 PR**、primitives → composites の順。参照実装は [`components/primitives/Button/`](./components/primitives/Button/) 一式 (先行移行済み)。
 
 **手順 (1 コンポーネント分)**:
 
@@ -766,7 +766,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 - すべてのインタラクティブ要素は **Tab / Shift+Tab / Enter / Space / Escape** で操作可能
 - `tabindex` は **0 または -1 のみ**。`1` 以上は予測不能のため禁止。視覚順序と DOM 順序を一致させ tabindex で順序制御しない
-- ↑↓←→ での内部移動: Tabs / Radio / Menu 等の同列要素を持つ composite で実装 (各 component States story で確認)
+- ↑↓←→ での内部移動: Tabs / Radio / Menu 等の同列要素を持つ composite で実装 (各 component の guideline のアクセシビリティ節に操作を書き、Playground の play test で確かめる)
 - ヘッダーの大きいページでは「メインコンテンツへスキップ」を `<a href="#main">` で先頭に置く
 
 ### 8-3. フォーカス管理
@@ -860,8 +860,8 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 - **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。依存の追跡は **Vite の module graph (import 連鎖)** で行うため、Tailwind / PostCSS 経由で CSS になるだけのファイル (`tokens/**` の source JSON と `preset.cjs`、`styles/**` の global CSS、`tailwind.config.cjs` / `postcss.config.js`) は graph の外にいて、変えても「影響 story 0 → 撮影 skip」になる。これらは workflow の **`externals`** に列挙し、1 つでも変わったら TurboSnap を無効化して全 story を撮り直す (全コンポーネントに波及するため妥当)。`.storybook/**` と `package.json` / lockfile は CLI が既定で全撮影扱い。**graph 外から見た目に効く経路を新しく足したら `externals` にも足す** (足し忘れは「変えたのに UI Tests が unchanged」として現れる。#107 がこの例)。
 - **複数 viewport はレイアウト系の EdgeCases のみ**: **AppShell / TwoColumn / SplitPane** の **EdgeCases** に `parameters.chromatic.viewports = [375, 1280]` を設定し mobile / desktop の構造切替を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。これら 3 つの **Overview は `[1280]` のみ** — prop カタログ (contentMax / split / listWidth) は desktop 機能で mobile では縦積みに潰れて重複ショットになるため (§7-10 のレイアウト系注意)。meta に `[375,1280]` を置き Overview で `[1280]` に override すると最小記述。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
 - **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。**例外は `Tokens/Color/Regression`** ([`components/tokens/ColorRegression.stories.tsx`](./components/tokens/ColorRegression.stories.tsx)): 文字も角丸も無い平坦な swatch (primitive 全段 + semantic 全 token) を **`diffThreshold: 0`** で撮る。Chromatic の既定閾値 (0.063、アンチエイリアス吸収用) では token 値の微調整 (RGB で +22 程度、#115 の brand 変更) が部品の snapshot で「unchanged」に吸収され検出できなかったため (#109 Color-4)。平坦面にはアンチエイリアスが無いので閾値 0 でも誤検知しない。**token の値を変える PR では、この story の差分が出ることを確認する** (出なければ変更が CSS に届いていない)。
-- **Playground は撮影対象外**: 全 component story の `Playground` に `parameters.chromatic.disableSnapshot = true` を付ける (Controls 探索の起点で、静的カタログ Variants/Sizes/States と冗長なため。§5-3)。
-- **overlay / portal 系の開状態は #78 で対応中**: Modal / Popover / Tooltip / DropdownMenu / Toast は「開いた状態」が play 駆動 story にしか無い (Toast は未撮影)。開状態の静的 story を追加して撮るのは別 PR (#78) で進める。それまで該当 component の Playground は撮影対象に残す。
+- **Playground は撮影対象外**: 全 component story の `Playground` に `parameters.chromatic.disableSnapshot = true` を付ける (Controls 探索の起点で、静的な一覧の Overview と冗長なため。§5-3)。
+- **overlay / portal 系は開いた状態を Overview で撮る** (#78 / #90、§7-10 の 7): Modal / Popover / DropdownMenu は `open`、Tooltip は `defaultOpen`、Toast は `ToastProvider` の `duration=0` で、開いた状態を静的に Overview に置く。Playground は他の部品と同じく撮影対象外。
 - **人間ゲート (機械的に弾く §5-5-1 とは別レイヤー)**: 視覚差分の合否は人間が Chromatic UI でレビュー & accept する。`exitZeroOnChanges: true` のため Actions の `chromatic` job は視覚差分では赤にならず、PR の required check には Chromatic の **"UI Tests"** status を使う (branch protection)。初回 baseline の accept・token 登録 (`CHROMATIC_PROJECT_TOKEN` secret) も人間が行う。
 - **意図した見た目の変化は、PR の説明に前後の写真で示す** (#125): Overview は 1 部品 ≒ 1 枚の大きな画像なので、その中の 1px の変化は Chromatic の差分では探しにくい。見た目を変える PR では、変わる部分だけを切り出した「前 / 後」の写真を PR テンプレートの「見た目の変化」に並べ、良し悪しはそこで判断する。Chromatic は「想定外の場所が変わっていないか」の確認に使う (分担)。写真はブランチにコミットし、コミットを指す URL で表示する
 - semver: 視覚回帰の CI 追加は消費者向け契約 (§10-6) に影響せず **bump 不要**。ただし Chromatic が検出する**意図しない見た目変化**自体は visual break (§10-2) として CHANGELOG / semver の対象。

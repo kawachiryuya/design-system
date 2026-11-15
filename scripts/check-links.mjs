@@ -52,8 +52,11 @@ const files = walk(COMPONENTS);
 const storiesFiles = files.filter((f) => /\.stories\.tsx?$/.test(f));
 const mdxFiles = files.filter((f) => f.endsWith('.mdx'));
 
+// meta の title を読む。meta より前にあるデータの `title:` (例: Accordion の FAQ 項目) を拾わないよう、
+// `const meta` があればそこから後ろだけを見る。
 const titleOf = (src) => {
-  const m = src.match(/title:\s*['"]([^'"]+)['"]/);
+  const metaAt = src.search(/\bconst\s+meta\b/);
+  const m = src.slice(Math.max(metaAt, 0)).match(/title:\s*['"]([^'"]+)['"]/);
   return m ? m[1] : null;
 };
 

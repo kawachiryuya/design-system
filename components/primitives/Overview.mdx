@@ -29,9 +29,9 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ---
 
-## 13 コンポーネント一覧
+## 17 コンポーネント一覧
 
-用途別に 5 グループに分けて掲載します。各コンポーネントの詳細は Guideline ページを参照してください。
+用途別に 6 グループに分けて掲載します。各コンポーネントの詳細は Guideline ページを参照してください。
 
 ### Form (入力)
 
@@ -71,23 +71,29 @@ import { Meta } from '@storybook/addon-docs/blocks';
 |---|---|
 | [VisuallyHidden](?path=/docs/primitives-visuallyhidden--guideline) | スクリーンリーダー専用テキスト。icon-only Button の補助ラベル等 |
 
+### Layout (配置)
+
+| Component | 役割 |
+|---|---|
+| [Stack](?path=/docs/primitives-stack--guideline) | 子要素を縦に等間隔で並べる。`gap` はグループ内の間隔 |
+| [Cluster](?path=/docs/primitives-cluster--guideline) | 子要素を横に並べ、画面端で折り返す |
+| [Center](?path=/docs/primitives-center--guideline) | 単列コンテンツの水平センタリング (`max` で最大幅) |
+| [Section](?path=/docs/primitives-section--guideline) | ページの縦リズム (section 分割)。`<section>` + `py-section-*` |
+
 ---
 
 ## 標準ストーリー構造
 
-全 Primitive で **Storybook の節構成と命名を固定** しています。読み手が「次のコンポーネントを見ても並びが同じ」状態を作るためです。
+全コンポーネントで **Storybook の節構成と命名を固定** しています。読み手が「次のコンポーネントを見ても並びが同じ」状態を作るためです。
 
 | 順 | 節名 | 役割 |
 |---|---|---|
 | 1 | **Guideline** | テキスト中心の設計指針 + Props 表。`.guideline.mdx` が autodocs の Docs を兼ねる |
-| 2 | **Playground** | `args` 全開放、Controls で props を探索する起点 |
-| 3 | **Variants** | 種類違いを静的に横並び (`primary` / `secondary` 等) |
-| 4 | **Sizes** | サイズ違いを静的に横並び (`small` / `medium` / `large` 等) |
-| 5 | **States** | Default / Hover / Focus / Active / Disabled / Loading を単独で並べる (`storybook-addon-pseudo-states` で強制表示) |
-| 6 | **WithIcon** | `icon` / `leadingIcon` / `iconOnly` 等の icon prop パターン |
-| 7 | **EdgeCases** | `fullWidth` / 長文 / truncate / 空文字など壊れやすいケースの監視 |
+| 2 | **Playground** | `args` 全開放、Controls で任意の 1 状態を探索する起点 (視覚回帰の撮影対象外) |
+| 3 | **Overview** | props で作れるパターン (variant × state / size / icon 等) を 1 枚に並べた総覧。Hover / Focus / Active は `storybook-addon-pseudo-states` で強制表示 |
+| 4 | **EdgeCases** | Controls では再現できない構造的なケース (特殊なマークアップ / コンテナ幅 / 複数インスタンス等)。該当が無ければ省略 |
 
-該当する prop が無い節は省略可。**順序は変えない**、`Playground` は絶対省略しない、というのが規約です。詳細は [AGENTS.md §5-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-3-storiestsx-の規約--標準ストーリー構造-固定順序) を参照。
+Playground と Overview は省略しない、というのが規約です。詳細は [AGENTS.md §5-3](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#5-3-storiestsx-の規約--vr-集約モデル-固定-3-節) を参照。
 
 参考実装: [Button.stories.tsx](https://github.com/kawachiryuya/design-system/blob/main/components/primitives/Button/Button.stories.tsx)
 

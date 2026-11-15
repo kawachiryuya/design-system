@@ -859,6 +859,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 - **Playground は撮影対象外**: 全 component story の `Playground` に `parameters.chromatic.disableSnapshot = true` を付ける (Controls 探索の起点で、静的カタログ Variants/Sizes/States と冗長なため。§5-3)。
 - **overlay / portal 系の開状態は #78 で対応中**: Modal / Popover / Tooltip / DropdownMenu / Toast は「開いた状態」が play 駆動 story にしか無い (Toast は未撮影)。開状態の静的 story を追加して撮るのは別 PR (#78) で進める。それまで該当 component の Playground は撮影対象に残す。
 - **人間ゲート (機械的に弾く §5-5-1 とは別レイヤー)**: 視覚差分の合否は人間が Chromatic UI でレビュー & accept する。`exitZeroOnChanges: true` のため Actions の `chromatic` job は視覚差分では赤にならず、PR の required check には Chromatic の **"UI Tests"** status を使う (branch protection)。初回 baseline の accept・token 登録 (`CHROMATIC_PROJECT_TOKEN` secret) も人間が行う。
+- **意図した見た目の変化は、PR の説明に前後の写真で示す** (#125): Overview は 1 部品 ≒ 1 枚の大きな画像なので、その中の 1px の変化は Chromatic の差分では探しにくい。見た目を変える PR では、変わる部分だけを切り出した「前 / 後」の写真を PR テンプレートの「見た目の変化」に並べ、良し悪しはそこで判断する。Chromatic は「想定外の場所が変わっていないか」の確認に使う (分担)。写真はブランチにコミットし、コミットを指す URL で表示する
 - semver: 視覚回帰の CI 追加は消費者向け契約 (§10-6) に影響せず **bump 不要**。ただし Chromatic が検出する**意図しない見た目変化**自体は visual break (§10-2) として CHANGELOG / semver の対象。
 
 ### 9-5. 適合率レポート (conformance-report)

@@ -1,0 +1,67 @@
+{
+  "$comment": "テーマ契約の manifest (AGENTS.md §3-8 / §10-6 (b))。semantic color token を themeable の 3 層に振り分ける。token を足すときは層を決めてここにも追記する (check:theme-contract が抜け・重複・取り残しを弾く)。",
+  "layers": {
+    "required": {
+      "description": "ブランドが必ず供給する (妥当な既定なし)。追加・rename・削除は全テーマ作者への破壊 = MAJOR。小さく安定に保つ。",
+      "tokens": [
+        "surface.primary"
+      ]
+    },
+    "optional": {
+      "description": "上書き可。未指定は既定を継承する。追加は後方互換 = MINOR。brand から決まる面・文字・縁・overlay、status 一式 (success / error / warning / info)、focus。成長はこの層で行う。",
+      "tokens": [
+        "surface.primary-muted",
+        "surface.success",
+        "surface.success-muted",
+        "surface.error",
+        "surface.error-muted",
+        "surface.warning",
+        "surface.warning-muted",
+        "surface.info",
+        "surface.info-muted",
+        "onSurface.primary",
+        "onSurface.success",
+        "onSurface.error",
+        "onSurface.warning",
+        "onSurface.info",
+        "onSurface.inverse",
+        "border.primary-strong",
+        "border.success-muted",
+        "border.success-strong",
+        "border.error-muted",
+        "border.error-strong",
+        "border.warning-muted",
+        "border.warning-strong",
+        "border.info-muted",
+        "border.info-strong",
+        "border.focus",
+        "state.hover-primary",
+        "state.active-primary",
+        "state.hover-error",
+        "state.active-error"
+      ]
+    },
+    "fixed": {
+      "description": "上書き不可。保証の土台。中性の canvas / 面 / 文字 / 境界 / state overlay、disabled、skeleton、中性の status 表示。",
+      "tokens": [
+        "bg.default",
+        "surface.default",
+        "surface.subtle",
+        "surface.overlay",
+        "surface.disabled",
+        "surface.skeleton",
+        "surface.neutral",
+        "surface.neutral-muted",
+        "surface.neutral-strong",
+        "onSurface.default",
+        "onSurface.subtle",
+        "onSurface.disabled",
+        "border.subtle",
+        "border.default",
+        "border.strong",
+        "state.hover",
+        "state.active"
+      ]
+    }
+  }
+}

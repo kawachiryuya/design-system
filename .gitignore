@@ -19,6 +19,9 @@ tokens/build/
 tokens/*.json
 # Exception: contrast-pairs.json is hand-authored source (check:contrast), not generated.
 !tokens/contrast-pairs.json
+# Exception: theme-contract.json is hand-authored source (check:theme-contract), not generated.
+# この例外が無く、manifest が一度もコミットされていなかった (#125 G-1)。
+!tokens/theme-contract.json
 
 # macOS
 .DS_Store

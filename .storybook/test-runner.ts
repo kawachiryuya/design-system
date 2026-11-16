@@ -49,7 +49,7 @@ const COLOR_CONTRAST_EXEMPT: Record<string, string> = {
 // story 単位で外すときは `parameters.focusRing = { disable: true }` (理由コメント必須)。
 const FOCUS_RING_EXEMPT: Record<string, string> = {
   'Composites/AppShell':
-    'TODO(focus): story のデモ用ナビが素の <a> で focus-ring が無く、ブラウザ任せの輪になる (部品ではなく story 側。直すかは #139 で判断)',
+    'TODO(focus): story のデモ用ナビが素の <a> で focus-ring が無く、ブラウザ任せの輪になる (部品ではなく story 側。#141 で直す)',
 };
 
 const FOCUS_RING_TARGET = /^(Primitives|Composites)\//;

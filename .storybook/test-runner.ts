@@ -1,12 +1,14 @@
 import type { TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { injectAxe, checkA11y, configureAxe } from 'axe-playwright';
+import { findFocusRingViolations } from './focus-ring-check';
 
 /**
  * Storybook test-runner 設定。
  *
  * 全 Story に対して (1) smoke render + play 関数の実行 (test-runner 標準) と
- * (2) axe による a11y 自動監査 (postVisit) を行う。CI の Run Storybook tests ステップで実行。
+ * (2) axe による a11y 自動監査 (postVisit) と (3) フォーカスの輪の検査 (postVisit、focus-ring-check.ts) を行う。
+ * CI の Run Storybook tests ステップで実行。
  *
  * a11y 例外: AGENTS §8 のとおり、意図的に許容する違反は Story の
  * `parameters.a11y` で個別に制御する (理由コメント必須):
@@ -41,6 +43,17 @@ const COLOR_CONTRAST_EXEMPT: Record<string, string> = {
   'Composites/SplitPane': 'TODO(contrast): muted text が layered 背景上で AA 4.5 未満。contrast 見直しで対応予定',
 };
 
+// フォーカスの輪の検査 (focus-ring-check.ts、DDR-2 #131 / #139) を story 単位で免除する (理由付き)。
+// 対象は出荷する部品の story (Primitives/* と Composites/*) だけ。Tokens / Principles は UI ではないので見ない。
+//  - 「TODO(focus)」付き: 既知 finding。直したらエントリを削除する
+// story 単位で外すときは `parameters.focusRing = { disable: true }` (理由コメント必須)。
+const FOCUS_RING_EXEMPT: Record<string, string> = {
+  'Composites/AppShell':
+    'TODO(focus): story のデモ用ナビが素の <a> で focus-ring が無く、ブラウザ任せの輪になる (部品ではなく story 側。直すかは #139 で判断)',
+};
+
+const FOCUS_RING_TARGET = /^(Primitives|Composites)\//;
+
 const config: TestRunnerConfig = {
   async preVisit(page) {
     // 決定性のため reduced-motion を常時強制する。CI の Playwright は既定で
@@ -52,29 +65,52 @@ const config: TestRunnerConfig = {
   },
   async postVisit(page, context) {
     const storyContext = await getStoryContext(page, context);
-
-    // 個別に a11y を無効化した Story はスキップ。
-    if (storyContext.parameters?.a11y?.disable) return;
-
-    // Tokens/* カテゴリは「色・値そのものの可視化」であり UI ではない (色見本の contrast や
-    // デモ markup の aria は監査対象外)。カタログ全体を axe からスキップする。
-    if (storyContext.title?.startsWith('Tokens/')) return;
-
-    const rules = [
-      ...PAGE_LEVEL_RULES_DISABLED,
-      ...(storyContext.parameters?.a11y?.config?.rules ?? []),
-    ];
-    if (storyContext.title && COLOR_CONTRAST_EXEMPT[storyContext.title]) {
-      rules.push({ id: 'color-contrast', enabled: false });
-    }
-
-    await configureAxe(page, { rules });
-
-    await checkA11y(page, '#storybook-root', {
-      detailedReport: true,
-      detailedReportOptions: { html: true },
-    });
+    await runAxe(page, storyContext);
+    // フォーカスを動かすので、axe の後に走らせる
+    await runFocusRingCheck(page, storyContext);
   },
 };
+
+type StoryContext = Awaited<ReturnType<typeof getStoryContext>>;
+type Page = Parameters<NonNullable<TestRunnerConfig['postVisit']>>[0];
+
+async function runAxe(page: Page, storyContext: StoryContext) {
+  // 個別に a11y を無効化した Story はスキップ。
+  if (storyContext.parameters?.a11y?.disable) return;
+
+  // Tokens/* カテゴリは「色・値そのものの可視化」であり UI ではない (色見本の contrast や
+  // デモ markup の aria は監査対象外)。カタログ全体を axe からスキップする。
+  if (storyContext.title?.startsWith('Tokens/')) return;
+
+  const rules = [
+    ...PAGE_LEVEL_RULES_DISABLED,
+    ...(storyContext.parameters?.a11y?.config?.rules ?? []),
+  ];
+  if (storyContext.title && COLOR_CONTRAST_EXEMPT[storyContext.title]) {
+    rules.push({ id: 'color-contrast', enabled: false });
+  }
+
+  await configureAxe(page, { rules });
+
+  await checkA11y(page, '#storybook-root', {
+    detailedReport: true,
+    detailedReportOptions: { html: true },
+  });
+}
+
+async function runFocusRingCheck(page: Page, storyContext: StoryContext) {
+  if (!FOCUS_RING_TARGET.test(storyContext.title ?? '')) return;
+  if (storyContext.parameters?.focusRing?.disable) return;
+  if (FOCUS_RING_EXEMPT[storyContext.title]) return;
+
+  const findings = await findFocusRingViolations(page);
+  if (findings.length === 0) return;
+  const lines = findings.map((f) => `  - ${f.element}: ${f.reason} [outline: ${f.outline}]`);
+  throw new Error(
+    `フォーカスの輪が規則 (AGENTS §3-2「フォーカスの規則」) に合わない要素が ${findings.length} 件:\n` +
+      lines.join('\n') +
+      '\nfocus-ring / focus-ring-inset / focus-ring-on-fill のどれかを付ける。意図的な例外は .storybook/test-runner.ts の FOCUS_RING_EXEMPT に理由付きで。',
+  );
+}
 
 export default config;

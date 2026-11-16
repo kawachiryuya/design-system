@@ -209,6 +209,7 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 - **ホバーと重なったときは何も足さない** (フォーカスの輪が上。すき間にホバーの色が見える)
 - **書かない**: `focus:outline-none` / `focus-visible:ring-*` / `ring-offset-*` / `focus:bg-*` / `focus:border-*` などの直書き (lint が弾く、§3-7)。輪の見た目を product で変えるときは CSS 変数 (`--focus-ring-width` / `--focus-ring-offset` / `--color-border-focus`) を上書きする
 - 目標: WCAG 2.4.13 (Focus Appearance、AAA) 相当を目安にする (準拠は名乗らない)。AA の 2.4.7 (見える) と 1.4.11 (非テキスト 3:1) は必ず満たす (`border.focus` × 各下地を `check:contrast` が検査)
+- **検査**: 書き方は lint が縛り (§3-7)、描画後に輪が出ているか (形・太さ・色) は部品の story を Tab で進む検査が確かめる (§8-4、`test-storybook`。`verify` には入らない)
 
 **3-3. `bg.default` は brand から独立した中性 canvas**
 
@@ -389,7 +390,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-subtle` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
 - **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
 - **primitive typography 直参照禁止** (#109 Typo-2): 出荷コンポーネントに `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error。semantic の text style `type-{role}` (`type-section-title` / `type-body` / `type-supporting` / `type-control-md` / `type-label` / `type-caption`。見出しは hero / page / section / item の役割名、本文は body (16) / supporting (14) の 2 つ。size + 行間 + weight + 字間を 1 クラスで持つ、preset が components 層に生成) を使う。weight の `font-{weight}` は type-* の上書き (Typography の weight prop 等) として可。例外は container 比で決まる文字 (Avatar の initials) のみで、理由付き `eslint-disable`
-- **フォーカスの表現は `focus-ring*` だけ** (DDR-2 #131): 出荷コンポーネントに `outline-none`・`focus:` / `focus-visible:` 付きの `ring-*` / `outline-*` / `border-*` / `bg-*` / `shadow-*`・`ring-inset`・`ring-offset-*` を書くと error。`focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` のどれか 1 つを使う (§3-2「フォーカスの規則」)。フォーカスと関係ない ring (Avatar の `ring-2 ring-surface`) は対象外
+- **フォーカスの表現は `focus-ring*` だけ** (DDR-2 #131): 出荷コンポーネントに `outline-none`・フォーカスの variant 付きの `ring-*` / `outline-*` / `border-*` / `bg-*` / `shadow-*`・`ring-inset`・`ring-offset-*` を書くと error。フォーカスの variant は `focus:` / `focus-visible:` / `focus-within:` と、その `peer-` / `group-` 版 (`group-focus/name:` も)、arbitrary の `[&:focus-visible]:` 等 (#139)。`focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` のどれか 1 つを使う (§3-2「フォーカスの規則」)。フォーカスと関係ない ring (Avatar の `ring-2 ring-surface`) は対象外
 - **書いた utility は CSS を生成していなければならない** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)、lint ではなく verify の check): 出荷コンポーネントの string literal 内の utility 候補を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラス (= preset に写像が無い / token 名と違う / Tailwind 既定が上書きで消えている) があれば error。対象は色・タイポ・枠・影・角丸に加え、余白・寸法・位置 (`p*` / `m*` / `w` / `h` / `min-*` / `max-*` / `size` / `inset` / `top` 等、#125)。spacing はトークンのスケールで上書きしているので、スケールに無い段 (`w-56` 等) は生成されない。Tailwind 既定の `px` も同じ理由で無い (`mt-px` は書けない。1px が要るときは `mt-[1px]`)。`border-border-default` (#107) / `text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の `bg-success-500` (#109) の再発防止。動的に組み立てるクラスは検査できないので、`${}` を含む template は skip、意図的な例外は同じ行に `utility-ignore: <理由>`
 - **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
 - **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
@@ -604,7 +605,7 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 | 書いた Tailwind utility が実際に CSS を生成している (出荷コンポーネント ↔ 配信 CSS、stories / `.storybook` / mdx ↔ Storybook CSS。存在しないクラスを書いても型・lint では止まらない silent break を弾く、§3-7) | **Check utilities** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)) |
 | semantic color token がテーマ契約 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)) のどれか 1 層にちょうど 1 回出る (層を決めずに token を足せない。rename / 削除の取り残しも弾く、§3-8) | **Check theme contract** (`npm run check:theme-contract`、[`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)) |
 | semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
-| 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
+| 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 + 部品の story で Tab で来る要素に決めた形のフォーカスの輪が出る (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
 
 #### 5-5-2. 人間が判断する
 
@@ -807,6 +808,13 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
   - `COLOR_CONTRAST_EXEMPT` に component 単位の color-contrast 免除を理由付きで列挙。`TODO(contrast):` 付きは**既知 finding** (token contrast 見直しで解消後にエントリ削除)
 
 **原則**: disabled 状態の意図的低コントラストは WCAG 1.4.3 が免除するため恒久例外でよい。それ以外の違反は「直す」が既定で、例外は finding として明示し追跡する。
+
+**フォーカスの輪の検査** (#139、[`.storybook/focus-ring-check.ts`](./.storybook/focus-ring-check.ts)): 同じステップで、出荷する部品の story (`Primitives/*` / `Composites/*`) について、(1) **検査を始めた時点でフォーカスがある要素** (部品がプログラムから移したフォーカス。Shift を押してキーボードで操作した状態にしてから見る) と、(2) 文書の先頭から **Tab キーで順に来る要素** の、描画後の outline を見る。合格は「実線・2px 以上・色が `border.focus`、または濃い塗りの内側 (outline-offset が負) の `onSurface.inverse`」(§3-2「フォーカスの規則」)。lint (§3-7) は書き方を縛るだけなので、こちらで「フォーカスが来るのに何も出ない」「ブラウザ任せの輪 (`outline-style: auto`)」「決めた色以外の輪」を捕まえる。
+
+- **矢印キーで中を動く部品** (Tabs のタブ / DropdownMenu の項目 / SegmentedControl / Radio): 検査は Tab で来る 1 つ (選択中など) だけを見る。矢印キーでだけ来る項目は、Tab で来る項目と同じクラスなら代表させてよい。**形が違う項目は、それが Tab で来る状態を story に用意する** (SegmentedControl: 選択中は `focus-ring-on-fill`、未選択は `focus-ring-inset`。何も選ばれていないと先頭の未選択が Tab の止まり先になるので、Overview にその行を置いている)
+- **overlay**: 検査はトリガーを押して開く操作をしない。見るのは story が開いた状態で描いている分だけ: Overview が `open` / `defaultOpen` で描いているもの (Modal / Popover / DropdownMenu / Tooltip の中の要素) と、play の最後に開いたまま残したもの。**Tab の順に入らないプログラムからのフォーカスは、開いたまま残して (1) で見せる** (Popover: 中に押せるものが無いとパネル自体にフォーカスが移る。Playground の play が最後にキーボードで開いて残す。クリックの後のプログラムからのフォーカスは `:focus-visible` にならないことがあるので、キーボードで開く)
+- **範囲に入れていないもの**: Tokens / Principles (UI ではない)。Tab で 1 つも要素に来ない story (表示だけの部品) は何も見ずに通る
+- **例外**: `FOCUS_RING_EXEMPT` ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts)) に component 単位で理由付きで列挙する (`TODO(focus):` 付きは既知 finding)。story 単位は `parameters.focusRing = { disable: true }` (理由コメント必須)
 
 ### 8-5. コントラスト基準 (WCAG 2 床 + APCA レンズ)
 

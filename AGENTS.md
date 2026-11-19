@@ -390,12 +390,33 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-subtle` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
 - **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
 - **primitive typography 直参照禁止** (#109 Typo-2): 出荷コンポーネントに `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error。semantic の text style `type-{role}` (`type-section-title` / `type-body` / `type-supporting` / `type-control-md` / `type-label` / `type-caption`。見出しは hero / page / section / item の役割名、本文は body (16) / supporting (14) の 2 つ。size + 行間 + weight + 字間を 1 クラスで持つ、preset が components 層に生成) を使う。weight の `font-{weight}` は type-* の上書き (Typography の weight prop 等) として可。例外は container 比で決まる文字 (Avatar の initials) のみで、理由付き `eslint-disable`
+- **story・`.storybook/blocks`・guideline の文字も `type-*`** (#145、**まだ lint の対象外**): 部品の story (`components/{primitives,composites}/**/*.stories.tsx`)・`.storybook/blocks/**`・部品の guideline (`*.guideline.mdx`) も、上と同じく `text-{xs〜5xl}` / `leading-*` / `tracking-*` を直書きせず `type-*` で書く。見本は人にも AI にも写されるので、見本が直書きだと出荷コンポーネントにも直書きが写る。lint (と、eslint が見ない mdx の検査) は #145 の手順 9 で広げる。それまでは、新しく書く所は `type-*` で書き、別の理由で触ったファイルの直書きもその PR で置き換える。置き換え方と対象外は下の「story と guideline の文字の置き換え」
 - **フォーカスの表現は `focus-ring*` だけ** (DDR-2 #131): 出荷コンポーネントに `outline-none`・フォーカスの variant 付きの `ring-*` / `outline-*` / `border-*` / `bg-*` / `shadow-*`・`ring-inset`・`ring-offset-*` を書くと error。フォーカスの variant は `focus:` / `focus-visible:` / `focus-within:` と、その `peer-` / `group-` 版 (`group-focus/name:` も)、arbitrary の `[&:focus-visible]:` 等 (#139)。`focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` のどれか 1 つを使う (§3-2「フォーカスの規則」)。フォーカスと関係ない ring (Avatar の `ring-2 ring-surface`) は対象外
 - **書いた utility は CSS を生成していなければならない** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)、lint ではなく verify の check): 出荷コンポーネントの string literal 内の utility 候補を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラス (= preset に写像が無い / token 名と違う / Tailwind 既定が上書きで消えている) があれば error。対象は色・タイポ・枠・影・角丸に加え、余白・寸法・位置 (`p*` / `m*` / `w` / `h` / `min-*` / `max-*` / `size` / `inset` / `top` 等、#125)。spacing はトークンのスケールで上書きしているので、スケールに無い段 (`w-56` 等) は生成されない。Tailwind 既定の `px` も同じ理由で無い (`mt-px` は書けない。1px が要るときは `mt-[1px]`)。`border-border-default` (#107) / `text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の `bg-success-500` (#109) の再発防止。動的に組み立てるクラスは検査できないので、`${}` を含む template は skip、意図的な例外は同じ行に `utility-ignore: <理由>`
 - **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
 - **storybook recommended**: play 関数の `await` 漏れ、story 命名規約 等
 
 新しい規約を機械化したくなったら、まず本ルールに足せるか検討する (「ドキュメントで守らせる」< 「lint で弾く」)。
+
+#### story と guideline の文字の置き換え (#145)
+
+上の「story・`.storybook/blocks`・guideline の文字も `type-*`」で直書きを置き換えるときの表。大きさではなく**役割**で選ぶ。
+
+| 今 | 置き換え先 | 備考 |
+|---|---|---|
+| `text-xs` | `type-caption` | 12px・行間 1.5 |
+| `text-sm` | `type-supporting` | 14px・行間 1.5 |
+| `text-sm font-medium` | `type-label` | 14px・medium・行間 1.5 |
+| `text-md` | `type-body` | 16px・行間 1.5 |
+| `text-lg` / `text-xl` 以上・`font-bold` の見出し | `type-item-title` / `type-section-title` など、役割で選ぶ | 大きさではなく役割で (hero / page / section / item) |
+| `leading-*` / `tracking-*` | 外す | `type-*` が行間・字間を持つ |
+| `font-mono` | 残す (`type-caption font-mono` のように並べる) | 書体は別の軸 |
+
+- **表で決まらない箇所は置き換えずに残し、PR に一覧で書く** (例: 大きさの違いそのものを見せる見本。Typography の story など)
+- **写真**: preset の `text-xs` / `text-sm` は大きさだけで行間を持たず、親から受け継ぐ (多くは 1.5)。`type-*` も行間 1.5 なので、置き換えても写真はほとんど変わらない想定 (変わるのは親の行間が 1.5 でない所だけ)。変わったら、その箇所を前後の写真で PR に示す (§9-4)
+- **対象外**:
+  - Tokens のカタログ (`components/tokens/**`): 大きさの段そのもの (`text-xs`〜`text-5xl`) を見せるのが目的で、§3-6 の別構造。ラベルだけ `type-*` にするかは、lint を広げた後に必要なら別に決める
+  - 出荷コンポーネント: すでに上の lint が守っている
 
 ### 3-8. テーマ契約 — 三層 themeable モデル (#59)
 
@@ -520,7 +541,7 @@ Composite → components/composites/ComponentName/
 - **Playground は `parameters.chromatic.disableSnapshot = true`** (Controls 探索用で Overview と冗長。§9-4)
 - **Overview / EdgeCases は args 非依存の静的 render** (視覚回帰の対象)
 - **ReactNode prop (`icon` 等) は `argTypes` の `mapping` で Controls 化** (ラベル → 実要素)。`control: false` で逃げず、Playground で全パターンを再現可能にする (参照: Button の `icon` mapping)
-- 色・余白はハードコードせず Tokens (semantic Tailwind ユーティリティ) を参照
+- 色・余白・文字はハードコードせず Tokens (semantic Tailwind ユーティリティ) を参照。文字は `type-*` (§3-7「story と guideline の文字の置き換え」)
 
 **節省略の判断**: Playground / Overview は**絶対省略しない**。EdgeCases は文脈依存の崩れが無ければ省略可。唯一の例外は見えない部品の `VisuallyHidden` で、撮るものが無いので Playground のみ。
 
@@ -575,7 +596,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 - **色分け**: 緑=Do (推奨) / 赤=Don't (非推奨) で固定
 - **構造**: `label` / `doExample` / `doCaption` / `dontExample` / `dontCaption`
 - **必須**: 各 `dontCaption` に **「なぜそうなのか」の理由** を 1 行
-- **プレビュー**: 必ず本物のコンポーネントを描画 (スクリーンショット画像禁止、Tokens 変更追従のため)
+- **プレビュー**: 必ず本物のコンポーネントを描画 (スクリーンショット画像禁止、Tokens 変更追従のため)。見本の中の文字も `type-*` で書く (§3-7)
 
 **書かない** (重複・陳腐化の温床):
 

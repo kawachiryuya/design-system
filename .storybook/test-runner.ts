@@ -47,10 +47,7 @@ const COLOR_CONTRAST_EXEMPT: Record<string, string> = {
 // 対象は出荷する部品の story (Primitives/* と Composites/*) だけ。Tokens / Principles は UI ではないので見ない。
 //  - 「TODO(focus)」付き: 既知 finding。直したらエントリを削除する
 // story 単位で外すときは `parameters.focusRing = { disable: true }` (理由コメント必須)。
-const FOCUS_RING_EXEMPT: Record<string, string> = {
-  'Composites/AppShell':
-    'TODO(focus): story のデモ用ナビが素の <a> で focus-ring が無く、ブラウザ任せの輪になる (部品ではなく story 側。#141 で直す)',
-};
+const FOCUS_RING_EXEMPT: Record<string, string> = {};
 
 const FOCUS_RING_TARGET = /^(Primitives|Composites)\//;
 

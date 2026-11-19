@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 import { AppShell } from './AppShell';
 import { Section } from '../../primitives/Section';
 import { Center } from '../../primitives/Center';
+import { Link } from '../../primitives/Link';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
@@ -58,9 +59,9 @@ const MockSidebar = () => (
   <div className="w-64 shrink-0 border-r border-border-subtle bg-surface sticky top-0 h-screen px-2">
     <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar (w-64)</div>
     <nav className="px-2 flex flex-col gap-1">
-      <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">ホーム</a>
-      <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">予約一覧</a>
-      <a href="#" className="px-3 py-2 rounded hover:bg-surface-subtle text-sm">マイページ</a>
+      <Link href="#" size="sm" className="px-3 py-2">ホーム</Link>
+      <Link href="#" size="sm" className="px-3 py-2">予約一覧</Link>
+      <Link href="#" size="sm" className="px-3 py-2">マイページ</Link>
     </nav>
   </div>
 );

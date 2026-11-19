@@ -108,6 +108,7 @@
 
 ### Fixed
 
+- **AppShell の story のデモ用ナビを素の `<a>` から `<Link>` に** (#141): フォーカスの輪がブラウザ任せになっていた (フォーカスの輪の検査の唯一の既知 finding)。`FOCUS_RING_EXEMPT` は空になった (仕組みは残す)。story だけの変更で、Overview / Edge Cases の 1280px の写真のサイドバーが変わる。部品の見た目は変わらない。consumer 影響なし
 - **Windows のハイコントラスト (forced-colors) でフォーカスの輪が消えていた** (DDR-2 #131): ring (box-shadow) は forced-colors で描かれない。outline に変えたので残る
 - **Input / Textarea の Overview でフォーカスの姿が出ていなかった**: story は `:focus-visible` を強制していたが、部品は `:focus` で輪を出していた。輪が `:focus-visible` になり一致した (Select の story は `:focus` の強制を `:focus-visible` に直した)
 - **Image / Avatar の story と guideline が外部の画像 (unsplash / pravatar) を読んでいたのを、同梱の SVG に差し替えた** (#125 F-1): 視覚回帰 (Overview は撮影対象) の結果が外部の都合で揺れうるうえ、外部に出られない環境では画像が読めず、Image は代替表示、Avatar はイニシャルに落ちていた。サンプル画像は自作の SVG (風景 1 枚、人型シルエット 3 色) を `.storybook/samples/` に置き、`@sb-blocks/sampleImages` から読む。人物写真は使わない。風景の SVG は `preserveAspectRatio="none"` にし、写真と同じく Image の `objectFit="fill"` で歪むようにした (SVG が自分で縦横比を保つと fill が contain と同じに見える)。読み込み失敗を見せる `BROKEN_IMG` はそのまま。Storybook のみの変更で consumer 影響なし

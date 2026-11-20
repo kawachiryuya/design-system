@@ -65,7 +65,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
         const total = 47;
         return (
           <div className="space-y-2">
-            <p className="text-sm text-onSurface-subtle">
+            <p className="type-supporting text-onSurface-subtle">
               全 {total} 件中 {(p - 1) * perPage + 1}〜{Math.min(p * perPage, total)} 件
             </p>
             <Pagination currentPage={p} totalPages={Math.ceil(total / perPage)} onPageChange={setP} />

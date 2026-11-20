@@ -44,7 +44,7 @@ export const Playground: Story = {
     <Card {...args}>
       <Card.Header>カードタイトル</Card.Header>
       <Card.Body>
-        <p className="text-sm text-onSurface-subtle">ここにコンテンツが入ります。</p>
+        <p className="type-supporting text-onSurface-subtle">ここにコンテンツが入ります。</p>
       </Card.Body>
       <Card.Footer>
         <Button size="sm" variant="tertiary">キャンセル</Button>
@@ -74,13 +74,13 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">variant (elevated / outlined / filled)</div>
+        <div className="type-caption text-onSurface-subtle">variant (elevated / outlined / filled)</div>
         <div className="flex flex-col gap-4 w-80">
           {(['elevated', 'outlined', 'filled'] as const).map((variant) => (
             <Card key={variant} variant={variant}>
               <Card.Body>
-                <p className="text-sm font-medium text-onSurface">{variant}</p>
-                <p className="text-xs text-onSurface-subtle mt-1">カードのバリアントサンプル</p>
+                <p className="type-label text-onSurface">{variant}</p>
+                <p className="type-caption text-onSurface-subtle mt-1">カードのバリアントサンプル</p>
               </Card.Body>
             </Card>
           ))}
@@ -88,45 +88,45 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">構成 (compound / padding 直 children / divider=false / clickable / link / hover)</div>
+        <div className="type-caption text-onSurface-subtle">構成 (compound / padding 直 children / divider=false / clickable / link / hover)</div>
         <div className="flex flex-col gap-4 w-80">
           <Caption text="Compound (Header + Body + Footer)">
             <Card>
               <Card.Header>カードタイトル</Card.Header>
-              <Card.Body><p className="text-sm text-onSurface-subtle">本文</p></Card.Body>
+              <Card.Body><p className="type-supporting text-onSurface-subtle">本文</p></Card.Body>
               <Card.Footer><Button size="sm">保存</Button></Card.Footer>
             </Card>
           </Caption>
           <Caption text="padding 指定 (compound なし、直接 children)">
-            <Card padding="md"><p className="text-sm text-onSurface">シンプルなテキストカード</p></Card>
+            <Card padding="md"><p className="type-supporting text-onSurface">シンプルなテキストカード</p></Card>
           </Caption>
           <Caption text="divider=false (Header/Footer の境界線なし)">
             <Card>
               <Card.Header divider={false}>タイトル</Card.Header>
-              <Card.Body><p className="text-sm text-onSurface-subtle">divider=false で境界線が消える</p></Card.Body>
+              <Card.Body><p className="type-supporting text-onSurface-subtle">divider=false で境界線が消える</p></Card.Body>
               <Card.Footer divider={false}><Button size="sm">OK</Button></Card.Footer>
             </Card>
           </Caption>
           <Caption text="Clickable (role=button + onClick)">
             <Card clickable onClick={() => {}}>
               <Card.Body>
-                <p className="text-sm font-medium text-onSurface">クリック可能</p>
-                <p className="text-xs text-onSurface-subtle mt-1">Enter/Space も対応</p>
+                <p className="type-label text-onSurface">クリック可能</p>
+                <p className="type-caption text-onSurface-subtle mt-1">Enter/Space も対応</p>
               </Card.Body>
             </Card>
           </Caption>
           <Caption text="Link card (href、<a> でレンダリング)">
             <Card href="#" target="_blank">
               <Card.Body>
-                <p className="text-sm font-medium text-onSurface">リンクカード</p>
-                <p className="text-xs text-onSurface-subtle mt-1">href 指定で a タグ</p>
+                <p className="type-label text-onSurface">リンクカード</p>
+                <p className="type-caption text-onSurface-subtle mt-1">href 指定で a タグ</p>
               </Card.Body>
             </Card>
           </Caption>
           <Caption text="Hover (pseudo 強制、clickable のみ反応)">
             <div id="card-hover">
               <Card clickable>
-                <Card.Body><p className="text-sm">Hover 中</p></Card.Body>
+                <Card.Body><p className="type-supporting">Hover 中</p></Card.Body>
               </Card>
             </div>
           </Caption>

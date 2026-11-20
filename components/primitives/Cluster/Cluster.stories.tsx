@@ -31,7 +31,7 @@ export default meta;
 type Story = StoryObj<typeof Cluster>;
 
 const Item = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-surface border border-border-default rounded-md px-3 py-2 text-sm">
+  <div className="bg-surface border border-border-default rounded-md px-3 py-2 type-supporting">
     {children}
   </div>
 );
@@ -86,7 +86,7 @@ export const Overview: Story = {
         <div className="flex flex-col gap-3">
           {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const).map((g) => (
             <div key={g} className="flex items-center gap-2">
-              <div className="w-16 text-xs text-onSurface-subtle font-mono">gap={g}</div>
+              <div className="w-16 type-caption text-onSurface-subtle font-mono">gap={g}</div>
               <div className="bg-surface-subtle border border-dashed border-border-subtle p-2 flex-1">
                 <Cluster gap={g}>
                   <Item>A</Item>
@@ -103,7 +103,7 @@ export const Overview: Story = {
         <div className="flex flex-col gap-2">
           {(['start', 'center', 'end', 'between', 'around'] as const).map((j) => (
             <div key={j} className="flex items-center gap-2">
-              <div className="w-20 text-xs text-onSurface-subtle font-mono">justify={j}</div>
+              <div className="w-20 type-caption text-onSurface-subtle font-mono">justify={j}</div>
               <div className="bg-surface-subtle border border-dashed border-border-subtle p-2 flex-1">
                 <Cluster gap="sm" justify={j}>
                   <Item>A</Item>
@@ -120,12 +120,12 @@ export const Overview: Story = {
         <div className="flex flex-col gap-2">
           {(['start', 'center', 'end', 'stretch', 'baseline'] as const).map((a) => (
             <div key={a} className="flex items-center gap-2">
-              <div className="w-20 text-xs text-onSurface-subtle font-mono">align={a}</div>
+              <div className="w-20 type-caption text-onSurface-subtle font-mono">align={a}</div>
               <div className="bg-surface-subtle border border-dashed border-border-subtle p-2 flex-1">
                 <Cluster gap="sm" align={a}>
-                  <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">短い</div>
+                  <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting">短い</div>
                   <div className="bg-surface border border-border-default rounded-md px-3 py-3 text-lg">高め</div>
-                  <div className="bg-surface border border-border-default rounded-md px-3 py-2 text-sm">中</div>
+                  <div className="bg-surface border border-border-default rounded-md px-3 py-2 type-supporting">中</div>
                 </Cluster>
               </div>
             </div>

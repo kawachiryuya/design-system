@@ -109,7 +109,7 @@ export const Overview: Story = {
         <div className="flex flex-col gap-2">
           {(['end', 'center', 'start', 'between'] as const).map((a) => (
             <div key={a} className="flex items-center gap-2">
-              <div className="w-32 shrink-0 text-xs text-onSurface-subtle font-mono">align={a}</div>
+              <div className="w-32 shrink-0 type-caption text-onSurface-subtle font-mono">align={a}</div>
               <Frame width="w-[360px]">
                 <ActionBar orientation="horizontal" align={a}>
                   <Button variant="secondary">戻る</Button>

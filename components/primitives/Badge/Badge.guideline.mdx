@@ -100,16 +100,16 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="変動する数値カウントは solid"
   doExample={
     <div className="flex gap-2 items-center">
-      <span className="text-sm">通知</span>
+      <span className="type-supporting">通知</span>
       <Badge variant="error" appearance="solid">12</Badge>
-      <span className="text-sm">メッセージ</span>
+      <span className="type-supporting">メッセージ</span>
       <Badge variant="primary" appearance="solid">99+</Badge>
     </div>
   }
   doCaption="1〜3 桁の数値を強調する標準パターン。99 超えは `99+` で固定幅を保つ。"
   dontExample={
     <div className="flex gap-2 items-center">
-      <span className="text-sm">通知</span>
+      <span className="type-supporting">通知</span>
       <Badge variant="error" appearance="outline">12345</Badge>
     </div>
   }
@@ -120,7 +120,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="押せない UI として使う (Button/Link の代わりにしない)"
   doExample={
     <div className="flex gap-2 items-center">
-      <span className="text-sm">記事タグ:</span>
+      <span className="type-supporting">記事タグ:</span>
       <Badge variant="neutral" appearance="outline">React</Badge>
       <Badge variant="neutral" appearance="outline">TypeScript</Badge>
     </div>

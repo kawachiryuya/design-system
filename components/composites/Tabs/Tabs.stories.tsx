@@ -21,8 +21,8 @@ const sampleTabs = [
     label: '概要',
     content: (
       <div className="space-y-2">
-        <p className="text-sm text-onSurface">プロジェクトの概要ページです。</p>
-        <p className="text-sm text-onSurface-subtle">最終更新: 2026 年 2 月 21 日</p>
+        <p className="type-supporting text-onSurface">プロジェクトの概要ページです。</p>
+        <p className="type-supporting text-onSurface-subtle">最終更新: 2026 年 2 月 21 日</p>
       </div>
     ),
   },
@@ -33,7 +33,7 @@ const sampleTabs = [
     content: (
       <ul className="space-y-2">
         {['田中 太郎', '鈴木 花子', '佐藤 一郎', '山田 次郎', '木村 三郎'].map((name) => (
-          <li key={name} className="text-sm text-onSurface">{name}</li>
+          <li key={name} className="type-supporting text-onSurface">{name}</li>
         ))}
       </ul>
     ),
@@ -41,7 +41,7 @@ const sampleTabs = [
   {
     id: 'settings',
     label: '設定',
-    content: <p className="text-sm text-onSurface">設定ページです。</p>,
+    content: <p className="type-supporting text-onSurface">設定ページです。</p>,
   },
   {
     id: 'disabled',
@@ -110,9 +110,9 @@ export const Overview: Story = {
       ariaLabel="Tabs overview"
       defaultActiveId="overview"
       tabs={[
-        { id: 'overview', label: '概要', content: <p className="text-sm text-onSurface py-1">概要パネルの中身。</p> },
-        { id: 'members', label: 'メンバー', badge: 5, content: <p className="text-sm text-onSurface py-1">メンバーパネルの中身。</p> },
-        { id: 'settings', label: '設定', content: <p className="text-sm text-onSurface py-1">設定パネルの中身。</p> },
+        { id: 'overview', label: '概要', content: <p className="type-supporting text-onSurface py-1">概要パネルの中身。</p> },
+        { id: 'members', label: 'メンバー', badge: 5, content: <p className="type-supporting text-onSurface py-1">メンバーパネルの中身。</p> },
+        { id: 'settings', label: '設定', content: <p className="type-supporting text-onSurface py-1">設定パネルの中身。</p> },
         { id: 'disabled', label: '無効タブ', disabled: true, content: null },
       ]}
     />
@@ -138,7 +138,7 @@ export const EdgeCases: Story = {
           tabs={Array.from({ length: 10 }, (_, i) => ({
             id: `t${i + 1}`,
             label: `タブ ${i + 1}`,
-            content: <p className="text-sm">タブ {i + 1} の中身</p>,
+            content: <p className="type-supporting">タブ {i + 1} の中身</p>,
           }))}
         />
       </div>

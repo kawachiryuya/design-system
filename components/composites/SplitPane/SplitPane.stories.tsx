@@ -41,11 +41,11 @@ type Story = StoryObj<typeof SplitPane>;
 
 const MockList = ({ count = 20 }: { count?: number }) => (
   <div className="p-4 space-y-2">
-    <div className="text-sm font-medium mb-3">予約一覧 (list pane)</div>
+    <div className="type-label mb-3">予約一覧 (list pane)</div>
     {Array.from({ length: count }, (_, i) => (
       <div key={i} className="bg-surface border border-border-default rounded-md p-3 hover:bg-surface-subtle cursor-pointer">
-        <div className="text-sm font-medium">予約 #{String(i + 1).padStart(3, '0')}</div>
-        <div className="text-xs text-onSurface-subtle mt-1">2026/06/{(i % 28) + 1} 東京 → 新大阪</div>
+        <div className="type-label">予約 #{String(i + 1).padStart(3, '0')}</div>
+        <div className="type-caption text-onSurface-subtle mt-1">2026/06/{(i % 28) + 1} 東京 → 新大阪</div>
       </div>
     ))}
   </div>
@@ -55,13 +55,13 @@ const MockDetail = () => (
   <div className="p-6 space-y-4">
     <div className="text-lg font-bold">予約詳細 (detail pane)</div>
     <div className="bg-surface border border-border-default rounded-md p-4">
-      <div className="text-sm font-medium mb-2">予約番号: RD-001</div>
-      <div className="text-sm text-onSurface-subtle">
+      <div className="type-label mb-2">予約番号: RD-001</div>
+      <div className="type-supporting text-onSurface-subtle">
         list / detail の独立スクロールを確認できるよう、両 pane を長くしておく。
       </div>
     </div>
     {Array.from({ length: 8 }, (_, i) => (
-      <div key={i} className="bg-surface-subtle border border-border-default rounded-md p-4 text-sm">
+      <div key={i} className="bg-surface-subtle border border-border-default rounded-md p-4 type-supporting">
         <div className="font-medium mb-1">セクション {i + 1}</div>
         <div className="text-onSurface-subtle">scroll させて確認。</div>
       </div>
@@ -183,7 +183,7 @@ export const EdgeCases: Story = {
       <Caption text='detail 未選択時 — children に empty state を渡す'>
         <PanePreview>
           <SplitPane height="500px" list={<MockList count={10} />}>
-            <div className="p-6 text-sm text-onSurface-subtle">左の一覧から項目を選択してください。</div>
+            <div className="p-6 type-supporting text-onSurface-subtle">左の一覧から項目を選択してください。</div>
           </SplitPane>
         </PanePreview>
       </Caption>

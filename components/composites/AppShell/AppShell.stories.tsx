@@ -89,7 +89,7 @@ const MockBottomNav = () => (
 
 const MockSubBar = ({ title }: { title: string }) => (
   <div className="hidden shell:block border-b border-border-subtle bg-surface px-container py-3">
-    <div className="text-xs text-onSurface-subtle">パンくず &gt; {title}</div>
+    <div className="type-caption text-onSurface-subtle">パンくず &gt; {title}</div>
     <div className="font-bold text-lg">{title}</div>
   </div>
 );
@@ -97,7 +97,7 @@ const MockSubBar = ({ title }: { title: string }) => (
 // AppShell が `<footer>` landmark を提供するので、中身は素の要素で渡す (二重に `<footer>` しない)。
 // 帯は内容カラム全幅、内側の読み幅は px-container で軽く絞る (consumer は Section/Center で組む)。
 const MockFooter = () => (
-  <div className="bg-surface border-t border-border-subtle px-container py-4 text-xs text-onSurface-subtle">
+  <div className="bg-surface border-t border-border-subtle px-container py-4 type-caption text-onSurface-subtle">
     {/* フッターの補助リンクは主張を弱める (color="subtle")。下線は既定 (常時) のまま */}
     <div className="flex flex-wrap gap-4">
       <Link href="#" size="sm" color="subtle">サービス紹介</Link>
@@ -111,7 +111,7 @@ const MockFooter = () => (
 const MockContent = ({ children }: { children?: React.ReactNode }) => (
   <div className="bg-surface-subtle border border-dashed border-border-subtle rounded-md p-4 min-h-[200px]">
     {children ?? (
-      <div className="text-sm text-onSurface-subtle">
+      <div className="type-supporting text-onSurface-subtle">
         ここが children (= main 内コンテンツ)。Storybook 用に dashed border で可視化。
       </div>
     )}
@@ -186,7 +186,7 @@ export const Overview: Story = {
               subBar={<MockSubBar title="narrow shell" />}
             >
               <MockContent>
-                <div className="text-sm">contentMax=&quot;narrow&quot; → 内側 main wrapper は <code>max-w-container-narrow</code> (= 768px)。右 pane が広くても読み列はここで頭打ち。</div>
+                <div className="type-supporting">contentMax=&quot;narrow&quot; → 内側 main wrapper は <code>max-w-container-narrow</code> (= 768px)。右 pane が広くても読み列はここで頭打ち。</div>
               </MockContent>
             </AppShell>
           </ShellPreview>
@@ -201,7 +201,7 @@ export const Overview: Story = {
               subBar={<MockSubBar title="wide shell" />}
             >
               <MockContent>
-                <div className="text-sm">contentMax=&quot;wide&quot; → 内側 main wrapper は <code>max-w-container-wide</code> (= 1536px)。narrow と同じフレーム幅で並べると読み列が明確に広い。</div>
+                <div className="type-supporting">contentMax=&quot;wide&quot; → 内側 main wrapper は <code>max-w-container-wide</code> (= 1536px)。narrow と同じフレーム幅で並べると読み列が明確に広い。</div>
               </MockContent>
             </AppShell>
           </ShellPreview>
@@ -229,14 +229,14 @@ export const EdgeCases: Story = {
           <AppShell sidebar={<MockSidebar />} layout="full">
             <Section padding="md" className="bg-surface-primary-muted">
               <Center max="md">
-                <div className="bg-surface border border-border-default rounded-md p-4 text-sm">
+                <div className="bg-surface border border-border-default rounded-md p-4 type-supporting">
                   背景 (Section) は main の端まで full-bleed、コンテンツ (Center max=md) は中央に絞られる。
                 </div>
               </Center>
             </Section>
             <Section padding="md">
               <Center max="md">
-                <div className="bg-surface border border-border-default rounded-md p-4 text-sm">
+                <div className="bg-surface border border-border-default rounded-md p-4 type-supporting">
                   2 つ目の section。`contained` と違い px+max-w の wrapper が無いので背景を端まで伸ばせる。
                 </div>
               </Center>
@@ -249,7 +249,7 @@ export const EdgeCases: Story = {
         <ShellPreview>
           <AppShell header={<MockHeader />}>
             <MockContent>
-              <div className="text-sm">header のみ提供、sidebar/bottomNav 未指定。mobile はトップ Header あり、PC は単純 main 表示。</div>
+              <div className="type-supporting">header のみ提供、sidebar/bottomNav 未指定。mobile はトップ Header あり、PC は単純 main 表示。</div>
             </MockContent>
           </AppShell>
         </ShellPreview>
@@ -259,7 +259,7 @@ export const EdgeCases: Story = {
         <ShellPreview>
           <AppShell>
             <MockContent>
-              <div className="text-sm">全 slot 未指定でも min-h-screen / px-container / max-w-container は効く。最小限の app shell として使える。</div>
+              <div className="type-supporting">全 slot 未指定でも min-h-screen / px-container / max-w-container は効く。最小限の app shell として使える。</div>
             </MockContent>
           </AppShell>
         </ShellPreview>
@@ -279,7 +279,7 @@ export const EdgeCases: Story = {
             footer={<MockFooter />}
           >
             <MockContent>
-              <div className="text-sm">短いコンテンツ。footer は中央に浮かず、内容カラム最下部 (= ビューポート底) に来る。</div>
+              <div className="type-supporting">短いコンテンツ。footer は中央に浮かず、内容カラム最下部 (= ビューポート底) に来る。</div>
             </MockContent>
           </AppShell>
         </ShellPreview>
@@ -294,7 +294,7 @@ export const EdgeCases: Story = {
           >
             <div className="flex flex-col gap-3">
               {Array.from({ length: 10 }, (_, i) => (
-                <div key={i} className="bg-surface border border-border-default rounded-md p-4 text-sm">
+                <div key={i} className="bg-surface border border-border-default rounded-md p-4 type-supporting">
                   セクション {i + 1} — long content で scroll 挙動を確認。
                 </div>
               ))}

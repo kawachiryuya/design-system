@@ -37,9 +37,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       <Tabs
         defaultActiveId="overview"
         tabs={[
-          { id: 'overview', label: '概要', content: <p className="text-sm">概要</p> },
-          { id: 'history', label: '履歴', content: <p className="text-sm">履歴</p> },
-          { id: 'settings', label: '設定', content: <p className="text-sm">設定</p> },
+          { id: 'overview', label: '概要', content: <p className="type-supporting">概要</p> },
+          { id: 'history', label: '履歴', content: <p className="type-supporting">履歴</p> },
+          { id: 'settings', label: '設定', content: <p className="type-supporting">設定</p> },
         ]}
       />
     </div>
@@ -119,7 +119,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="ページ全体の切替は Routing、タブはページ内"
   doExample={
-    <div className="text-sm space-y-2">
+    <div className="type-supporting space-y-2">
       <div className="px-3 py-2 rounded-md bg-surface-subtle">/users (一覧ページ — URL ごと)</div>
       <div className="px-3 py-2 rounded-md bg-surface-subtle">/users/123 (詳細ページ — Tabs で「概要 / 履歴 / 設定」)</div>
     </div>
@@ -160,15 +160,15 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <div className="border border-border-subtle rounded-md overflow-hidden">
   <div className="p-4 bg-surface-subtle border-b border-border-subtle">
     <h2 className="font-medium text-onSurface m-0">田中 太郎</h2>
-    <p className="text-sm text-onSurface-subtle">UI デザイナー</p>
+    <p className="type-supporting text-onSurface-subtle">UI デザイナー</p>
   </div>
   <div className="px-4">
     <Tabs
       defaultActiveId="posts"
       tabs={[
-        { id: 'posts', label: '記事', badge: 48, content: <p className="text-sm text-onSurface-subtle py-2">記事一覧</p> },
-        { id: 'followers', label: 'フォロワー', badge: '1.2k', content: <p className="text-sm text-onSurface-subtle py-2">フォロワー一覧</p> },
-        { id: 'following', label: 'フォロー中', badge: 320, content: <p className="text-sm text-onSurface-subtle py-2">フォロー中一覧</p> },
+        { id: 'posts', label: '記事', badge: 48, content: <p className="type-supporting text-onSurface-subtle py-2">記事一覧</p> },
+        { id: 'followers', label: 'フォロワー', badge: '1.2k', content: <p className="type-supporting text-onSurface-subtle py-2">フォロワー一覧</p> },
+        { id: 'following', label: 'フォロー中', badge: 320, content: <p className="type-supporting text-onSurface-subtle py-2">フォロー中一覧</p> },
       ]}
     />
   </div>

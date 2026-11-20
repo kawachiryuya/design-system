@@ -41,8 +41,6 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## Do / Don't
 
-{/* 例外 (#145): この Don't は「タグに大きさを直書きする」こと自体を見せる見本なので、`text-2xl font-bold` を残す。 */}
-
 <DoDontExample
   label="見出しは visual と semantic を分離する"
   doExample={
@@ -50,6 +48,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   }
   doCaption="サイドバー等の脇役見出しは `as` で文書構造に合った要素 (h3) にしつつ、見た目は役割 (sectionTitle) で決める。SR の見出しジャンプ機能も正確に動く。"
   dontExample={
+    /* type-ignore: 例外 (#145)。この Don't は「タグに大きさを直書きする」こと自体を見せる見本なので、`text-2xl font-bold` を残す。 */
     <h3 className="text-2xl font-bold">サイドバーの見出し</h3>
   }
   dontCaption="HTML タグに直接 className でスタイルを当てると、デザイントークン更新を追従できず、見た目と HTML の整合性が崩れる。"

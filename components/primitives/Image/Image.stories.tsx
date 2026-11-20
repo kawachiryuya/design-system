@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { Image } from './Image';
+import { Icon } from '../Icon';
 import { Caption } from '@sb-blocks/Caption';
 import { SAMPLE_LANDSCAPE, SAMPLE_AVATARS } from '@sb-blocks/sampleImages';
 
@@ -151,7 +152,7 @@ export const EdgeCases: Story = {
             aspectRatio="video"
             fallback={
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-disabled text-onSurface-disabled gap-2">
-                <span className="text-3xl">🖼️</span>
+                <Icon name="image" size="lg" />
                 <span className="type-caption">画像を読み込めませんでした</span>
               </div>
             }

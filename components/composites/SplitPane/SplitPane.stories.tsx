@@ -53,7 +53,7 @@ const MockList = ({ count = 20 }: { count?: number }) => (
 
 const MockDetail = () => (
   <div className="p-6 space-y-4">
-    <div className="text-lg font-bold">予約詳細 (detail pane)</div>
+    <div className="type-section-title">予約詳細 (detail pane)</div>
     <div className="bg-surface border border-border-default rounded-md p-4">
       <div className="type-label mb-2">予約番号: RD-001</div>
       <div className="type-supporting text-onSurface-subtle">

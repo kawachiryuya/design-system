@@ -804,6 +804,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 - すべてのインタラクティブ要素は **Tab / Shift+Tab / Enter / Space / Escape** で操作可能
 - `tabindex` は **0 または -1 のみ**。`1` 以上は予測不能のため禁止。視覚順序と DOM 順序を一致させ tabindex で順序制御しない
+- **領域そのものに Tab で止めるのは、止める理由があるときだけ** (#136): 理由は (a) 中に Tab で来られる要素が無いタブのパネル、(b) 実際にスクロールでき、かつ中に Tab で来られる要素が無い領域 (キーボードでスクロールするため。axe の scrollable-region-focusable と同じ条件) の 2 つ。`tabIndex={0}` を固定で書かず、[`components/_internal/useFocusStop.ts`](./components/_internal/useFocusStop.ts) で描画後に測る (中身の変化・リサイズに追従する。Tabs のパネル / SplitPane の領域)。意味のない所にフォーカスが来ると、キーボードの人は何もできないまま Tab を 1 回余計に押す。止まるかどうかで中身が動かないよう、輪のための余白は止まらないときも同じにする
 - ↑↓←→ での内部移動: Tabs / Radio / Menu 等の同列要素を持つ composite で実装 (各 component の guideline のアクセシビリティ節に操作を書く。自前で実装している部品 (Tabs / DropdownMenu / SegmentedControl) は Playground の play test で確かめる。ネイティブの radio に任せている Radio は対象外)
 - ヘッダーの大きいページでは「メインコンテンツへスキップ」を `<a href="#main">` で先頭に置く
 

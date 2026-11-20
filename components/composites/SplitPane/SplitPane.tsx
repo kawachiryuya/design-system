@@ -1,4 +1,7 @@
-import React from 'react';
+'use client';
+
+import React, { useRef } from 'react';
+import { useFocusStop } from '../../_internal/useFocusStop';
 
 /**
  * SplitPane Props
@@ -86,6 +89,10 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
   style,
   ...rest
 }) => {
+  const listRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+  const listStop = useFocusStop(listRef, 'scrollable-without-tabbable');
+  const detailStop = useFocusStop(detailRef, 'scrollable-without-tabbable');
   const containerClass = [
     'cols:grid cols:grid-cols-[var(--sp-cols)] cols:h-[var(--sp-height)]',
     divider ? 'cols:divide-x cols:divide-border-subtle' : '',
@@ -98,11 +105,13 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
   };
   return (
     <div data-ds-root {...rest} className={containerClass} style={mergedStyle}>
-      {/* 独立スクロールする pane はキーボードでもスクロールできるよう tabindex=0 を付与
-          (WCAG 2.1.1 / axe scrollable-region-focusable)。フォーカスが来たら内側 2px の輪を出し、
-          輪と中身が重ならないよう内側に余白 (p-2) を持たせる (AGENTS §3-2「フォーカスの規則」、#136 で止め方を見直し予定)。 */}
-      <div tabIndex={0} className="focus-ring-inset p-2 cols:pr-8 cols:overflow-y-auto">{list}</div>
-      <div tabIndex={0} className="focus-ring-inset p-2 cols:pl-8 cols:overflow-y-auto">{children}</div>
+      {/* 独立スクロールする pane は、キーボードでもスクロールできるよう Tab で止まる (WCAG 2.1.1 /
+          axe scrollable-region-focusable)。ただし止まるのは理由があるときだけ: 実際にスクロールでき、かつ中に
+          Tab で来られる要素が無いとき (#136)。縦積み (cols 未満)・中身が短い・中に押せるものがある、のどれかなら止まらない。
+          来たときは内側 2px の輪を出し、輪と中身が重ならないよう内側に余白 (p-2) を持たせる
+          (AGENTS §3-2「フォーカスの規則」。余白は止まらないときも同じにして、止まるかどうかで中身が動かないようにする)。 */}
+      <div ref={listRef} tabIndex={listStop ? 0 : undefined} className="focus-ring-inset p-2 cols:pr-8 cols:overflow-y-auto">{list}</div>
+      <div ref={detailRef} tabIndex={detailStop ? 0 : undefined} className="focus-ring-inset p-2 cols:pl-8 cols:overflow-y-auto">{children}</div>
     </div>
   );
 };

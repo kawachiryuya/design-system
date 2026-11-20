@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, waitFor } from 'storybook/test';
 import { useState } from 'react';
 import { Tabs } from './Tabs';
+import { Button } from '../../primitives/Button';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
@@ -41,7 +42,13 @@ const sampleTabs = [
   {
     id: 'settings',
     label: '設定',
-    content: <p className="type-supporting text-onSurface">設定ページです。</p>,
+    // 中に押せるものがあるパネル (パネルそのものには Tab で止まらない、#136)
+    content: (
+      <div className="space-y-3">
+        <p className="type-supporting text-onSurface">設定ページです。</p>
+        <Button variant="secondary" size="sm">設定を保存</Button>
+      </div>
+    ),
   },
   {
     id: 'disabled',
@@ -74,7 +81,7 @@ export const Playground: Story = {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から defaultActiveId / ariaLabel を切替。キーボード操作 (← → Home End) を play test で検証。',
+        story: 'Controls から defaultActiveId / ariaLabel を切替。キーボード操作 (← → Home End) と、パネルに Tab で止まる条件 (中に押せるものが無いときだけ) を play test で検証。',
       },
     },
   },
@@ -82,6 +89,8 @@ export const Playground: Story = {
     const canvas = within(canvasElement);
     const firstTab = canvas.getByRole('tab', { name: '概要' });
     await expect(firstTab).toHaveAttribute('aria-selected', 'true');
+    // パネルに Tab で止まるのは、中に押せるものが無いときだけ (#136)。概要 = 文章だけ → 止まる
+    await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveAttribute('tabindex', '0'));
     await userEvent.click(firstTab);
     await userEvent.keyboard('{ArrowRight}');
     // 'メンバー' タブは badge:5 付きでアクセシブル名が「メンバー 5」になるため部分一致で取る
@@ -89,8 +98,15 @@ export const Playground: Story = {
     await expect(membersTab).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{End}');
     await expect(canvas.getByRole('tab', { name: '設定' })).toHaveAttribute('aria-selected', 'true');
+    // 設定 = 中にボタンがある → パネルには止まらず、Tab はタブからボタンへ直接進む
+    await waitFor(() => expect(canvas.getByRole('tabpanel')).not.toHaveAttribute('tabindex'));
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: '設定を保存' })).toHaveFocus();
+    await userEvent.tab({ shift: true });
     await userEvent.keyboard('{Home}');
     await expect(firstTab).toHaveAttribute('aria-selected', 'true');
+    // 文章だけのパネルに戻ると、また止まる
+    await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveAttribute('tabindex', '0'));
   },
 };
 

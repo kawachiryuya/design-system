@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import { SplitPane } from './SplitPane';
+import { Link } from '../../primitives/Link';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
@@ -197,4 +198,72 @@ export const EdgeCases: Story = {
       </Caption>
     </div>
   ),
+};
+
+// ── 4. FocusStop (視覚回帰対象外: 挙動テスト) ────────────────────
+// 領域に Tab で止まるのは「実際にスクロールでき、かつ中に Tab で来られる要素が無い」ときだけ (#136)。
+// 止まるかどうかは見た目に出ない (余白は同じ) ので、play で確かめる。
+
+export const FocusStop: Story = {
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story: '領域に Tab で止まる条件の挙動テスト。スクロールする文章だけの領域 → 止まる / 中身が短くスクロールしない → 止まらない / スクロールするが中に押せるものがある → 止まらない (中の要素へのフォーカスでスクロールできる)。',
+      },
+    },
+  },
+  render: () => (
+    <div className="space-y-6">
+      <Caption text="スクロールする・中に押せるものが無い → 両方の領域に Tab で止まる">
+        <PanePreview>
+          <SplitPane height="500px" list={<div data-testid="scroll-list"><MockList count={10} /></div>}>
+            <div data-testid="scroll-detail"><MockDetail /></div>
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+      <Caption text="中身が短くスクロールしない → 止まらない">
+        <PanePreview>
+          <SplitPane height="500px" list={<div data-testid="short-list"><MockList count={2} /></div>}>
+            <div data-testid="short-detail" className="p-6 type-supporting">短い中身。</div>
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+      <Caption text="スクロールするが、中に押せるものがある → 領域には止まらない">
+        <PanePreview>
+          <SplitPane
+            height="500px"
+            list={
+              <ul data-testid="link-list" className="p-4 space-y-6">
+                {Array.from({ length: 16 }, (_, i) => (
+                  <li key={i}><Link href="#">予約 #{String(i + 1).padStart(3, '0')}</Link></li>
+                ))}
+              </ul>
+            }
+          >
+            <div data-testid="link-detail"><MockDetail /></div>
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const pane = (id: string) => canvas.getByTestId(id).parentElement as HTMLElement;
+    // 幅が cols 未満 (縦積み) のときは、どの領域もスクロールの枠でないので止まらない
+    const stacked = getComputedStyle(pane('scroll-list')).overflowY === 'visible';
+    if (stacked) {
+      for (const id of ['scroll-list', 'scroll-detail', 'short-list', 'short-detail', 'link-list', 'link-detail']) {
+        await waitFor(() => expect(pane(id)).not.toHaveAttribute('tabindex'));
+      }
+      return;
+    }
+    await waitFor(() => expect(pane('scroll-list')).toHaveAttribute('tabindex', '0'));
+    await expect(pane('scroll-detail')).toHaveAttribute('tabindex', '0');
+    await waitFor(() => expect(pane('short-list')).not.toHaveAttribute('tabindex'));
+    await expect(pane('short-detail')).not.toHaveAttribute('tabindex');
+    await waitFor(() => expect(pane('link-list')).not.toHaveAttribute('tabindex'));
+    // 押せるものが無い側 (詳細) は、同じ SplitPane の中でも止まる
+    await expect(pane('link-detail')).toHaveAttribute('tabindex', '0');
+  },
 };

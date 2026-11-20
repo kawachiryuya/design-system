@@ -4,6 +4,7 @@ import { AppShell } from './AppShell';
 import { Section } from '../../primitives/Section';
 import { Center } from '../../primitives/Center';
 import { Link } from '../../primitives/Link';
+import { Icon } from '../../primitives/Icon';
 import { Caption } from '@sb-blocks/Caption';
 
 /**
@@ -51,13 +52,23 @@ type Story = StoryObj<typeof AppShell>;
 
 const MockHeader = () => (
   <header className="bg-surface border-b border-border-subtle px-4 h-12 flex items-center font-medium">
-    📱 Mobile Header
+    Mobile Header
   </header>
 );
 
-const MockSidebar = () => (
-  <div className="w-64 shrink-0 border-r border-border-subtle bg-surface sticky top-0 h-screen px-2">
-    <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar (w-64)</div>
+/**
+ * `height="screen"` (既定) は実アプリと同じ sticky + h-screen。
+ * `height="fill"` は親 (枠) の高さに収める版 — Storybook の 500px 枠で「短い viewport」を模すとき用
+ * (h-screen=100vh は flex 行を枠より高く広げ、footer を枠外へ押し出すため)。
+ */
+const MockSidebar = ({ height = 'screen' }: { height?: 'screen' | 'fill' }) => (
+  <div
+    className={[
+      'w-64 shrink-0 border-r border-border-subtle bg-surface px-2',
+      height === 'screen' ? 'sticky top-0 h-screen' : 'h-full',
+    ].join(' ')}
+  >
+    <div className="px-4 h-16 flex items-center font-bold">PC Sidebar (w-64)</div>
     <nav className="px-2 flex flex-col gap-1">
       <Link href="#" size="sm" className="px-3 py-2">ホーム</Link>
       <Link href="#" size="sm" className="px-3 py-2">予約一覧</Link>
@@ -68,16 +79,16 @@ const MockSidebar = () => (
 
 const MockBottomNav = () => (
   <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-border-subtle shadow-sm">
-    <div className="flex items-center justify-around h-16 text-xs">
-      <div className="flex flex-col items-center gap-1">📌<span>ホーム</span></div>
-      <div className="flex flex-col items-center gap-1">📋<span>予約一覧</span></div>
-      <div className="flex flex-col items-center gap-1">👤<span>マイページ</span></div>
+    <div className="flex items-center justify-around h-16">
+      <Link href="#" size="sm" className="flex-col px-3 py-1"><Icon name="home" />ホーム</Link>
+      <Link href="#" size="sm" className="flex-col px-3 py-1"><Icon name="list_alt" />予約一覧</Link>
+      <Link href="#" size="sm" className="flex-col px-3 py-1"><Icon name="person" />マイページ</Link>
     </div>
   </nav>
 );
 
 const MockSubBar = ({ title }: { title: string }) => (
-  <div className="hidden lg:block border-b border-border-subtle bg-surface px-container py-3">
+  <div className="hidden shell:block border-b border-border-subtle bg-surface px-container py-3">
     <div className="text-xs text-onSurface-subtle">パンくず &gt; {title}</div>
     <div className="font-bold text-lg">{title}</div>
   </div>
@@ -87,10 +98,11 @@ const MockSubBar = ({ title }: { title: string }) => (
 // 帯は内容カラム全幅、内側の読み幅は px-container で軽く絞る (consumer は Section/Center で組む)。
 const MockFooter = () => (
   <div className="bg-surface border-t border-border-subtle px-container py-4 text-xs text-onSurface-subtle">
+    {/* フッターの補助リンクは主張を弱める (color="subtle")。下線は既定 (常時) のまま */}
     <div className="flex flex-wrap gap-4">
-      <span>サービス紹介</span>
-      <span>ヘルプ</span>
-      <span>よくある質問</span>
+      <Link href="#" size="sm" color="subtle">サービス紹介</Link>
+      <Link href="#" size="sm" color="subtle">ヘルプ</Link>
+      <Link href="#" size="sm" color="subtle">よくある質問</Link>
     </div>
     <div className="mt-3">© 2026 Rail Demo</div>
   </div>
@@ -257,21 +269,11 @@ export const EdgeCases: Story = {
         <ShellPreview>
           {/* footer を枠内で可視化するため「短い viewport」を模す:
               (1) AppShell の min-h-screen を !min-h-full で枠 (500px) 高に収める。
-              (2) sidebar は h-screen 版 MockSidebar でなく枠高に収まる版を使う
-                  (h-screen=100vh は flex 行を 900px に広げ min-height を上回り footer を枠外へ押し出すため)。 */}
+              (2) sidebar は height="fill" で枠高に収める (h-screen だと footer が枠外へ押し出される)。 */}
           <AppShell
             className="!min-h-full"
             header={<MockHeader />}
-            sidebar={
-              <div className="w-64 shrink-0 h-full border-r border-border-subtle bg-surface px-2">
-                <div className="px-4 h-16 flex items-center font-bold">🖥 PC Sidebar</div>
-                <nav className="px-2 flex flex-col gap-1">
-                  <span className="px-3 py-2 rounded text-sm">ホーム</span>
-                  <span className="px-3 py-2 rounded text-sm">予約一覧</span>
-                  <span className="px-3 py-2 rounded text-sm">マイページ</span>
-                </nav>
-              </div>
-            }
+            sidebar={<MockSidebar height="fill" />}
             bottomNav={<MockBottomNav />}
             subBar={<MockSubBar title="footer 付き" />}
             footer={<MockFooter />}

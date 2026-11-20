@@ -108,6 +108,7 @@
 
 ### Fixed
 
+- **AppShell の story の残りの仮の部品を規則に合わせた** (#144): 下のナビ・フッターの項目を `<Link>` に (フッターは `color="subtle"`)、下のナビの絵文字を `<Icon>` に、見出しの絵文字を削除、Edge Cases のサイドバーの写しを `MockSidebar height="fill"` に統合、`MockSubBar` の `lg:` を `shell:` に。story だけの変更で consumer 影響なし
 - **AppShell の story のデモ用ナビを素の `<a>` から `<Link>` に** (#141): フォーカスの輪がブラウザ任せになっていた (フォーカスの輪の検査の唯一の既知 finding)。`FOCUS_RING_EXEMPT` は空になった (仕組みは残す)。story だけの変更で、Overview / Edge Cases の 1280px の写真のサイドバーが変わる。部品の見た目は変わらない。consumer 影響なし
 - **Windows のハイコントラスト (forced-colors) でフォーカスの輪が消えていた** (DDR-2 #131): ring (box-shadow) は forced-colors で描かれない。outline に変えたので残る
 - **Input / Textarea の Overview でフォーカスの姿が出ていなかった**: story は `:focus-visible` を強制していたが、部品は `:focus` で輪を出していた。輪が `:focus-visible` になり一致した (Select の story は `:focus` の強制を `:focus-visible` に直した)

@@ -32,7 +32,7 @@ export default meta;
 type Story = StoryObj<typeof Stack>;
 
 const Item = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-surface border border-border-default rounded-md px-3 py-2 text-sm">
+  <div className="bg-surface border border-border-default rounded-md px-3 py-2 type-supporting">
     {children}
   </div>
 );
@@ -85,7 +85,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">gap (xs / sm / md / lg / xl)</div>
+        <div className="type-caption text-onSurface-subtle">gap (xs / sm / md / lg / xl)</div>
         <div className="flex flex-wrap gap-6">
           {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((g) => (
             <Caption key={g} text={`gap=${g}`}>
@@ -102,11 +102,11 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">align (cross-axis: start / center / end / stretch)</div>
+        <div className="type-caption text-onSurface-subtle">align (cross-axis: start / center / end / stretch)</div>
         <div className="grid grid-cols-4 gap-2">
           {(['start', 'center', 'end', 'stretch'] as const).map((a) => (
             <div key={a} className="bg-surface-subtle border border-dashed border-border-subtle p-3">
-              <div className="text-xs text-onSurface-subtle mb-2">align={a}</div>
+              <div className="type-caption text-onSurface-subtle mb-2">align={a}</div>
               <Stack gap="sm" align={a}>
                 <Item>短い</Item>
                 <Item>少し長めの item</Item>

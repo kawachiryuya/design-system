@@ -30,7 +30,7 @@ export default meta;
 type Story = StoryObj<typeof Section>;
 
 const Block = ({ label }: { label: string }) => (
-  <div className="bg-surface border border-border-default rounded-md p-4 text-center text-sm">
+  <div className="bg-surface border border-border-default rounded-md p-4 text-center type-supporting">
     {label}
   </div>
 );

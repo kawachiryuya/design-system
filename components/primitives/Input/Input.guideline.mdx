@@ -87,8 +87,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <div className="flex flex-col gap-1">
       <input className="h-12 rounded-sm border border-border-error-strong bg-surface-error-muted px-3" />
-      <p className="text-xs text-onSurface-subtle">3〜16 文字の英数字</p>
-      <p className="text-xs text-onSurface-error">3 文字以上で入力してください</p>
+      <p className="type-caption text-onSurface-subtle">3〜16 文字の英数字</p>
+      <p className="type-caption text-onSurface-error">3 文字以上で入力してください</p>
     </div>
   }
   dontCaption="自前で input + help + error を組み立てると同時表示・冗長読み上げ・aria 関連付け漏れが起きやすい。Input コンポーネントに任せる。"

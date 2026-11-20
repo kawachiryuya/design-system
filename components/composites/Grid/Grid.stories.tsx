@@ -38,7 +38,7 @@ export default meta;
 type Story = StoryObj<typeof Grid>;
 
 const Card = ({ label }: { label: string }) => (
-  <div className="bg-surface border border-border-default rounded-md p-4 text-sm text-center">
+  <div className="bg-surface border border-border-default rounded-md p-4 type-supporting text-center">
     {label}
   </div>
 );
@@ -105,7 +105,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-3">
-        <div className="text-xs text-onSurface-subtle">反復モード — 同種アイテムを並べる (列数の決め方が違う)</div>
+        <div className="type-caption text-onSurface-subtle">反復モード — 同種アイテムを並べる (列数の決め方が違う)</div>
         <Caption text='auto-fit (minItemWidth="12rem") — 幅で列数が自動 (推奨)'>
           <div className="w-[680px] max-w-full p-3 bg-surface-subtle">
             <Grid minItemWidth="12rem">{cards(5)}</Grid>
@@ -119,7 +119,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="text-xs text-onSurface-subtle">placement モード — layout="page" の 12 カラムに Grid.Item span で非対称配置</div>
+        <div className="type-caption text-onSurface-subtle">placement モード — layout="page" の 12 カラムに Grid.Item span で非対称配置</div>
         {([
           { label: '3 / 6 / 3 (aside / main / aside)', spans: [3, 6, 3] },
           { label: '4 / 4 / 4 (3 等分)', spans: [4, 4, 4] },

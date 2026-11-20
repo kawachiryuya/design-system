@@ -74,7 +74,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">color (primary / neutral / subtle)</div>
+        <div className="type-caption text-onSurface-subtle">color (primary / neutral / subtle)</div>
         <div className="flex flex-wrap gap-6 items-center">
           <Link href="#" color="primary">Primary</Link>
           <Link href="#" color="neutral">Neutral</Link>
@@ -83,7 +83,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">size (sm 14 / md 16)</div>
+        <div className="type-caption text-onSurface-subtle">size (sm 14 / md 16)</div>
         <div className="flex flex-wrap gap-6 items-baseline">
           <Link href="#" size="sm">Small</Link>
           <Link href="#" size="md">Medium</Link>
@@ -91,7 +91,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">state (Default / Hover / Focus / Active / Disabled)</div>
+        <div className="type-caption text-onSurface-subtle">state (Default / Hover / Focus / Active / Disabled)</div>
         <div className="grid grid-cols-3 gap-4 items-start">
           <Caption text="Default"><Link href="#">Default</Link></Caption>
           <Caption text="Hover"><Link href="#" id="link-hover">Hover</Link></Caption>
@@ -102,7 +102,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">underline (always / hover / none)</div>
+        <div className="type-caption text-onSurface-subtle">underline (always / hover / none)</div>
         <div className="flex flex-col gap-2 items-start">
           <Link href="#" underline="always">underline=always (常に下線)</Link>
           <Link href="#" underline="hover">underline=hover (ホバー時のみ)</Link>
@@ -111,7 +111,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">external (外部アイコン自動付与 + rel/target)</div>
+        <div className="type-caption text-onSurface-subtle">external (外部アイコン自動付与 + rel/target)</div>
         <Link href="https://example.com" external>外部リンク</Link>
       </div>
     </div>
@@ -135,7 +135,7 @@ export const EdgeCases: Story = {
   render: () => (
     <div className="flex flex-col gap-6 w-80">
       <Caption text="段落中インライン (text-decoration が周辺と分離)">
-        <p className="text-md leading-relaxed">
+        <p className="type-body leading-relaxed">
           このサービスをご利用の際は、<Link href="#">利用規約</Link>および
           <Link href="#">プライバシーポリシー</Link>に同意したものとみなします。
         </p>

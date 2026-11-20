@@ -45,7 +45,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doCaption="role=searchbox / Esc で内容クリア / 履歴サジェスト等、browser 標準の検索挙動が自動で得られる。"
   dontExample={
     <div className="px-3 h-10 inline-flex items-center border border-border rounded-sm bg-surface">
-      <span className="text-onSurface-subtle text-sm">検索... (普通の Input ベース)</span>
+      <span className="text-onSurface-subtle type-supporting">検索... (普通の Input ベース)</span>
     </div>
   }
   dontCaption="普通の text input ベースで自前実装すると、role=searchbox や履歴等の標準機能が失われる。"
@@ -153,8 +153,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <div className="w-80 space-y-3">
   <SearchBar value="" onChange={() => {}} size="sm" fullWidth placeholder="ユーザーを検索..." />
   <ul className="divide-y divide-border-subtle border border-border-subtle rounded-sm">
-    <li className="px-3 py-2 text-sm text-onSurface">田中 太郎</li>
-    <li className="px-3 py-2 text-sm text-onSurface">鈴木 花子</li>
+    <li className="px-3 py-2 type-supporting text-onSurface">田中 太郎</li>
+    <li className="px-3 py-2 type-supporting text-onSurface">鈴木 花子</li>
   </ul>
 </div>
 

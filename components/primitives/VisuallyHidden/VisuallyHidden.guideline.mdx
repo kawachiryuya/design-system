@@ -60,14 +60,14 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="display:none ではなく VisuallyHidden を使う"
   doExample={
-    <p className="text-sm">
+    <p className="type-supporting">
       <VisuallyHidden>必須項目: </VisuallyHidden>
       <span className="text-onSurface-error">*</span> メールアドレス
     </p>
   }
   doCaption="`*` の意味 (必須) を VisuallyHidden で SR に伝える。視覚的には記号のみ、SR には「必須項目」が読まれる。"
   dontExample={
-    <p className="text-sm">
+    <p className="type-supporting">
       <span className="hidden">必須項目: </span>
       <span className="text-onSurface-error">*</span> メールアドレス
     </p>

@@ -74,7 +74,7 @@ export const Library: Story = {
       {getIconNames().map((name) => (
         <div key={name} className="flex flex-col items-center gap-2 p-3 rounded border border-border-subtle">
           <Icon name={name} size="md" color="neutral" />
-          <code className="text-xs">{name}</code>
+          <code className="type-caption">{name}</code>
         </div>
       ))}
     </div>
@@ -95,7 +95,7 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">color (semantic 8)</div>
+        <div className="type-caption text-onSurface-subtle">color (semantic 8)</div>
         <div className="flex flex-wrap gap-6 items-center">
           {COLORS.map((color) => (
             <Caption key={color} text={color}>
@@ -106,7 +106,7 @@ export const Overview: Story = {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">size (sm / md / lg / xl)</div>
+        <div className="type-caption text-onSurface-subtle">size (sm / md / lg / xl)</div>
         <div className="flex flex-wrap gap-6 items-end">
           {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
             <Caption key={size} text={`${size} (${SIZE_PX[size]}px)`}>
@@ -148,13 +148,13 @@ export const EdgeCases: Story = {
       <Caption text='存在しない name — registry に無い場合は path なし (装飾的フェイルセーフ)'>
         <div className="flex items-center gap-2 border border-dashed border-border-subtle p-2 rounded">
           <Icon name="nonexistent_icon" size="md" />
-          <span className="text-xs text-onSurface-subtle">↑ SVG タグはあるが path なし</span>
+          <span className="type-caption text-onSurface-subtle">↑ SVG タグはあるが path なし</span>
         </div>
       </Caption>
       <Caption text='xl + 本文隣接 — baseline が効かないので flex items-center で揃える'>
         <div className="flex items-center gap-2">
           <Icon name="info" size="xl" color="info" />
-          <span className="text-md">items-center で揃える</span>
+          <span className="type-body">items-center で揃える</span>
         </div>
       </Caption>
     </div>

@@ -44,14 +44,14 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="flex items-center gap-2 text-onSurface-subtle">
       <Spinner size="xs" color="neutral" />
-      <span className="text-sm">読み込み中...</span>
+      <span className="type-supporting">読み込み中...</span>
     </div>
   }
   doCaption="テキスト隣には xs (12px) で text-sm の line-height と揃える。視線が散らずに自然に読める。"
   dontExample={
     <div className="flex items-center gap-2 text-onSurface-subtle">
       <Spinner size="lg" color="neutral" />
-      <span className="text-sm">読み込み中...</span>
+      <span className="type-supporting">読み込み中...</span>
     </div>
   }
   dontCaption="text-sm の隣に lg (32px) を置くと視覚バランスが崩れ、Spinner が主役のように見えてしまう。"

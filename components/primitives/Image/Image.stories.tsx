@@ -78,42 +78,42 @@ export const Overview: Story = {
   render: () => (
     <div className="flex flex-col gap-6 w-96">
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">aspectRatio (square / video / portrait / wide / auto)</div>
+        <div className="type-caption text-onSurface-subtle">aspectRatio (square / video / portrait / wide / auto)</div>
         {/* Caption (items-start) だと絶対配置 img の比率ボックスが幅0に潰れるため、
             stretch する flex-col セルで囲んで幅を与える。 */}
         <div className="grid grid-cols-2 gap-4">
           {(['square', 'video', 'portrait', 'wide'] as const).map((ratio) => (
             <div key={ratio} className="flex flex-col gap-1">
               <Image src={SAMPLE_IMG} alt="風景" aspectRatio={ratio} rounded="md" />
-              <span className="text-xs text-onSurface-subtle">{ratio}</span>
+              <span className="type-caption text-onSurface-subtle">{ratio}</span>
             </div>
           ))}
           <div className="flex flex-col gap-1">
             <Image src={PORTRAIT_IMG} alt="プロフィール" aspectRatio="auto" />
-            <span className="text-xs text-onSurface-subtle">auto (固定なし)</span>
+            <span className="type-caption text-onSurface-subtle">auto (固定なし)</span>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">objectFit: cover (デフォルト) / contain (余白許容) / fill (歪み、通常非推奨)</div>
+        <div className="type-caption text-onSurface-subtle">objectFit: cover (デフォルト) / contain (余白許容) / fill (歪み、通常非推奨)</div>
         <div className="grid grid-cols-3 gap-2">
           {(['cover', 'contain', 'fill'] as const).map((fit) => (
             <div key={fit} className="flex flex-col gap-1">
               <Image src={SAMPLE_IMG} alt="風景" aspectRatio="square" objectFit={fit} />
-              <span className="text-xs text-onSurface-subtle text-center">{fit}</span>
+              <span className="type-caption text-onSurface-subtle text-center">{fit}</span>
             </div>
           ))}
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-onSurface-subtle">rounded (none / sm / md / lg / full)</div>
+        <div className="type-caption text-onSurface-subtle">rounded (none / sm / md / lg / full)</div>
         <div className="flex flex-wrap gap-3 items-end">
           {(['none', 'sm', 'md', 'lg', 'full'] as const).map((r) => (
             <div key={r} className="flex flex-col items-center gap-1">
               <Image src={PORTRAIT_IMG} alt="プロフィール" aspectRatio="square" rounded={r} className="w-14" />
-              <span className="text-xs text-onSurface-subtle">{r}</span>
+              <span className="type-caption text-onSurface-subtle">{r}</span>
             </div>
           ))}
         </div>
@@ -152,7 +152,7 @@ export const EdgeCases: Story = {
             fallback={
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-disabled text-onSurface-disabled gap-2">
                 <span className="text-3xl">🖼️</span>
-                <span className="text-xs">画像を読み込めませんでした</span>
+                <span className="type-caption">画像を読み込めませんでした</span>
               </div>
             }
           />

@@ -63,14 +63,14 @@ import { SAMPLE_AVATARS } from '@sb-blocks/sampleImages';
   doExample={
     <div className="flex gap-4 items-center">
       <Avatar size="md" name="田中 太郎" status="online" />
-      <span className="text-sm">チャット相手のオンライン状態</span>
+      <span className="type-supporting">チャット相手のオンライン状態</span>
     </div>
   }
   doCaption="チャット・通話・コラボツールのように「ユーザーの状態」が意味を持つ context で使う。SR には `aria-label` に「(オンライン)」が追記される。"
   dontExample={
     <div className="flex gap-4 items-center">
       <Avatar size="md" name="田中 太郎" status="online" />
-      <span className="text-sm">記事の執筆者 (ただの情報表示)</span>
+      <span className="type-supporting">記事の執筆者 (ただの情報表示)</span>
     </div>
   }
   dontCaption="ステータスが意味を持たない場面 (記事の著者表示等) で status を付けると、無関係な状態情報がノイズになる。"
@@ -89,7 +89,7 @@ import { SAMPLE_AVATARS } from '@sb-blocks/sampleImages';
   }
   doCaption="xs: コメント横 / sm: リスト行 / md: 標準カード / lg: プロフィール側面 / xl: プロフィールヒーロー、と用途に合わせて選ぶ。"
   dontExample={
-    <div className="text-sm flex gap-2 items-center">
+    <div className="type-supporting flex gap-2 items-center">
       <Avatar size="xl" name="田中" />
       <span>コメント本文 (xl は大きすぎる)</span>
     </div>

@@ -59,9 +59,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="p-2 bg-surface-subtle">
       <Grid minItemWidth="8rem">
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">A</div>
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">B</div>
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">C</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">A</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">B</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">C</div>
       </Grid>
     </div>
   }
@@ -69,9 +69,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <div className="p-2 bg-surface-subtle">
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">A</div>
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">B</div>
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">C</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">A</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">B</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">C</div>
       </div>
     </div>
   }
@@ -82,7 +82,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="中央寄せの単列は Grid でなく Center に畳む"
   doExample={
     <div className="p-2 bg-surface-subtle border border-dashed border-border-subtle">
-      <div className="max-w-content-md mx-auto bg-surface border border-border-default rounded-md p-3 text-xs text-center">
+      <div className="max-w-content-md mx-auto bg-surface border border-border-default rounded-md p-3 type-caption text-center">
         Center max=md で中央寄せ
       </div>
     </div>
@@ -91,7 +91,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <div className="p-2 bg-surface-subtle border border-dashed border-border-subtle">
       <div className="grid-base">
-        <div className="col-span-full cols:col-span-8 cols:col-start-3 bg-surface border border-border-default rounded-md p-3 text-xs text-center">
+        <div className="col-span-full cols:col-span-8 cols:col-start-3 bg-surface border border-border-default rounded-md p-3 type-caption text-center">
           12 カラムの col-start-3 col-span-8 で中央寄せ
         </div>
       </div>
@@ -105,8 +105,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="p-2 bg-surface-subtle">
       <Grid cols={2}>
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">プラン A</div>
-        <div className="bg-surface border border-border-default rounded-md p-3 text-xs text-center">プラン B</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">プラン A</div>
+        <div className="bg-surface border border-border-default rounded-md p-3 type-caption text-center">プラン B</div>
       </Grid>
     </div>
   }

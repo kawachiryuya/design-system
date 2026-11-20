@@ -43,7 +43,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="xs">
         <span>⏱</span>
-        <span className="text-sm text-onSurface-subtle">5 分で読める</span>
+        <span className="type-supporting text-onSurface-subtle">5 分で読める</span>
       </Cluster>
     </div>
   }
@@ -52,7 +52,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="xl" align="start">
         <span>⏱</span>
-        <span className="text-sm text-onSurface-subtle">5 分で読める</span>
+        <span className="type-supporting text-onSurface-subtle">5 分で読める</span>
       </Cluster>
     </div>
   }
@@ -64,9 +64,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md" as="nav">
-        <a href="#" className="text-sm">ホーム</a>
-        <a href="#" className="text-sm">予約一覧</a>
-        <a href="#" className="text-sm">マイページ</a>
+        <a href="#" className="type-supporting">ホーム</a>
+        <a href="#" className="type-supporting">予約一覧</a>
+        <a href="#" className="type-supporting">マイページ</a>
       </Cluster>
     </div>
   }
@@ -74,9 +74,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md">
-        <a href="#" className="text-sm">ホーム</a>
-        <a href="#" className="text-sm">予約一覧</a>
-        <a href="#" className="text-sm">マイページ</a>
+        <a href="#" className="type-supporting">ホーム</a>
+        <a href="#" className="type-supporting">予約一覧</a>
+        <a href="#" className="type-supporting">マイページ</a>
       </Cluster>
     </div>
   }
@@ -88,8 +88,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md" justify="between">
-        <div className="text-md font-medium">予約一覧</div>
-        <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button>
+        <div className="type-body font-medium">予約一覧</div>
+        <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 type-supporting">新規予約</button>
       </Cluster>
     </div>
   }
@@ -97,8 +97,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="md" justify="start">
-        <div className="text-md font-medium">予約一覧</div>
-        <div className="ml-auto"><button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button></div>
+        <div className="type-body font-medium">予約一覧</div>
+        <div className="ml-auto"><button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 type-supporting">新規予約</button></div>
       </Cluster>
     </div>
   }
@@ -110,9 +110,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <div className="flex items-center gap-2 whitespace-nowrap overflow-x-auto">
-        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 1</div>
-        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 2</div>
-        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm whitespace-nowrap">Tab 3</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting whitespace-nowrap">Tab 1</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting whitespace-nowrap">Tab 2</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting whitespace-nowrap">Tab 3</div>
       </div>
     </div>
   }
@@ -120,9 +120,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <div className="bg-surface-subtle border border-dashed border-border-subtle p-3">
       <Cluster gap="sm">
-        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 1</div>
-        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 2</div>
-        <div className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">Tab 3</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting">Tab 1</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting">Tab 2</div>
+        <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting">Tab 3</div>
       </Cluster>
     </div>
   }
@@ -150,10 +150,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 <div className="max-w-md p-3 border border-border-subtle rounded-lg">
   <Cluster gap="md" justify="between" align="center">
-    <span className="text-md font-medium">予約一覧</span>
+    <span className="type-body font-medium">予約一覧</span>
     <Cluster gap="sm">
-      <button className="bg-surface border border-border-default rounded-md px-3 py-1 text-sm">フィルタ</button>
-      <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 text-sm">新規予約</button>
+      <button className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting">フィルタ</button>
+      <button className="bg-surface-primary text-onSurface-inverse rounded-md px-3 py-1 type-supporting">新規予約</button>
     </Cluster>
   </Cluster>
 </div>
@@ -163,7 +163,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <div className="max-w-md p-3 border border-border-subtle rounded-lg">
   <Cluster gap="xs" align="center">
     <span className="text-onSurface-subtle">⏱</span>
-    <span className="text-sm text-onSurface-subtle">5 分で読める</span>
+    <span className="type-supporting text-onSurface-subtle">5 分で読める</span>
   </Cluster>
 </div>
 

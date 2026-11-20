@@ -42,16 +42,16 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="セクション間の視覚的区切りに使う"
   doExample={
     <div className="flex flex-col gap-2 w-64">
-      <span className="text-sm">基本情報</span>
+      <span className="type-supporting">基本情報</span>
       <Divider />
-      <span className="text-sm">通知設定</span>
+      <span className="type-supporting">通知設定</span>
     </div>
   }
   doCaption="関連の薄いセクションどうしを分けて、視線を整理する。設定画面・カード内の項目区切り等。"
   dontExample={
     <div className="flex flex-col gap-2 w-64">
       <Divider />
-      <span className="text-sm">タイトル</span>
+      <span className="type-supporting">タイトル</span>
       <Divider />
     </div>
   }
@@ -62,17 +62,17 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="意味的な区切りには label を使う"
   doExample={
     <div className="flex flex-col gap-4 w-64">
-      <button type="button" className="w-full py-2 px-4 border border-border-default rounded text-sm">Google でログイン</button>
+      <button type="button" className="w-full py-2 px-4 border border-border-default rounded type-supporting">Google でログイン</button>
       <Divider label="または" />
-      <input type="email" placeholder="メールアドレス" className="w-full px-3 py-2 border border-border-default rounded text-sm" />
+      <input type="email" placeholder="メールアドレス" className="w-full px-3 py-2 border border-border-default rounded type-supporting" />
     </div>
   }
   doCaption="2 つの選択肢の「OR 関係」を視覚的に明示する。SR にも aria-label が伝わる。"
   dontExample={
     <div className="flex flex-col gap-2 w-64">
-      <button type="button" className="w-full py-2 px-4 border border-border-default rounded text-sm">Google でログイン</button>
-      <p className="text-sm text-center">または</p>
-      <input type="email" placeholder="メールアドレス" className="w-full px-3 py-2 border border-border-default rounded text-sm" />
+      <button type="button" className="w-full py-2 px-4 border border-border-default rounded type-supporting">Google でログイン</button>
+      <p className="type-supporting text-center">または</p>
+      <input type="email" placeholder="メールアドレス" className="w-full px-3 py-2 border border-border-default rounded type-supporting" />
     </div>
   }
   dontCaption="「または」を素のテキストで配置すると、視覚的な区切り感がなく、文章の続きに見える。Divider label で線とセットにする。"
@@ -82,18 +82,18 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="vertical Divider は適切な高さの親で使う"
   doExample={
     <div className="flex items-center gap-3 h-8">
-      <span className="text-sm">利用規約</span>
+      <span className="type-supporting">利用規約</span>
       <Divider orientation="vertical" />
-      <span className="text-sm">プライバシーポリシー</span>
+      <span className="type-supporting">プライバシーポリシー</span>
     </div>
   }
   doCaption="フッターのリンク区切り等、親の高さが明確で `flex items-center` がある場所で使う。`self-stretch` で親の高さに追従する。"
   dontExample={
     <div className="flex flex-col gap-1 border border-dashed border-border-subtle p-3 w-full">
-      <span className="text-sm">縦並びの中で</span>
+      <span className="type-supporting">縦並びの中で</span>
       <Divider orientation="vertical" />
-      <em className="text-xs text-onSurface-error not-italic">↑ vertical Divider があるはずが、0 高さで不可視</em>
-      <span className="text-sm">vertical Divider を使う</span>
+      <em className="type-caption text-onSurface-error not-italic">↑ vertical Divider があるはずが、0 高さで不可視</em>
+      <span className="type-supporting">vertical Divider を使う</span>
     </div>
   }
   dontCaption="flex-col の親で vertical を使うと、`self-stretch` が横方向 (cross 軸) にしか効かず 0 高さの div になって不可視。意図せず「無いように見える」失敗パターン。"
@@ -103,21 +103,21 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="weight=normal は強調用途に限定する"
   doExample={
     <div className="flex flex-col gap-3 w-64">
-      <span className="text-sm">通常セクション</span>
+      <span className="type-supporting">通常セクション</span>
       <Divider weight="thin" />
-      <span className="text-sm">関連セクション</span>
+      <span className="type-supporting">関連セクション</span>
       <Divider weight="normal" />
-      <span className="text-sm font-medium">明確に分けたい別カテゴリ</span>
+      <span className="type-label">明確に分けたい別カテゴリ</span>
     </div>
   }
   doCaption="thin (1px) を標準にし、特に大きな区切り (カテゴリの境界等) でのみ normal (2px) を使う。"
   dontExample={
     <div className="flex flex-col gap-3 w-64">
-      <span className="text-sm">セクション A</span>
+      <span className="type-supporting">セクション A</span>
       <Divider weight="normal" />
-      <span className="text-sm">セクション B</span>
+      <span className="type-supporting">セクション B</span>
       <Divider weight="normal" />
-      <span className="text-sm">セクション C</span>
+      <span className="type-supporting">セクション C</span>
     </div>
   }
   dontCaption="normal を多用すると線が画面の主役になりノイズに。普段は thin、強調したい箇所だけ normal の使い分けを保つ。"

@@ -36,17 +36,17 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   label="variant は強調レベルで使い分け"
   doExample={
     <div className="flex flex-col gap-2">
-      <Card variant="elevated"><Card.Body><p className="text-sm">elevated: 強調 / 浮き上がる印象 (モーダル風)</p></Card.Body></Card>
-      <Card variant="outlined"><Card.Body><p className="text-sm">outlined: 標準 (リスト / 設定セクション)</p></Card.Body></Card>
-      <Card variant="filled"><Card.Body><p className="text-sm">filled: 控えめな区切り (背景塗りで章わけ)</p></Card.Body></Card>
+      <Card variant="elevated"><Card.Body><p className="type-supporting">elevated: 強調 / 浮き上がる印象 (モーダル風)</p></Card.Body></Card>
+      <Card variant="outlined"><Card.Body><p className="type-supporting">outlined: 標準 (リスト / 設定セクション)</p></Card.Body></Card>
+      <Card variant="filled"><Card.Body><p className="type-supporting">filled: 控えめな区切り (背景塗りで章わけ)</p></Card.Body></Card>
     </div>
   }
   doCaption="elevated は 1 画面に 1〜2 枚の主要要素、outlined は標準のリスト要素、filled は控えめな区切りに。"
   dontExample={
     <div className="flex flex-col gap-2">
-      <Card variant="elevated"><Card.Body><p className="text-sm">elevated</p></Card.Body></Card>
-      <Card variant="elevated"><Card.Body><p className="text-sm">elevated</p></Card.Body></Card>
-      <Card variant="elevated"><Card.Body><p className="text-sm">elevated</p></Card.Body></Card>
+      <Card variant="elevated"><Card.Body><p className="type-supporting">elevated</p></Card.Body></Card>
+      <Card variant="elevated"><Card.Body><p className="type-supporting">elevated</p></Card.Body></Card>
+      <Card variant="elevated"><Card.Body><p className="type-supporting">elevated</p></Card.Body></Card>
     </div>
   }
   dontCaption="全てを elevated にすると影が重なり「どれが主要要素か」が読めなくなる。強調はピンポイントに使う。"
@@ -57,8 +57,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <Card clickable onClick={() => {}}>
       <Card.Body>
-        <p className="text-sm font-medium">記事タイトル</p>
-        <p className="text-xs text-onSurface-subtle mt-1">概要…</p>
+        <p className="type-label">記事タイトル</p>
+        <p className="type-caption text-onSurface-subtle mt-1">概要…</p>
       </Card.Body>
     </Card>
   }
@@ -66,7 +66,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <Card onClick={() => {}}>
       <Card.Body>
-        <p className="text-sm">div に onClick だけ付けた状態 (clickable なし)</p>
+        <p className="type-supporting">div に onClick だけ付けた状態 (clickable なし)</p>
       </Card.Body>
     </Card>
   }
@@ -78,15 +78,15 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   doExample={
     <Card>
       <Card.Header>プロジェクト設定</Card.Header>
-      <Card.Body><p className="text-sm text-onSurface-subtle">プロジェクトの表示名や説明を変更できます。</p></Card.Body>
+      <Card.Body><p className="type-supporting text-onSurface-subtle">プロジェクトの表示名や説明を変更できます。</p></Card.Body>
       <Card.Footer><Button size="sm" variant="tertiary">キャンセル</Button><Button size="sm">保存</Button></Card.Footer>
     </Card>
   }
   doCaption="Header / Body / Footer の役割を明示的に分けると、ボーダーと padding が自動で揃って読みやすい。"
   dontExample={
     <Card padding="md">
-      <p className="text-sm font-medium">プロジェクト設定</p>
-      <p className="text-sm text-onSurface-subtle my-3">プロジェクトの表示名や説明を変更できます。</p>
+      <p className="type-label">プロジェクト設定</p>
+      <p className="type-supporting text-onSurface-subtle my-3">プロジェクトの表示名や説明を変更できます。</p>
       <div className="flex gap-2 justify-end">
         <Button size="sm" variant="tertiary">キャンセル</Button>
         <Button size="sm">保存</Button>
@@ -103,10 +103,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       <Card.Header divider={false}>
         <div className="flex items-center justify-between">
           <span>お知らせ</span>
-          <span className="text-xs text-onSurface-warning font-medium">重要</span>
+          <span className="type-caption text-onSurface-warning font-medium">重要</span>
         </div>
       </Card.Header>
-      <Card.Body><p className="text-sm text-onSurface-subtle">メンテナンスを実施します</p></Card.Body>
+      <Card.Body><p className="type-supporting text-onSurface-subtle">メンテナンスを実施します</p></Card.Body>
     </Card>
   }
   doCaption="header に複数要素 (タイトル + Badge / icon) を入れる場合は `divider=false` で境界線を消すと窮屈にならない。"
@@ -115,10 +115,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       <Card.Header>
         <div className="flex items-center justify-between">
           <span>お知らせ</span>
-          <span className="text-xs text-onSurface-warning font-medium">重要</span>
+          <span className="type-caption text-onSurface-warning font-medium">重要</span>
         </div>
       </Card.Header>
-      <Card.Body><p className="text-sm text-onSurface-subtle">メンテナンスを実施します</p></Card.Body>
+      <Card.Body><p className="type-supporting text-onSurface-subtle">メンテナンスを実施します</p></Card.Body>
     </Card>
   }
   dontCaption="複数要素を含むヘッダで divider があると窮屈に見える。シンプルな単一タイトル時は divider あり、リッチなヘッダ時は false。"
@@ -150,8 +150,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       </div>
     </Card.Header>
     <Card.Body>
-      <p className="text-sm text-onSurface-subtle">3 月 10 日 02:00〜06:00 にサーバーメンテナンスを実施します。</p>
-      <p className="text-xs text-onSurface-subtle mt-2">2026.03.04</p>
+      <p className="type-supporting text-onSurface-subtle">3 月 10 日 02:00〜06:00 にサーバーメンテナンスを実施します。</p>
+      <p className="type-caption text-onSurface-subtle mt-2">2026.03.04</p>
     </Card.Body>
   </Card>
 </div>
@@ -166,9 +166,9 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
     { label: '平均セッション', value: '8m 32s', change: '+1m 12s', up: true },
   ].map(({ label, value, change, up }) => (
     <Card key={label} padding="md">
-      <p className="text-xs text-onSurface-subtle">{label}</p>
+      <p className="type-caption text-onSurface-subtle">{label}</p>
       <p className="text-xl font-bold text-onSurface mt-1">{value}</p>
-      <p className={`text-xs mt-1 ${up ? 'text-onSurface-success' : 'text-onSurface-error'}`}>{change}</p>
+      <p className={`type-caption mt-1 ${up ? 'text-onSurface-success' : 'text-onSurface-error'}`}>{change}</p>
     </Card>
   ))}
 </div>

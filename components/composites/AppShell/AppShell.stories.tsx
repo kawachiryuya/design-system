@@ -90,7 +90,7 @@ const MockBottomNav = () => (
 const MockSubBar = ({ title }: { title: string }) => (
   <div className="hidden shell:block border-b border-border-subtle bg-surface px-container py-3">
     <div className="type-caption text-onSurface-subtle">パンくず &gt; {title}</div>
-    <div className="font-bold text-lg">{title}</div>
+    <div className="type-page-title">{title}</div>
   </div>
 );
 

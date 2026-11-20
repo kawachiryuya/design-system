@@ -8,7 +8,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
 import { TYPOGRAPHY_PATTERN } from './scripts/typography-pattern.mjs';
 
-// primitive typography 直参照禁止 (#109 Typo-2 / #145、AGENTS §3-7): text-{size} / leading-* / tracking-* を書かず、
+// primitive typography 直参照禁止 (#109 Typo-2 / #145 / #155、AGENTS §3-7): text-{size} / leading-* / tracking-* (任意の値・variant 付きも) を書かず、
 // text style `type-{role}` (type-body / type-supporting / type-section-title 等) を使う。
 // weight の `font-*` は type-* の上書き (Typography の weight prop 等) として許可。
 // 出荷コンポーネントと、story・.storybook の両方に掛ける (mdx は eslint が見ないので check:mdx-typography)。

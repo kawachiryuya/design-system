@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useId, useEffect } from 'react';
+import { useFocusStop } from '../../_internal/useFocusStop';
 
 /**
  * Tabs の 1 タブ項目。
@@ -100,6 +101,39 @@ export interface TabsProps {
   /** 追加 CSS クラス（コンテナに適用）。 */
   className?: string;
 }
+
+/**
+ * タブのパネル (内部用)。
+ *
+ * パネルそのものに Tab で止まらないのは、中身が Tab で来られる要素で**始まるとき**だけ (#136、WAI-ARIA Authoring
+ * Practices のタブの作法と同じ)。そのときは、Tab はタブから最初の要素へ直接進む。中に押せるものが無いとき、
+ * 文章などの後に押せるものがあるときはパネルに止まる (Tab だけで進む読み上げの人が、文章を飛ばさないため)。
+ * 来たときは内側 2px の輪を出し、輪と中身が重ならないよう内側に余白を持たせる
+ * (16px = タブの文字と頭がそろう。余白は止まらないときも同じ)。
+ */
+const TabPanel: React.FC<{ id: string; labelledBy: string; active: boolean; children: React.ReactNode }> = ({
+  id,
+  labelledBy,
+  active,
+  children,
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const stop = useFocusStop(ref, 'content-does-not-start-with-tabbable');
+  return (
+    <div
+      ref={ref}
+      role="tabpanel"
+      id={id}
+      aria-labelledby={labelledBy}
+      hidden={!active}
+      tabIndex={stop ? 0 : undefined}
+      className="focus-ring-inset p-4"
+    >
+      {active && children}
+    </div>
+  );
+};
+TabPanel.displayName = 'TabPanel';
 
 /**
  * Tabs — Atomic Design: Composite (Molecule)
@@ -231,19 +265,14 @@ export const Tabs: React.FC<TabsProps> = ({
 
       {/* タブパネル */}
       {tabs.map((tab) => (
-        <div
+        <TabPanel
           key={tab.id}
-          role="tabpanel"
           id={`${uid}-panel-${tab.id}`}
-          aria-labelledby={`${uid}-tab-${tab.id}`}
-          hidden={tab.id !== currentId}
-          tabIndex={0}
-          // パネルは Tab で止まる (#136 で見直し予定)。来たときは内側 2px の輪を出し、
-          // 輪と中身が重ならないよう内側に余白を持たせる (16px = タブの文字と頭がそろう)
-          className="focus-ring-inset p-4"
+          labelledBy={`${uid}-tab-${tab.id}`}
+          active={tab.id === currentId}
         >
-          {tab.id === currentId && tab.content}
-        </div>
+          {tab.content}
+        </TabPanel>
       ))}
     </div>
   );

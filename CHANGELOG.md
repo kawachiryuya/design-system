@@ -109,6 +109,7 @@
 
 ### Fixed
 
+- **Tabs のパネルと SplitPane の領域に、必要なときだけ Tab で止まるようにした** (#136、AGENTS §8-2): これまでは中身に関係なく常に止まっていた (`tabIndex={0}` 固定)。Tabs のパネルは**中身が押せるもので始まるとき以外は**止まる (押せるもので始まるときは Tab が中へ直接進む。文章の後に押せるものがあるときに止まるのは、Tab だけで進む読み上げの人が文章を飛ばさないため。WAI-ARIA Authoring Practices のタブの作法と同じ)。SplitPane の領域は**実際に縦か横にスクロールでき、かつ中に押せるものが無いときだけ**止まる (縦積みの幅・中身が短いときに、何もできない場所にフォーカスが来ていた)。中身と大きさを描画後に測って決める (prop は足していない。無効 (`<fieldset disabled>` の中を含む)・`visibility: hidden`・閉じた `<details>` の中の要素は押せるものに数えない。領域そのものにフォーカスがある間は、条件が変わっても止まるのをやめない)。**Tab の順番が変わる**: 利用側で「パネル / 領域に Tab で止まる」ことを前提にしたテストがあれば直す (`tabindex="0"` が付かない場合がある)。見た目は変わらない (輪のための余白は同じ)。SplitPane は hook を使うので `'use client'` が付いた
 - **AppShell の story の残りの仮の部品を規則に合わせた** (#144): 下のナビ・フッターの項目を `<Link>` に (フッターは `color="subtle"`)、下のナビの絵文字を `<Icon>` に、見出しの絵文字を削除、Edge Cases のサイドバーの写しを `MockSidebar height="fill"` に統合、`MockSubBar` の `lg:` を `shell:` に。story だけの変更で consumer 影響なし
 - **AppShell の story のデモ用ナビを素の `<a>` から `<Link>` に** (#141): フォーカスの輪がブラウザ任せになっていた (フォーカスの輪の検査の唯一の既知 finding)。`FOCUS_RING_EXEMPT` は空になった (仕組みは残す)。story だけの変更で、Overview / Edge Cases の 1280px の写真のサイドバーが変わる。部品の見た目は変わらない。consumer 影響なし
 - **Windows のハイコントラスト (forced-colors) でフォーカスの輪が消えていた** (DDR-2 #131): ring (box-shadow) は forced-colors で描かれない。outline に変えたので残る

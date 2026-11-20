@@ -114,14 +114,10 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <div className="p-2 bg-surface-subtle">
       <Grid cols={4}>
-        {/* type-ignore: 例外 (#155)。4 列で窮屈になる Don't の見本。10px に当たる `type-*` が無く、`type-caption` (12px) にすると見本の見え方が変わるので、`text-[10px]` を残す。 */}
-        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 1</div>
-        {/* type-ignore: 同上 (Don't の見本の `text-[10px]`)。 */}
-        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 2</div>
-        {/* type-ignore: 同上 (Don't の見本の `text-[10px]`)。 */}
-        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 3</div>
-        {/* type-ignore: 同上 (Don't の見本の `text-[10px]`)。 */}
-        <div className="bg-surface border border-border-default rounded-md p-2 text-[10px] text-center">記事 4</div>
+        <div className="bg-surface border border-border-default rounded-md p-2 type-caption text-center">記事 1</div>
+        <div className="bg-surface border border-border-default rounded-md p-2 type-caption text-center">記事 2</div>
+        <div className="bg-surface border border-border-default rounded-md p-2 type-caption text-center">記事 3</div>
+        <div className="bg-surface border border-border-default rounded-md p-2 type-caption text-center">記事 4</div>
       </Grid>
     </div>
   }

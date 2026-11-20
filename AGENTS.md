@@ -834,6 +834,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 - **矢印キーで中を動く部品** (Tabs のタブ / DropdownMenu の項目 / SegmentedControl / Radio): 検査は Tab で来る 1 つ (選択中など) だけを見る。矢印キーでだけ来る項目は、Tab で来る項目と同じクラスなら代表させてよい。**形が違う項目は、それが Tab で来る状態を story に用意する** (SegmentedControl: 選択中は `focus-ring-on-fill`、未選択は `focus-ring-inset`。何も選ばれていないと先頭の未選択が Tab の止まり先になるので、Overview にその行を置いている)
 - **overlay**: 検査はトリガーを押して開く操作をしない。見るのは story が開いた状態で描いている分だけ: Overview が `open` / `defaultOpen` で描いているもの (Modal / Popover / DropdownMenu / Tooltip の中の要素) と、play の最後に開いたまま残したもの。**Tab の順に入らないプログラムからのフォーカスは、開いたまま残して (1) で見せる** (Popover: 中に押せるものが無いとパネル自体にフォーカスが移る。Playground の play が最後にキーボードで開いて残す。クリックの後のプログラムからのフォーカスは `:focus-visible` にならないことがあるので、キーボードで開く)
+- **幅で構造が変わる story**: 既定の幅 (1280px) で見た後、story が `parameters.chromatic.viewports` (§9-4) で宣言している残りの幅 (今は AppShell / TwoColumn / SplitPane の 375px) でも同じ検査をする (#152)。狭い幅でだけ出る要素 (AppShell の下のナビ等) は既定の幅では Tab が来ないため。「この幅では別の見え方になる」の宣言は撮影と検査で 1 つにし、検査のための宣言を別に持たない。**狭い幅でだけ出る押せる要素を足したら、その story の `chromatic.viewports` にその幅があることを確かめる** (無ければ検査は見ない)。落ちたときの報告には `[幅 375px]` が付く
 - **範囲に入れていないもの**: Tokens / Principles (UI ではない)。Tab で 1 つも要素に来ない story (表示だけの部品) は何も見ずに通る
 - **例外**: `FOCUS_RING_EXEMPT` ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts)) に component 単位で理由付きで列挙する (`TODO(focus):` 付きは既知 finding)。story 単位は `parameters.focusRing = { disable: true }` (理由コメント必須)
 

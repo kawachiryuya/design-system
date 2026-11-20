@@ -390,7 +390,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 - **primitive hue 直参照禁止** (§3 / スタイリング3規律): `bg-teal-500` / `text-neutral-200` / `border-red-700` のような `{utility}-{hue}-{shade}` (hue = teal/neutral/green/red/orange/blue) を書くと error。semantic token (`bg-surface-primary` / `text-onSurface-subtle` 等) を使う。string literal / template literal の両方を検知 (JSDoc コメント内の反例は AST 対象外なので可)
 - **`@/` エイリアス import 禁止** (§4 依存): `components/**` からの `@/...` import は error (相対 import か `@sb-blocks` を使う)
 - **primitive typography 直参照禁止** (#109 Typo-2): 出荷コンポーネントに `text-{xs〜5xl}` / `leading-*` / `tracking-*` を書くと error。semantic の text style `type-{role}` (`type-section-title` / `type-body` / `type-supporting` / `type-control-md` / `type-label` / `type-caption`。見出しは hero / page / section / item の役割名、本文は body (16) / supporting (14) の 2 つ。size + 行間 + weight + 字間を 1 クラスで持つ、preset が components 層に生成) を使う。weight の `font-{weight}` は type-* の上書き (Typography の weight prop 等) として可。例外は container 比で決まる文字 (Avatar の initials) のみで、理由付き `eslint-disable`
-- **story・`.storybook/blocks`・guideline の文字も `type-*`** (#145、**まだ lint の対象外**): 部品の story (`components/{primitives,composites}/**/*.stories.tsx`)・`.storybook/blocks/**`・部品の guideline (`*.guideline.mdx`) も、上と同じく `text-{xs〜5xl}` / `leading-*` / `tracking-*` を直書きせず `type-*` で書く。見本は人にも AI にも写されるので、見本が直書きだと出荷コンポーネントにも直書きが写る。lint (と、eslint が見ない mdx の検査) は #145 の手順 9 で広げる。それまでは、新しく書く所は `type-*` で書き、別の理由で触ったファイルの直書きもその PR で置き換える。置き換え方と対象外は下の「story と guideline の文字の置き換え」
+- **story・`.storybook`・guideline の文字も `type-*`** (#145): 部品の story (`components/**/*.stories.tsx`)・`.storybook/**` の ts / tsx・mdx (`components/**/*.mdx` / `.storybook/**/*.mdx`、guideline や Principles) も、上と同じく `text-{xs〜5xl}` / `leading-*` / `tracking-*` を直書きせず `type-*` で書く。見本は人にも AI にも写されるので、見本が直書きだと出荷コンポーネントにも直書きが写る。tsx は lint が、mdx は `check:mdx-typography` ([`scripts/check-mdx-typography.mjs`](./scripts/check-mdx-typography.mjs)、eslint は mdx を読まないので `className` の中だけを見る。散文の「text-sm」などの言葉は対象外) が弾く。パターンは両方とも [`scripts/typography-pattern.mjs`](./scripts/typography-pattern.mjs) を読む。どちらも Tokens のカタログ (`components/tokens/**`) は対象外。**わざと残すときは理由を書いて外す**: tsx は `eslint-disable-next-line no-restricted-syntax -- <理由>`、mdx は同じ行か直前の行に `{/* type-ignore: <理由> */}` (理由の無い印・何も外していない印も落ちる)。今の例外は 3 か所 (Cluster の story の「高め」・Typography の guideline の Don't・Card の guideline の KPI の値)。置き換え方と対象外は下の「story と guideline の文字の置き換え」
 - **フォーカスの表現は `focus-ring*` だけ** (DDR-2 #131): 出荷コンポーネントに `outline-none`・フォーカスの variant 付きの `ring-*` / `outline-*` / `border-*` / `bg-*` / `shadow-*`・`ring-inset`・`ring-offset-*` を書くと error。フォーカスの variant は `focus:` / `focus-visible:` / `focus-within:` と、その `peer-` / `group-` 版 (`group-focus/name:` も)、arbitrary の `[&:focus-visible]:` 等 (#139)。`focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` のどれか 1 つを使う (§3-2「フォーカスの規則」)。フォーカスと関係ない ring (Avatar の `ring-2 ring-surface`) は対象外
 - **書いた utility は CSS を生成していなければならない** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)、lint ではなく verify の check): 出荷コンポーネントの string literal 内の utility 候補を配信 CSS と、stories / `.storybook` / mdx の `className` を Storybook CSS と突き合わせ、生成されていないクラス (= preset に写像が無い / token 名と違う / Tailwind 既定が上書きで消えている) があれば error。対象は色・タイポ・枠・影・角丸に加え、余白・寸法・位置 (`p*` / `m*` / `w` / `h` / `min-*` / `max-*` / `size` / `inset` / `top` 等、#125)。spacing はトークンのスケールで上書きしているので、スケールに無い段 (`w-56` 等) は生成されない。Tailwind 既定の `px` も同じ理由で無い (`mt-px` は書けない。1px が要るときは `mt-[1px]`)。`border-border-default` (#107) / `text-onSurface-subdued` / `font-normal` / `ring-current` / Do/Don't の `bg-success-500` (#109) の再発防止。動的に組み立てるクラスは検査できないので、`${}` を含む template は skip、意図的な例外は同じ行に `utility-ignore: <理由>`
 - **react-hooks**: `rules-of-hooks` (error) / `exhaustive-deps` (warn)。意図的な dep 省略は `// eslint-disable-next-line react-hooks/exhaustive-deps` + 理由コメントで明示
@@ -400,7 +400,7 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 
 #### story と guideline の文字の置き換え (#145)
 
-上の「story・`.storybook/blocks`・guideline の文字も `type-*`」で直書きを置き換えるときの表。大きさではなく**役割**で選ぶ。
+上の「story・`.storybook`・guideline の文字も `type-*`」で直書きを置き換えるときの表。大きさではなく**役割**で選ぶ。
 
 | 今 | 置き換え先 | 備考 |
 |---|---|---|
@@ -412,10 +412,10 @@ PJ 側 (本リポを依存として使う product 側) で、ブランド固有�
 | `leading-*` / `tracking-*` | 外す | `type-*` が行間・字間を持つ |
 | `font-mono` | 残す (`type-caption font-mono` のように並べる) | 書体は別の軸 |
 
-- **表で決まらない箇所は置き換えずに残し、PR に一覧で書く** (例: 大きさの違いそのものを見せる見本。Typography の story など)
+- **表で決まらない箇所は置き換えずに残し、理由を書いて検査から外し (上の `eslint-disable-next-line` / `type-ignore`)、PR に一覧で書く** (例: 大きさの違いそのものを見せる見本)
 - **写真**: preset の `text-xs` / `text-sm` は大きさだけで行間を持たず、親から受け継ぐ (多くは 1.5)。`type-*` も行間 1.5 なので、置き換えても写真はほとんど変わらない想定 (変わるのは親の行間が 1.5 でない所だけ)。変わったら、その箇所を前後の写真で PR に示す (§9-4)
 - **対象外**:
-  - Tokens のカタログ (`components/tokens/**`): 大きさの段そのもの (`text-xs`〜`text-5xl`) を見せるのが目的で、§3-6 の別構造。ラベルだけ `type-*` にするかは、lint を広げた後に必要なら別に決める
+  - Tokens のカタログ (`components/tokens/**`): 大きさの段そのもの (`text-xs`〜`text-5xl`) を見せるのが目的で、§3-6 の別構造。ラベルだけ `type-*` にするかは、必要になったら別に決める
   - 出荷コンポーネント: すでに上の lint が守っている
 
 ### 3-8. テーマ契約 — 三層 themeable モデル (#59)
@@ -478,7 +478,7 @@ themeable トークンを 3 層に分け、機械可読な manifest [`tokens/the
 | **コミット前の最終確認 (全体)** | `npm run verify` |
 | 視覚・a11y も含む全確認 | `npm run verify:full` |
 
-- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:conventions → typecheck → check:styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
+- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:mdx-typography → check:conventions → typecheck → check:styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
 - `typecheck` は incremental (`.tsbuildinfo`) のため 2 回目以降が速い。
 - **イテレーション中はスコープ版、全体走査はコミット前のみ** という方針を守る。
 
@@ -623,6 +623,7 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 | 壊れた Storybook 内リンク (`?path=...`) が無い | **Check links** (`npm run check:links`、§9-3) |
 | コマンド・PR テンプレ・スクリプトの `§N` 参照が AGENTS.md の実在見出しを指す (改番でのリンク切れ防止) | **Check refs** (`npm run check:refs`、[`scripts/check-refs.mjs`](./scripts/check-refs.mjs)) |
 | `tokens/preset.cjs` が require する外部パッケージが dependencies / peerDependencies に宣言済み (mode② consumer の preset 解決を守る。devDependency 止まりだと `Cannot find module` で落ちる packaging silent break を弾く) | **Check preset deps** (`npm run check:preset-deps`、[`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs)) |
+| story・`.storybook`・mdx でも文字の大きさ・行間・字間を直書きしない (`type-*` で書く。tsx は Lint、mdx は `className` の中を見る、§3-7) | **Lint** (`npm run lint`) / **Check mdx typography** (`npm run check:mdx-typography`、[`scripts/check-mdx-typography.mjs`](./scripts/check-mdx-typography.mjs)) |
 | 書いた Tailwind utility が実際に CSS を生成している (出荷コンポーネント ↔ 配信 CSS、stories / `.storybook` / mdx ↔ Storybook CSS。存在しないクラスを書いても型・lint では止まらない silent break を弾く、§3-7) | **Check utilities** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)) |
 | semantic color token がテーマ契約 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)) のどれか 1 層にちょうど 1 回出る (層を決めずに token を足せない。rename / 削除の取り残しも弾く、§3-8) | **Check theme contract** (`npm run check:theme-contract`、[`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)) |
 | semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
@@ -835,6 +836,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 - **矢印キーで中を動く部品** (Tabs のタブ / DropdownMenu の項目 / SegmentedControl / Radio): 検査は Tab で来る 1 つ (選択中など) だけを見る。矢印キーでだけ来る項目は、Tab で来る項目と同じクラスなら代表させてよい。**形が違う項目は、それが Tab で来る状態を story に用意する** (SegmentedControl: 選択中は `focus-ring-on-fill`、未選択は `focus-ring-inset`。何も選ばれていないと先頭の未選択が Tab の止まり先になるので、Overview にその行を置いている)
 - **overlay**: 検査はトリガーを押して開く操作をしない。見るのは story が開いた状態で描いている分だけ: Overview が `open` / `defaultOpen` で描いているもの (Modal / Popover / DropdownMenu / Tooltip の中の要素) と、play の最後に開いたまま残したもの。**Tab の順に入らないプログラムからのフォーカスは、開いたまま残して (1) で見せる** (Popover: 中に押せるものが無いとパネル自体にフォーカスが移る。Playground の play が最後にキーボードで開いて残す。クリックの後のプログラムからのフォーカスは `:focus-visible` にならないことがあるので、キーボードで開く)
+- **幅で構造が変わる story**: 既定の幅 (1280px) で見た後、story が `parameters.chromatic.viewports` (§9-4) で宣言している残りの幅 (今は AppShell / TwoColumn / SplitPane の 375px) でも同じ検査をする (#152)。狭い幅でだけ出る要素 (AppShell の下のナビ等) は既定の幅では Tab が来ないため。「この幅では別の見え方になる」の宣言は撮影と検査で 1 つにし、検査のための宣言を別に持たない。**狭い幅でだけ出る押せる要素を足したら、その story の `chromatic.viewports` にその幅があることを確かめる** (無ければ検査は見ない)。落ちたときの報告には `[幅 375px]` が付く
 - **範囲に入れていないもの**: Tokens / Principles (UI ではない)。Tab で 1 つも要素に来ない story (表示だけの部品) は何も見ずに通る
 - **例外**: `FOCUS_RING_EXEMPT` ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts)) に component 単位で理由付きで列挙する (`TODO(focus):` 付きは既知 finding)。story 単位は `parameters.focusRing = { disable: true }` (理由コメント必須)
 

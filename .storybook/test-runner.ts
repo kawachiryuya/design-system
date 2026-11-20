@@ -95,14 +95,45 @@ async function runAxe(page: Page, storyContext: StoryContext) {
   });
 }
 
+/** 幅を変えた後、レイアウトが落ち着くのを待つ (media query の切り替え → 描画 2 回ぶん) */
+async function settleLayout(page: Page) {
+  await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
+}
+
 async function runFocusRingCheck(page: Page, storyContext: StoryContext) {
   if (!FOCUS_RING_TARGET.test(storyContext.title ?? '')) return;
   if (storyContext.parameters?.focusRing?.disable) return;
   if (FOCUS_RING_EXEMPT[storyContext.title]) return;
 
-  const findings = await findFocusRingViolations(page);
+  // まず今の幅 (test-runner の既定) で見る
+  const findings = (await findFocusRingViolations(page)).map((f) => ({ ...f, width: null as number | null }));
+
+  // 幅で構造が変わると story が宣言している幅でも見る (#152)。宣言は Chromatic の撮影の幅
+  // (`parameters.chromatic.viewports`、§9-4) をそのまま読む: 「この幅では別の見え方になる」と
+  // 書いてある story だけが対象で、検査のための宣言を別に持たない。
+  // 狭い幅でだけ出る要素 (AppShell の下のナビ等) は、既定の幅では Tab が来ないので、ここでしか見えない。
+  const original = page.viewportSize();
+  const declared: unknown = storyContext.parameters?.chromatic?.viewports;
+  const widths = Array.isArray(declared)
+    ? [...new Set(declared.filter((w): w is number => typeof w === 'number' && w !== original?.width))]
+    : [];
+  if (original && widths.length > 0) {
+    try {
+      for (const width of widths) {
+        await page.setViewportSize({ width, height: original.height });
+        await settleLayout(page);
+        for (const f of await findFocusRingViolations(page)) findings.push({ ...f, width });
+      }
+    } finally {
+      await page.setViewportSize(original);
+      await settleLayout(page);
+    }
+  }
+
   if (findings.length === 0) return;
-  const lines = findings.map((f) => `  - ${f.element}: ${f.reason} [outline: ${f.outline}]`);
+  const lines = findings.map(
+    (f) => `  - ${f.width ? `[幅 ${f.width}px] ` : ''}${f.element}: ${f.reason} [outline: ${f.outline}]`,
+  );
   throw new Error(
     `フォーカスの輪が規則 (AGENTS §3-2「フォーカスの規則」) に合わない要素が ${findings.length} 件:\n` +
       lines.join('\n') +

@@ -6,6 +6,25 @@
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
+import { TYPOGRAPHY_PATTERN } from './scripts/typography-pattern.mjs';
+
+// primitive typography 直参照禁止 (#109 Typo-2 / #145、AGENTS §3-7): text-{size} / leading-* / tracking-* を書かず、
+// text style `type-{role}` (type-body / type-supporting / type-section-title 等) を使う。
+// weight の `font-*` は type-* の上書き (Typography の weight prop 等) として許可。
+// 出荷コンポーネントと、story・.storybook の両方に掛ける (mdx は eslint が見ないので check:mdx-typography)。
+// 例外は `eslint-disable-next-line no-restricted-syntax -- <理由>`。
+const typographySelectors = [
+  {
+    selector: `Literal[value=/${TYPOGRAPHY_PATTERN}/]`,
+    message:
+      'primitive typography 直参照 (text-sm / leading-tight 等) は禁止。text style `type-{role}` (type-body / type-supporting 等) を使う (AGENTS §3-7)。',
+  },
+  {
+    selector: `TemplateElement[value.raw=/${TYPOGRAPHY_PATTERN}/]`,
+    message:
+      'primitive typography 直参照はテンプレートリテラル内でも禁止。text style `type-{role}` を使う (AGENTS §3-7)。',
+  },
+];
 
 export default tseslint.config(
   {
@@ -66,22 +85,7 @@ export default tseslint.config(
           message:
             'primitive hue 直参照はテンプレートリテラル内でも禁止。semantic token を使う (AGENTS §3 / スタイリング3規律)。',
         },
-        // primitive typography 直参照禁止 (#109 Typo-2、AGENTS §3-7): text-{size} / leading-* / tracking-* を
-        // 出荷コンポーネントに書かず、text style `type-{role}` (type-body-md / type-control-sm 等) を使う。
-        // weight の `font-*` は type-* の上書き (Typography の weight prop 等) として許可。
-        // 例外 (Avatar の initials 等) は eslint-disable + 理由コメント。
-        {
-          selector:
-            'Literal[value=/(^|\\s)(text-(xs|sm|md|lg|xl|2xl|3xl|4xl|5xl)|leading-(none|tight|snug|normal|relaxed)|tracking-(tight|normal|wide))(\\s|$)/]',
-          message:
-            'primitive typography 直参照 (text-sm / leading-tight 等) は禁止。text style `type-{role}` (type-body-md / type-control-sm 等) を使う (AGENTS §3-7)。',
-        },
-        {
-          selector:
-            'TemplateElement[value.raw=/(^|\\s)(text-(xs|sm|md|lg|xl|2xl|3xl|4xl|5xl)|leading-(none|tight|snug|normal|relaxed)|tracking-(tight|normal|wide))(\\s|$)/]',
-          message:
-            'primitive typography 直参照はテンプレートリテラル内でも禁止。text style `type-{role}` を使う (AGENTS §3-7)。',
-        },
+        ...typographySelectors,
         // フォーカスの表現は utility `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` だけで書く (DDR-2 #131、AGENTS §3-7)。
         // outline-none での消去、フォーカスの variant での ring / outline / 枠線 / 塗り / 影の直書き、ring-inset / ring-offset-* を弾く。
         // フォーカスの variant = focus: / focus-visible: / focus-within: と、その peer- / group- 版 (名前付き `group-focus/name:` も)、
@@ -100,6 +104,17 @@ export default tseslint.config(
             'フォーカスの表現はテンプレートリテラル内でも focus-ring / focus-ring-inset / focus-ring-on-fill のどれか 1 つで書く (AGENTS §3-7)。',
         },
       ],
+    },
+  },
+
+  // ── 文字の直書き禁止を story と .storybook にも (#145、AGENTS §3-7) ──
+  // 見本は人にも AI にも写されるので、出荷コンポーネントと同じ規則に揃える。
+  // Tokens のカタログ (components/tokens/**) は大きさの段そのものを見せるのが目的なので対象外 (§3-6)。
+  {
+    files: ['components/**/*.stories.tsx', '.storybook/**/*.{ts,tsx}'],
+    ignores: ['components/tokens/**'],
+    rules: {
+      'no-restricted-syntax': ['error', ...typographySelectors],
     },
   },
 

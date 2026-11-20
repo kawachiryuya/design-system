@@ -167,7 +167,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   ].map(({ label, value, change, up }) => (
     <Card key={label} padding="md">
       <p className="type-caption text-onSurface-subtle">{label}</p>
-      {/* 例外 (#145): 強調する数値で、見出しではない。数値に当たる `type-*` の役割がまだ無いので、`text-xl font-bold` を残す。 */}
+      {/* type-ignore: 例外 (#145)。強調する数値で、見出しではない。数値に当たる `type-*` の役割がまだ無いので、`text-xl font-bold` を残す。 */}
       <p className="text-xl font-bold text-onSurface mt-1">{value}</p>
       <p className={`type-caption mt-1 ${up ? 'text-onSurface-success' : 'text-onSurface-error'}`}>{change}</p>
     </Card>

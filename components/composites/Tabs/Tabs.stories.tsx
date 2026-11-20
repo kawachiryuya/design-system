@@ -31,18 +31,22 @@ const sampleTabs = [
     id: 'members',
     label: 'メンバー',
     badge: 5,
+    // 押せるもので始まるパネル (パネルそのものには Tab で止まらず、Tab は招待ボタンへ直接進む、#136)
     content: (
-      <ul className="space-y-2">
-        {['田中 太郎', '鈴木 花子', '佐藤 一郎', '山田 次郎', '木村 三郎'].map((name) => (
-          <li key={name} className="type-supporting text-onSurface">{name}</li>
-        ))}
-      </ul>
+      <div className="space-y-3">
+        <Button variant="secondary" size="sm">メンバーを招待</Button>
+        <ul className="space-y-2">
+          {['田中 太郎', '鈴木 花子', '佐藤 一郎', '山田 次郎', '木村 三郎'].map((name) => (
+            <li key={name} className="type-supporting text-onSurface">{name}</li>
+          ))}
+        </ul>
+      </div>
     ),
   },
   {
     id: 'settings',
     label: '設定',
-    // 中に押せるものがあるパネル (パネルそのものには Tab で止まらない、#136)
+    // 文章の後に押せるものがあるパネル (パネルに止まる。Tab だけで進む人が文章を飛ばさないため、#136)
     content: (
       <div className="space-y-3">
         <p className="type-supporting text-onSurface">設定ページです。</p>
@@ -57,6 +61,16 @@ const sampleTabs = [
     content: null,
   },
 ];
+
+/**
+ * 描画とパネルの測り直し (1 フレームにまとめている) が済むのを待つ。パネルの最初の値は「止まる」なので、
+ * 待たずに「止まる」を確かめると、測る前の値で通ってしまう
+ */
+const nextFrames = (n = 3) =>
+  new Promise<void>((resolve) => {
+    const step = (left: number) => (left <= 0 ? resolve() : requestAnimationFrame(() => step(left - 1)));
+    step(n);
+  });
 
 const meta: Meta<typeof Tabs> = {
   title: 'Composites/Tabs',
@@ -81,7 +95,7 @@ export const Playground: Story = {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: 'Controls から defaultActiveId / ariaLabel を切替。キーボード操作 (← → Home End) と、パネルに Tab で止まる条件 (中に押せるものが無いときだけ) を play test で検証。',
+        story: 'Controls から defaultActiveId / ariaLabel を切替。キーボード操作 (← → Home End) と、パネルに Tab で止まる条件 (中身が押せるもので始まるとき以外は止まる。概要 = 文章だけ → 止まる / メンバー = ボタンで始まる → 止まらない / 設定 = 文章の後にボタン → 止まる) を play test で検証。',
       },
     },
   },
@@ -89,23 +103,37 @@ export const Playground: Story = {
     const canvas = within(canvasElement);
     const firstTab = canvas.getByRole('tab', { name: '概要' });
     await expect(firstTab).toHaveAttribute('aria-selected', 'true');
-    // パネルに Tab で止まるのは、中に押せるものが無いときだけ (#136)。概要 = 文章だけ → 止まる
+    // パネルに Tab で止まらないのは、中身が押せるもので始まるときだけ (#136、WAI-ARIA APG)。概要 = 文章だけ → 止まる
+    await nextFrames();
     await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveAttribute('tabindex', '0'));
     await userEvent.click(firstTab);
     await userEvent.keyboard('{ArrowRight}');
     // 'メンバー' タブは badge:5 付きでアクセシブル名が「メンバー 5」になるため部分一致で取る
     const membersTab = canvas.getByRole('tab', { name: /メンバー/ });
     await expect(membersTab).toHaveAttribute('aria-selected', 'true');
-    await userEvent.keyboard('{End}');
-    await expect(canvas.getByRole('tab', { name: '設定' })).toHaveAttribute('aria-selected', 'true');
-    // 設定 = 中にボタンがある → パネルには止まらず、Tab はタブからボタンへ直接進む
+    // メンバー = ボタンで始まる → パネルには止まらず、Tab はタブからボタンへ直接進む
     await waitFor(() => expect(canvas.getByRole('tabpanel')).not.toHaveAttribute('tabindex'));
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: 'メンバーを招待' })).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    await expect(membersTab).toHaveFocus();
+    await userEvent.keyboard('{End}');
+    const settingsTab = canvas.getByRole('tab', { name: '設定' });
+    await expect(settingsTab).toHaveAttribute('aria-selected', 'true');
+    // 設定 = 文章の後にボタン → パネルに止まり (文章を飛ばさない)、もう一度 Tab でボタンへ
+    await nextFrames();
+    await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveAttribute('tabindex', '0'));
+    await userEvent.tab();
+    await expect(canvas.getByRole('tabpanel')).toHaveFocus();
     await userEvent.tab();
     await expect(canvas.getByRole('button', { name: '設定を保存' })).toHaveFocus();
     await userEvent.tab({ shift: true });
+    await userEvent.tab({ shift: true });
+    await expect(settingsTab).toHaveFocus();
     await userEvent.keyboard('{Home}');
     await expect(firstTab).toHaveAttribute('aria-selected', 'true');
     // 文章だけのパネルに戻ると、また止まる
+    await nextFrames();
     await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveAttribute('tabindex', '0'));
   },
 };

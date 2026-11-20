@@ -106,7 +106,7 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
   return (
     <div data-ds-root {...rest} className={containerClass} style={mergedStyle}>
       {/* 独立スクロールする pane は、キーボードでもスクロールできるよう Tab で止まる (WCAG 2.1.1 /
-          axe scrollable-region-focusable)。ただし止まるのは理由があるときだけ: 実際にスクロールでき、かつ中に
+          axe scrollable-region-focusable)。ただし止まるのは理由があるときだけ: 実際に縦か横にスクロールでき、かつ中に
           Tab で来られる要素が無いとき (#136)。縦積み (cols 未満)・中身が短い・中に押せるものがある、のどれかなら止まらない。
           来たときは内側 2px の輪を出し、輪と中身が重ならないよう内側に余白 (p-2) を持たせる
           (AGENTS §3-2「フォーカスの規則」。余白は止まらないときも同じにして、止まるかどうかで中身が動かないようにする)。 */}

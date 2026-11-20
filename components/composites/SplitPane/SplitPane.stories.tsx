@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { useState } from 'react';
 import { SplitPane } from './SplitPane';
+import { Button } from '../../primitives/Button';
 import { Link } from '../../primitives/Link';
 import { Caption } from '@sb-blocks/Caption';
 
@@ -201,15 +203,39 @@ export const EdgeCases: Story = {
 };
 
 // ── 4. FocusStop (視覚回帰対象外: 挙動テスト) ────────────────────
-// 領域に Tab で止まるのは「実際にスクロールでき、かつ中に Tab で来られる要素が無い」ときだけ (#136)。
+// 領域に Tab で止まるのは「実際に縦か横にスクロールでき、かつ中に Tab で来られる要素が無い」ときだけ (#136)。
 // 止まるかどうかは見た目に出ない (余白は同じ) ので、play で確かめる。
+
+/** 中身を短くできる SplitPane (領域そのものにフォーカスがある間に条件が変わる場合の確認用)。押すボタンは領域の外に置く */
+const ShrinkDemo = () => {
+  const [long, setLong] = useState(true);
+  return (
+    <div className="space-y-2">
+      <Button variant="secondary" size="sm" onClick={() => setLong(false)}>詳細を短くする</Button>
+      <PanePreview>
+        <SplitPane height="500px" list={<div data-testid="shrink-list"><MockList count={10} /></div>}>
+          <div data-testid="shrink-detail">
+            {long ? <MockDetail /> : <p className="p-6 type-supporting">短くなった中身。</p>}
+          </div>
+        </SplitPane>
+      </PanePreview>
+    </div>
+  );
+};
+
+/** 描画と測り直し (1 フレームにまとめている) が済むのを待つ */
+const nextFrames = (n = 2) =>
+  new Promise<void>((resolve) => {
+    const step = (left: number) => (left <= 0 ? resolve() : requestAnimationFrame(() => step(left - 1)));
+    step(n);
+  });
 
 export const FocusStop: Story = {
   parameters: {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
-        story: '領域に Tab で止まる条件の挙動テスト。スクロールする文章だけの領域 → 止まる / 中身が短くスクロールしない → 止まらない / スクロールするが中に押せるものがある → 止まらない (中の要素へのフォーカスでスクロールできる)。',
+        story: '領域に Tab で止まる条件の挙動テスト。スクロールする文章だけの領域 → 止まる / 中身が短くスクロールしない → 止まらない / スクロールするが中に押せるものがある → 止まらない (中の要素へのフォーカスでスクロールできる) / 横にだけあふれる → 止まる / 中のボタンが `<fieldset disabled>` で無効 → 止まる / 領域そのものにフォーカスがある間に中身が短くなっても、tabindex を外さない (外すとフォーカスが body に飛ぶ。フォーカスが外れたら外す)。',
       },
     },
   },
@@ -245,15 +271,56 @@ export const FocusStop: Story = {
           </SplitPane>
         </PanePreview>
       </Caption>
+      <Caption text="横にだけあふれる (幅の広い中身) → 止まる">
+        <PanePreview>
+          <SplitPane
+            height="500px"
+            list={
+              <div data-testid="wide-list" className="w-[1200px] p-4 type-supporting">
+                幅の広い中身 (横にスクロールする)。
+              </div>
+            }
+          >
+            <div data-testid="wide-detail" className="p-6 type-supporting">短い中身。</div>
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+      <Caption text="スクロールするが、中のボタンは fieldset ごと無効 → 押せるものに数えず、止まる">
+        <PanePreview>
+          <SplitPane
+            height="500px"
+            list={
+              <fieldset data-testid="disabled-list" disabled className="p-4 space-y-6">
+                {Array.from({ length: 16 }, (_, i) => (
+                  <div key={i}><Button variant="secondary" size="sm">予約 #{String(i + 1).padStart(3, '0')}</Button></div>
+                ))}
+              </fieldset>
+            }
+          >
+            <div data-testid="disabled-detail" className="p-6 type-supporting">短い中身。</div>
+          </SplitPane>
+        </PanePreview>
+      </Caption>
+      <Caption text="領域にフォーカスがある間に中身が短くなる → フォーカスも tabindex も残り、フォーカスが外れたら外れる">
+        <ShrinkDemo />
+      </Caption>
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const pane = (id: string) => canvas.getByTestId(id).parentElement as HTMLElement;
-    // 幅が cols 未満 (縦積み) のときは、どの領域もスクロールの枠でないので止まらない
-    const stacked = getComputedStyle(pane('scroll-list')).overflowY === 'visible';
+    // 幅が cols (= lg) 未満 (縦積み) のときは、どの領域もスクロールの枠でないので止まらない。
+    // 縦積みかどうかは CSS の読み込みを待たずに決まるよう、幅の media query で見る
+    const stacked = !window.matchMedia('(min-width: 1024px)').matches;
+    // CSS が効いて、測り直し (1 フレームにまとめている) が済むまで待つ。最初の描画は「止まる」なので、
+    // 待たずに「止まる」を確かめると、測る前の値で通ってしまう
+    if (!stacked) await waitFor(() => expect(getComputedStyle(pane('scroll-list')).overflowY).toBe('auto'));
+    await nextFrames(3);
     if (stacked) {
-      for (const id of ['scroll-list', 'scroll-detail', 'short-list', 'short-detail', 'link-list', 'link-detail']) {
+      for (const id of [
+        'scroll-list', 'scroll-detail', 'short-list', 'short-detail', 'link-list', 'link-detail',
+        'wide-list', 'wide-detail', 'disabled-list', 'disabled-detail', 'shrink-list', 'shrink-detail',
+      ]) {
         await waitFor(() => expect(pane(id)).not.toHaveAttribute('tabindex'));
       }
       return;
@@ -265,5 +332,33 @@ export const FocusStop: Story = {
     await waitFor(() => expect(pane('link-list')).not.toHaveAttribute('tabindex'));
     // 押せるものが無い側 (詳細) は、同じ SplitPane の中でも止まる
     await expect(pane('link-detail')).toHaveAttribute('tabindex', '0');
+    // 横にだけあふれる領域も、スクロールできるので止まる
+    await waitFor(() => expect(pane('wide-list')).toHaveAttribute('tabindex', '0'));
+    await expect(pane('wide-detail')).not.toHaveAttribute('tabindex');
+    // fieldset ごと無効なボタンは Tab で来られないので数えない → 止まる
+    await waitFor(() => expect(pane('disabled-list')).toHaveAttribute('tabindex', '0'));
+
+    // 実際に Tab を押すと、止まる領域にフォーカスが来る (領域の外のボタン → 一覧の領域)
+    const shrinkButton = canvas.getByRole('button', { name: '詳細を短くする' });
+    const shrinkList = pane('shrink-list');
+    const shrinkDetail = pane('shrink-detail');
+    await waitFor(() => expect(shrinkList).toHaveAttribute('tabindex', '0'));
+    await waitFor(() => expect(shrinkDetail).toHaveAttribute('tabindex', '0'));
+    shrinkButton.focus();
+    await userEvent.tab();
+    await expect(shrinkList).toHaveFocus();
+    await userEvent.tab();
+    await expect(shrinkDetail).toHaveFocus();
+
+    // 領域そのものにフォーカスがある間に中身が短くなる (フォーカスを動かさずに押す)
+    shrinkButton.click();
+    await waitFor(() => expect(canvas.getByText('短くなった中身。')).toBeInTheDocument());
+    await nextFrames(3);
+    // フォーカスは body に飛ばず領域に残り、tabindex も残る
+    await expect(shrinkDetail).toHaveFocus();
+    await expect(shrinkDetail).toHaveAttribute('tabindex', '0');
+    // フォーカスが外れたら、測り直して外す
+    shrinkDetail.blur();
+    await waitFor(() => expect(shrinkDetail).not.toHaveAttribute('tabindex'));
   },
 };

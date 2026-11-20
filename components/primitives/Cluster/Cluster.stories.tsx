@@ -124,7 +124,7 @@ export const Overview: Story = {
               <div className="bg-surface-subtle border border-dashed border-border-subtle p-2 flex-1">
                 <Cluster gap="sm" align={a}>
                   <div className="bg-surface border border-border-default rounded-md px-3 py-1 type-supporting">短い</div>
-                  {/* 例外 (#145): 文字の大きさが違うと align=baseline の効き方が見えるので、`text-lg` を残す。 */}
+                  {/* eslint-disable-next-line no-restricted-syntax -- 例外 (#145): 文字の大きさが違うと align=baseline の効き方が見えるので、`text-lg` を残す。役割の type-* は無い */}
                   <div className="bg-surface border border-border-default rounded-md px-3 py-3 text-lg">高め</div>
                   <div className="bg-surface border border-border-default rounded-md px-3 py-2 type-supporting">中</div>
                 </Cluster>

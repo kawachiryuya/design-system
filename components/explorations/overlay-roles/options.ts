@@ -12,13 +12,22 @@ export type Role = 'confirm' | 'choose' | 'info' | 'task';
 /** 出方 */
 export type Form = 'center' | 'anchor' | 'sheet' | 'full';
 
+/** つまみ。hash では 0 / 1 / 2 */
+export type Handle = 'none' | 'visual' | 'drag';
+export const HANDLES: Handle[] = ['none', 'visual', 'drag'];
+export const HANDLE_LABEL: Record<Handle, string> = {
+  none: 'なし',
+  visual: 'あり・見た目だけ',
+  drag: 'あり・引いて閉じる',
+};
+
 export interface Settings {
   confirm: Form;
   choose: Form;
   info: Form;
   task: Form;
-  /** 下から出る形の上端の短い横棒 (見た目だけ) */
-  handle: boolean;
+  /** 下から出る形の上端の短い横棒: none なし / visual あり・見た目だけ / drag あり・引いて閉じる */
+  handle: Handle;
 }
 
 export const FORM_LABEL: Record<Form, string> = {
@@ -66,13 +75,13 @@ export const DEFAULTS: Settings = {
   choose: CHOICES.choose[0],
   info: CHOICES.info[0],
   task: CHOICES.task[0],
-  handle: false,
+  handle: 'none',
 };
 
 /** 狭い幅と広い幅の境目 (Tailwind の sm と同じ) */
 export const WIDE_QUERY = '(min-width: 640px)';
 
-/** hash (例 `#confirm=sheet&choose=anchor&info=sheet&task=full&handle=1`) から読む。知らない値は初期値に戻す */
+/** hash (例 `#confirm=sheet&choose=anchor&info=sheet&task=full&handle=2`) から読む。知らない値は初期値に戻す */
 export function parseHash(hash: string): Settings {
   const params = new URLSearchParams(hash.replace(/^#/, ''));
   const next: Settings = { ...DEFAULTS };
@@ -80,7 +89,8 @@ export function parseHash(hash: string): Settings {
     const v = params.get(role) as Form | null;
     if (v && CHOICES[role].includes(v)) next[role] = v;
   }
-  next.handle = params.get('handle') === '1';
+  const h = Number(params.get('handle'));
+  next.handle = HANDLES[h] ?? 'none';
   return next;
 }
 
@@ -88,7 +98,7 @@ export function parseHash(hash: string): Settings {
 export function toHash(s: Settings): string {
   const params = new URLSearchParams();
   for (const role of ROLES) params.set(role, s[role]);
-  params.set('handle', s.handle ? '1' : '0');
+  params.set('handle', String(HANDLES.indexOf(s.handle)));
   return `#${params.toString()}`;
 }
 
@@ -102,5 +112,5 @@ export const FORM_SHORT: Record<Form, string> = {
 
 /** 帯に出す短い表示 (例「確認:中央 選ぶ:近く 補足:近く 作業:下から」) */
 export function summary(s: Settings): string {
-  return ROLES.map((r) => `${ROLE_LABEL[r]}:${FORM_SHORT[s[r]]}`).join(' ') + (s.handle ? ' つまみ' : '');
+  return ROLES.map((r) => `${ROLE_LABEL[r]}:${FORM_SHORT[s[r]]}`).join(' ') + (s.handle === 'visual' ? ' つまみ' : s.handle === 'drag' ? ' つまみ(引く)' : '');
 }

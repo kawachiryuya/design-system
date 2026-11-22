@@ -23,6 +23,8 @@ import {
   CHOICES,
   DEFAULTS,
   FORM_LABEL,
+  HANDLES,
+  HANDLE_LABEL,
   ROLES,
   ROLE_LABEL,
   ROLE_NOTE,
@@ -172,21 +174,20 @@ const SwitchBand: React.FC<{ settings: Settings; onChange: (s: Settings) => void
                   ))}
                 </RadioGroup>
               ))}
-              <RadioGroup legend="「下から出る形」のつまみ（上端の短い横棒。見た目だけ）" inline>
-                <Radio
-                  name="x-handle"
-                  value="0"
-                  label="なし"
-                  checked={!settings.handle}
-                  onChange={() => onChange({ ...settings, handle: false })}
-                />
-                <Radio
-                  name="x-handle"
-                  value="1"
-                  label="あり"
-                  checked={settings.handle}
-                  onChange={() => onChange({ ...settings, handle: true })}
-                />
+              <RadioGroup
+                legend="「下から出る形」のつまみ（上端の短い横棒）"
+                helpText="「引いて閉じる」は、背景を押すと閉じる下から出る形（選ぶ・補足・作業）だけで効きます。上端の帯（つまみと見出しの行）を下へ引くと閉じます。確認・画面いっぱいでは見た目だけと同じです。"
+              >
+                {HANDLES.map((h) => (
+                  <Radio
+                    key={h}
+                    name="x-handle"
+                    value={h}
+                    label={HANDLE_LABEL[h]}
+                    checked={settings.handle === h}
+                    onChange={() => onChange({ ...settings, handle: h })}
+                  />
+                ))}
               </RadioGroup>
             </Stack>
           </div>
@@ -647,7 +648,7 @@ export const OnRailApp: Story = {
     docs: {
       description: {
         story:
-          '上の帯から、役割ごとに狭い幅での出方を切り替えて触る。状態は URL の hash に入る (例 #confirm=sheet&choose=sheet&info=sheet&task=sheet&handle=1)。',
+          '上の帯から、役割ごとに狭い幅での出方を切り替えて触る。状態は URL の hash に入る (例 #confirm=sheet&choose=sheet&info=sheet&task=sheet&handle=2。handle は 0 なし / 1 見た目だけ / 2 引いて閉じる)。',
       },
     },
   },

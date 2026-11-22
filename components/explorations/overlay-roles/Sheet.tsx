@@ -20,7 +20,24 @@ import { VisuallyHidden } from '../../primitives/VisuallyHidden';
  * - 開くときは下から 200ms (duration normal・easing out)。prefers-reduced-motion では動かさない。閉じる動きは無し
  * - 開いている間は背景をスクロールさせない。閉じたらフォーカスを開く前の要素 (押した要素) に戻す
  * - `full` = 画面いっぱい: 100dvh・角なし。上に見出しと閉じる、下にフッター固定
+ * - `handle="drag"` (引いて閉じる。`form="sheet"` かつ背景を押して閉じるシートだけ):
+ *   - 掴めるのは上端の帯 (つまみの行と見出しの行。閉じるボタンは除く) だけ。本体は引いても動かない
+ *   - 掴む領域は touch-action: none。Pointer Events で指に付いて下へ動く (上へは動かない)。値は CSS 変数 --x-sheet-drag
+ *   - 離したとき、引いた距離が高さの 25% を超える か 下向きの速さが 0.5px/ms を超える → 下へ抜けて閉じる (200ms の後に onClose)。
+ *     それ以外 → 元の位置へ戻る (200ms)。prefers-reduced-motion: reduce では動きを付けずに即時
+ *   - つまみは aria-hidden でフォーカスも受けない (閉じるボタンと Esc が代わりの手段)
  */
+
+/** つまみ: なし / あり・見た目だけ / あり・引いて閉じる */
+export type SheetHandle = 'none' | 'visual' | 'drag';
+
+/** 引いて閉じる、の閾値 (仮) */
+export const DRAG_CLOSE_RATIO = 0.25;
+export const DRAG_CLOSE_VELOCITY = 0.5; // px/ms
+/** 速さを測る区間 (直近この時間ぶんの動き) */
+const VELOCITY_WINDOW_MS = 100;
+/** 抜ける・戻る動きの長さ (token の duration normal と同じ値。終わりを待つのに使う) */
+const SETTLE_MS = 200;
 export interface SheetProps {
   /** 開いているか */
   open: boolean;
@@ -36,10 +53,11 @@ export interface SheetProps {
    */
   closeOnBackdrop?: boolean;
   /**
-   * 上端の短い横棒 (見た目だけ。引いて閉じる動きは無い)。`full` では出さない
-   * @default false
+   * 上端の短い横棒。`none` 出さない / `visual` 見た目だけ / `drag` 引いて閉じる。
+   * `full` では出さない。`drag` は `form="sheet"` かつ `closeOnBackdrop` のときだけ効き、ほかでは `visual` と同じ
+   * @default 'none'
    */
-  handle?: boolean;
+  handle?: SheetHandle;
   /** フッター (固定)。確定・取り消しなど */
   footer?: React.ReactNode;
   /**
@@ -56,7 +74,14 @@ const SHEET_CSS = `
 @keyframes x-sheet-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .x-sheet[open] { animation: x-sheet-in var(--duration-normal) var(--easing-out); }
 @media (prefers-reduced-motion: reduce) { .x-sheet[open] { animation: none; } }
+/* 引いて閉じる: 位置は CSS 変数で受ける。引いている間は動きなし、離した後 (data-drag=settle) だけ transition */
+.x-sheet { transform: translateY(var(--x-sheet-drag, 0px)); }
+.x-sheet[data-drag="settle"] { transition: transform var(--duration-normal) var(--easing-out); }
+@media (prefers-reduced-motion: reduce) { .x-sheet[data-drag="settle"] { transition: none; } }
 `;
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let lockCount = 0;
 /** 背景のスクロールを止める (html と body の両方。重ねて開いても最後に閉じたときに戻す) */
@@ -81,7 +106,7 @@ export const Sheet: React.FC<SheetProps> = ({
   title,
   form = 'sheet',
   closeOnBackdrop = true,
-  handle = false,
+  handle = 'none',
   footer,
   padded = true,
   children,
@@ -89,26 +114,116 @@ export const Sheet: React.FC<SheetProps> = ({
   const ref = React.useRef<HTMLDialogElement | null>(null);
   const returnTo = React.useRef<HTMLElement | null>(null);
   const titleId = React.useId();
+  const full = form === 'full';
+  const showHandle = handle !== 'none' && !full;
+  const draggable = handle === 'drag' && !full && closeOnBackdrop;
+
+  // 引いている間の値は再描画せずに ref と CSS 変数で持つ
+  const drag = React.useRef<{
+    pointerId: number;
+    startY: number;
+    height: number;
+    samples: { y: number; t: number }[];
+  } | null>(null);
+  const settleTimer = React.useRef<number | null>(null);
+  const onCloseRef = React.useRef(onClose);
+  onCloseRef.current = onClose;
+
+  /** 位置を 0 に戻し、引く状態を全部捨てる (開くとき・閉じるときに必ず呼ぶ) */
+  const resetDrag = React.useCallback(() => {
+    drag.current = null;
+    if (settleTimer.current !== null) window.clearTimeout(settleTimer.current);
+    settleTimer.current = null;
+    const d = ref.current;
+    if (!d) return;
+    d.style.removeProperty('--x-sheet-drag');
+    delete d.dataset.drag;
+    delete d.dataset.dragging;
+  }, []);
 
   React.useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
     if (open && !dialog.open) {
+      resetDrag();
+      delete dialog.dataset.dragResult;
       returnTo.current = document.activeElement as HTMLElement | null;
       dialog.showModal();
     } else if (!open && dialog.open) {
+      resetDrag();
       dialog.close();
       // ブラウザも戻すが、戻さないブラウザに備えて明示する
       returnTo.current?.focus();
     }
-  }, [open]);
+  }, [open, resetDrag]);
 
   React.useEffect(() => {
     if (!open) return;
     return lockScroll();
   }, [open]);
 
-  const full = form === 'full';
+  React.useEffect(() => resetDrag, [resetDrag]);
+
+  const setOffset = (px: number) => ref.current?.style.setProperty('--x-sheet-drag', `${px}px`);
+
+  const onGrabDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = ref.current;
+    if (!draggable || !d || !d.open || drag.current || settleTimer.current !== null) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    // 閉じるボタンは今までどおり押せるように、ボタンの上では掴まない
+    if ((e.target as Element).closest('button')) return;
+    // 開く動きの途中で掴んだら、動きを終わらせてから指に付ける (animation と transform がぶつからないように)
+    d.getAnimations().forEach((a) => a.finish());
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = {
+      pointerId: e.pointerId,
+      startY: e.clientY,
+      height: d.getBoundingClientRect().height,
+      samples: [{ y: e.clientY, t: e.timeStamp }],
+    };
+    delete d.dataset.drag;
+    d.dataset.dragging = '';
+  };
+
+  const onGrabMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const g = drag.current;
+    if (!g || e.pointerId !== g.pointerId) return;
+    e.preventDefault();
+    setOffset(Math.max(0, e.clientY - g.startY));
+    g.samples.push({ y: e.clientY, t: e.timeStamp });
+    while (g.samples.length > 2 && e.timeStamp - g.samples[0].t > VELOCITY_WINDOW_MS) g.samples.shift();
+  };
+
+  /** 離したとき (cancel は戻すだけ) */
+  const finish = (e: React.PointerEvent<HTMLDivElement>, cancelled: boolean) => {
+    const g = drag.current;
+    const d = ref.current;
+    if (!g || e.pointerId !== g.pointerId || !d) return;
+    drag.current = null;
+    delete d.dataset.dragging;
+    const dist = Math.max(0, e.clientY - g.startY);
+    const first = g.samples[0];
+    const dt = e.timeStamp - first.t;
+    const velocity = dt > 0 ? (e.clientY - first.y) / dt : 0;
+    const shouldClose = !cancelled && (dist > g.height * DRAG_CLOSE_RATIO || velocity > DRAG_CLOSE_VELOCITY);
+    // 検討の確かめ用 (見た目には使わない): 結果と、引いた距離 px・速さ px/ms
+    d.dataset.dragResult = shouldClose ? 'close' : 'back';
+    d.dataset.dragMeasure = `${Math.round(dist)}px ${velocity.toFixed(2)}px/ms`;
+
+    if (prefersReducedMotion()) {
+      if (shouldClose) onCloseRef.current();
+      else resetDrag();
+      return;
+    }
+    d.dataset.drag = 'settle';
+    // 下へ抜ける: 高さ + 影のぶんだけ下へ
+    setOffset(shouldClose ? g.height + 16 : 0);
+    settleTimer.current = window.setTimeout(() => {
+      settleTimer.current = null;
+      if (shouldClose) onCloseRef.current();
+      else resetDrag();
+    }, SETTLE_MS);
+  };
 
   return (
     <dialog
@@ -131,17 +246,27 @@ export const Sheet: React.FC<SheetProps> = ({
       ].join(' ')}
     >
       <style>{SHEET_CSS}</style>
-      {handle && !full && (
-        <div aria-hidden className="flex justify-center pt-2">
-          <span className="block h-1 w-10 rounded-full bg-surface-neutral" />
-        </div>
-      )}
-      <header className={['flex items-center justify-between gap-3 pl-4 pr-2', handle && !full ? 'pt-1' : 'pt-2', 'pb-1'].join(' ')}>
-        <h2 id={titleId} className="type-section-title text-onSurface flex-1 min-w-0">
-          {title}
-        </h2>
-        <Button variant="tertiary" size="md" iconOnly icon={<Icon name="close" />} aria-label="閉じる" onClick={onClose} />
-      </header>
+      {/* 上端の帯 (つまみの行 + 見出しの行)。drag のときだけここが掴む領域になる */}
+      <div
+        data-sheet-grab={draggable ? '' : undefined}
+        onPointerDown={draggable ? onGrabDown : undefined}
+        onPointerMove={draggable ? onGrabMove : undefined}
+        onPointerUp={draggable ? (e) => finish(e, false) : undefined}
+        onPointerCancel={draggable ? (e) => finish(e, true) : undefined}
+        className={draggable ? 'touch-none select-none cursor-grab' : undefined}
+      >
+        {showHandle && (
+          <div aria-hidden className="flex justify-center pt-2">
+            <span className="block h-1 w-10 rounded-full bg-surface-neutral" />
+          </div>
+        )}
+        <header className={['flex items-center justify-between gap-3 pl-4 pr-2', showHandle ? 'pt-1' : 'pt-2', 'pb-1'].join(' ')}>
+          <h2 id={titleId} className="type-section-title text-onSurface flex-1 min-w-0">
+            {title}
+          </h2>
+          <Button variant="tertiary" size="md" iconOnly icon={<Icon name="close" />} aria-label="閉じる" onClick={onClose} />
+        </header>
+      </div>
       <div
         className={[
           // flex-auto: 高さが中身なりの入れ物の中で flex-1 (basis 0%) にすると、Safari では本体の高さが 0 に潰れることがある

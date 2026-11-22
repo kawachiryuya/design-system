@@ -144,7 +144,8 @@ export const Sheet: React.FC<SheetProps> = ({
       </header>
       <div
         className={[
-          'flex-1 min-h-0 overflow-y-auto overscroll-contain type-body text-onSurface',
+          // flex-auto: 高さが中身なりの入れ物の中で flex-1 (basis 0%) にすると、Safari では本体の高さが 0 に潰れることがある
+          'flex-auto min-h-0 overflow-y-auto overscroll-contain type-body text-onSurface',
           padded ? 'px-4 pb-4' : 'pb-2',
           // フッターが無いときは本体の下に安全域の余白
           footer ? '' : 'pb-[calc(theme(spacing.4)+env(safe-area-inset-bottom))]',

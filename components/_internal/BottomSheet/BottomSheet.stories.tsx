@@ -308,6 +308,33 @@ export const Checks: Story = {
     await expect(trigger).toHaveFocus();
     await expect(html.style.overflow).toBe('');
 
+    // 受け付けない間に押し始め、受け付けるようになってから離す: その押下から出た click では選ばれない
+    const ptr = { bubbles: true, isPrimary: true, pointerType: 'touch', pointerId: 9 };
+    await userEvent.click(trigger);
+    await waitFor(() => expect(dialog.open).toBe(true));
+    const late = screen.getByRole('button', { name: '所要時間順' });
+    late.dispatchEvent(new PointerEvent('pointerdown', ptr));
+    await afterOpenGuard();
+    late.dispatchEvent(new PointerEvent('pointerup', ptr));
+    late.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+    await new Promise((r) => setTimeout(r, 100));
+    await expect(dialog.open).toBe(true);
+    await expect(canvas.getByTestId('last-choice')).toHaveTextContent('到着時刻順');
+    dialog.dispatchEvent(new Event('cancel', { cancelable: true }));
+    await waitFor(() => expect(dialog.open).toBe(false));
+
+    // 受け付けない間に始めた押下が click にならずに終わった (指で引いた・スクロールした = pointercancel) 後も、
+    // キーボードの 1 回目はふつうに効く (印が残って、次の click を止めない)
+    await userEvent.click(trigger);
+    await waitFor(() => expect(dialog.open).toBe(true));
+    late.dispatchEvent(new PointerEvent('pointerdown', ptr));
+    late.dispatchEvent(new PointerEvent('pointercancel', ptr));
+    await afterOpenGuard();
+    screen.getByRole('button', { name: '所要時間順' }).focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(dialog.open).toBe(false));
+    await expect(canvas.getByTestId('last-choice')).toHaveTextContent('所要時間順');
+
     // 最後はキーボードで開いたまま残す (test-runner の axe が開いた面を見る)
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(dialog.open).toBe(true));

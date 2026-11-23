@@ -27,7 +27,8 @@ import { lockScroll } from '../scrollLock';
  *   閉じたらフォーカスを開く前の要素に戻す
  * - 開いてから 300ms は、ポインタの操作 (面の中を押す・背景を押して閉じる・帯を引く) を受け付けない。入口を素早く 2 回押したとき、
  *   2 回目が上がってくる面の項目に当たって選ばれたり、背景に当たってすぐ閉じたりしないため。この間に押し始めた操作は、
- *   300ms を越えて離しても受け付けない。時間は動きの有無によらず同じ。キーボード (Esc・矢印・Enter) は受ける
+ *   300ms を越えて離しても受け付けない (止めるのはその押下から出る click だけで、印は押下が終わると消える)。時間は動きの有無によらず同じ。
+ *   キーボード (Esc・矢印・Enter・Space)・`el.click()`・読み上げの「実行」(detail が 0 の click) は、いつでも受ける
  * - 閉じる動きの間は面を `inert` にして、二度押し・Esc の連打を受けない (もう一度開く `open` は受ける)
  *
  * 配信契約 (AGENTS §10-2): `data-state="open" | "closed"` (閉じる動きの間も `closed`)、引いている間の `data-dragging`、
@@ -80,6 +81,8 @@ const VELOCITY_WINDOW = 100;
 const VELOCITY_MIN_DISTANCE = 10;
 /** 開いてからこの時間 (ms) は、ポインタの操作を受け付けない (入口の二度押しが面に当たらないように) */
 const OPEN_POINTER_GUARD_MS = 300;
+/** pointerup の後、その押下から出る click を待つ時間 (ms)。click はふつう pointerup と同じ瞬間に来る */
+const CLICK_AFTER_UP_MS = 500;
 /** 引いた距離の CSS 変数 (配信契約) */
 const DRAG_VAR = '--ds-bottom-sheet-drag';
 
@@ -180,8 +183,14 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     const pressOnBackdropRef = React.useRef(false);
     /** 開いた (開き直した) 時刻 (performance.now)。この後 OPEN_POINTER_GUARD_MS はポインタを受け付けない */
     const openedAtRef = React.useRef(0);
-    /** いまの押下が、受け付けない間に押し始めたものか (離すまで続く) */
+    /** いまの押下が、受け付けない間に押し始めたものか (押下が終わる = pointerup / pointercancel で消える) */
     const pressGuardedRef = React.useRef(false);
+    /**
+     * 受け付けない間に押し始めた押下が pointerup で終わった: その押下から出る click (ポインタの click、detail > 0) を 1 回だけ止める。
+     * click が来なかったとき (引いた・離れた所で離した) に残らないよう、次の押し始めと、少し後 (CLICK_AFTER_UP_MS) に消す
+     */
+    const swallowClickRef = React.useRef(false);
+    const swallowTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const inPointerGuard = () => performance.now() - openedAtRef.current < OPEN_POINTER_GUARD_MS;
 
     const bodyFocusStop = useFocusStop(bodyRef, 'scrollable-without-tabbable');
@@ -293,6 +302,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     // アンマウント: 開いたまま・閉じる途中で消えても、背景のスクロールとフォーカスを残さない
     React.useEffect(
       () => () => {
+        clearSwallow();
         finishClose();
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps -- アンマウントのときだけ
@@ -325,14 +335,33 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     };
 
     // 開いた直後の守り: 押し始めを capture で見て、受け付けない間に始まった押下を覚える (離すまで)
+    const clearSwallow = () => {
+      swallowClickRef.current = false;
+      if (swallowTimerRef.current) clearTimeout(swallowTimerRef.current);
+      swallowTimerRef.current = null;
+    };
     const handlePointerDownCapture = () => {
+      clearSwallow();
       pressGuardedRef.current = inPointerGuard();
     };
-    // 受け付けない間に押し始めた押下の click と、受け付けない間のポインタの click は、中の項目にも届けない。
-    // キーボードで起きる click (Enter・Space。detail が 0) は受ける
-    const handleClickCapture = (e: React.MouseEvent<HTMLDialogElement>) => {
-      const guarded = pressGuardedRef.current || (e.detail > 0 && inPointerGuard());
+    // 押下が終わったら印は必ず消す。pointerup で終わったときだけ、その押下から出る click を止める印に移す
+    const handlePointerUpCapture = () => {
+      const guarded = pressGuardedRef.current;
       pressGuardedRef.current = false;
+      if (!guarded) return;
+      clearSwallow();
+      swallowClickRef.current = true;
+      swallowTimerRef.current = setTimeout(clearSwallow, CLICK_AFTER_UP_MS);
+    };
+    const handlePointerCancelCapture = () => {
+      pressGuardedRef.current = false;
+    };
+    // 止めるのはポインタの click (detail > 0) だけ: 受け付けない間に押し始めた押下から出た click と、受け付けない間の click。
+    // キーボード (Enter・Space)・el.click()・読み上げの「実行」(detail が 0) は止めない
+    const handleClickCapture = (e: React.MouseEvent<HTMLDialogElement>) => {
+      const fromPointer = e.detail > 0;
+      const guarded = fromPointer && (swallowClickRef.current || pressGuardedRef.current || inPointerGuard());
+      if (fromPointer) clearSwallow();
       if (!guarded) return;
       e.preventDefault();
       e.stopPropagation();
@@ -433,6 +462,8 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
         onCancel={handleCancel}
         onClose={handleNativeClose}
         onPointerDownCapture={handlePointerDownCapture}
+        onPointerUpCapture={handlePointerUpCapture}
+        onPointerCancelCapture={handlePointerCancelCapture}
         onClickCapture={handleClickCapture}
         onPointerDown={handlePointerDown}
         onClick={handleClick}

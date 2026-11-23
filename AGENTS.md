@@ -980,6 +980,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
   - **M = 3 ヶ月** (気づく→自分のサイクルに組む→走らせる の計画レイテンシ。保守的・大規模採用者向けは 6 ヶ月)。
 - **信号 (3 点セット必須)**: dev 限定 `console.warn` ([`components/_internal/deprecate.ts`](./components/_internal/deprecate.ts)、本番 no-op・warn-once) + `@deprecated` JSDoc + CHANGELOG。
 - **非推奨ごとに codemod / 移行手順を必須**にする (短い窓を正当化しているのはこれ。codemod 無しなら窓を伸ばす)。
+- **例外 — 外に利用者がいない間は、すぐ消してよい** (#157)。利用側が持ち主の手元のプロダクトだけの間は、非推奨の期間を置かずに MAJOR で直接消してよい (`DropdownMenu` → `Menu` がこの例)。移行手順は CHANGELOG の ⚠ BREAKING CHANGES に必ず書く。古い名前と新しい名前を二重に持つ期間を作らないため。外に利用者ができたら、この例外は使わず上の窓に戻す。
 
 ### 10-6. 3 つの versioned 契約 (#63)
 

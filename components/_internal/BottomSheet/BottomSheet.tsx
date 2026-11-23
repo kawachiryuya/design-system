@@ -140,8 +140,11 @@ const sheet = tv({
 const TABBABLE =
   'a[href],button,input,select,textarea,summary,[tabindex],[contenteditable=""],[contenteditable="true"],audio[controls],video[controls]';
 
-/** root の中で最初の、Tab で来られる要素 (root 自身は含まない) */
-function firstTabbable(root: HTMLElement | null): HTMLElement | null {
+/**
+ * root の中で最初の、Tab で来られる要素 (root 自身は含まない)。
+ * Popover の広い幅 (押した要素の近くのパネル) も、開いた直後のフォーカス先をこれで決める (どちらの幅でも同じ判定にする)
+ */
+export function firstTabbable(root: HTMLElement | null): HTMLElement | null {
   if (!root) return null;
   for (const el of root.querySelectorAll<HTMLElement>(TABBABLE)) {
     if (el.tabIndex < 0 || el.matches(':disabled')) continue;

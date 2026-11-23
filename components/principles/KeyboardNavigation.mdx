@@ -12,7 +12,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 2. **`tabindex` は 0 / -1 のみ**: DOM 順 = フォーカス順にし、正の `tabindex` で順序を捻じ曲げない。
 3. **複合ウィジェットは roving tabindex + 矢印キー**: tabs / menu / radiogroup / segmented control は「1 ウィジェット = 1 Tab ストップ」にし、内部移動は矢印キー (`Home` / `End` 併用)。
 4. **フォーカスを常に可視化**: `focus-visible` で 2px・コントラスト 3:1+ のリングを出す。`outline: none` だけにしない。
-5. **overlay は Esc で閉じ、focus を戻す**: Modal / Popover / Menu は `Esc` で閉じ、閉じたらトリガーへ focus を返す。Modal は focus trap、それ以外は非トラップ。
+5. **overlay は Esc で閉じ、focus を戻す**: Modal / Popover / Menu は `Esc` で閉じ、閉じたらトリガーへ focus を返す。Modal は focus trap。Popover / Menu は、広い幅では非トラップ、狭い幅 (下から出る面) では面の中に閉じ込める。
 
 ## Do / Don't
 

@@ -19,15 +19,15 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-トリガーの近くに浮かせて補助情報や軽い操作を出す非モーダルの overlay。native の `popover` 属性で top-layer 表示・外側クリック / Esc での light-dismiss をブラウザ標準に委ね、位置決めだけ `@floating-ui/dom` (offset / flip / shift) で行う。背景を遮断して確認させたい操作には Popover ではなく `<Modal>` を使う。
+役割「補足」の部品。押した要素についての説明や軽い操作を出す。読み流せるもので、外を押すと閉じる。**狭い幅 (画面の幅 640px 未満) では画面の下から、広い幅では押した要素の近くに出る。どちらで出すかは部品が決め、使う側は選ばない**。見出しの `title` は必須で、狭い幅では面の見出し、広い幅ではパネルの読み上げ名になる (広い幅の見た目には見出しを出さない)。
 
-選択肢・操作から 1 つを選ぶのは `Menu`、hover / focus の短い補足は `Tooltip` (どちらも同じ仕組みを自前で持つ。Popover を土台にはしていない)。
+選択肢・操作から 1 つを選んで閉じるのは `Menu`、hover / focus の短い補足は `Tooltip`、戻せない操作の確認やまとまった入力は `<Modal>` を使う。
 
 ---
 
 ## Props
 
-下表は Popover.tsx の TypeScript 型と JSDoc から自動生成。
+下表は Popover.tsx の TypeScript 型と JSDoc から自動生成。`placement`・`offset`・`className` は広い幅でだけ効く。
 
 <ArgTypes of={PopoverStories.Playground} />
 
@@ -38,71 +38,75 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 <DoDontExample
   label="補助情報・軽い操作は Popover、重要な確認は Modal"
   doExample={
-    <Popover trigger={<Button>送料について</Button>} aria-label="送料の補足">
+    <Popover trigger={<Button>送料について</Button>} title="送料について">
       <p className="text-onSurface">3,000 円以上の購入で送料無料になります。</p>
     </Popover>
   }
-  doCaption="読み流せる補足や、戻せる軽い操作は Popover。背景を操作したまま参照できる。"
+  doCaption="読み流せる補足や、戻せる軽い操作は Popover。広い幅では背景を操作したまま参照できる。"
   dontExample={
-    <Popover trigger={<Button variant="destructive">アカウント削除</Button>} aria-label="削除確認">
+    <Popover trigger={<Button variant="destructive">アカウント削除</Button>} title="削除の確認">
       <p className="text-onSurface">本当に削除しますか？</p>
       <Button variant="destructive" size="sm">削除する</Button>
     </Popover>
   }
-  dontCaption="不可逆・重要な確認は外側クリックで消える Popover では危険。focus trap + 背景遮断のある Modal を使う。"
+  dontCaption="不可逆・重要な確認は外を押すと消える Popover では危険。外を押しても閉じない Modal を使う。"
 />
 
 <DoDontExample
-  label="パネルに aria-label か見出しを付ける"
+  label="見出し (title) は、何についての補足かを短く書く"
   doExample={
-    <Popover trigger={<Button>ヘルプ</Button>} aria-label="パスワードの要件">
+    <Popover trigger={<Button>パスワードの要件</Button>} title="パスワードの要件">
       <p className="text-onSurface">8 文字以上、英数字を含めてください。</p>
     </Popover>
   }
-  doCaption="aria-label (または内部の見出し) があると SR が「何のダイアログか」を読み上げられる。"
+  doCaption="狭い幅では面の見出し、広い幅では読み上げ名になる。入口の文言と同じ言葉で短く。"
   dontExample={
-    <Popover trigger={<Button>ヘルプ</Button>}>
+    <Popover trigger={<Button>パスワードの要件</Button>} title="詳細">
       <p className="text-onSurface">8 文字以上、英数字を含めてください。</p>
     </Popover>
   }
-  dontCaption="ラベルなしだと SR では用途が分からない無名のダイアログになる。"
+  dontCaption="「詳細」「お知らせ」では、下から出た面を見ても何の補足か分からず、読み上げでも用途が伝わらない。"
 />
 
 <DoDontExample
-  label="長い・複雑なコンテンツは Modal へ"
+  label="長い・複雑なコンテンツは Modal か別のページへ"
   doExample={
-    <Popover trigger={<Button>表示順</Button>} aria-label="表示順">
-      <p className="text-onSurface">新着順 / 人気順 を選ぶだけの軽い切替。</p>
+    <Popover trigger={<Button>自由席について</Button>} title="自由席について">
+      <p className="text-onSurface">自由席は 1〜3 号車です。混雑時は座れないことがあります。</p>
     </Popover>
   }
-  doCaption="数項目の選択や短い補足など、画面遷移を伴わない軽量な内容に留める。"
+  doCaption="数行の補足や、2〜3 個の軽い操作など、画面遷移を伴わない内容に留める。"
   dontExample={
-    <Popover trigger={<Button>会員登録</Button>} aria-label="会員登録">
+    <Popover trigger={<Button>会員登録</Button>} title="会員登録">
       <p className="text-onSurface">氏名・住所・支払い方法…と続く長いフォーム</p>
     </Popover>
   }
-  dontCaption="スクロールや多数の入力が要る内容は、はみ出して操作しづらい。Modal か専用ページにする。"
+  dontCaption="外を押すと消えるので、多数の入力は失われやすい。確定と取り消しがある作業は Modal か専用ページにする。"
 />
 
 ### 別コンポーネントの方が適切な場面
 
 | やろうとすること | 使うべきコンポーネント | 理由 |
 |---|---|---|
-| **背景を遮断して確認させる** (不可逆操作) | `<Modal>` | focus trap + 背景遮断。外側クリックで消えては困る |
+| **背景を遮断して確認させる** (不可逆操作) | `<Modal>` | 外を押しても閉じない。Popover は外を押すと閉じる軽いものだけ |
 | **ホバーで出る短いヒント** | [`<Tooltip>`](?path=/docs/composites-tooltip--guideline) | hover / focus で出る短い補助 |
-| **選択肢・操作から 1 つ選ぶメニュー** | [`<Menu>`](?path=/docs/composites-menu--guideline) | `menu` / `menuitem` の roving。狭い幅では下から出る |
+| **選択肢・操作から 1 つ選ぶ** | [`<Menu>`](?path=/docs/composites-menu--guideline) | `menu` / `menuitem` の矢印キー移動。選んだら閉じる |
 | **ページ内に常設する通知** | `<Alert>` | 常時表示・overlay ではない |
 
 ---
 
 ## アクセシビリティ
 
-- **native `popover="auto"`**: top-layer 表示 / 外側クリック・Esc での light-dismiss をブラウザ標準に委ねる (自前の outside-click 監視より堅牢)
-- **`role="dialog"` + `aria-label`**: パネルの用途を SR に伝える。見出しが無い場合は `aria-label` を指定する
-- **トリガーの ARIA を自動付与**: `aria-haspopup="dialog"` / `aria-expanded` (開閉に連動) / `aria-controls` (パネル id)
-- **フォーカス管理**: 開くとパネル内の最初の focusable (無ければパネル本体) へ移動。閉じると trigger へ戻す (外側の別コントロールを押して閉じた場合は focus を奪わない)。パネル本体にフォーカスが来たときは、キーボード操作なら内側 2px の輪 (`focus-ring-inset`) を出す (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
-- **非モーダル**: focus trap は張らない。背景操作をブロックしたい確認は `<Modal>` を使う
-- **アニメーション**: `prefers-reduced-motion` は preset でグローバル対応済 (個別対応不要)
+- **入口の ARIA を自動で付ける**: `aria-haspopup="dialog"` / `aria-expanded` (開閉に連動) / `aria-controls` (出ている形の面・パネル)
+- **名前**: どちらの幅でも `title` が名前になる。広い幅はパネル (`role="dialog"`) の `aria-label`、狭い幅は面 (`<dialog>`) の見出し (`aria-labelledby`)
+- **開いた直後のフォーカス (どちらの幅でも同じ)**: 中の最初の押せるもの。無ければ面・パネルそのもの (中身が文だけのとき)。狭い幅の閉じるボタンには最初のフォーカスを当てない。閉じたら入口に戻す (外の別の押せるものを押して閉じたときは、そちらへ移ったフォーカスを奪わない)
+- **広い幅の形**: native `popover="auto"` で、外を押す / `Esc` で閉じる。フォーカスは閉じ込めない (非モーダル。Tab でパネルの外へ出られる)
+- **狭い幅の形**: 下から出る面 (`<dialog>` の `showModal()`)。開いている間は背景を操作できず、背景はスクロールしない。`Tab` は面の中 (中身と閉じるボタン) を回る。閉じるのは `Esc`・外を押す・閉じるボタン・上端の帯を下に引く。帯を引くのは指の近道で、同じことは閉じるボタンと `Esc` でできる。中身は本文の大きさ (`type-body`) で出す
+- **Modal の中に置いたとき**: `Esc`・外を押す 1 回で閉じるのは Popover だけ (Modal は開いたまま)
+- **タッチ**: 狭い幅の面は、開いてから 300ms は押しても反応しない (入口の二度押しが、上がってくる面に当たらないように)
+- **フォーカスの輪**: 面・パネルそのものにフォーカスが来たときは内側 2px の輪 (`focus-ring-inset`)。指・マウスで開いたときは、開いた直後にフォーカスは移すが、キーを押すまで輪を出さない (キーボード・外から `open` で開いたときは、はじめから出す)。指・マウスで閉じて入口に戻したフォーカスも、次にキーを押すか入口から離れるまで輪を出さない (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
+- **幅が変わったとき**: 開いている間に幅が 640px をまたいだら閉じる (形を入れ替えない)
+- **アニメーション**: 狭い幅の面は下から出る (200ms)。`prefers-reduced-motion` では動かさない
 
 ---
 
@@ -110,8 +114,12 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ### 内部で利用するコンポーネント
 
-- `<Button>` — `trigger` に渡す代表例 (任意の focusable 要素を渡せる)
+- `<Button>` — `trigger` に渡す代表例 (任意の focusable 要素を渡せる)。狭い幅の面の閉じるボタン
 
 ### 依存
 
-- [`@floating-ui/dom`](https://floating-ui.com/) — パネルの位置決め (offset / flip / shift + autoUpdate) のみに使用
+- [`@floating-ui/dom`](https://floating-ui.com/) — 広い幅のパネルの位置決め (offset / flip / shift + autoUpdate) のみに使用
+
+### 同じ仕組みを使う部品
+
+- [`<Menu>`](?path=/docs/composites-menu--guideline) — 狭い幅で下から出る面と、広い幅で押した要素の近くに出す仕組みが同じ

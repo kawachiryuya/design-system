@@ -29,3 +29,29 @@ export function useHideFocusRingUntilKey(hide: boolean) {
     },
   };
 }
+
+const clearers = new WeakMap<HTMLElement, () => void>();
+
+/**
+ * 閉じた重なりから入口へ戻したフォーカスに、輪を出さない (#157)。ポインタで閉じたとき (外を押す・帯を引く・
+ * 閉じるボタンや項目を指・マウスで押す) に使う。入口に `data-ds-hide-focus-ring` を付け、**次にキーが押されるか、
+ * 入口からフォーカスが外れたら**外す (その後に Tab で戻ってきたときは、ふつうに輪が出る)。
+ * 入口は使う側の要素なので、付けるのはこの属性だけで、ほかの属性・ハンドラには触らない。返る関数で、すぐ外せる。
+ * 属性は輪の出し方 (`focus-ring*`) にだけ効くので、入口が `focus-ring*` を持たない要素なら何も変わらない。
+ */
+export function hideFocusRingUntilKeyOrBlur(el: HTMLElement | null | undefined): () => void {
+  if (!el || !el.isConnected) return () => {};
+  clearers.get(el)?.();
+  const doc = el.ownerDocument;
+  const clear = () => {
+    el.removeAttribute(HIDE_FOCUS_RING_ATTR);
+    doc.removeEventListener('keydown', clear, true);
+    el.removeEventListener('blur', clear);
+    if (clearers.get(el) === clear) clearers.delete(el);
+  };
+  el.setAttribute(HIDE_FOCUS_RING_ATTR, '');
+  doc.addEventListener('keydown', clear, true);
+  el.addEventListener('blur', clear);
+  clearers.set(el, clear);
+  return clear;
+}

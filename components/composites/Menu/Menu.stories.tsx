@@ -72,7 +72,7 @@ export const Playground: Story = {
     docs: {
       description: {
         story:
-          '入口を押して開き、項目を押す (または矢印キーで移動して Enter) と選んで閉じる。`kind` で「操作の一覧」と「1 つ選ぶ」を切り替える。幅 640px 未満で開くと下から出る。play は広い幅で、役割・入口の属性・フォーカスの移動・無効な項目を飛ばす・Enter で選ぶ・Tab で閉じる、を確かめる。',
+          '入口を押して開き、項目を押す (または矢印キーで移動して Enter) と選んで閉じる。`kind` で「操作の一覧」と「1 つ選ぶ」を切り替える。幅 640px 未満で開くと下から出る。play は広い幅で、役割・入口の属性・フォーカスの移動・無効な項目を飛ばす・Enter で選ぶ・Tab で閉じる・閉じ方 (ポインタかキーか) で入口の輪を出すか、を確かめる。',
       },
     },
   },
@@ -142,6 +142,9 @@ export const Playground: Story = {
     await expect(args.onDuplicate).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
     await waitFor(() => expect(trigger).toHaveFocus());
+    // キーボードで閉じたので、入口に戻したフォーカスには今までどおり輪を出す
+    await expect(trigger).not.toHaveAttribute('data-ds-hide-focus-ring');
+    if (trigger.matches(':focus-visible')) await expect(getComputedStyle(trigger).outlineStyle).toBe('solid');
 
     // 押して選ぶ
     await userEvent.click(trigger);
@@ -150,6 +153,11 @@ export const Playground: Story = {
     await expect(args.onDelete).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
     await waitFor(() => expect(trigger).toHaveFocus());
+    // ポインタで閉じたので、入口に戻したフォーカスには輪を出さない (ブラウザ既定の輪も)。キーを押すと出る
+    await expect(trigger).toHaveAttribute('data-ds-hide-focus-ring');
+    await expect(getComputedStyle(trigger).outlineStyle).toBe('none');
+    await userEvent.keyboard('{Shift}');
+    await expect(trigger).not.toHaveAttribute('data-ds-hide-focus-ring');
 
     // 無効な項目は押しても選ばれず、閉じない。フォーカスも項目から外れない (矢印・Tab が効き続ける)
     await userEvent.click(trigger);

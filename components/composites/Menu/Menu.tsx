@@ -12,7 +12,7 @@ import {
 import { Icon } from '../../primitives/Icon';
 import { BottomSheet } from '../../_internal/BottomSheet/BottomSheet';
 import { useIsNarrowViewport } from '../../_internal/useIsNarrowViewport';
-import { useHideFocusRingUntilKey } from '../../_internal/useHideFocusRingUntilKey';
+import { useHideFocusRingUntilKey, hideFocusRingUntilKeyOrBlur } from '../../_internal/useHideFocusRingUntilKey';
 import { tv } from '../../_internal/tv';
 
 /** Menu の配置 (floating-ui の Placement)。広い幅でだけ効く。 */
@@ -196,11 +196,44 @@ export const Menu: React.FC<MenuProps> = ({
   const initialIndexRef = React.useRef(initialIndex);
   initialIndexRef.current = initialIndex;
 
-  const requestOpenChange = React.useCallback((next: boolean) => {
+  /** 開いている間の最後の操作が、ポインタ (指・マウスの押し始め) か、キーか。閉じ方の見分けに使う */
+  const lastInputRef = React.useRef<'pointer' | 'key'>('key');
+
+  /**
+   * 開閉の要求。閉じるとき、最後の操作がポインタなら (外を押す・帯を引く・閉じるボタンや項目を押す)、
+   * 入口へ戻すフォーカスに輪を出さない (次にキーが押されるか、入口からフォーカスが外れるまで)。
+   * 幅が境目をまたいで閉じるときは `neutral` (今までどおり輪を出す側)
+   */
+  const requestOpenChange = React.useCallback((next: boolean, neutral = false) => {
     if (openRef.current === next) return;
+    if (!next && !neutral && lastInputRef.current === 'pointer') hideFocusRingUntilKeyOrBlur(referenceRef.current);
     if (!isControlledRef.current) setInternalOpen(next);
     onOpenChangeRef.current?.(next);
   }, []);
+
+  // 開いている間の最後の操作を覚える (開いたときは、開き方から始める)
+  React.useEffect(() => {
+    if (!shown) return;
+    lastInputRef.current = openedByPointer ? 'pointer' : 'key';
+    const onPointer = () => {
+      lastInputRef.current = 'pointer';
+    };
+    const onKey = () => {
+      lastInputRef.current = 'key';
+    };
+    // 押して実行した (detail > 0) か、キーボード・読み上げの「実行」か (detail 0)。閉じるボタン・項目に効く
+    const onClick = (e: MouseEvent) => {
+      lastInputRef.current = e.detail > 0 ? 'pointer' : 'key';
+    };
+    document.addEventListener('pointerdown', onPointer, true);
+    document.addEventListener('keydown', onKey, true);
+    document.addEventListener('click', onClick, true);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer, true);
+      document.removeEventListener('keydown', onKey, true);
+      document.removeEventListener('click', onClick, true);
+    };
+  }, [shown, openedByPointer]);
 
   // 下から出る面に渡す、開いた直後のフォーカス先 (選択中の項目か、最初の有効な項目)
   const initialFocusRef = React.useMemo<React.RefObject<HTMLElement | null>>(
@@ -225,7 +258,7 @@ export const Menu: React.FC<MenuProps> = ({
     prevFormRef.current = form;
     if (!openRef.current) return;
     formAtOpenRef.current = null;
-    requestOpenChange(false);
+    requestOpenChange(false, true);
     forceRender();
     // 広い幅のメニュー (popover) は外されたので、中にあったフォーカスは body に落ちている。入口に戻す
     const active = document.activeElement;

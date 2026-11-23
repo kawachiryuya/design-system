@@ -1,4 +1,5 @@
 import React from 'react';
+import { flushSync } from 'react-dom';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
 import { BottomSheet } from './BottomSheet';
@@ -81,6 +82,77 @@ function Demo({ title, content, initialFocus }: DemoArgs) {
   );
 }
 
+/**
+ * 2 つの面を重ねたり、閉じる途中に別の面を開いたりする (背景のスクロール止めが、順番によらず戻るかの確かめ)。
+ * 面 A の中のボタンで、A を閉じると同時に B を開く・B を A の上に開く。B の中のボタンで A を閉じる。
+ */
+function StackedDemo() {
+  const [a, setA] = React.useState(false);
+  const [b, setB] = React.useState(false);
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <Button onClick={() => setA(true)}>面 A を開く</Button>
+      <BottomSheet open={a} onClose={() => setA(false)} title="面 A">
+        <div className="flex flex-col gap-2">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setA(false);
+              setB(true);
+            }}
+          >
+            A を閉じて B を開く
+          </Button>
+          <Button variant="secondary" onClick={() => setB(true)}>
+            A の上に B を開く
+          </Button>
+        </div>
+      </BottomSheet>
+      <BottomSheet open={b} onClose={() => setB(false)} title="面 B">
+        <Button variant="secondary" onClick={() => setA(false)}>
+          下の A を閉じる
+        </Button>
+      </BottomSheet>
+    </div>
+  );
+}
+
+/** React の StrictMode で、開いた状態 (`open` が最初から true) から描き始める */
+function StrictOpenDemo() {
+  const [open, setOpen] = React.useState(true);
+  const [closes, setCloses] = React.useState(0);
+  return (
+    <React.StrictMode>
+      <p className="type-supporting text-onSurface-subtle" data-testid="close-count">
+        onClose の回数: {closes}
+      </p>
+      <Button onClick={() => setOpen(true)}>開く</Button>
+      <BottomSheet
+        open={open}
+        onClose={() => {
+          setCloses((n) => n + 1);
+          setOpen(false);
+        }}
+        title="最初から開いている面"
+      >
+        <div className="flex flex-col gap-3">
+          <p className="type-body text-onSurface">{PARAGRAPH}</p>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              // 閉じて、ブラウザの close イベントが届く前に開き直す (動きを減らす設定では、閉じるのがすぐ終わる)
+              flushSync(() => setOpen(false));
+              setOpen(true);
+            }}
+          >
+            閉じてすぐ開き直す
+          </Button>
+        </div>
+      </BottomSheet>
+    </React.StrictMode>
+  );
+}
+
 const meta: Meta<DemoArgs> = {
   title: 'Internal/BottomSheet',
   component: Demo,
@@ -108,6 +180,19 @@ const backdropPoint = (dialog: HTMLElement) => {
   const r = dialog.getBoundingClientRect();
   return { clientX: r.left + 10, clientY: Math.max(1, r.top - 20) };
 };
+/** 開いてから、ポインタを受け付けるまで待つ (部品の守りは 300ms) */
+const afterOpenGuard = () => new Promise((r) => setTimeout(r, 350));
+/** 帯 (見出しの行) の上で、合成の pointer で下へ dy 引いて離す (合成のイベントは間を空けずに続くので、速さは大きい) */
+const dragGrab = (dialog: HTMLElement, dy: number) => {
+  const h = dialog.querySelector('h2') as HTMLElement;
+  const r = h.getBoundingClientRect();
+  const x = r.left + 10;
+  const y = r.top + r.height / 2;
+  const init = { bubbles: true, isPrimary: true, pointerType: 'touch', pointerId: 7 };
+  h.dispatchEvent(new PointerEvent('pointerdown', { ...init, clientX: x, clientY: y }));
+  h.dispatchEvent(new PointerEvent('pointermove', { ...init, clientX: x, clientY: y + dy }));
+  h.dispatchEvent(new PointerEvent('pointerup', { ...init, clientX: x, clientY: y + dy }));
+};
 /** 押し始め (pointerdown) を el に、離した後の click を dialog に、座標つきで送る (背景の上の click は dialog に届く) */
 const press = (el: Element, dialog: HTMLElement, at: { clientX: number; clientY: number }) => {
   const r = el.getBoundingClientRect();
@@ -132,7 +217,7 @@ export const Checks: Story = {
     docs: {
       description: {
         story:
-          'test-storybook が走らせる自動の確かめ (play)。開く・中で押して外で離すと閉じない・外を押す・閉じるボタン・項目を選ぶ・Esc を順に行い、フォーカスの戻り先と html / body の overflow を見る。最後はキーボードで開いたまま残す (axe が開いた面を見る)。手で触るときは Playground を使う。',
+          'test-storybook が走らせる自動の確かめ (play)。開く・開いた直後 300ms はポインタを受け付けない・帯を軽く触っても閉じない・中で押して外で離すと閉じない・外を押す・閉じるボタン・項目を選ぶ・Esc を順に行い、フォーカスの戻り先と html / body の overflow を見る。最後はキーボードで開いたまま残す (axe が開いた面を見る)。手で触るときは Playground を使う。',
       },
     },
   },
@@ -151,6 +236,33 @@ export const Checks: Story = {
     await expect(html.style.overflow).toBe('hidden');
     await expect(document.body.style.overflow).toBe('hidden');
 
+    // 開いた直後 (300ms 以内) のポインタは受け付けない: 項目を押しても選ばれず、背景を押しても閉じない
+    await userEvent.click(screen.getByRole('button', { name: '所要時間順' }));
+    press(dialog, dialog, backdropPoint(dialog));
+    dragGrab(dialog, 200);
+    await new Promise((r) => setTimeout(r, 50));
+    await expect(dialog.open).toBe(true);
+    await expect(dialog).toHaveAttribute('data-state', 'open');
+    await expect(canvas.getByTestId('last-choice')).toHaveTextContent('まだ選んでいない');
+    await afterOpenGuard();
+
+    // 動きを減らす設定では、背景の暗さも動かさない (preset の共通の規則は ::backdrop に当たらない)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      await expect(getComputedStyle(dialog, '::backdrop').transitionProperty).toBe('none');
+    }
+
+    // 帯を軽く触っただけ (10px 以下) は、速くても閉じない。10px を超えて速ければ閉じる
+    dragGrab(dialog, 8);
+    await new Promise((r) => setTimeout(r, 100));
+    await expect(dialog.open).toBe(true);
+    await expect(dialog).toHaveAttribute('data-state', 'open');
+    dragGrab(dialog, 14);
+    await waitFor(() => expect(dialog.open).toBe(false));
+    await expect(trigger).toHaveFocus();
+    await userEvent.click(trigger);
+    await waitFor(() => expect(dialog.open).toBe(true));
+    await afterOpenGuard();
+
     // 中 (本体の項目) で押して背景で離す (click は dialog に届く): 閉じない
     press(screen.getByRole('button', { name: '到着時刻順' }), dialog, backdropPoint(dialog));
     // 閉じる要求は描画の後に反映されるので、少し待ってから開いたままかを見る
@@ -168,6 +280,7 @@ export const Checks: Story = {
     // 閉じるボタン
     await userEvent.click(trigger);
     await waitFor(() => expect(dialog.open).toBe(true));
+    await afterOpenGuard();
     await userEvent.click(screen.getByRole('button', { name: '閉じる' }));
     await waitFor(() => expect(dialog.open).toBe(false));
     await expect(trigger).toHaveFocus();
@@ -175,6 +288,7 @@ export const Checks: Story = {
     // 項目を選ぶ (使う側が onClose と同じく open を false にする)
     await userEvent.click(trigger);
     await waitFor(() => expect(dialog.open).toBe(true));
+    await afterOpenGuard();
     await userEvent.click(screen.getByRole('button', { name: '到着時刻順' }));
     await waitFor(() => expect(dialog.open).toBe(false));
     await expect(canvas.getByTestId('last-choice')).toHaveTextContent('到着時刻順');
@@ -197,5 +311,91 @@ export const Checks: Story = {
     // 最後はキーボードで開いたまま残す (test-runner の axe が開いた面を見る)
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(dialog.open).toBe(true));
+  },
+};
+
+export const Stacked: Story = {
+  render: () => <StackedDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const [a, b] = [...canvasElement.querySelectorAll('dialog')] as HTMLDialogElement[];
+    const html = document.documentElement;
+    const body = document.body;
+    // 元の inline の指定 (個別指定) が、そのまま戻ることも見る
+    html.style.overflowY = 'auto';
+    body.style.setProperty('overflow-x', 'clip', 'important');
+    try {
+      // A を閉じると同時に B を開く → B を閉じる
+      await userEvent.click(canvas.getByRole('button', { name: '面 A を開く' }));
+      await waitFor(() => expect(a.open).toBe(true));
+      await afterOpenGuard();
+      await userEvent.click(screen.getByRole('button', { name: 'A を閉じて B を開く' }));
+      await waitFor(() => expect(b.open).toBe(true));
+      await expect(html.style.overflowY).toBe('hidden');
+      b.dispatchEvent(new Event('cancel', { cancelable: true }));
+      await waitFor(() => expect(a.open || b.open).toBe(false));
+      await expect(html.style.overflowY).toBe('auto');
+      await expect(html.style.overflowX).toBe('');
+      await expect(body.style.getPropertyValue('overflow-x')).toBe('clip');
+      await expect(body.style.getPropertyPriority('overflow-x')).toBe('important');
+      await expect(body.style.overflowY).toBe('');
+
+      // A の上に B を開き、下の A を先に閉じる → B を閉じる (開いた順と同じ順に閉じる)
+      await userEvent.click(canvas.getByRole('button', { name: '面 A を開く' }));
+      await waitFor(() => expect(a.open).toBe(true));
+      await afterOpenGuard();
+      await userEvent.click(screen.getByRole('button', { name: 'A の上に B を開く' }));
+      await waitFor(() => expect(b.open).toBe(true));
+      await afterOpenGuard();
+      await userEvent.click(screen.getByRole('button', { name: '下の A を閉じる' }));
+      await waitFor(() => expect(a.open).toBe(false));
+      // B はまだ開いているので止まったまま
+      await expect(html.style.overflowY).toBe('hidden');
+      await expect(body.style.overflowY).toBe('hidden');
+      b.dispatchEvent(new Event('cancel', { cancelable: true }));
+      await waitFor(() => expect(b.open).toBe(false));
+      await expect(html.style.overflowY).toBe('auto');
+      await expect(body.style.getPropertyValue('overflow-x')).toBe('clip');
+      await expect(body.style.overflowY).toBe('');
+    } finally {
+      html.style.removeProperty('overflow-y');
+      body.style.removeProperty('overflow-x');
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '2 つの面を重ねる・閉じる途中に別の面を開く。どの順番で閉じても、閉じ終えたら html・body のスクロール止めが元に戻る。',
+      },
+    },
+  },
+};
+
+export const StrictOpen: Story = {
+  render: () => <StrictOpenDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dialog = canvasElement.querySelector('dialog') as HTMLDialogElement;
+    // 最初から開いていて、閉じない (StrictMode の描き直しで、遅れて届く close を「ブラウザが閉じた」と取り違えない)
+    await waitFor(() => expect(dialog.open).toBe(true));
+    await new Promise((r) => setTimeout(r, 100));
+    await expect(dialog.open).toBe(true);
+    await expect(canvas.getByTestId('close-count')).toHaveTextContent('onClose の回数: 0');
+    // 閉じてすぐ開き直す (キーボードで押す): 開いたままで、onClose は呼ばれない
+    screen.getByRole('button', { name: '閉じてすぐ開き直す' }).focus();
+    await userEvent.keyboard('{Enter}');
+    await new Promise((r) => setTimeout(r, 100));
+    await expect(dialog.open).toBe(true);
+    await expect(dialog).toHaveAttribute('data-state', 'open');
+    await expect(canvas.getByTestId('close-count')).toHaveTextContent('onClose の回数: 0');
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'React の StrictMode で、`open` が最初から true のまま描き始める。開いたままで、`onClose` は呼ばれない。面の中のボタンで「閉じて、ブラウザの close イベントが届く前に開き直す」も試せる。',
+      },
+    },
   },
 };

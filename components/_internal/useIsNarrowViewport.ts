@@ -11,8 +11,12 @@ import { BREAKPOINTS } from '../../tokens';
  * (置かれた場所の幅ではない。下から出る面は画面の下端に出るので、画面で決める)。
  *
  * - 境目の値は breakpoint の token (`tokens/source/breakpoints.json` の `sm`) から読む。数値を二重に持たない
- * - SSR セーフ: 描画中に `window` を触らない。サーバーと hydration の最初の描画は `false` (広い幅) を返し、
- *   描画後に `matchMedia` で測って、幅が変わるたびに追従する
+ * - SSR セーフ: サーバーの描画と hydration の最初の描画では `window` を触らず、`false` (広い幅) を返す
+ *   (`useSyncExternalStore` の `getServerSnapshot`)。hydration の後に測り直し、幅が変わるたびに追従する
+ * - クライアントだけで描くとき (hydration でない描き始め・描き直し) は、`useSyncExternalStore` が**描画中に**
+ *   `matchMedia` を読む (`getSnapshot`)。AGENTS §5-2 の「render で window を触らない」の字面には当たるが、
+ *   `useEffect` で測る形にすると、狭い幅でも最初の 1 回は広い幅の形で描かれ、開いた状態で描くと形が一瞬で
+ *   切り替わるため、こちらにしている (#157 の仮決め)
  *
  * 注: preset (Tailwind) の `screens.sm` を利用側で上書きしても、この判定は token の値のまま
  * (Tailwind の breakpoint と同じく、ビルド時に決まる値として扱う)。

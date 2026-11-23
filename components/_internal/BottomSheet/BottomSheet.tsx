@@ -5,6 +5,7 @@ import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';
 import { tv } from '../tv';
 import { useFocusStop } from '../useFocusStop';
+import { lockScroll } from '../scrollLock';
 
 /**
  * BottomSheet Props
@@ -19,9 +20,14 @@ import { useFocusStop } from '../useFocusStop';
  * - 高さは中身なり、上限 85dvh。本体だけスクロールし、見出しは固定。下端に端末の余白 (safe-area) を足す
  * - 閉じ方: 外を押す (押し始めと離した場所の両方が背景のときだけ) / 閉じるボタン (48px) / Esc / 上端の帯を下に引く
  * - 上端の帯 (つまみと見出しの行。閉じるボタンは除く) を下に引いて離したとき、引いた距離が高さの 25% を超えるか、
- *   下向きの速さ (直近 100ms) が 0.5px/ms を超えると閉じる。それ以外と pointercancel は元に戻る。中身を引いても動かない
- * - 開閉は 200ms (duration normal・easing out)。閉じるときも下へ抜ける。動きを減らす設定では即時
- * - 開いている間は背景 (html と body) をスクロールさせない。閉じたらフォーカスを開く前の要素に戻す
+ *   下向きの速さ (直近 100ms) が 0.5px/ms を超えると閉じる。ただし速さで閉じるのは、引いた距離が 10px を超えたときだけ
+ *   (10px 以下は指のぶれ。触っただけで閉じない)。それ以外と pointercancel は元に戻る。中身を引いても動かない
+ * - 開閉は 200ms (duration normal・easing out)。閉じるときも下へ抜ける。動きを減らす設定では即時 (背景の暗さも)
+ * - 開いている間は背景 (html と body) をスクロールさせない (`scrollLock` の共有の止め方。面が重なっても、最後の 1 つが閉じたときに元へ戻る)。
+ *   閉じたらフォーカスを開く前の要素に戻す
+ * - 開いてから 300ms は、ポインタの操作 (面の中を押す・背景を押して閉じる・帯を引く) を受け付けない。入口を素早く 2 回押したとき、
+ *   2 回目が上がってくる面の項目に当たって選ばれたり、背景に当たってすぐ閉じたりしないため。この間に押し始めた操作は、
+ *   300ms を越えて離しても受け付けない。時間は動きの有無によらず同じ。キーボード (Esc・矢印・Enter) は受ける
  * - 閉じる動きの間は面を `inert` にして、二度押し・Esc の連打を受けない (もう一度開く `open` は受ける)
  *
  * 配信契約 (AGENTS §10-2): `data-state="open" | "closed"` (閉じる動きの間も `closed`)、引いている間の `data-dragging`、
@@ -70,6 +76,10 @@ const DISMISS_DISTANCE_RATIO = 0.25;
 const DISMISS_VELOCITY = 0.5;
 /** 速さを測る時間の幅 (ms)。離す直前のこの時間の動きで測る */
 const VELOCITY_WINDOW = 100;
+/** 引いて閉じる: 速さで閉じるのは、引いた距離がこれ (px) を超えたときだけ。これ以下は指のぶれとして扱う */
+const VELOCITY_MIN_DISTANCE = 10;
+/** 開いてからこの時間 (ms) は、ポインタの操作を受け付けない (入口の二度押しが面に当たらないように) */
+const OPEN_POINTER_GUARD_MS = 300;
 /** 引いた距離の CSS 変数 (配信契約) */
 const DRAG_VAR = '--ds-bottom-sheet-drag';
 
@@ -87,6 +97,8 @@ const sheet = tv({
       'transition-transform duration-normal ease-out data-[dragging]:transition-none',
       'backdrop:bg-surface-overlay backdrop:transition-opacity backdrop:duration-normal backdrop:ease-out',
       'data-[state=closed]:backdrop:opacity-0',
+      // 動きを減らす設定: preset の共通の規則 (transition-duration 0.01ms) は ::backdrop に当たらないので、ここで止める
+      'motion-reduce:backdrop:transition-none',
       // 面そのものにフォーカスが来たとき (中に押せるものが無いとき) の輪
       'focus-ring-inset',
     ],
@@ -132,19 +144,6 @@ function transitionMs(el: HTMLElement): number {
   return Math.max(0, ...durations.map((d, i) => d + (delays[i % delays.length] ?? 0)));
 }
 
-/** html と body のスクロールを止める。戻す関数を返す (前の値に戻すので、重ねても入れ子の順に戻る) */
-function lockScroll(): () => void {
-  const html = document.documentElement;
-  const body = document.body;
-  const prev = [html.style.overflow, body.style.overflow] as const;
-  html.style.overflow = 'hidden';
-  body.style.overflow = 'hidden';
-  return () => {
-    html.style.overflow = prev[0];
-    body.style.overflow = prev[1];
-  };
-}
-
 type Phase = 'closed' | 'open' | 'closing';
 
 interface DragState {
@@ -179,6 +178,11 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     const openerRef = React.useRef<HTMLElement | null>(null);
     const dragRef = React.useRef<DragState | null>(null);
     const pressOnBackdropRef = React.useRef(false);
+    /** 開いた (開き直した) 時刻 (performance.now)。この後 OPEN_POINTER_GUARD_MS はポインタを受け付けない */
+    const openedAtRef = React.useRef(0);
+    /** いまの押下が、受け付けない間に押し始めたものか (離すまで続く) */
+    const pressGuardedRef = React.useRef(false);
+    const inPointerGuard = () => performance.now() - openedAtRef.current < OPEN_POINTER_GUARD_MS;
 
     const bodyFocusStop = useFocusStop(bodyRef, 'scrollable-without-tabbable');
 
@@ -248,6 +252,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
           if (timerRef.current) clearTimeout(timerRef.current);
           timerRef.current = null;
           phaseRef.current = 'open';
+          openedAtRef.current = performance.now();
           dialog.inert = false;
           dialog.style.removeProperty(DRAG_VAR);
           dialog.setAttribute('data-state', 'open');
@@ -266,6 +271,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
           void dialog.offsetHeight;
           dialog.setAttribute('data-state', 'open');
           phaseRef.current = 'open';
+          openedAtRef.current = performance.now();
           focusInitial();
         }
         return;
@@ -299,8 +305,13 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       if (phaseRef.current === 'open') onCloseRef.current();
     };
 
-    /** dialog がブラウザの都合で閉じた (Esc の連打で cancel を飛ばされた、form method="dialog" 等) */
+    /**
+     * dialog がブラウザの都合で閉じた (Esc の連打で cancel を飛ばされた、form method="dialog" 等)。
+     * close イベントは閉じた後に遅れて届くので、自分が閉じた分 (finishClose) の close が、開き直した後に届くことがある
+     * (StrictMode の描き直し・閉じてすぐ開き直す)。届いた時点で dialog が開いていれば、古い知らせとして無視する
+     */
     const handleNativeClose = () => {
+      if (dialogRef.current?.open) return;
       const wasOpen = phaseRef.current === 'open';
       if (phaseRef.current !== 'closed') finishClose();
       if (wasOpen) onCloseRef.current();
@@ -313,9 +324,24 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
     };
 
+    // 開いた直後の守り: 押し始めを capture で見て、受け付けない間に始まった押下を覚える (離すまで)
+    const handlePointerDownCapture = () => {
+      pressGuardedRef.current = inPointerGuard();
+    };
+    // 受け付けない間に押し始めた押下の click と、受け付けない間のポインタの click は、中の項目にも届けない。
+    // キーボードで起きる click (Enter・Space。detail が 0) は受ける
+    const handleClickCapture = (e: React.MouseEvent<HTMLDialogElement>) => {
+      const guarded = pressGuardedRef.current || (e.detail > 0 && inPointerGuard());
+      pressGuardedRef.current = false;
+      if (!guarded) return;
+      e.preventDefault();
+      e.stopPropagation();
+      pressOnBackdropRef.current = false;
+    };
+
     // 外を押して閉じる: 押し始めと離した場所の両方が背景のときだけ (中で押して外で離しても閉じない)
     const handlePointerDown = (e: React.PointerEvent<HTMLDialogElement>) => {
-      pressOnBackdropRef.current = e.target === dialogRef.current && isOutside(e);
+      pressOnBackdropRef.current = !pressGuardedRef.current && e.target === dialogRef.current && isOutside(e);
     };
     const handleClick = (e: React.MouseEvent<HTMLDialogElement>) => {
       const startedOnBackdrop = pressOnBackdropRef.current;
@@ -329,6 +355,8 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       const dialog = dialogRef.current;
       if (!dialog || phaseRef.current !== 'open' || dragRef.current) return;
       if (e.pointerType === 'mouse' && e.button !== 0) return;
+      // 開いた直後に押し始めたものは引かない (dialog の capture で、この押下は受け付けない印が付いている)
+      if (pressGuardedRef.current) return;
       // 閉じるボタンの上では掴まない
       if ((e.target as Element).closest('button')) return;
       try {
@@ -371,7 +399,9 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       const dt = last.t - first.t;
       const velocity = dt > 0 ? (last.y - first.y) / dt : 0;
       endDrag();
-      const dismiss = distance > drag.height * DISMISS_DISTANCE_RATIO || (distance > 0 && velocity > DISMISS_VELOCITY);
+      const dismiss =
+        distance > drag.height * DISMISS_DISTANCE_RATIO ||
+        (distance > VELOCITY_MIN_DISTANCE && velocity > DISMISS_VELOCITY);
       if (!dismiss) {
         setDrag(0);
         return;
@@ -402,6 +432,8 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
         className={styles.dialog()}
         onCancel={handleCancel}
         onClose={handleNativeClose}
+        onPointerDownCapture={handlePointerDownCapture}
+        onClickCapture={handleClickCapture}
         onPointerDown={handlePointerDown}
         onClick={handleClick}
       >

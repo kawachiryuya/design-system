@@ -31,6 +31,8 @@ import { useHideFocusRingUntilKey } from '../useHideFocusRingUntilKey';
  *   300ms を越えて離しても受け付けない (止めるのはその押下から出る click だけで、印は押下が終わると消える)。時間は動きの有無によらず同じ。
  *   キーボード (Esc・矢印・Enter・Space)・`el.click()`・読み上げの「実行」(detail が 0 の click) は、いつでも受ける
  * - 閉じる動きの間は面を `inert` にして、二度押し・Esc の連打を受けない (もう一度開く `open` は受ける)
+ * - 親が閉じる要求を断ったまま Esc が続くと、ブラウザは止めさせずに面を閉じる。そのときは閉じる要求を出し、
+ *   1 フレーム後も `open` が true なら出し直す (開いているはずなのに消えたまま、にしない)
  *
  * 配信契約 (AGENTS §10-2): `data-state="open" | "closed"` (閉じる動きの間も `closed`)、引いている間の `data-dragging`、
  * ポインタで開いてキーが押されるまでの `data-ds-hide-focus-ring`、
@@ -190,7 +192,9 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     const onCloseRef = React.useRef(onClose);
     const initialFocusRefRef = React.useRef(initialFocusRef);
     const returnFocusRefRef = React.useRef(returnFocusRef);
+    const openPropRef = React.useRef(open);
     onCloseRef.current = onClose;
+    openPropRef.current = open;
     initialFocusRefRef.current = initialFocusRef;
     returnFocusRefRef.current = returnFocusRef;
 
@@ -249,6 +253,25 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       target.focus();
     };
 
+    /** 閉じている面を開く (下から出す)。閉じ終えていないとき・dialog が開いているときは何もしない */
+    const showFromClosed = () => {
+      const dialog = dialogRef.current;
+      if (!dialog || !dialog.isConnected || phaseRef.current !== 'closed' || dialog.open) return;
+      const active = document.activeElement;
+      openerRef.current = active instanceof HTMLElement && active !== document.body ? active : null;
+      unlockRef.current?.();
+      unlockRef.current = lockScroll();
+      dialog.style.removeProperty(DRAG_VAR);
+      dialog.setAttribute('data-state', 'closed');
+      dialog.showModal();
+      // 閉じた位置 (画面の外) を一度描いてから開いた位置へ移す (transition で下から出る)
+      void dialog.offsetHeight;
+      dialog.setAttribute('data-state', 'open');
+      phaseRef.current = 'open';
+      openedAtRef.current = performance.now();
+      focusInitial();
+    };
+
     /** 閉じ終える: dialog を閉じ、背景のスクロールとフォーカスを戻す。何度呼んでもよい */
     const finishClose = () => {
       const dialog = dialogRef.current;
@@ -288,21 +311,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
           focusInitial();
           return;
         }
-        if (phaseRef.current === 'closed' && !dialog.open) {
-          const active = document.activeElement;
-          openerRef.current = active instanceof HTMLElement && active !== document.body ? active : null;
-          unlockRef.current?.();
-          unlockRef.current = lockScroll();
-          dialog.style.removeProperty(DRAG_VAR);
-          dialog.setAttribute('data-state', 'closed');
-          dialog.showModal();
-          // 閉じた位置 (画面の外) を一度描いてから開いた位置へ移す (transition で下から出る)
-          void dialog.offsetHeight;
-          dialog.setAttribute('data-state', 'open');
-          phaseRef.current = 'open';
-          openedAtRef.current = performance.now();
-          focusInitial();
-        }
+        showFromClosed();
         return;
       }
       if (phaseRef.current === 'open') {
@@ -347,7 +356,10 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     /**
      * dialog がブラウザの都合で閉じた (Esc の連打で cancel を飛ばされた、form method="dialog" 等)。
      * close イベントは閉じた後に遅れて届くので、自分が閉じた分 (finishClose) の close が、開き直した後に届くことがある
-     * (StrictMode の描き直し・閉じてすぐ開き直す)。届いた時点で dialog が開いていれば、古い知らせとして無視する
+     * (StrictMode の描き直し・閉じてすぐ開き直す)。届いた時点で dialog が開いていれば、古い知らせとして無視する。
+     * 閉じる要求を出した後、親が閉じなかったとき (`open` が true のまま) は出し直す。親が断った Esc が続くと、
+     * ブラウザは cancel を止めさせずに閉じる。そのままだと「開いているはずなのに消えたまま」になるため。
+     * 親が閉じたかは 1 フレーム後に 1 回だけ見る (帯を引いて閉じなかったときに元へ戻すのと同じ)
      */
     const handleNativeClose = (e: React.SyntheticEvent<HTMLDialogElement>) => {
       if (e.target !== e.currentTarget) return;
@@ -355,7 +367,11 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       if (dialogRef.current?.open) return;
       const wasOpen = phaseRef.current === 'open';
       if (phaseRef.current !== 'closed') finishClose();
-      if (wasOpen) onCloseRef.current();
+      if (!wasOpen) return;
+      onCloseRef.current();
+      requestAnimationFrame(() => {
+        if (openPropRef.current) showFromClosed();
+      });
     };
 
     const isOutside = (e: { clientX: number; clientY: number }) => {

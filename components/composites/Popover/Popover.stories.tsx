@@ -9,7 +9,7 @@ import { Button } from '../../primitives/Button';
 /**
  * Popover stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
- * 構成: Playground / Overview / OverviewTextOnly / FirstFocus / Scenarios / ReturnFocus / LateClose0 / LateClose100。
+ * 構成: Playground / Overview / OverviewTextOnly / FirstFocus / Scenarios / ReturnFocus / LateClose0 / LateClose100 / GateOpen / GateClose。
  * 出方が幅で変わる (640px 未満は下から、以上は押した要素の近く) ので、撮影する story は
  * `chromatic.viewports = [375, 1280]` で両方の幅を撮る (フォーカスの輪の検査も同じ宣言を読んで両方の幅で走る、§8-4)。
  * 開いた状態は同時に 1 つしか出せない (popover="auto" / showModal) ので、「押せるものがある中身」(Overview) と
@@ -192,7 +192,7 @@ export const FirstFocus: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'text' | 'actions' | 'long' | 'inModal' | 'fromMenu' | 'controlled' | 'pinned' | 'lateMicrotask' | 'late0' | 'late100' | 'two' | 'strict' | 'bottom';
+type Scenario = 'text' | 'actions' | 'long' | 'inModal' | 'fromMenu' | 'controlled' | 'pinned' | 'lateMicrotask' | 'late0' | 'late100' | 'late500' | 'gateOpen' | 'gateClose' | 'two' | 'strict' | 'bottom';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
@@ -200,6 +200,8 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [noteOpen, setNoteOpen] = React.useState(false);
   const [controlledOpen, setControlledOpen] = React.useState(false);
+  const [allowOpen, setAllowOpen] = React.useState(scenario !== 'gateOpen');
+  const [allowClose, setAllowClose] = React.useState(scenario !== 'gateClose');
 
   const note = (
     <Popover trigger={<Button variant="secondary">自由席について</Button>} title="自由席について">
@@ -315,10 +317,13 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
         );
       case 'lateMicrotask':
       case 'late0':
-      case 'late100': {
+      case 'late100':
+      case 'late500': {
         // 親が 1 拍遅れて閉じる (onOpenChange(false) を受けてから、マイクロタスク / setTimeout 0 / 100ms 後に open を false に)
         const later = (fn: () => void) =>
-          scenario === 'lateMicrotask' ? queueMicrotask(fn) : window.setTimeout(fn, scenario === 'late0' ? 0 : 100);
+          scenario === 'lateMicrotask'
+            ? queueMicrotask(fn)
+            : window.setTimeout(fn, scenario === 'late0' ? 0 : scenario === 'late100' ? 100 : 500);
         return (
           <Popover
             trigger={<Button>アカウント</Button>}
@@ -334,6 +339,30 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
           </Popover>
         );
       }
+      case 'gateOpen':
+      case 'gateClose':
+        // 親が条件付きで要求を断る (読み込み中は開かない / 保存中は閉じない など)。下のボタンで許可を切り替える
+        return (
+          <div className="flex items-start gap-4">
+            <Button variant="tertiary" onClick={() => setAllowOpen((v) => !v)}>
+              {`開く：${allowOpen ? '許可' : '断る'}`}
+            </Button>
+            <Button variant="tertiary" onClick={() => setAllowClose((v) => !v)}>
+              {`閉じる：${allowClose ? '許可' : '断る'}`}
+            </Button>
+            <Popover
+              trigger={<Button>アカウント</Button>}
+              title="アカウント"
+              open={controlledOpen}
+              onOpenChange={(o) => {
+                add(`onOpenChange(${o})`);
+                if (o ? allowOpen : allowClose) setControlledOpen(o);
+              }}
+            >
+              <AccountContent />
+            </Popover>
+          </div>
+        );
       case 'two':
         return (
           <div className="flex gap-4">
@@ -365,7 +394,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   argTypes: {
     scenario: {
       control: 'select',
-      options: ['text', 'actions', 'long', 'inModal', 'fromMenu', 'controlled', 'pinned', 'lateMicrotask', 'late0', 'late100', 'two', 'strict', 'bottom'],
+      options: ['text', 'actions', 'long', 'inModal', 'fromMenu', 'controlled', 'pinned', 'lateMicrotask', 'late0', 'late100', 'late500', 'gateOpen', 'gateClose', 'two', 'strict', 'bottom'],
     },
   },
   parameters: {
@@ -373,7 +402,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inModal: Modal の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではパネルが消え、入口を押すと出し直す。別の Popover も並べる) / lateMicrotask・late0・late100: 親が遅れて閉じる / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inModal: Modal の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではパネルが消え、入口を押すと出し直す。別の Popover も並べる) / lateMicrotask・late0・late100・late500: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
       },
     },
   },
@@ -472,4 +501,75 @@ export const LateClose100: StoryObj<{ scenario: Scenario }> = {
   },
   render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
   play: lateClosePlay(),
+};
+
+export const GateOpen: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'gateOpen' },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '親が開く要求を断る (gateOpen)。断られている間も、操作のたびに onOpenChange(true) が 1 回ずつ出る。許可に変えた後の最初の 1 回で開く (広い幅)。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'アカウント' });
+    const log = canvas.getByTestId('log');
+    // 断られている間: 押す 2 回・Enter・Space → 要求は 4 回、開かない
+    await userEvent.click(trigger);
+    await userEvent.click(trigger);
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard(' ');
+    await expect(log).toHaveTextContent(Array(4).fill('onOpenChange(true)').join(' / '));
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    // 許可に変える → 最初の 1 回で開く
+    await userEvent.click(canvas.getByRole('button', { name: '開く：断る' }));
+    await userEvent.click(trigger);
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+    await expect(log).toHaveTextContent(Array(5).fill('onOpenChange(true)').join(' / '));
+    const panel = await screen.findByRole('dialog', { name: 'アカウント' });
+    await waitFor(() => expect(within(panel).getByRole('button', { name: 'プロフィール' })).toHaveFocus());
+    // 閉じる (読み上げの「実行」と同じ detail 0 の click でも要求が出る)
+    trigger.click();
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+  },
+};
+
+export const GateClose: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'gateClose' },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '親が閉じる要求を断る (gateClose)。断られている間も、操作のたびに onOpenChange(false) が 1 回ずつ出る。許可に変えた後の最初の 1 回で閉じる (広い幅)。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'アカウント' });
+    const log = canvas.getByTestId('log');
+    await userEvent.click(trigger);
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+    // 断られている間: 入口を押す・detail 0 の click 2 回・Enter → 要求は 4 回、開いたまま
+    await userEvent.click(trigger);
+    trigger.click();
+    trigger.click();
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(log).toHaveTextContent(['onOpenChange(true)', ...Array(4).fill('onOpenChange(false)')].join(' / '));
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    // 許可に変える → 最初の 1 回で閉じる
+    await userEvent.click(canvas.getByRole('button', { name: '閉じる：断る' }));
+    trigger.click();
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+    await expect(log).toHaveTextContent(['onOpenChange(true)', ...Array(5).fill('onOpenChange(false)')].join(' / '));
+  },
 };

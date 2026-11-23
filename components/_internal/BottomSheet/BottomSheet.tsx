@@ -338,6 +338,9 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       if (e.target !== e.currentTarget) return;
       e.stopPropagation();
       e.preventDefault();
+      // 止められない cancel (親が閉じる要求を断り続けて Esc が続くと、ブラウザは cancel を止めさせずに閉じる) は、
+      // この後に届く close の側 (handleNativeClose) で 1 回だけ要求を出す。ここでも出すと、1 回の Esc で 2 回になる
+      if (!e.nativeEvent.cancelable) return;
       if (phaseRef.current === 'open') onCloseRef.current();
     };
 

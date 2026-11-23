@@ -21,7 +21,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 トリガーの近くに浮かせて補助情報や軽い操作を出す非モーダルの overlay。native の `popover` 属性で top-layer 表示・外側クリック / Esc での light-dismiss をブラウザ標準に委ね、位置決めだけ `@floating-ui/dom` (offset / flip / shift) で行う。背景を遮断して確認させたい操作には Popover ではなく `<Modal>` を使う。
 
-`DropdownMenu` (複数アクションのメニュー) と `Tooltip` (hover ヒント) は、この Popover を土台に積む予定 (ロードマップは `design-system-strategy.md`)。
+選択肢・操作から 1 つを選ぶのは `Menu`、hover / focus の短い補足は `Tooltip` (どちらも同じ仕組みを自前で持つ。Popover を土台にはしていない)。
 
 ---
 
@@ -89,8 +89,8 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | やろうとすること | 使うべきコンポーネント | 理由 |
 |---|---|---|
 | **背景を遮断して確認させる** (不可逆操作) | `<Modal>` | focus trap + 背景遮断。外側クリックで消えては困る |
-| **ホバーで出る短いヒント** | `<Tooltip>` (将来) | hover/focus で出る補助。現状は未実装 |
-| **複数アクションのメニュー** | `<DropdownMenu>` (将来) | `menu` / `menuitem` の roving。現状は Popover で代用可 |
+| **ホバーで出る短いヒント** | [`<Tooltip>`](?path=/docs/composites-tooltip--guideline) | hover / focus で出る短い補助 |
+| **選択肢・操作から 1 つ選ぶメニュー** | [`<Menu>`](?path=/docs/composites-menu--guideline) | `menu` / `menuitem` の roving。狭い幅では下から出る |
 | **ページ内に常設する通知** | `<Alert>` | 常時表示・overlay ではない |
 
 ---

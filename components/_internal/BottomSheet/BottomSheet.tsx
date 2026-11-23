@@ -6,6 +6,7 @@ import { Icon } from '../../primitives/Icon';
 import { tv } from '../tv';
 import { useFocusStop } from '../useFocusStop';
 import { lockScroll } from '../scrollLock';
+import { useHideFocusRingUntilKey } from '../useHideFocusRingUntilKey';
 
 /**
  * BottomSheet Props
@@ -32,6 +33,7 @@ import { lockScroll } from '../scrollLock';
  * - 閉じる動きの間は面を `inert` にして、二度押し・Esc の連打を受けない (もう一度開く `open` は受ける)
  *
  * 配信契約 (AGENTS §10-2): `data-state="open" | "closed"` (閉じる動きの間も `closed`)、引いている間の `data-dragging`、
+ * ポインタで開いてキーが押されるまでの `data-ds-hide-focus-ring`、
  * 引いた距離の CSS 変数 `--ds-bottom-sheet-drag` (px、下向き)。どれも `<dialog>` に付く。
  *
  * @example
@@ -68,6 +70,18 @@ export interface BottomSheetProps {
   bodyPadding?: 'default' | 'none';
   /** `<dialog>` の id (入口の `aria-controls` 用)。 */
   id?: string;
+  /**
+   * 閉じた後にフォーカスを戻す要素 (Menu の入口など)。省略時は、開く前にフォーカスがあった要素。
+   * 使う側の部品が別の場所から開かれる (別のメニューで選んだら開く等) とき、開く前のフォーカスは入口ではないので指定する。
+   * 戻すのは、閉じたときにフォーカスが面の中か、どこにも無い (body) ときだけ。
+   */
+  returnFocusRef?: React.RefObject<HTMLElement | null>;
+  /**
+   * ポインタ (指・マウス) で開いたか。true の間は、面の中でキーが押されるまでフォーカスの輪を出さない
+   * (`data-ds-hide-focus-ring`。フォーカスは移す)。キーボードで開いたとき・外から `open` で開いたときは false。
+   * @default false
+   */
+  hideFocusRing?: boolean;
   children: React.ReactNode;
 }
 
@@ -162,7 +176,7 @@ interface DragState {
  * @see BottomSheetProps 決まりと使い方
  */
 export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>(
-  ({ open, onClose, title, initialFocusRef, bodyPadding, id, children }, ref) => {
+  ({ open, onClose, title, initialFocusRef, bodyPadding, id, returnFocusRef, hideFocusRing = false, children }, ref) => {
     const dialogRef = React.useRef<HTMLDialogElement | null>(null);
     const bodyRef = React.useRef<HTMLDivElement | null>(null);
     const grabRef = React.useRef<HTMLDivElement | null>(null);
@@ -172,8 +186,10 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     // 最新の props を effect / handler から読む (effect を開閉以外で走らせ直さない)
     const onCloseRef = React.useRef(onClose);
     const initialFocusRefRef = React.useRef(initialFocusRef);
+    const returnFocusRefRef = React.useRef(returnFocusRef);
     onCloseRef.current = onClose;
     initialFocusRefRef.current = initialFocusRef;
+    returnFocusRefRef.current = returnFocusRef;
 
     const phaseRef = React.useRef<Phase>('closed');
     const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -194,6 +210,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     const inPointerGuard = () => performance.now() - openedAtRef.current < OPEN_POINTER_GUARD_MS;
 
     const bodyFocusStop = useFocusStop(bodyRef, 'scrollable-without-tabbable');
+    const ring = useHideFocusRingUntilKey(open && hideFocusRing);
 
     const setDialogRef = React.useCallback(
       (node: HTMLDialogElement | null) => {
@@ -245,7 +262,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       }
       unlockRef.current?.();
       unlockRef.current = null;
-      const opener = openerRef.current;
+      const opener = returnFocusRefRef.current?.current ?? openerRef.current;
       openerRef.current = null;
       const active = document.activeElement;
       const focusLost = !active || active === document.body || (!!dialog && dialog.contains(active));
@@ -309,8 +326,14 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       [],
     );
 
-    /** Esc。ブラウザに閉じさせず、親に閉じる要求を出す */
+    /**
+     * Esc。ブラウザに閉じさせず、親に閉じる要求を出す。
+     * cancel / close は React では DOM の親へ伝わる: この面が Modal など別の `<dialog>` の中に置かれていると、
+     * 親の dialog の onCancel / onClose まで呼ばれて親も閉じる。自分の分はここで止め、自分宛てでないもの (中に置いた別の面の分) は扱わない
+     */
     const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
+      if (e.target !== e.currentTarget) return;
+      e.stopPropagation();
       e.preventDefault();
       if (phaseRef.current === 'open') onCloseRef.current();
     };
@@ -320,7 +343,9 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
      * close イベントは閉じた後に遅れて届くので、自分が閉じた分 (finishClose) の close が、開き直した後に届くことがある
      * (StrictMode の描き直し・閉じてすぐ開き直す)。届いた時点で dialog が開いていれば、古い知らせとして無視する
      */
-    const handleNativeClose = () => {
+    const handleNativeClose = (e: React.SyntheticEvent<HTMLDialogElement>) => {
+      if (e.target !== e.currentTarget) return;
+      e.stopPropagation();
       if (dialogRef.current?.open) return;
       const wasOpen = phaseRef.current === 'open';
       if (phaseRef.current !== 'closed') finishClose();
@@ -453,6 +478,8 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     return (
       <dialog
         data-ds-root
+        data-ds-hide-focus-ring={ring.hidden ? '' : undefined}
+        onKeyDownCapture={ring.onKeyDownCapture}
         ref={setDialogRef}
         id={id}
         tabIndex={-1}

@@ -282,24 +282,34 @@ module.exports = {
     // - outline で描く: すき間を塗らない (下の面の色が見える)、ホバーの box-shadow と別の層、
     //   forced-colors (Windows ハイコントラスト) でも消えない。
     // - 値は CSS 変数 (--focus-ring-width / --focus-ring-offset / --color-border-focus) 経由で、利用側が上書きできる。
+    // - `[data-ds-hide-focus-ring]` の中では出さない (#157): ポインタ (指・マウス) で開いた重なり (Menu など) は、
+    //   開いた直後に項目へフォーカスを移すが、輪はキーボードの現在地なので、キーが押されるまで出さない。
+    //   `:focus-visible` の判断はブラウザごとに違う (iOS の Safari は指で開いても出す) ので、部品が属性で決める。
+    //   `:where()` で包むので詳細度は変わらない
     plugin(function ({ addComponents }) {
       const width = 'var(--focus-ring-width)';
       const offset = 'var(--focus-ring-offset)';
+      const shown = '&:focus-visible:not(:where([data-ds-hide-focus-ring], [data-ds-hide-focus-ring] *))';
+      // 隠すときは、ブラウザ既定の輪 (outline-style: auto) も出さない
+      const hidden = '&:focus-visible:where([data-ds-hide-focus-ring], [data-ds-hide-focus-ring] *)';
       addComponents({
         '.focus-ring': {
-          '&:focus-visible': {
+          [hidden]: { outline: 'none' },
+          [shown]: {
             outline: `${width} solid var(--color-border-focus)`,
             outlineOffset: offset,
           },
         },
         '.focus-ring-inset': {
-          '&:focus-visible': {
+          [hidden]: { outline: 'none' },
+          [shown]: {
             outline: `${width} solid var(--color-border-focus)`,
             outlineOffset: `calc(-1 * ${width})`,
           },
         },
         '.focus-ring-on-fill': {
-          '&:focus-visible': {
+          [hidden]: { outline: 'none' },
+          [shown]: {
             outline: `${width} solid var(--color-on-surface-inverse)`,
             outlineOffset: `calc(-1 * (${width} + ${offset}))`,
           },

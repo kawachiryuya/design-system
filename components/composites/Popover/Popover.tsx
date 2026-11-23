@@ -18,7 +18,7 @@ export type PopoverPlacement = Placement;
  *
  * native の `popover` 属性 (top-layer / 外側クリック・Esc での light-dismiss) を土台にし、
  * 位置決めだけ `@floating-ui/dom` (offset / flip / shift + autoUpdate) で行う。
- * focus trap は張らない非モーダルの overlay。`DropdownMenu` / `Tooltip` はこの Popover を土台に積む想定。
+ * focus trap は張らない非モーダルの overlay。`Menu` / `Tooltip` は同じ仕組み (native popover + floating-ui) を自前で持つ。
  *
  * @example
  *   // 基本 (uncontrolled)

@@ -9,8 +9,8 @@
  * 使い方: `const release = lockScroll();` … 閉じるときに `release()`。`release` は何度呼んでも 1 回だけ数える。
  * ブラウザでだけ呼ぶ (effect / handler の中)。描画中には呼ばない。
  *
- * 注: 今の `Modal` は body だけを自前で止めていて、ここには乗っていない (#157 の次の PR で乗せる)。
- * それまでは、この止め方と Modal を同時に使うと、閉じる順によって body が止まったまま残ることがある。
+ * 使っている部品: 下から出る面 (`BottomSheet`)・`Modal`。背景を止める重なりを足すときは、ここに乗せる
+ * (自前で overflow を書き換えると、閉じる順によって止まったまま残る)。
  */
 
 const PROPS = ['overflow-x', 'overflow-y'] as const;

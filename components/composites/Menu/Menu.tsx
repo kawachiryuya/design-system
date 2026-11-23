@@ -155,6 +155,7 @@ export const Menu: React.FC<MenuProps> = ({
   const narrow = useIsNarrowViewport();
   const form: Form = narrow ? 'sheet' : 'popover';
   const panelRef = React.useRef<HTMLDivElement | null>(null);
+  const sheetRef = React.useRef<HTMLDialogElement | null>(null);
   const referenceRef = React.useRef<HTMLElement | null>(null);
   const itemRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const typeaheadRef = React.useRef<{ buffer: string; timer: number | null }>({ buffer: '', timer: null });
@@ -282,6 +283,20 @@ export const Menu: React.FC<MenuProps> = ({
     };
   }, [form, requestOpenChange]);
 
+  // 開いている間に items が変わってアクティブな項目が消えた・無効になった: 近い有効な項目へ移す。
+  // 無ければ項目 0 個のときと同じ扱い (狭い幅は面そのもの、広い幅は入口にフォーカス)
+  React.useEffect(() => {
+    if (!shown || activeIndex < 0) return;
+    if (activeIndex < items.length && !items[activeIndex].disabled) return;
+    if (enabledIndexes.length === 0) {
+      setActiveIndex(-1);
+      (form === 'sheet' ? sheetRef.current : referenceRef.current)?.focus();
+      return;
+    }
+    const nearest = enabledIndexes.reduce((a, b) => (Math.abs(b - activeIndex) < Math.abs(a - activeIndex) ? b : a));
+    setActiveIndex(nearest);
+  }, [shown, activeIndex, items, enabledIndexes, form]);
+
   // アクティブな項目へフォーカス (開いている間)。popover を出す effect の後に置く
   React.useEffect(() => {
     if (shown && activeIndex >= 0) itemRefs.current[activeIndex]?.focus();
@@ -298,8 +313,12 @@ export const Menu: React.FC<MenuProps> = ({
   const selectAt = (index: number) => {
     const it = items[index];
     if (!it || it.disabled) return;
-    it.onSelect();
-    requestOpenChange(false);
+    try {
+      it.onSelect();
+    } finally {
+      // onSelect が例外を投げても閉じる (開いたまま・背景が止まったままにしない)。例外はそのまま上へ
+      requestOpenChange(false);
+    }
   };
 
   // 無効な項目・項目の間を押しても、フォーカスを項目から外さない (外れると矢印・Tab がメニューに届かなくなる)
@@ -329,8 +348,10 @@ export const Menu: React.FC<MenuProps> = ({
       e.preventDefault();
       setActiveIndex(enabledIndexes[enabledIndexes.length - 1]);
     } else if (e.key === 'Enter' || e.key === ' ') {
+      // 選ぶのはフォーカスのある項目 (押しかけてずらしたときなど、activeIndex と輪の位置がずれていても、見えている輪の項目)
       e.preventDefault();
-      selectAt(activeIndex);
+      const focused = itemRefs.current.findIndex((el) => el !== null && el === document.activeElement);
+      if (focused >= 0) selectAt(focused);
     } else if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
       // 先頭文字: 入力した文字でラベルが始まる項目へ
       const ta = typeaheadRef.current;
@@ -361,6 +382,10 @@ export const Menu: React.FC<MenuProps> = ({
         aria-disabled={it.disabled || undefined}
         tabIndex={index === activeIndex ? 0 : -1}
         onClick={() => selectAt(index)}
+        onFocus={() => {
+          // フォーカスが項目に移ったら (押した・プログラム)、矢印キーの続きもそこから
+          if (!it.disabled) setActiveIndex(index);
+        }}
         className={item({ form: f, tone: it.destructive ? 'destructive' : 'default' })}
       >
         {it.icon && <span className="flex-shrink-0 inline-flex">{it.icon}</span>}
@@ -400,6 +425,7 @@ export const Menu: React.FC<MenuProps> = ({
       <>
         {triggerEl}
         <BottomSheet
+          ref={sheetRef}
           open={shown}
           onClose={() => requestOpenChange(false)}
           title={title}

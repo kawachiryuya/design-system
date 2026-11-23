@@ -144,12 +144,36 @@ export const Playground: Story = {
     await userEvent.click(items[1]);
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
     await expect(items[0]).toHaveFocus();
+    // フォーカスが無効な項目にあるとき (スクリプトで移した等) は、Enter で何も選ばない (アクティブだった項目も選ばない)
+    items[1].focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(args.onRename).toHaveBeenCalledTimes(0);
+    items[0].focus();
+
+    // 押しかけてずらして離す (click にならない) と、フォーカスはその項目に移る。Enter はフォーカスのある項目を選ぶ
+    // (アクティブだった「削除」ではない)
+    await userEvent.keyboard('{End}');
+    await waitFor(() => expect(items[3]).toHaveFocus());
+    await userEvent.pointer([{ keys: '[MouseLeft>]', target: items[0] }, { target: canvasElement }, { keys: '[/MouseLeft]' }]);
+    await waitFor(() => expect(items[0]).toHaveFocus());
+    // 矢印キーの続きも、フォーカスのある項目から (↓ は無効な項目を飛ばして 3 つ目へ、↑ で戻る)
+    await userEvent.keyboard('{ArrowDown}');
+    await waitFor(() => expect(items[2]).toHaveFocus());
+    await userEvent.keyboard('{ArrowUp}');
+    await waitFor(() => expect(items[0]).toHaveFocus());
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onRename).toHaveBeenCalledTimes(1);
+    await expect(args.onDelete).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
 
     // Tab は閉じて入口に戻す (選ばない)
+    await userEvent.click(trigger);
+    await waitFor(() => expect(items[0]).toHaveFocus());
     await userEvent.keyboard('{Tab}');
     await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
     await waitFor(() => expect(trigger).toHaveFocus());
-    await expect(args.onRename).toHaveBeenCalledTimes(0);
+    await expect(args.onRename).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -254,7 +278,7 @@ export const SingleChoice: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'actions' | 'modal' | 'nested' | 'controlled' | 'empty' | 'allDisabled' | 'long' | 'strict' | 'bottom';
+type Scenario = 'actions' | 'inModal' | 'shrink' | 'throws' | 'modal' | 'nested' | 'controlled' | 'empty' | 'allDisabled' | 'long' | 'strict' | 'bottom';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
@@ -262,6 +286,7 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [secondOpen, setSecondOpen] = React.useState(false);
   const [controlledOpen, setControlledOpen] = React.useState(false);
+  const [shrinkItems, setShrinkItems] = React.useState(4);
 
   const body = (() => {
     switch (scenario) {
@@ -275,6 +300,47 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
               { label: '共有 (準備中)', disabled: true, onSelect: () => add('共有') },
               { label: '複製', onSelect: () => add('複製') },
               { label: '削除', icon: <Icon name="remove" size="sm" />, destructive: true, onSelect: () => add('削除') },
+            ]}
+          />
+        );
+      case 'inModal':
+        return (
+          <>
+            <Button onClick={() => setModalOpen(true)}>条件を開く</Button>
+            <Modal open={modalOpen} onClose={() => { add('Modal の onClose'); setModalOpen(false); }} title="条件" size="sm">
+              <Modal.Body>
+                <SortMenu onPick={(l) => add(l)} />
+              </Modal.Body>
+            </Modal>
+          </>
+        );
+      case 'shrink':
+        return (
+          <Menu
+            trigger={<Button>操作</Button>}
+            title="操作"
+            onOpenChange={(o) => {
+              // 開いて 300ms 後に、後ろの 2 項目が消える (開いている間に items が減る)
+              if (o) window.setTimeout(() => setShrinkItems(2), 300);
+              else setShrinkItems(4);
+            }}
+            items={['名前を変更', '複製', '移動', '削除'].slice(0, shrinkItems).map((label) => ({ label, onSelect: () => add(label) }))}
+          />
+        );
+      case 'throws':
+        return (
+          <Menu
+            trigger={<Button>操作</Button>}
+            title="操作"
+            items={[
+              { label: '複製', onSelect: () => add('複製') },
+              {
+                label: '失敗する操作',
+                onSelect: () => {
+                  add('失敗する操作');
+                  throw new Error('onSelect が失敗した (見本)');
+                },
+              },
             ]}
           />
         );
@@ -387,7 +453,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   argTypes: {
     scenario: {
       control: 'select',
-      options: ['actions', 'modal', 'nested', 'controlled', 'empty', 'allDisabled', 'long', 'strict', 'bottom'],
+      options: ['actions', 'inModal', 'shrink', 'throws', 'modal', 'nested', 'controlled', 'empty', 'allDisabled', 'long', 'strict', 'bottom'],
     },
   },
   parameters: {
@@ -395,7 +461,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。actions: 操作の一覧 (無効な項目あり) / modal: 選んだら Modal を開く / nested: 選んだら別の Menu を開く / controlled: open と onOpenChange の回数と順番を下に出す / empty: 項目が 0 個 / allDisabled: 全部無効 / long: 項目が多い (狭い幅では面の中でスクロール) / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。actions: 操作の一覧 (無効な項目あり) / inModal: Modal の中の Menu (Esc で Menu だけ閉じる) / shrink: 開いて 300ms 後に項目が減る / throws: onSelect が例外を投げる / modal: 選んだら Modal を開く / nested: 選んだら別の Menu を開く / controlled: open と onOpenChange の回数と順番を下に出す / empty: 項目が 0 個 / allDisabled: 全部無効 / long: 項目が多い (狭い幅では面の中でスクロール) / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
       },
     },
   },
@@ -424,5 +490,31 @@ export const ReturnFocus: StoryObj<{ scenario: Scenario }> = {
     await waitFor(() => expect(canvas.getByRole('button', { name: '並び順' })).toHaveAttribute('aria-expanded', 'false'));
     await expect(canvas.getByTestId('log')).toHaveTextContent('所要時間順');
     await waitFor(() => expect(canvas.getByRole('button', { name: '並び順' })).toHaveFocus());
+  },
+};
+
+export const ItemsShrink: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'shrink' },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story: '開いている間に項目が減って、アクティブな項目が消える。フォーカスは近い有効な項目へ移り、矢印と Enter が効き続ける。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '操作' }));
+    const menu = await screen.findByRole('menu', { name: '操作' });
+    await userEvent.keyboard('{End}');
+    // 300ms 後に後ろの 2 項目が消える → 残った最後 (複製) にフォーカス
+    await waitFor(() => expect(within(menu).getAllByRole('menuitem')).toHaveLength(2));
+    await waitFor(() => expect(within(menu).getByRole('menuitem', { name: '複製' })).toHaveFocus());
+    await userEvent.keyboard('{ArrowUp}');
+    await waitFor(() => expect(within(menu).getByRole('menuitem', { name: '名前を変更' })).toHaveFocus());
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(canvas.getByTestId('log')).toHaveTextContent('名前を変更'));
   },
 };

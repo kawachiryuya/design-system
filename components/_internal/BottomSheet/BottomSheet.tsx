@@ -317,8 +317,14 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       [],
     );
 
-    /** Esc。ブラウザに閉じさせず、親に閉じる要求を出す */
+    /**
+     * Esc。ブラウザに閉じさせず、親に閉じる要求を出す。
+     * cancel / close は React では DOM の親へ伝わる: この面が Modal など別の `<dialog>` の中に置かれていると、
+     * 親の dialog の onCancel / onClose まで呼ばれて親も閉じる。自分の分はここで止め、自分宛てでないもの (中に置いた別の面の分) は扱わない
+     */
     const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
+      if (e.target !== e.currentTarget) return;
+      e.stopPropagation();
       e.preventDefault();
       if (phaseRef.current === 'open') onCloseRef.current();
     };
@@ -328,7 +334,9 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
      * close イベントは閉じた後に遅れて届くので、自分が閉じた分 (finishClose) の close が、開き直した後に届くことがある
      * (StrictMode の描き直し・閉じてすぐ開き直す)。届いた時点で dialog が開いていれば、古い知らせとして無視する
      */
-    const handleNativeClose = () => {
+    const handleNativeClose = (e: React.SyntheticEvent<HTMLDialogElement>) => {
+      if (e.target !== e.currentTarget) return;
+      e.stopPropagation();
       if (dialogRef.current?.open) return;
       const wasOpen = phaseRef.current === 'open';
       if (phaseRef.current !== 'closed') finishClose();

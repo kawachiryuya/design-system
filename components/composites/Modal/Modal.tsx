@@ -160,6 +160,8 @@ const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
   }, [open]);
 
   const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
+    // 中に置いた別の dialog (Menu の下から出る面など) の Esc は、React では親のここまで伝わる。自分宛てのものだけ扱う
+    if (e.target !== e.currentTarget) return;
     e.preventDefault();
     if (closeOnEsc) onClose();
   };

@@ -9,7 +9,7 @@ import { Button } from '../../primitives/Button';
 /**
  * Popover stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
- * 構成: Playground / Overview / OverviewTextOnly / FirstFocus / Scenarios / ReturnFocus。
+ * 構成: Playground / Overview / OverviewTextOnly / FirstFocus / Scenarios / ReturnFocus / LateClose0 / LateClose100。
  * 出方が幅で変わる (640px 未満は下から、以上は押した要素の近く) ので、撮影する story は
  * `chromatic.viewports = [375, 1280]` で両方の幅を撮る (フォーカスの輪の検査も同じ宣言を読んで両方の幅で走る、§8-4)。
  * 開いた状態は同時に 1 つしか出せない (popover="auto" / showModal) ので、「押せるものがある中身」(Overview) と
@@ -192,7 +192,7 @@ export const FirstFocus: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'text' | 'actions' | 'long' | 'inModal' | 'fromMenu' | 'controlled' | 'pinned' | 'two' | 'strict' | 'bottom';
+type Scenario = 'text' | 'actions' | 'long' | 'inModal' | 'fromMenu' | 'controlled' | 'pinned' | 'lateMicrotask' | 'late0' | 'late100' | 'two' | 'strict' | 'bottom';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
@@ -295,10 +295,11 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
       case 'pinned':
         // 親が閉じる要求を無視する (開いたら開いたまま)。閉じるのは下のボタンだけ
         return (
-          <>
+          <div className="flex items-start gap-4">
             <Button variant="tertiary" onClick={() => setControlledOpen(false)}>
               親から閉じる
             </Button>
+            {note}
             <Popover
               trigger={<Button>アカウント</Button>}
               title="アカウント"
@@ -310,8 +311,29 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
             >
               <AccountContent />
             </Popover>
-          </>
+          </div>
         );
+      case 'lateMicrotask':
+      case 'late0':
+      case 'late100': {
+        // 親が 1 拍遅れて閉じる (onOpenChange(false) を受けてから、マイクロタスク / setTimeout 0 / 100ms 後に open を false に)
+        const later = (fn: () => void) =>
+          scenario === 'lateMicrotask' ? queueMicrotask(fn) : window.setTimeout(fn, scenario === 'late0' ? 0 : 100);
+        return (
+          <Popover
+            trigger={<Button>アカウント</Button>}
+            title="アカウント"
+            open={controlledOpen}
+            onOpenChange={(o) => {
+              add(`onOpenChange(${o})`);
+              if (o) setControlledOpen(true);
+              else later(() => setControlledOpen(false));
+            }}
+          >
+            <AccountContent />
+          </Popover>
+        );
+      }
       case 'two':
         return (
           <div className="flex gap-4">
@@ -343,7 +365,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   argTypes: {
     scenario: {
       control: 'select',
-      options: ['text', 'actions', 'long', 'inModal', 'fromMenu', 'controlled', 'pinned', 'two', 'strict', 'bottom'],
+      options: ['text', 'actions', 'long', 'inModal', 'fromMenu', 'controlled', 'pinned', 'lateMicrotask', 'late0', 'late100', 'two', 'strict', 'bottom'],
     },
   },
   parameters: {
@@ -351,7 +373,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inModal: Modal の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inModal: Modal の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではパネルが消え、入口を押すと出し直す。別の Popover も並べる) / lateMicrotask・late0・late100: 親が遅れて閉じる / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
       },
     },
   },
@@ -386,4 +408,68 @@ export const ReturnFocus: StoryObj<{ scenario: Scenario }> = {
     await waitFor(() => expect(noteTrigger).toHaveAttribute('aria-expanded', 'false'));
     await waitFor(() => expect(noteTrigger).toHaveFocus());
   },
+};
+
+/** 親が遅れて閉じる場面の play (広い幅)。1 回で閉じて、出し直さない */
+function lateClosePlay() {
+  return async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'アカウント' });
+    const panel = document.getElementById(trigger.getAttribute('aria-controls') ?? '') as HTMLElement;
+    let opens = 0;
+    const onToggle = (e: Event) => {
+      if ((e as ToggleEvent).newState === 'open') opens++;
+    };
+    panel.addEventListener('toggle', onToggle);
+    try {
+      for (const how of ['pointer', 'key'] as const) {
+        opens = 0;
+        if (how === 'pointer') await userEvent.click(trigger);
+        else {
+          trigger.focus();
+          await userEvent.keyboard('{Enter}');
+        }
+        await waitFor(() => expect(panel.matches(':popover-open')).toBe(true));
+        // 閉じる (入口を押す / Enter)。親は遅れて閉じる
+        if (how === 'pointer') await userEvent.click(trigger);
+        else {
+          trigger.focus();
+          await userEvent.keyboard('{Enter}');
+        }
+        await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+        await expect(panel.matches(':popover-open')).toBe(false);
+        // 出し直さない (少し待っても閉じたまま。開いたのは 1 回だけ)
+        await new Promise((r) => setTimeout(r, 300));
+        await expect(panel.matches(':popover-open')).toBe(false);
+        await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+        await waitFor(() => expect(opens).toBe(1));
+        await expect(trigger).toHaveFocus();
+      }
+      await expect(canvas.getByTestId('log')).toHaveTextContent(
+        'onOpenChange(true) / onOpenChange(false) / onOpenChange(true) / onOpenChange(false)',
+      );
+    } finally {
+      panel.removeEventListener('toggle', onToggle);
+    }
+  };
+}
+
+export const LateClose0: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'late0' },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: { description: { story: '親が onOpenChange(false) を受けて setTimeout 0 で閉じる。パネルは 1 回で閉じ、出し直さない (広い幅)。' } },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: lateClosePlay(),
+};
+
+export const LateClose100: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'late100' },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: { description: { story: '親が onOpenChange(false) を受けて 100ms 後に閉じる。パネルは 1 回で閉じ、出し直さない (広い幅)。' } },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: lateClosePlay(),
 };

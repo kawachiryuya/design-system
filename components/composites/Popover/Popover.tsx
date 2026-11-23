@@ -22,7 +22,7 @@ export type PopoverPlacement = Placement;
  * 役割「補足」の部品 (#157): 押した要素についての説明や軽い操作を出す。読み流せて、外を押すと閉じる。
  * **出方は部品が幅で決める (使う側は選ばない)**: 画面の幅 640px 以上は押した要素の近くに出し
  * (native の `popover="auto"` + `@floating-ui/dom`。フォーカスは閉じ込めない)、640px 未満は画面の下から出す
- * (内部の `BottomSheet`。背景が暗くなり、フォーカスは面の中を回る)。開いている間に幅が境目をまたいだら閉じる
+ * (内部の `BottomSheet`。背景が暗くなり、Tab で面の外 (背景のページ) には出ない)。開いている間に幅が境目をまたいだら閉じる
  * (形を入れ替えない)。
  *
  * 開いた直後のフォーカスは、どちらの幅でも中の最初の押せるもの (無ければ面・パネルそのもの)。
@@ -68,7 +68,8 @@ export interface PopoverProps {
   open?: boolean;
   /**
    * 開閉が変わるとき (入口を押す / Esc / 外を押す / 閉じるボタン / 帯を引く / 幅が境目をまたぐ) に呼ばれる。
-   * controlled で親が閉じなかったときは、開いたまま出し続ける。
+   * controlled で親が閉じる要求を無視したとき、狭い幅の面は開いたまま、広い幅のパネルは消える (`aria-expanded` は
+   * true のまま。入口を押すとパネルを出し直す)。
    */
   onOpenChange?: (open: boolean) => void;
   /** 広い幅のパネルに付ける追加の class。**狭い幅 (下から出る面) には付かない**。 */
@@ -96,14 +97,13 @@ export const Popover: React.FC<PopoverProps> = ({
   const form: Form = narrow ? 'sheet' : 'popover';
   const panelRef = React.useRef<HTMLDivElement | null>(null);
   const referenceRef = React.useRef<HTMLElement | null>(null);
-  const triggerPressRef = React.useRef<boolean | null>(null);
+  /** 入口を押し始めた時点の開閉 (状態) と、広い幅のパネルが実際に出ていたか */
+  const triggerPressRef = React.useRef<{ open: boolean; panelShown: boolean } | null>(null);
   const panelId = React.useId();
   const isControlled = open !== undefined;
   const [internalOpen, setInternalOpen] = React.useState(false);
   /** 入口をポインタ (指・マウス。click の detail > 0) で押して開いたか。キーボード・読み上げの「実行」(detail 0)・外からの open は false */
   const [openedByPointer, setOpenedByPointer] = React.useState(false);
-  /** 広い幅: ブラウザが閉じた (light dismiss) のに親が開いたままにしたとき、出し直すための印 */
-  const [reshowTick, setReshowTick] = React.useState(0);
   const [, forceRender] = React.useReducer((n: number) => n + 1, 0);
   const openState = isControlled ? open : internalOpen;
 
@@ -123,6 +123,15 @@ export const Popover: React.FC<PopoverProps> = ({
   const onOpenChangeRef = React.useRef(onOpenChange);
   onOpenChangeRef.current = onOpenChange;
 
+  /**
+   * 1 つの操作 (押す・キー) の中で出した、まだ状態に返ってきていない開閉の要求。同じ操作の中で同じ要求を二度出さない
+   * (広い幅で入口を押すと、ブラウザが外を押したとして閉じる知らせと入口の click の両方が閉じる要求になり、親が遅れて閉じるとき
+   * onOpenChange(false) が 2 回届いていた)。状態が要求に追いついたとき・次の操作 (pointerdown / keydown) が始まったときに消す
+   * (親が要求を無視しても、次の操作ではもう一度要求を出す)
+   */
+  const pendingRef = React.useRef<boolean | null>(null);
+  if (pendingRef.current === openState) pendingRef.current = null;
+
   /** 開いている間の最後の操作が、ポインタ (指・マウスの押し始め) か、キーか。閉じ方の見分けに使う */
   const lastInputRef = React.useRef<'pointer' | 'key'>('key');
 
@@ -132,7 +141,8 @@ export const Popover: React.FC<PopoverProps> = ({
    * 幅が境目をまたいで閉じるときは `neutral` (今までどおり輪を出す側)
    */
   const requestOpenChange = React.useCallback((next: boolean, neutral = false) => {
-    if (openRef.current === next) return;
+    if (openRef.current === next || pendingRef.current === next) return;
+    pendingRef.current = next;
     if (!next && !neutral && lastInputRef.current === 'pointer') hideFocusRingUntilKeyOrBlur(referenceRef.current);
     if (!isControlledRef.current) setInternalOpen(next);
     onOpenChangeRef.current?.(next);
@@ -144,9 +154,11 @@ export const Popover: React.FC<PopoverProps> = ({
     lastInputRef.current = openedByPointer ? 'pointer' : 'key';
     const onPointer = () => {
       lastInputRef.current = 'pointer';
+      pendingRef.current = null;
     };
     const onKey = () => {
       lastInputRef.current = 'key';
+      pendingRef.current = null;
     };
     // 押して実行した (detail > 0) か、キーボード・読み上げの「実行」か (detail 0)。閉じるボタン・入口に効く
     const onClick = (e: MouseEvent) => {
@@ -175,6 +187,8 @@ export const Popover: React.FC<PopoverProps> = ({
     if (!openRef.current) return;
     formAtOpenRef.current = null;
     requestOpenChange(false, true);
+    // 親が開いたままにしたら新しい形で出し直すので、この要求は持ち越さない
+    pendingRef.current = null;
     forceRender();
     // 広い幅のパネル (popover) は外されたので、中にあったフォーカスは body に落ちている。入口に戻す
     const active = document.activeElement;
@@ -229,9 +243,11 @@ export const Popover: React.FC<PopoverProps> = ({
       const emptyPress = !active || active === document.body || (!!reference && active.contains(reference));
       if (inside || emptyPress || panel.contains(active)) reference?.focus();
     }
-  }, [form, shown, placement, offset, reshowTick]);
+  }, [form, shown, placement, offset]);
 
-  // 広い幅: 外を押す・Esc でブラウザが閉じた (light dismiss) ことを状態に伝える。親が開いたままにしたら出し直す
+  // 広い幅: 外を押す・Esc でブラウザが閉じた (light dismiss) ことを状態に伝える。
+  // controlled で親が閉じる要求を無視したときは、パネルは消えたまま (状態は開いたまま、自分からは出し直さない。Menu と同じ)。
+  // その状態で入口を押したときは、入口の click でパネルを出し直す (Menu は何も起きない。main の Popover は押すと出た)
   React.useEffect(() => {
     if (form !== 'popover') return;
     const panel = panelRef.current;
@@ -240,13 +256,7 @@ export const Popover: React.FC<PopoverProps> = ({
       if ((e as ToggleEvent).newState === 'closed') focusWasInsideRef.current = panel.contains(document.activeElement);
     };
     const onToggle = (e: Event) => {
-      if ((e as ToggleEvent).newState !== 'closed' || !openRef.current) return;
-      requestOpenChange(false);
-      // controlled で親が閉じなかった: 開いたまま出し続ける (狭い幅の面と同じ)。
-      // ただし別の popover (Menu・Popover) が開いてこちらが閉じたときは出し直さない (popover="auto" は 1 つずつしか出せず、
-      // 出し直すと向こうを閉じてしまう)
-      const another = Array.from(document.querySelectorAll(':popover-open')).some((el) => el !== panel);
-      if (!another) setReshowTick((n) => n + 1);
+      if ((e as ToggleEvent).newState === 'closed' && openRef.current) requestOpenChange(false);
     };
     panel.addEventListener('beforetoggle', onBeforeToggle);
     panel.addEventListener('toggle', onToggle);
@@ -294,8 +304,8 @@ export const Popover: React.FC<PopoverProps> = ({
     onPointerDown: (e: React.PointerEvent) => {
       triggerNode.props.onPointerDown?.(e);
       // 押し始めた時点の開閉を覚える (広い幅では、押して離した瞬間にブラウザが外を押したとして閉じる。
-      // その後の click で開き直さない)
-      triggerPressRef.current = openRef.current;
+      // その後の click で開き直さない)。パネルが実際に出ていたかも覚える (親が閉じる要求を無視して消えたままのとき用)
+      triggerPressRef.current = { open: openRef.current, panelShown: !!panelRef.current?.matches(':popover-open') };
     },
     onClick: (e: React.MouseEvent) => {
       triggerNode.props.onClick?.(e);
@@ -303,7 +313,19 @@ export const Popover: React.FC<PopoverProps> = ({
       // キーボードの Enter・Space (detail 0) に、古い値を持ち越さない
       const pressed = triggerPressRef.current;
       triggerPressRef.current = null;
-      const wasOpen = e.detail > 0 && pressed !== null ? pressed : openRef.current;
+      const usePressed = e.detail > 0 && pressed !== null;
+      const wasOpen = usePressed ? pressed.open : openRef.current;
+      const panel = panelRef.current;
+      const panelShown = usePressed ? pressed.panelShown : !!panel?.matches(':popover-open');
+      if (wasOpen && form === 'popover' && panel && !panelShown) {
+        // 広い幅で、controlled の親が閉じる要求を無視したため、状態は開いたままパネルだけ消えている。
+        // 閉じる要求をもう一度出しても何も起きないので、パネルを出し直す (main の Popover と同じく、押せば出る)
+        if (!panel.matches(':popover-open')) panel.showPopover();
+        pendingRef.current = null;
+        setOpenedByPointer(e.detail > 0);
+        (firstTabbable(panel) ?? panel).focus();
+        return;
+      }
       if (!wasOpen) setOpenedByPointer(e.detail > 0);
       requestOpenChange(!wasOpen);
     },

@@ -1,0 +1,158 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as MenuStories from './Menu.stories';
+import { Menu } from './Menu';
+import { Button } from '../../primitives/Button';
+import { Icon } from '../../primitives/Icon';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+<Meta of={MenuStories} name="Guideline" />
+
+# Menu
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+役割「選ぶ」の部品。押した要素に属する選択肢・操作から 1 つを選び、選んだら閉じる (WAI-ARIA APG の Menu Button パターン)。**狭い幅 (画面の幅 640px 未満) では画面の下から、広い幅では押した要素の近くに出る。どちらで出すかは部品が決め、使う側は選ばない**。どちらも外を押すと閉じる。
+
+使い方は 2 つ:
+
+- **1 つ選ぶ** — 並び順・種別など、今の値から 1 つを選び直す。項目に `selected` を持たせると、選択中の行の右にチェックが出て、読み上げにも選択中が伝わる。開くと選択中の項目にフォーカスが来る
+- **操作の一覧** — 変更・複製・削除など、押すとすぐ実行する操作を集める。`selected` は持たせない (チェックの列も出ない)
+
+フォームの欄で値を選んで送信するもの (住所の都道府県など) は `<Select>`、選択肢を常に見せて切り替えるもの (2〜4 個) は `<SegmentedControl>`、戻せない操作の確認は `<Modal>` を使う。
+
+---
+
+## Props
+
+下表は Menu.tsx の TypeScript 型と JSDoc から自動生成。
+
+<ArgTypes of={MenuStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="見出し (title) は、何を選ぶメニューかを短く書く"
+  doExample={
+    <Menu
+      trigger={<Button variant="secondary">並び順：出発時刻順</Button>}
+      title="並び順"
+      items={[
+        { label: '出発時刻順', selected: true, onSelect: () => {} },
+        { label: '到着時刻順', selected: false, onSelect: () => {} },
+      ]}
+    />
+  }
+  doCaption="狭い幅では面の見出し、広い幅ではメニューの読み上げ名になる。入口の文言と同じ言葉で短く。"
+  dontExample={
+    <Menu
+      trigger={<Button variant="secondary">並び順：出発時刻順</Button>}
+      title="選択してください"
+      items={[
+        { label: '出発時刻順', selected: true, onSelect: () => {} },
+        { label: '到着時刻順', selected: false, onSelect: () => {} },
+      ]}
+    />
+  }
+  dontCaption="「選択してください」では、下から出た面を見ても何を選んでいるか分からない。"
+/>
+
+<DoDontExample
+  label="今の値から選び直すメニューは、選択中を selected で示す"
+  doExample={
+    <Menu
+      trigger={<Button variant="secondary">種別：のぞみ</Button>}
+      title="種別"
+      items={[
+        { label: 'のぞみ', selected: true, onSelect: () => {} },
+        { label: 'ひかり', selected: false, onSelect: () => {} },
+        { label: 'こだま', selected: false, onSelect: () => {} },
+      ]}
+    />
+  }
+  doCaption="選択中の行の右にチェックが出て、読み上げでも「選択中」と伝わる。"
+  dontExample={
+    <Menu
+      trigger={<Button variant="secondary">種別：のぞみ</Button>}
+      title="種別"
+      items={[
+        { label: 'のぞみ (選択中)', onSelect: () => {} },
+        { label: 'ひかり', onSelect: () => {} },
+        { label: 'こだま', onSelect: () => {} },
+      ]}
+    />
+  }
+  dontCaption="文言に「(選択中)」と書くと、読み上げでは状態として伝わらず、見た目もそろわない。"
+/>
+
+<DoDontExample
+  label="破壊的な操作は destructive で明示する"
+  doExample={
+    <Menu
+      trigger={<Button>操作</Button>}
+      title="操作"
+      items={[
+        { label: '複製', onSelect: () => {} },
+        { label: '削除', icon: <Icon name="remove" size="sm" />, destructive: true, onSelect: () => {} },
+      ]}
+    />
+  }
+  doCaption="削除等は destructive: true で赤系にし、色 + アイコンで取り返しのつかない操作だと伝える。"
+  dontExample={
+    <Menu
+      trigger={<Button>操作</Button>}
+      title="操作"
+      items={[
+        { label: '複製', onSelect: () => {} },
+        { label: '削除', onSelect: () => {} },
+      ]}
+    />
+  }
+  dontCaption="削除が他の項目と同じ見た目だと、誤操作のおそれが上がる。戻せない操作は、選んだ後に Modal で確認する。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべきコンポーネント | 理由 |
+|---|---|---|
+| **フォームの欄で値を選んで送る** | `<Select>` | フォームの値として持ち、送信される。Menu は選んだらすぐ反映・実行する |
+| **2〜4 個の選択肢を常に見せて切り替える** | `<SegmentedControl>` | 開かずに今の値と他の選択肢が見える |
+| **補足の情報・自由なレイアウト** | `<Popover>` | 選択肢・操作の並びでない内容 |
+| **戻せない操作の確認・まとまった入力** | `<Modal>` | 外を押しても閉じない。Menu は外を押すと閉じる軽いものだけ |
+| **ナビゲーションのタブ切替** | `<Tabs>` | 同じ階層の内容の切り替え |
+
+---
+
+## アクセシビリティ
+
+- **WAI-ARIA APG Menu Button 準拠**: 入口に `aria-haspopup="menu"` / `aria-expanded` / `aria-controls` (出ている形のメニューを指す)、メニューは `role="menu"`、項目は `role="menuitem"` (1 つ選ぶメニューは `role="menuitemradio"` + `aria-checked`)
+- **キーボード (どちらの幅でも同じ)**: 開くと選択中の項目 (無ければ最初の有効な項目) にフォーカス。`↑` `↓` で移動 (無効な項目は飛ばす)、`Home` / `End` で先頭 / 末尾、項目名の先頭文字で移動、`Enter` / `Space` で選ぶ、`Esc` で閉じる、`Tab` は閉じて入口に戻す。閉じたら入口にフォーカスが戻る
+- **狭い幅の形**: 下から出る面 (`<dialog>` の `showModal()`) の中にメニューを置く。面の名前は見出し (`title`) で、メニューには名前を付けない (同じ名前を二重に読ませない)。開いている間は背景を操作できず、背景はスクロールしない。面の閉じるボタンには `Tab` では行かない (`Tab` はメニューを閉じる) ので、閉じるのは `Esc`・項目を選ぶ・外を押す・閉じるボタンを押す。上端の帯を下に引いて閉じる動きは指の操作の近道で、同じことは閉じるボタンと `Esc` でできる
+- **選択中の印**: チェックのアイコンは読み上げから外し、選択中は `aria-checked` で伝える
+- **タッチ**: 狭い幅では行の高さ 48px 以上。開いてから 300ms は押しても反応しない (入口の二度押しが、上がってくる面の項目に当たらないように)
+- **フォーカスの輪**: 項目のフォーカスは輪だけ (内側 2px、`focus-ring-inset`、キーボードのときだけ)。塗りはホバーだけで、ホバーと見分けが付く (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
+- **roving tabindex**: アクティブな項目だけ `tabIndex=0`。メニュー全体で Tab 1 ストップ
+- **広い幅の形**: native `popover="auto"` で外を押す / `Esc` で閉じる。フォーカスは閉じ込めない (メニューの標準的な振る舞い)。`prefers-reduced-motion` では下から出る動きを付けない
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- `<Button>` — `trigger` に渡す代表例
+- `<Icon>` — 各項目の `icon` と、選択中のチェック (`check`)
+
+### 同じ仕組みを使う部品
+
+- [`<Popover>`](?path=/docs/composites-popover--guideline) — 広い幅で押した要素の近くに出す仕組み (native popover + floating-ui) が同じ

@@ -68,6 +68,12 @@ export interface BottomSheetProps {
   bodyPadding?: 'default' | 'none';
   /** `<dialog>` の id (入口の `aria-controls` 用)。 */
   id?: string;
+  /**
+   * 閉じた後にフォーカスを戻す要素 (Menu の入口など)。省略時は、開く前にフォーカスがあった要素。
+   * 使う側の部品が別の場所から開かれる (別のメニューで選んだら開く等) とき、開く前のフォーカスは入口ではないので指定する。
+   * 戻すのは、閉じたときにフォーカスが面の中か、どこにも無い (body) ときだけ。
+   */
+  returnFocusRef?: React.RefObject<HTMLElement | null>;
   children: React.ReactNode;
 }
 
@@ -162,7 +168,7 @@ interface DragState {
  * @see BottomSheetProps 決まりと使い方
  */
 export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>(
-  ({ open, onClose, title, initialFocusRef, bodyPadding, id, children }, ref) => {
+  ({ open, onClose, title, initialFocusRef, bodyPadding, id, returnFocusRef, children }, ref) => {
     const dialogRef = React.useRef<HTMLDialogElement | null>(null);
     const bodyRef = React.useRef<HTMLDivElement | null>(null);
     const grabRef = React.useRef<HTMLDivElement | null>(null);
@@ -172,8 +178,10 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     // 最新の props を effect / handler から読む (effect を開閉以外で走らせ直さない)
     const onCloseRef = React.useRef(onClose);
     const initialFocusRefRef = React.useRef(initialFocusRef);
+    const returnFocusRefRef = React.useRef(returnFocusRef);
     onCloseRef.current = onClose;
     initialFocusRefRef.current = initialFocusRef;
+    returnFocusRefRef.current = returnFocusRef;
 
     const phaseRef = React.useRef<Phase>('closed');
     const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -245,7 +253,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       }
       unlockRef.current?.();
       unlockRef.current = null;
-      const opener = openerRef.current;
+      const opener = returnFocusRefRef.current?.current ?? openerRef.current;
       openerRef.current = null;
       const active = document.activeElement;
       const focusLost = !active || active === document.body || (!!dialog && dialog.contains(active));

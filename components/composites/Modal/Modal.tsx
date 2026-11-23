@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';
+import { lockScroll } from '../../_internal/scrollLock';
 
 /** Modal のサイズ */
 export type ModalSize = 'sm' | 'md' | 'lg' | 'full';
@@ -150,16 +151,12 @@ const ModalRoot = React.forwardRef<HTMLDialogElement, ModalProps>(({
   }, [open, initialFocusRef]);
 
   // 背景スクロールロック。native `<dialog>.showModal()` は背後ページのホイール/スワイプ
-  // スクロールを止めないため、開いている間だけ body の overflow を hidden にする。
-  // CSS (`.storybook/tailwind.css`) は consumer に出荷されないので JS 側で制御する。
-  // 従前値を save/restore するため、ネストした複数 Modal でも cleanup の LIFO 順で正しく復元される。
+  // スクロールを止めないため、開いている間だけ html と body の overflow を hidden にする。
+  // 重なる部品 (下から出る面など) と共有の止め方 (`_internal/scrollLock`) に乗る: 開いているものの数を数え、
+  // 最後の 1 つが閉じたときにだけ元の inline の指定へ戻すので、閉じる順番によらず正しく戻る (#157)。
   React.useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return lockScroll();
   }, [open]);
 
   const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {

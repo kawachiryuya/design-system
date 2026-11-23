@@ -239,11 +239,11 @@ if (featureFlag.newDesign) {
 - **方針**: PC 適用フェーズで `h-8` (32px) 等のハードコードが場当たり的に生えるのを防ぐため、**「ポインタデバイス時のみ compact (32px) を許可」** という条件付き density ティアを将来導入する。`control-height` の compact 段を semantic 化し、`@media (pointer: fine)` または明示 prop で出し分ける案を検討する
 - 現時点では追加しない (タッチ基準の単一ティアを維持)
 
-### オーバーレイ系コンポーネント (Popover / DropdownMenu / Tooltip)
+### オーバーレイ系コンポーネント (Popover / Menu / Tooltip)
 
 z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだが実体コンポーネントが無く、現状 Button guideline は「メニューは暫定で `<Modal>` 代用」と案内している。複数アクションの集約をモーダルで代替するのは操作コストが高く、デザイン的にも過剰な中断。
 
-- **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (Popover + `menu`/`menuitem` roving) → `Tooltip` (Popover + hover/focus delay)。Popover を土台に積み上げる
+- **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (`menu`/`menuitem` roving) → `Tooltip` (hover/focus delay)。実装済み。`DropdownMenu` は #157 で役割「選ぶ」の `Menu` に改名し、狭い幅では下から出る面 (内部の `BottomSheet`) で出す
 - いずれも実装は別 PR。着手時に native `popover` 属性 / CSS Anchor Positioning の採用可否を最初に判断する
 
 ### スタイルのカプセル化 (C-scoped 確定 / 完全カプセル化 D は保留) — #76

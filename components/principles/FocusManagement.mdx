@@ -9,7 +9,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 ## 原則
 
 1. **フォーカスを常に可視化**: `focus-visible` で 2px・コントラスト 3:1+ のリングを出す。キーボード操作時に「どこにいるか」が分かる。
-2. **overlay は開いたら中へ、閉じたら trigger へ**: Modal / Popover / Menu は開いた直後に内部へ focus を移し、閉じたら開いたトリガーへ返す。Modal は trap、それ以外は非 trap。
+2. **overlay は開いたら中へ、閉じたら trigger へ**: Modal / Popover / Menu は開いた直後に内部へ focus を移し、閉じたら開いたトリガーへ返す。Modal は trap。Popover / Menu は、広い幅 (押した要素の近く) では非 trap、狭い幅 (640px 未満、下から出る面) では面の中に閉じ込める。
 3. **動的追加時は新要素へ**: 検索結果リストの表示など、新たに現れた領域へ focus を移して読み上げ・操作に繋げる。
 4. **動的削除時は論理的な次へ**: 削除したアイテムの **次** (なければ前) に focus を移す。`<body>` へ落とさない。
 5. **初期 focus を設計する**: 確認ダイアログでは close ボタンではなく主要アクションへ (`Modal` の `initialFocusRef`)。SR が先に主要操作を読む。

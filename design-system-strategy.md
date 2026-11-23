@@ -243,7 +243,7 @@ if (featureFlag.newDesign) {
 
 z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだが実体コンポーネントが無く、現状 Button guideline は「メニューは暫定で `<Modal>` 代用」と案内している。複数アクションの集約をモーダルで代替するのは操作コストが高く、デザイン的にも過剰な中断。
 
-- **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (`menu`/`menuitem` roving) → `Tooltip` (hover/focus delay)。実装済み。`DropdownMenu` は #157 で役割「選ぶ」の `Menu` に改名し、狭い幅では下から出る面 (内部の `BottomSheet`) で出す
+- **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (`menu`/`menuitem` roving) → `Tooltip` (hover/focus delay)。実装済み。`DropdownMenu` は #157 で役割「選ぶ」の `Menu` に改名し、狭い幅では下から出る面 (内部の `BottomSheet`) で出す。`Popover` も #157 で役割「補足」として、狭い幅では同じ面で出す
 - いずれも実装は別 PR。着手時に native `popover` 属性 / CSS Anchor Positioning の採用可否を最初に判断する
 
 ### スタイルのカプセル化 (C-scoped 確定 / 完全カプセル化 D は保留) — #76

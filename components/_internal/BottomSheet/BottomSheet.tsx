@@ -140,8 +140,11 @@ const sheet = tv({
 const TABBABLE =
   'a[href],button,input,select,textarea,summary,[tabindex],[contenteditable=""],[contenteditable="true"],audio[controls],video[controls]';
 
-/** root の中で最初の、Tab で来られる要素 (root 自身は含まない) */
-function firstTabbable(root: HTMLElement | null): HTMLElement | null {
+/**
+ * root の中で最初の、Tab で来られる要素 (root 自身は含まない)。
+ * Popover の広い幅 (押した要素の近くのパネル) も、開いた直後のフォーカス先をこれで決める (どちらの幅でも同じ判定にする)
+ */
+export function firstTabbable(root: HTMLElement | null): HTMLElement | null {
   if (!root) return null;
   for (const el of root.querySelectorAll<HTMLElement>(TABBABLE)) {
     if (el.tabIndex < 0 || el.matches(':disabled')) continue;
@@ -335,6 +338,9 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       if (e.target !== e.currentTarget) return;
       e.stopPropagation();
       e.preventDefault();
+      // 止められない cancel (親が閉じる要求を断り続けて Esc が続くと、ブラウザは cancel を止めさせずに閉じる) は、
+      // この後に届く close の側 (handleNativeClose) で 1 回だけ要求を出す。ここでも出すと、1 回の Esc で 2 回になる
+      if (!e.nativeEvent.cancelable) return;
       if (phaseRef.current === 'open') onCloseRef.current();
     };
 

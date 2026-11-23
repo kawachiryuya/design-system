@@ -12,6 +12,7 @@ import {
 import { Icon } from '../../primitives/Icon';
 import { BottomSheet } from '../../_internal/BottomSheet/BottomSheet';
 import { useIsNarrowViewport } from '../../_internal/useIsNarrowViewport';
+import { useHideFocusRingUntilKey } from '../../_internal/useHideFocusRingUntilKey';
 import { tv } from '../../_internal/tv';
 
 /** Menu の配置 (floating-ui の Placement)。広い幅でだけ効く。 */
@@ -164,6 +165,8 @@ export const Menu: React.FC<MenuProps> = ({
   const isControlled = open !== undefined;
   const [internalOpen, setInternalOpen] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(-1);
+  /** 入口をポインタ (指・マウス。click の detail > 0) で押して開いたか。キーボード・読み上げの「実行」(detail 0)・外からの open は false */
+  const [openedByPointer, setOpenedByPointer] = React.useState(false);
   const [, forceRender] = React.useReducer((n: number) => n + 1, 0);
   const openState = isControlled ? open : internalOpen;
 
@@ -172,6 +175,8 @@ export const Menu: React.FC<MenuProps> = ({
   if (!openState) formAtOpenRef.current = null;
   else if (formAtOpenRef.current === null) formAtOpenRef.current = form;
   const shown = openState && formAtOpenRef.current === form;
+  // ポインタで開いたときは、メニューの中でキーが押されるまでフォーカスの輪を出さない (#157。フォーカスは移す)
+  const ring = useHideFocusRingUntilKey(shown && openedByPointer && form === 'popover');
 
   const isChoice = items.some((it) => it.selected !== undefined);
   const enabledIndexes = React.useMemo(
@@ -207,9 +212,10 @@ export const Menu: React.FC<MenuProps> = ({
     [],
   );
 
-  // 開いたら、選択中 (無ければ最初の有効な項目) をアクティブに
+  // 開いたら、選択中 (無ければ最初の有効な項目) をアクティブに。閉じたら「ポインタで開いた」も消す (次に外から開いたときに持ち越さない)
   React.useEffect(() => {
     setActiveIndex(shown ? initialIndexRef.current : -1);
+    if (!shown) setOpenedByPointer(false);
   }, [shown]);
 
   // 幅が境目をまたいだ: 開いていれば閉じる。親が開いたままにした (controlled で閉じない) ときは、新しい形で出し直す
@@ -416,6 +422,7 @@ export const Menu: React.FC<MenuProps> = ({
       triggerNode.props.onClick?.(e);
       const wasOpen = triggerPressRef.current ?? openRef.current;
       triggerPressRef.current = null;
+      if (!wasOpen) setOpenedByPointer(e.detail > 0);
       requestOpenChange(!wasOpen);
     },
   });
@@ -431,6 +438,7 @@ export const Menu: React.FC<MenuProps> = ({
           title={title}
           initialFocusRef={initialFocusRef}
           returnFocusRef={referenceRef}
+          hideFocusRing={openedByPointer}
           bodyPadding="none"
         >
           {/* 面 (dialog) の名前が見出しなので、menu には名前を付けない (二重に読ませない) */}
@@ -450,6 +458,8 @@ export const Menu: React.FC<MenuProps> = ({
       {triggerEl}
       <div
         data-ds-root
+        data-ds-hide-focus-ring={ring.hidden ? '' : undefined}
+        onKeyDownCapture={ring.onKeyDownCapture}
         {...nativePopoverAttr}
         ref={panelRef}
         id={menuId}

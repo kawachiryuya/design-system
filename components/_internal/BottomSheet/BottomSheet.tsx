@@ -6,6 +6,7 @@ import { Icon } from '../../primitives/Icon';
 import { tv } from '../tv';
 import { useFocusStop } from '../useFocusStop';
 import { lockScroll } from '../scrollLock';
+import { useHideFocusRingUntilKey } from '../useHideFocusRingUntilKey';
 
 /**
  * BottomSheet Props
@@ -32,6 +33,7 @@ import { lockScroll } from '../scrollLock';
  * - 閉じる動きの間は面を `inert` にして、二度押し・Esc の連打を受けない (もう一度開く `open` は受ける)
  *
  * 配信契約 (AGENTS §10-2): `data-state="open" | "closed"` (閉じる動きの間も `closed`)、引いている間の `data-dragging`、
+ * ポインタで開いてキーが押されるまでの `data-ds-hide-focus-ring`、
  * 引いた距離の CSS 変数 `--ds-bottom-sheet-drag` (px、下向き)。どれも `<dialog>` に付く。
  *
  * @example
@@ -74,6 +76,12 @@ export interface BottomSheetProps {
    * 戻すのは、閉じたときにフォーカスが面の中か、どこにも無い (body) ときだけ。
    */
   returnFocusRef?: React.RefObject<HTMLElement | null>;
+  /**
+   * ポインタ (指・マウス) で開いたか。true の間は、面の中でキーが押されるまでフォーカスの輪を出さない
+   * (`data-ds-hide-focus-ring`。フォーカスは移す)。キーボードで開いたとき・外から `open` で開いたときは false。
+   * @default false
+   */
+  hideFocusRing?: boolean;
   children: React.ReactNode;
 }
 
@@ -168,7 +176,7 @@ interface DragState {
  * @see BottomSheetProps 決まりと使い方
  */
 export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>(
-  ({ open, onClose, title, initialFocusRef, bodyPadding, id, returnFocusRef, children }, ref) => {
+  ({ open, onClose, title, initialFocusRef, bodyPadding, id, returnFocusRef, hideFocusRing = false, children }, ref) => {
     const dialogRef = React.useRef<HTMLDialogElement | null>(null);
     const bodyRef = React.useRef<HTMLDivElement | null>(null);
     const grabRef = React.useRef<HTMLDivElement | null>(null);
@@ -202,6 +210,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     const inPointerGuard = () => performance.now() - openedAtRef.current < OPEN_POINTER_GUARD_MS;
 
     const bodyFocusStop = useFocusStop(bodyRef, 'scrollable-without-tabbable');
+    const ring = useHideFocusRingUntilKey(open && hideFocusRing);
 
     const setDialogRef = React.useCallback(
       (node: HTMLDialogElement | null) => {
@@ -469,6 +478,8 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
     return (
       <dialog
         data-ds-root
+        data-ds-hide-focus-ring={ring.hidden ? '' : undefined}
+        onKeyDownCapture={ring.onKeyDownCapture}
         ref={setDialogRef}
         id={id}
         tabIndex={-1}

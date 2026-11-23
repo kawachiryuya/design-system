@@ -113,16 +113,29 @@ export const Playground: Story = {
     const items = within(menu).getAllByRole('menuitem');
     await expect(items).toHaveLength(4);
 
-    // 開くと最初の有効な項目にフォーカス。↓ は無効な項目 (共有) を飛ばす。End・Home・先頭文字
+    // 開くと最初の有効な項目にフォーカス。ポインタで開いたので、キーを押すまで輪は出さない (ブラウザ既定の輪も)
     await waitFor(() => expect(items[0]).toHaveFocus());
+    await expect(menu).toHaveAttribute('data-ds-hide-focus-ring');
+    await expect(getComputedStyle(items[0]).outlineStyle).toBe('none');
+    // ↓ は無効な項目 (共有) を飛ばす。キーを押したので、ここから輪が出る。End・Home・先頭文字
     await userEvent.keyboard('{ArrowDown}');
     await waitFor(() => expect(items[2]).toHaveFocus());
+    await expect(menu).not.toHaveAttribute('data-ds-hide-focus-ring');
+    if (items[2].matches(':focus-visible')) await expect(getComputedStyle(items[2]).outlineStyle).toBe('solid');
     await userEvent.keyboard('{End}');
     await waitFor(() => expect(items[3]).toHaveFocus());
     await userEvent.keyboard('{Home}');
     await waitFor(() => expect(items[0]).toHaveFocus());
     await userEvent.keyboard('複');
     await waitFor(() => expect(items[2]).toHaveFocus());
+
+    // キーボードで開いたときは、はじめから輪を出す (Tab で閉じてから Enter で開き直して確かめる。合成の Esc では popover は閉じない)
+    await userEvent.keyboard('{Tab}');
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(items[0]).toHaveFocus());
+    await expect(menu).not.toHaveAttribute('data-ds-hide-focus-ring');
+    await userEvent.keyboard('{ArrowDown}');
 
     // Enter で選ぶ → onSelect が 1 回、閉じて、フォーカスは入口
     await userEvent.keyboard('{Enter}');

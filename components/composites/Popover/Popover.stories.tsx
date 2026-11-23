@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
 import { Popover } from './Popover';
 import { Menu } from '../Menu';
-import { Modal } from '../Modal';
+import { FormDialog } from '../FormDialog';
 import { Button } from '../../primitives/Button';
 
 /**
@@ -192,7 +192,7 @@ export const FirstFocus: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'text' | 'actions' | 'long' | 'inModal' | 'fromMenu' | 'controlled' | 'pinned' | 'lateMicrotask' | 'late0' | 'late100' | 'late500' | 'gateOpen' | 'gateClose' | 'two' | 'strict' | 'bottom';
+type Scenario = 'text' | 'actions' | 'long' | 'inFormDialog' | 'fromMenu' | 'controlled' | 'pinned' | 'lateMicrotask' | 'late0' | 'late100' | 'late500' | 'gateOpen' | 'gateClose' | 'two' | 'strict' | 'bottom';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
@@ -229,32 +229,34 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
             ))}
           </Popover>
         );
-      case 'inModal':
+      case 'inFormDialog':
         return (
           <>
             <Button onClick={() => setModalOpen(true)}>条件を開く</Button>
-            <Modal
+            <FormDialog
               open={modalOpen}
               onClose={() => {
-                add('Modal の onClose');
+                add('FormDialog の onClose');
+                setModalOpen(false);
+              }}
+              onSubmit={() => {
+                add('FormDialog の onSubmit');
                 setModalOpen(false);
               }}
               title="条件"
-              size="sm"
+              submitLabel="適用"
             >
-              <Modal.Body>
-                <div className="flex flex-col items-start gap-4">
-                  <p>座席の条件を選びます。</p>
-                  <Popover
-                    trigger={<Button variant="secondary">自由席について</Button>}
-                    title="自由席について"
-                    onOpenChange={(o) => add(`Popover(${o})`)}
-                  >
-                    <p className="text-onSurface">{SEAT_NOTE}</p>
-                  </Popover>
-                </div>
-              </Modal.Body>
-            </Modal>
+              <div className="flex flex-col items-start gap-4">
+                <p>座席の条件を選びます。</p>
+                <Popover
+                  trigger={<Button variant="secondary">自由席について</Button>}
+                  title="自由席について"
+                  onOpenChange={(o) => add(`Popover(${o})`)}
+                >
+                  <p className="text-onSurface">{SEAT_NOTE}</p>
+                </Popover>
+              </div>
+            </FormDialog>
           </>
         );
       case 'fromMenu':
@@ -394,7 +396,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   argTypes: {
     scenario: {
       control: 'select',
-      options: ['text', 'actions', 'long', 'inModal', 'fromMenu', 'controlled', 'pinned', 'lateMicrotask', 'late0', 'late100', 'late500', 'gateOpen', 'gateClose', 'two', 'strict', 'bottom'],
+      options: ['text', 'actions', 'long', 'inFormDialog', 'fromMenu', 'controlled', 'pinned', 'lateMicrotask', 'late0', 'late100', 'late500', 'gateOpen', 'gateClose', 'two', 'strict', 'bottom'],
     },
   },
   parameters: {
@@ -402,7 +404,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inModal: Modal の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではパネルが消え、入口を押すと出し直す。別の Popover も並べる) / lateMicrotask・late0・late100・late500: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inFormDialog: FormDialog の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではパネルが消え、入口を押すと出し直す。別の Popover も並べる) / lateMicrotask・late0・late100・late500: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
       },
     },
   },

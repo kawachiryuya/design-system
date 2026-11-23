@@ -86,7 +86,7 @@ export interface MenuItem {
 export interface MenuProps {
   /**
    * 開閉の入口 (`<Button>` 等)。`aria-haspopup="menu"` / `aria-expanded` / `aria-controls` と
-   * ref / onClick / onPointerDown が自動で付く。入口自身の `ref` は上書きされる。
+   * ref / onClick / onPointerDown が自動で付く。入口自身の `ref` にも要素を渡す (`ConfirmDialog` の `returnFocusRef` などに使える)。
    */
   trigger: React.ReactElement;
   /** メニューの項目。並べた順に出る。 */
@@ -442,6 +442,10 @@ export const Menu: React.FC<MenuProps> = ({
   const triggerEl = React.cloneElement(triggerNode, {
     ref: (node: HTMLElement | null) => {
       referenceRef.current = node;
+      // 入口自身の ref にも渡す (使う側が入口を指せるように。React 18 は element.ref に持つ)
+      const own = (triggerNode as { ref?: React.Ref<HTMLElement> }).ref;
+      if (typeof own === 'function') own(node);
+      else if (own) (own as React.MutableRefObject<HTMLElement | null>).current = node;
     },
     'aria-haspopup': 'menu',
     'aria-expanded': shown,

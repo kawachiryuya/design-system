@@ -128,7 +128,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| **モーダルダイアログ** | `<Modal>` | 画面全体を遮断、focus trap、Esc キー閉じ |
+| **背景を止めて確認・入力させる** | `<ConfirmDialog>` (確認) / `<FormDialog>` (作業) | 画面全体を遮断、focus trap、Esc キーで取り消し |
 | **画面内のお知らせ** | `<Alert>` | 状態色 + アイコン、SR に `role="alert"` |
 | **データなしの代替表示** | `<EmptyState>` | icon + 説明 + アクションへの誘導に最適化 |
 | **タブの中身** | `<Tabs>` の panel として | Tabs の compound として組み込み |

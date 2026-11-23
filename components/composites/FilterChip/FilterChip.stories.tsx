@@ -72,7 +72,7 @@ export const Overview: Story = {
     },
     docs: {
       description: {
-        story: '視覚回帰用の総覧。default / active / disabled の状態と hover / focus-visible (pseudo 強制) のマトリクス、icon 構成 (iconLeft / iconRight=Modal 起動 / 両端 / iconOnly) を集約。',
+        story: '視覚回帰用の総覧。default / active / disabled の状態と hover / focus-visible (pseudo 強制) のマトリクス、icon 構成 (iconLeft / iconRight=開く / 両端 / iconOnly) を集約。',
       },
     },
   },
@@ -96,7 +96,7 @@ export const Overview: Story = {
         <div className="type-caption text-onSurface-subtle">icon 構成 (iconOnly は aria-label 必須)</div>
         <div className="flex flex-wrap gap-3 items-center">
           <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />}>左アイコン</FilterChip>
-          <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>右に矢印 (Modal 起動)</FilterChip>
+          <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>右に矢印 (開く)</FilterChip>
           <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>両端アイコン</FilterChip>
           <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} aria-label="すべての条件で絞り込み" />
         </div>

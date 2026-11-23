@@ -1,0 +1,167 @@
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ConfirmDialogStories from './ConfirmDialog.stories';
+import { ConfirmDialog } from './ConfirmDialog';
+import { Button } from '../../primitives/Button';
+import { Input } from '../../primitives/Input';
+import { DoDontExample } from '@sb-blocks/DoDontExample';
+import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+import React from 'react';
+
+<Meta of={ConfirmDialogStories} name="Guideline" />
+
+# ConfirmDialog
+
+<GuidelineToc items={[
+  { label: '概要', href: '#概要' },
+  { label: 'Props', href: '#props' },
+  { label: 'Do / Don\'t', href: '#do--dont' },
+  { label: 'アクセシビリティ', href: '#アクセシビリティ' },
+  { label: '関連', href: '#関連' },
+]} />
+
+## 概要
+
+役割「**確認**」の部品。操作を実行する前に、本当に実行してよいかを確かめる (戻せない削除・取り消し・送信など)。見出し (問いの形)・短い説明・取り消しと確定の 2 つのボタンだけで、ボタンは部品が持つ。どの幅でも画面の中央のカードで、**外 (背景) を押しても閉じない**。入力があるなら `FormDialog`、押した要素についての補足で外を押すと閉じてよいなら `Popover`、元に戻せる操作は確かめずに実行して `Toast` で「元に戻す」を出す。
+
+---
+
+## Props
+
+<ArgTypes of={ConfirmDialogStories.Playground} />
+
+---
+
+## Do / Don't
+
+<DoDontExample
+  label="確定ボタンの文言は、何をするかの動詞"
+  doExample={
+    (() => {
+      function Demo() {
+        const [o, setO] = React.useState(false);
+        return (
+          <>
+            <Button variant="secondary" onClick={() => setO(true)}>保存</Button>
+            <ConfirmDialog open={o} onClose={() => setO(false)} title="変更を保存しますか？" confirmLabel="保存" onConfirm={() => setO(false)}>
+              保存すると、ほかの人にも新しい内容が見えます。
+            </ConfirmDialog>
+          </>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="見出しは問い、確定は「保存」。ボタンだけ読んでも、押すと何が起きるかが分かる。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [o, setO] = React.useState(false);
+        return (
+          <>
+            <Button variant="secondary" onClick={() => setO(true)}>保存</Button>
+            <ConfirmDialog open={o} onClose={() => setO(false)} title="確認" confirmLabel="OK" onConfirm={() => setO(false)}>
+              よろしいですか？
+            </ConfirmDialog>
+          </>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="「確認」「OK」では何を確かめているかが読めず、読まずに押す癖が付く。見出しとボタンに操作の名前を書く。"
+/>
+
+<DoDontExample
+  label="戻せない操作は destructive"
+  doExample={
+    (() => {
+      function Demo() {
+        const [o, setO] = React.useState(false);
+        return (
+          <>
+            <Button variant="destructive" onClick={() => setO(true)}>予約を取り消す</Button>
+            <ConfirmDialog open={o} onClose={() => setO(false)} title="予約を取り消しますか？" confirmLabel="予約を取り消す" destructive onConfirm={() => setO(false)}>
+              取り消すと元に戻せません。
+            </ConfirmDialog>
+          </>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="確定が赤くなり、開いた直後のフォーカスは取り消しボタンに置かれる (Enter の連打で実行されない)。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [o, setO] = React.useState(false);
+        return (
+          <>
+            <Button variant="destructive" onClick={() => setO(true)}>予約を取り消す</Button>
+            <ConfirmDialog open={o} onClose={() => setO(false)} title="予約を取り消しますか？" confirmLabel="予約を取り消す" onConfirm={() => setO(false)}>
+              取り消すと元に戻せません。
+            </ConfirmDialog>
+          </>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="いつもの確定と同じ色だと区別が付かず、フォーカスも確定に置かれるので、Enter の一押しで戻せない操作が実行される。"
+/>
+
+<DoDontExample
+  label="入力があるなら FormDialog"
+  doExample={
+    <p className="type-supporting text-onSurface-subtle">理由を書いてもらうなら `FormDialog` (確定と取り消しのフッター、入力欄で Enter を押すと確定)。</p>
+  }
+  doCaption="ConfirmDialog は「実行してよいか」を確かめるだけ。入力が要るなら作業の部品を使う。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [o, setO] = React.useState(false);
+        return (
+          <>
+            <Button variant="secondary" onClick={() => setO(true)}>取り消しの理由</Button>
+            <ConfirmDialog open={o} onClose={() => setO(false)} title="予約を取り消しますか？" confirmLabel="取り消す" onConfirm={() => setO(false)}>
+              <Input label="理由" fullWidth />
+            </ConfirmDialog>
+          </>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="中身はフォームにならないので、入力欄で Enter を押しても確定しない。説明として読み上げられる中身に入力欄が混ざる。"
+/>
+
+### 別コンポーネントの方が適切な場面
+
+| やろうとすること | 使うべき別コンポーネント | 理由 |
+|---|---|---|
+| **ひとまとまりの入力をして確定する** (絞り込み・座席の変更) | `<FormDialog>` | 中身が `<form>`。入力欄で Enter を押すと確定。狭い幅は画面いっぱい |
+| **押した要素についての補足・軽い操作** | `<Popover>` | 外を押すと閉じる軽い重なり。狭い幅は下から |
+| **選択肢・操作から 1 つ選ぶ** | `<Menu>` | 選んだら閉じる。戻せない操作は、選んだ後に ConfirmDialog で確かめる |
+| **元に戻せる操作の結果を伝える** | `<Toast>` | 確かめずに実行し、「元に戻す」を出す方が流れを止めない |
+| **処理の結果 (成功・失敗) を伝える** | `<Toast>` / `<Alert>` | 結果のために dialog を開くと、閉じる手間が増え、失敗の内容を見ながら直せない |
+
+---
+
+## アクセシビリティ
+
+- **土台はネイティブの `<dialog>` の `showModal()`**: 背景は操作できず、フォーカスは中に閉じ込められる。開いている間は背景 (html と body) もスクロールしない
+- **`role="alertdialog"`**: 読み上げの名前は見出し (`title`、`aria-labelledby`)、説明は `children` (`aria-describedby`)。説明を省くと `aria-describedby` は付かない
+- **外 (背景) を押しても閉じない**。閉じ方は `Esc`・× (閉じるボタン)・取り消しボタンで、どれも取り消しとして `onClose` を呼ぶ。確定ボタンは `onConfirm` を呼ぶだけで、閉じるのは親 (`open` を false にする)
+- **開いた直後のフォーカス**: 確定ボタン。`destructive` のときは取り消しボタン (Enter の連打で戻せない操作が実行されない)。× には置かない
+- **閉じた後のフォーカス**: 開く前にフォーカスがあった要素へ戻す (ブラウザの働き)。開く前の要素が閉じた後に残らないとき (Menu の項目から開いたときなど) は、`returnFocusRef` に入口を渡す。戻すのは、閉じたときにフォーカスが dialog の中にあったときだけ
+- **フォーカスの輪**: 指・マウスで開いた (直前の操作が指・マウス) ときは、中でキーが押されるまで輪を出さない (フォーカスは移す)。指・マウスで閉じて戻したフォーカスも同じ。キーボード・読み上げの「実行」で開いた・閉じたとき、まだ何も操作していないときは出す
+- **ブラウザが閉じたとき**: 親が閉じる要求に応えないまま `Esc` を続けると、ブラウザは dialog を閉じる (止められない)。このときも `onClose` を呼び、`open` が true のままなら出し直す
+- **閉じるボタン (×)** と 2 つのボタンは 48px の高さ。ボタンは右寄せで、取り消し → 確定の順。収まらないときは折り返す
+
+---
+
+## 関連
+
+### 内部で利用するコンポーネント
+
+- [`<Button>`](?path=/docs/primitives-button--guideline) — 取り消し (tertiary)・確定 (primary / destructive)・閉じるボタン
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — `close` アイコン (×)

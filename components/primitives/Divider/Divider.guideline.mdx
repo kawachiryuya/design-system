@@ -128,7 +128,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
 | 見出しで階層を作る | `<Typography variant="h*">` | 区切り線で階層を作るのは過剰。font-size / weight で表現 |
-| Card / Modal の枠線 | `<Card>` / `<Modal>` | コンテナの責務、Divider は内部の区切り専用 |
+| Card / dialog の枠線 | `<Card>` / `<ConfirmDialog>` / `<FormDialog>` | コンテナの責務、Divider は内部の区切り専用 |
 | ステータスを示す色帯 | `<Alert>` の bar / `<Badge>` | 区切り線は意味を持たない、色で意味を伝えるなら別 |
 | ナビゲーションのインジケーター | `<Tabs>` の under-line | tab 切替の active 表示は Tabs の責務 |
 
@@ -155,6 +155,6 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 ### Divider を内部で使う代表的なコンポーネント
 
 - `<Card>` の footer 上 — content と action の区切り
-- `<Modal>` の header 下 / footer 上 — title / body / actions の区切り
+- `<FormDialog>` の footer 上 — 本体と actions の区切り (部品が持つ)
 - 設定画面 / プロフィール画面 — セクション間の区切り
 - フッターのリンク群 (vertical) — utility リンクの区切り

@@ -40,7 +40,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
     </tr>
     <tr style={{ borderBottom: '1px solid var(--color-neutral-100)' }}>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>Composites</td>
-      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Card・Tabs・Modal・Toast・CheckboxGroup・AppShell・TwoColumn など、複数要素を組み合わせた複合コンポーネント（28コンポーネント）</td>
+      <td style={{ padding: '10px 12px', color: 'var(--color-neutral-600)' }}>Card・Tabs・ConfirmDialog・FormDialog・Toast・CheckboxGroup・AppShell・TwoColumn など、複数要素を組み合わせた複合コンポーネント（29コンポーネント）</td>
     </tr>
     <tr>
       <td style={{ padding: '10px 12px', fontWeight: 600 }}>[Product名]</td>
@@ -111,7 +111,7 @@ DS のために Tailwind を導入したくない場合。**2 つの CSS を imp
 `variables.css` の全 token 変数 + `styles.css` のコンポーネント utility を**両方** import（順序は variables → styles、片方では壊れる）。
 
 ```tsx
-import { Button, Card, Modal } from '@kawachiryuya/design-system';
+import { Button, Card, ConfirmDialog } from '@kawachiryuya/design-system';
 
 <Button variant="primary">保存</Button>
 ```
@@ -147,7 +147,7 @@ module.exports = {
 
 ### SSR / RSC（Next.js App Router 等）
 
-本パッケージは SSR セーフ（module/render スコープで `window`/`document` に触れない）です。インタラクティブなコンポーネント（Modal / Popover / Menu / Tooltip / Toast / Tabs / Accordion / フォーム系等）は `'use client'` 付きで出荷されるため、Server Component から import してもそのまま動作します。純粋な表示系（Badge / Divider / Typography / Icon / レイアウト primitive）は Server Component として描画できます。
+本パッケージは SSR セーフ（module/render スコープで `window`/`document` に触れない）です。インタラクティブなコンポーネント（ConfirmDialog / FormDialog / Popover / Menu / Tooltip / Toast / Tabs / Accordion / フォーム系等）は `'use client'` 付きで出荷されるため、Server Component から import してもそのまま動作します。純粋な表示系（Badge / Divider / Typography / Icon / レイアウト primitive）は Server Component として描画できます。
 
 ### Token 値を product 全体で override
 
@@ -225,7 +225,7 @@ WCAG 2.1 の **POUR 原則** (Perceivable / Operable / Understandable / Robust) 
 
 - **ARIA属性**：role・aria-label・aria-invalid・aria-modal などを適切に付与
 - **キーボード操作**：Tab / Shift+Tab / Enter / Space / Escape / 矢印キー対応。`tabindex` は 0 または -1 のみ（DOM 順序 = フォーカス順序）
-- **フォーカス管理**：2px outline + コントラスト 3:1+ のフォーカスインジケータ、Modal は focus trap（ネイティブ `<dialog>` で標準対応）、動的コンテンツ追加/削除時は論理的な次要素へフォーカス移動
+- **フォーカス管理**：2px outline + コントラスト 3:1+ のフォーカスインジケータ、ConfirmDialog / FormDialog は focus trap（ネイティブ `<dialog>` で標準対応）、動的コンテンツ追加/削除時は論理的な次要素へフォーカス移動
 - **色コントラスト**：通常テキスト 4.5:1 以上、大テキスト・UI 要素 3:1 以上を遵守
 - **タッチ操作**：最小ターゲット 44×44px、隣接間隔 8px+、ホバー依存禁止
 - **a11y アドオン**：各 Story の「Accessibility」タブで axe-core 自動検証結果を表示

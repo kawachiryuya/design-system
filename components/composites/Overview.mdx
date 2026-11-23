@@ -13,12 +13,12 @@ import { Meta } from '@storybook/addon-docs/blocks';
 次のいずれかを満たすものが Composite です ([AGENTS.md §2](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#primitive-vs-composite) 参照):
 
 - **構造**: 複数の HTML 要素 / Primitive を組み合わせる (例: Switch の `<Label>` + `<button>`)
-- **状態**: 状態管理を持つ (例: Modal の open / close、CheckboxGroup の group state)
+- **状態**: 状態管理を持つ (例: ConfirmDialog の open / close、CheckboxGroup の group state)
 - **振る舞い**: focus trap / portal / animation / overlay 等を持つ
 
 ---
 
-## 28 コンポーネント一覧
+## 29 コンポーネント一覧
 
 用途別に 6 グループに分けて掲載します。各コンポーネントの詳細は Guideline ページを参照してください。
 
@@ -67,7 +67,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | [Alert](?path=/docs/composites-alert--guideline) | ページ上に表示し続けるインラインの通知 |
 | [Toast](?path=/docs/composites-toast--guideline) | 操作直後の一時的な通知 (`useToast()`) |
 | [ProgressBar](?path=/docs/composites-progressbar--guideline) | 進捗の表示 (determinate / indeterminate) |
-| [Modal](?path=/docs/composites-modal--guideline) | ネイティブ `<dialog>` ベースのモーダルダイアログ |
+| [ConfirmDialog](?path=/docs/composites-confirmdialog--guideline) | 確認: 操作を実行する前に確かめる。どの幅でも中央のカード。外を押しても閉じない |
+| [FormDialog](?path=/docs/composites-formdialog--guideline) | 作業: ひとまとまりの入力をして確定する。狭い幅は画面いっぱい、広い幅は中央の大きいカード。外を押しても閉じない |
 | [Popover](?path=/docs/composites-popover--guideline) | 補足: 押した要素についての説明・軽い操作。狭い幅は下から、広い幅は近くに出る |
 | [Tooltip](?path=/docs/composites-tooltip--guideline) | hover / focus で出す短い補足テキスト |
 

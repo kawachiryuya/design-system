@@ -33,8 +33,9 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | テキストの装飾的階層 | `<Typography>` | `<h1>` 直書きより推奨 |
 | ローディング | `<Spinner>` または `<Skeleton>` | 待機状態の見せ方で使い分け |
 | スクリーンリーダ専用テキスト | `<VisuallyHidden>` | icon-only Button の補助ラベル / live region |
-| モーダル表示 | `<Modal>` | ネイティブ `<dialog>` ベース。確認ダイアログ・フォーム入力等 |
-| 補足 (押した要素についての説明・軽い操作。外を押すと閉じる) | `<Popover>` | 狭い幅 (640px 未満) は下から、広い幅は押した要素の近くに出る (部品が決める)。見出しの `title` は必須。確認・重要操作は Modal、選択肢から 1 つ選ぶのは Menu |
+| 確認 (操作を実行する前に確かめる。外を押しても閉じない) | `<ConfirmDialog>` | どの幅でも中央のカード。見出し・短い説明・取り消しと確定のボタン (部品が持つ)。戻せない操作は `destructive`。入力があるなら FormDialog |
+| 作業 (ひとまとまりの入力をして確定する。外を押しても閉じない) | `<FormDialog>` | 狭い幅 (640px 未満) は画面いっぱい、広い幅は中央の大きいカード (CSS の `sm:` で決まる)。中身は `<form>`、取り消しと確定のフッターは部品が持つ。入力の無い長い中身は入れない (補足は Popover、長い文は別のページ) |
+| 補足 (押した要素についての説明・軽い操作。外を押すと閉じる) | `<Popover>` | 狭い幅 (640px 未満) は下から、広い幅は押した要素の近くに出る (部品が決める)。見出しの `title` は必須。確認・重要操作は ConfirmDialog、まとまった入力は FormDialog、選択肢から 1 つ選ぶのは Menu |
 | 選ぶ (押した要素に属する選択肢・操作から 1 つ。選んだら閉じる) | `<Menu>` | 狭い幅 (640px 未満) は下から、広い幅は押した要素の近くに出る (部品が決める)。「1 つ選ぶ」(`selected` でチェック) と「操作の一覧」。フォームの欄で値を送るのは Select |
 | hover/focus の短い補足 | `<Tooltip>` | Popover 基盤 + `role="tooltip"`/`aria-describedby`。操作・複数行は Popover |
 | 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け |
@@ -52,7 +53,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 - **Primitive** (`components/primitives/`): **単一の HTML 要素を装飾**する薄いラッパー、かつ **状態管理を持たない**
 - **Composite** (`components/composites/`): いずれかを満たす場合
   - 複数の HTML 要素 / Primitive を組み合わせる (例: Switch の `<Label>` + `<button>` 内包)
-  - 状態管理を持つ (例: Modal の open/close、CheckboxGroup の group state)
+  - 状態管理を持つ (例: ConfirmDialog の open/close、CheckboxGroup の group state)
   - 振る舞いを持つ (focus trap / portal / animation / overlay 等)
 
 判定の具体例:
@@ -67,7 +68,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | Switch | Composite | `<Label>` 内包 + `<button role="switch">`、label position 切替 |
 | Checkbox / Radio | Composite | `<Label>` + `<input>` + `<FormMessage>` を内包、`CheckboxGroup` / `RadioGroup` で group state |
 | ProgressBar | Composite | label + value 表示 + track + fill の **複数 `<div>` / `<span>`** 構造 |
-| Modal / Toast / Popover / Menu / Tooltip | Composite | portal / focus trap / overlay |
+| ConfirmDialog / FormDialog / Toast / Popover / Menu / Tooltip | Composite | portal / focus trap / overlay |
 | Card / Tabs / Accordion / Pagination | Composite | 構造の組合せ + 状態管理 |
 | AppShell / TwoColumn / SplitPane | Composite (Layout) | 複数 slot (header / nav / main / aside 等) + レスポンシブ振る舞い |
 
@@ -88,7 +89,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 
 > 状態の「class 条件付加」検知の自動化は難しいため、規律 2 は当面**規約 + レビュー運用** (規律 1 は §3-7 lint で機械強制)。移行は §7 の手順で 1 コンポーネント = 1 PR で段階的に進める。出荷する `data-*` 属性名は silent-break 面 (§10-2)。
 
-> **配信ベースリセットの scope (#76, C-scoped)**: 各コンポーネントの最外要素と overlay (Modal/Popover 等) には識別属性 **`data-ds-root`** を付ける。配信 `styles.css` の最小ベース (box-sizing/border/form 正規化) は `:where([data-ds-root]…)` に scope され、消費者の素の要素には触れない。完全カプセル化 (D) の保留判断・forcing function は [`design-system-strategy.md`](./design-system-strategy.md) ロードマップ節を参照。`check:styles` が global footprint の再混入をガードする。
+> **配信ベースリセットの scope (#76, C-scoped)**: 各コンポーネントの最外要素と overlay (ConfirmDialog / FormDialog / Popover 等) には識別属性 **`data-ds-root`** を付ける。配信 `styles.css` の最小ベース (box-sizing/border/form 正規化) は `:where([data-ds-root]…)` に scope され、消費者の素の要素には触れない。完全カプセル化 (D) の保留判断・forcing function は [`design-system-strategy.md`](./design-system-strategy.md) ロードマップ節を参照。`check:styles` が global footprint の再混入をガードする。
 
 ---
 
@@ -191,7 +192,7 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 - **濃い塗り・役割色の面 → 黒 8%** (`state.hover`)。Primary Button・選択中の Toggle / Segmented・Alert / Toast の閉じるボタン
 - **例外は入力欄だけ**: Input / Select / Textarea / NumberInput の枠は「枠線を一段濃く」(`hover:border-border-strong`)。塗ると選択済みに見えるため
 - **小さい部品** (Checkbox / Radio / Switch) は中に重ねられないので**外側 4px の輪** (`hover:shadow-[0_0_0_4px_var(--color-state-hover-primary)]`)
-- **影はホバーに使わない** (影は Modal / Popover / Toast / Card elevated のような「浮いている層」の高さ表現)
+- **影はホバーに使わない** (影は ConfirmDialog / FormDialog / Popover / Toast / Card elevated のような「浮いている層」の高さ表現)
 - 重ね方の実装: 下地に `bg-*` があり hover で置換したくない面は `shadow-[inset_0_0_0_9999px_var(--color-state-*)]` (Button)、resting shadow を持ちうる面は `after:` 擬似要素 (Card)、それ以外は `hover:bg-state-*`。見え方は同じで、どれでもよい
 - リンクの下線は**常時** (`Link` の `underline` 既定 = `always`、Breadcrumb も)。ホバーは下線を足すのではなく上の規則で面を重ねる
 
@@ -204,7 +205,7 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 - **色は `border.focus` の一色**。エラー時 (Button destructive / エラーの Checkbox・Radio・入力欄) も、Alert・Toast の閉じるも同じ。輪は「今ここ」だけを表し、エラーは枠線と文言で表す。**すき間は塗らない** (下の面の色が見える。outline で描くので自然にそうなる)
 - **入力欄も例外にしない**: 外側の輪で、フォーカスで枠線の色は変えない (エラーの赤い枠線と輪が別々に見える)。文字の入力欄はブラウザがクリックでも `:focus-visible` にするので、入力欄はクリックでも出る
 - **フォーカスは輪だけ、ホバーは塗りだけ** (メニューの項目など矢印キーで動くものも)。塗り＝ポインタ、輪＝キーボードの現在地
-- **ポインタ (指・マウス) で開いた重なり (Menu・Popover) の中では、キーが押されるまで輪を出さない。フォーカスは移す** (#157)。重なりの外側に `data-ds-hide-focus-ring` を付けると、preset の `focus-ring*` がその中で輪を出さない (ブラウザ既定の輪も)。`:focus-visible` の判断はブラウザごとに違う (iOS の Safari は指で開いても出す) ので、部品が「どうやって開いたか」(入口の click の `detail`) を持って決める ([`components/_internal/useHideFocusRingUntilKey.ts`](./components/_internal/useHideFocusRingUntilKey.ts))。キーボード・読み上げの「実行」・外から `open` で開いたときは、はじめから出す。**閉じて入口に戻したフォーカスも同じ**: ポインタで閉じたとき (外を押す・帯を引く・閉じるボタンや項目を指・マウスで押す) は、入口にこの属性を付け、次にキーが押されるか入口からフォーカスが外れるまで輪を出さない (`hideFocusRingUntilKeyOrBlur`、同じファイル)。キーボード (Esc・Tab・Enter / Space で選ぶ)・読み上げの「実行」(click の `detail` 0)・幅が変わって閉じた・外から `open` を閉じたときは、今までどおり出す
+- **ポインタ (指・マウス) で開いた重なり (Menu・Popover・ConfirmDialog・FormDialog) の中では、キーが押されるまで輪を出さない。フォーカスは移す** (#157)。重なりの外側に `data-ds-hide-focus-ring` を付けると、preset の `focus-ring*` がその中で輪を出さない (ブラウザ既定の輪も)。`:focus-visible` の判断はブラウザごとに違う (iOS の Safari は指で開いても出す) ので、部品が「どうやって開いたか」(入口の click の `detail`) を持って決める ([`components/_internal/useHideFocusRingUntilKey.ts`](./components/_internal/useHideFocusRingUntilKey.ts))。キーボード・読み上げの「実行」・外から `open` で開いたときは、はじめから出す。**閉じて入口に戻したフォーカスも同じ**: ポインタで閉じたとき (外を押す・帯を引く・閉じるボタンや項目を指・マウスで押す) は、入口にこの属性を付け、次にキーが押されるか入口からフォーカスが外れるまで輪を出さない (`hideFocusRingUntilKeyOrBlur`、同じファイル)。キーボード (Esc・Tab・Enter / Space で選ぶ)・読み上げの「実行」(click の `detail` 0)・幅が変わって閉じた・外から `open` を閉じたときは、今までどおり出す。**入口を持たない ConfirmDialog・FormDialog** (使う側が `open` で開く) は、入口の click の代わりに**開いた・閉じた瞬間の直前の操作**で決める (文書の `pointerdown`・`keydown`・`click` の `detail` を覚える。[`components/_internal/inputModality.ts`](./components/_internal/inputModality.ts)): 指・マウスなら出さない、キー・読み上げの「実行」・まだ何も操作が無い (ページを開いた直後に `open` で開いた。story の Overview) なら出す。Menu の項目を指で選んで開いた確認は「指で開いた」になる
 - **フォーカスが来るだけの領域**は、内側に輪が入るだけの余白を持たせる (中身を輪に重ねない。Tabs のパネル 16px、SplitPane の領域 8px)
 - **内側の輪の角は、接している枠の角丸に沿わせる** (`rounded-inner-sm` / `rounded-inner-md` = 枠の角丸 − 枠線 1px)。Accordion の見出し・NumberInput の −
 - **ホバーと重なったときは何も足さない** (フォーカスの輪が上。すき間にホバーの色が見える)
@@ -227,7 +228,7 @@ bg.default       (neutral.50)   ページ最下層 (UI の canvas。surface と�
 surface.default  (white)        既定の面: ページ上のカード・モーダル等。utility は bg-surface
 surface.subtle   (neutral.50)   控えめな面: default の中の入れ子区画 (Card filled / Alert・Toast の neutral 等)
 
-surface.overlay  (rgba)         Modal の背景マスク
+surface.overlay  (rgba)         ConfirmDialog / FormDialog・下から出る面の背景マスク
 surface.{role}   (各色)         brand / functional / state
 ```
 
@@ -516,7 +517,7 @@ Composite → components/composites/ComponentName/
 - **Props の説明は `.tsx` JSDoc が唯一の情報源**。`.stories.tsx` の `argTypes` 側に `description` を書くと JSDoc を上書きしてしまうので書かない
 - ネイティブ HTML 属性 (`disabled` 等、`React.ButtonHTMLAttributes` 等から継承) は **再宣言して JSDoc を上書き** する (React の型には JSDoc が付いておらず Props 表で Description 空欄になる回避)
 - コンポーネント本体に `@example` JSDoc を 2〜3 例
-- **`forwardRef` で ref 透過**: primitive は必須 (単一 HTML 要素なので ref 先が自明)。composite は **ref を当てる対象要素が明確な場合のみ**実装する (例: `Modal`→`<dialog>`、`SearchBar`→`<input>`)。対象が曖昧な複合レイアウト系 (AppShell / TwoColumn 等) は無理に付けず `React.FC` のままでよい
+- **`forwardRef` で ref 透過**: primitive は必須 (単一 HTML 要素なので ref 先が自明)。composite は **ref を当てる対象要素が明確な場合のみ**実装する (例: `ConfirmDialog` / `FormDialog`→`<dialog>`、`SearchBar`→`<input>`)。対象が曖昧な複合レイアウト系 (AppShell / TwoColumn 等) は無理に付けず `React.FC` のままでよい
 - **styling は `tailwind-variants` (`tv`)** で variant マップを宣言的に保持 (`Button.tsx` の `buttonVariants` 参照)。文字列配列の組立て・object lookup は避ける
 - **状態は `data-*` 属性 + variant で表す** (スタイリング3規律 2)。`open` / `loading` / `selected` / `checked` / `disabled` 等は要素に `data-state=...` / `data-loading` 等を付け、tv 側を `data-[state=open]:` / `data-[loading]:` の variant で当てる。class を条件付加 (`checked ? 'bg-x' : 'bg-y'`) しない。参照実装: `Switch` (toggle 系) / `Accordion` (open 系)
 - **SSR / RSC セーフを契約にする** (#62)。module / render スコープで `window` / `document` を触らない (browser API は `useEffect` / event handler 内に置く)。**`'use client'` をファイル先頭に付ける条件**: hook (`useState` / `useEffect` / `useRef` / `useId` 等) を使う、自前の event handler を host 要素に常時 attach する (例: `Link` / `Pagination`)、または Context Provider を持つ。**付けない**: hook を持たず consumer の `onClick` 等を `{...props}` で spread するだけの純表示 (Badge / Divider / Typography / Icon / レイアウト primitive / Button / Card 等) — Server Component として描けるよう「shared」のままにする。
@@ -783,7 +784,7 @@ http://localhost:6006 で目視確認:
 4. **EdgeCases を純化 (VR 対象)**: **Playground (Controls) で再現できない構造的ケースだけ**残す (inner-span `truncate` 等の特殊マークアップ / コンテナ幅依存は**固定幅**で見せる / 複数インスタンス・item 数依存の配置 / 段落内 inline 等)。**長文折返し・`fullWidth` 等 Controls で出せるものは入れない** (Playground の役目)。**非視覚 (SR 専用 aria-label 長文など) も削除** — axe (§8-4) + guideline で担保。該当ケースが無ければ EdgeCases 自体を省略。
 5. **旧カタログを削除**: `Variants` / `Sizes` / `States` / `WithIcon` / `WithDescription` を削除。各 story の設計根拠 (例: size と WCAG タッチターゲット) は **guideline.mdx の Do/Don't・アクセシビリティ節に既出か確認**し、無ければ移設する (散文の方が適切)。
 6. **guideline.mdx のリンク追従**: 削除した story を `?path=` で参照していないか確認 (`check:links` が CI で検出)。`<ArgTypes of={Stories.Playground} />` は維持。
-7. **overlay / portal 系の特例** (Modal / Popover / Tooltip / Menu / Toast): 「開いた状態」が play 駆動 story にしか無い盲点があるため、**Overview に `open` / `defaultOpen` 直指定で開状態を静的に持たせて撮る** (トリガー裏に残さない)。`<dialog>` 系で同時に 1 つしか開けない等は、状態ごとに Overview 内のサブ snapshot か別 story で分ける。
+7. **overlay / portal 系の特例** (ConfirmDialog / FormDialog / Popover / Tooltip / Menu / Toast): 「開いた状態」が play 駆動 story にしか無い盲点があるため、**Overview に `open` / `defaultOpen` 直指定で開状態を静的に持たせて撮る** (トリガー裏に残さない)。`<dialog>` 系で同時に 1 つしか開けない等は、状態ごとに Overview 内のサブ snapshot か別 story で分ける。
 8. **CHANGELOG**: 削除した story id を `[Unreleased]` の **⚠ BREAKING CHANGES** に明記 (Storybook URL 無効化 = silent break §10-2)。
 9. **検証 → PR → accept**: `npm run verify` (check:conventions / check:links) + `npm run build-storybook` 緑。PR を出し、Chromatic (UI Tests) で Overview / EdgeCases の差分をレビュー & accept してからマージ。
 
@@ -814,7 +815,8 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 ### 8-3. フォーカス管理
 
 - **インジケータ**: 2px の outline、下地との差 3:1 以上 (WCAG 1.4.11)。太さは 2.4.13 (AAA) 相当を目安にする。形は 3 つで、どれを使うかは §3-2「フォーカスの規則」。2.4.11 (AA) は「フォーカスが隠れない」(sticky ヘッダー等で覆わない)
-- **トラップ (Modal)**: ネイティブ `<dialog>.showModal()` を使えばブラウザ標準でトラップ + Esc close + 閉じ後 trigger 復帰。自前 modal は同等の挙動を実装
+- **トラップ (ConfirmDialog / FormDialog)**: ネイティブ `<dialog>.showModal()` を使えばブラウザ標準でトラップ + Esc + 閉じ後 trigger 復帰。2 つの部品は共通の土台 ([`components/_internal/DialogBase.tsx`](./components/_internal/DialogBase.tsx)) に乗り、外を押しても閉じず、Esc は取り消しとして閉じる要求 (`onClose`) を出す。自前 modal は同等の挙動を実装
+- **閉じた後のフォーカスの戻り先 (`returnFocusRef`)**: 開く前の要素が閉じた後に残らないとき (狭い幅の Menu の項目から ConfirmDialog を開いた等。Menu の面は閉じているので、ブラウザは body に戻す) は、`returnFocusRef` に入口を渡す。戻すのは、閉じたときにフォーカスが dialog の中か body のときだけ (下から出る面 `BottomSheet` と同じ線)。Menu・Popover の入口に付けた `ref` は入口の要素を指す
 - **動的コンテンツ追加時**: 追加要素に focus 移動 (例: 検索結果リスト)
 - **動的コンテンツ削除時**: 削除アイテムの **論理的な次** (なければ前) に focus 移動。`<body>` 戻りを避ける
 - **ページ遷移時**: 先頭または `<main>` に focus を戻す
@@ -837,8 +839,8 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 **フォーカスの輪の検査** (#139、[`.storybook/focus-ring-check.ts`](./.storybook/focus-ring-check.ts)): 同じステップで、出荷する部品の story (`Primitives/*` / `Composites/*`) について、(1) **検査を始めた時点でフォーカスがある要素** (部品がプログラムから移したフォーカス。Shift を押してキーボードで操作した状態にしてから見る) と、(2) 文書の先頭から **Tab キーで順に来る要素** の、描画後の outline を見る。合格は「実線・2px 以上・色が `border.focus`、または濃い塗りの内側 (outline-offset が負) の `onSurface.inverse`」(§3-2「フォーカスの規則」)。lint (§3-7) は書き方を縛るだけなので、こちらで「フォーカスが来るのに何も出ない」「ブラウザ任せの輪 (`outline-style: auto`)」「決めた色以外の輪」を捕まえる。
 
 - **矢印キーで中を動く部品** (Tabs のタブ / Menu の項目 / SegmentedControl / Radio): 検査は Tab で来る 1 つ (選択中など) だけを見る。矢印キーでだけ来る項目は、Tab で来る項目と同じクラスなら代表させてよい。**形が違う項目は、それが Tab で来る状態を story に用意する** (SegmentedControl: 選択中は `focus-ring-on-fill`、未選択は `focus-ring-inset`。何も選ばれていないと先頭の未選択が Tab の止まり先になるので、Overview にその行を置いている)
-- **overlay**: 検査はトリガーを押して開く操作をしない。見るのは story が開いた状態で描いている分だけ: Overview が `open` / `defaultOpen` で描いているもの (Modal / Popover / Menu / Tooltip の中の要素) と、play の最後に開いたまま残したもの。story が `open` で直接開いた状態は、ポインタで開いたものとは扱わないので輪が出る (§3-2「フォーカスの規則」の「ポインタで開いた重なり」)。**Tab の順に入らないプログラムからのフォーカスは、開いたまま残して (1) で見せる** (Popover: 中に押せるものが無いと、広い幅はパネル自体、狭い幅は下から出る面そのものにフォーカスが移る。広い幅は Playground の play が最後にキーボードで開いて残す。クリックの後のプログラムからのフォーカスは `:focus-visible` にならないことがあるので、キーボードで開く。両方の幅は、文だけの中身を `open` で開いた OverviewTextOnly が `[375, 1280]` の宣言で見せる)
-- **幅で構造が変わる story**: 既定の幅 (1280px) で見た後、story が `parameters.chromatic.viewports` (§9-4) で宣言している残りの幅 (今は AppShell / TwoColumn / SplitPane の EdgeCases と、Menu の Overview / OverviewSingleChoice・Popover の Overview / OverviewTextOnly の 375px) でも同じ検査をする (#152)。狭い幅でだけ出る要素 (AppShell の下のナビ等) は既定の幅では Tab が来ないため。「この幅では別の見え方になる」の宣言は撮影と検査で 1 つにし、検査のための宣言を別に持たない。**狭い幅でだけ出る押せる要素を足したら、その story の `chromatic.viewports` にその幅があることを確かめる** (無ければ検査は見ない)。落ちたときの報告には `[幅 375px]` が付く
+- **overlay**: 検査はトリガーを押して開く操作をしない。見るのは story が開いた状態で描いている分だけ: Overview が `open` / `defaultOpen` で描いているもの (ConfirmDialog / FormDialog / Popover / Menu / Tooltip の中の要素) と、play の最後に開いたまま残したもの。story が `open` で直接開いた状態は、ポインタで開いたものとは扱わないので輪が出る (§3-2「フォーカスの規則」の「ポインタで開いた重なり」)。**Tab の順に入らないプログラムからのフォーカスは、開いたまま残して (1) で見せる** (Popover: 中に押せるものが無いと、広い幅はパネル自体、狭い幅は下から出る面そのものにフォーカスが移る。広い幅は Playground の play が最後にキーボードで開いて残す。クリックの後のプログラムからのフォーカスは `:focus-visible` にならないことがあるので、キーボードで開く。両方の幅は、文だけの中身を `open` で開いた OverviewTextOnly が `[375, 1280]` の宣言で見せる)
+- **幅で構造が変わる story**: 既定の幅 (1280px) で見た後、story が `parameters.chromatic.viewports` (§9-4) で宣言している残りの幅 (今は AppShell / TwoColumn / SplitPane の EdgeCases と、Menu の Overview / OverviewSingleChoice・Popover の Overview / OverviewTextOnly・ConfirmDialog の Overview / OverviewDestructive・FormDialog の Overview / EdgeCases の 375px) でも同じ検査をする (#152)。狭い幅でだけ出る要素 (AppShell の下のナビ等) は既定の幅では Tab が来ないため。「この幅では別の見え方になる」の宣言は撮影と検査で 1 つにし、検査のための宣言を別に持たない。**狭い幅でだけ出る押せる要素を足したら、その story の `chromatic.viewports` にその幅があることを確かめる** (無ければ検査は見ない)。落ちたときの報告には `[幅 375px]` が付く
 - **範囲に入れていないもの**: Tokens / Principles (UI ではない)。Tab で 1 つも要素に来ない story (表示だけの部品) は何も見ずに通る
 - **例外**: `FOCUS_RING_EXEMPT` ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts)) に component 単位で理由付きで列挙する (`TODO(focus):` 付きは既知 finding)。story 単位は `parameters.focusRing = { disable: true }` (理由コメント必須)
 
@@ -908,10 +910,10 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
   - **`pull_request` イベントは使わない** (公式推奨): GitHub が作る ephemeral な merge commit 上で走り baseline の系譜を見失う (PR で before が空になる現象の原因)。push でビルドした head SHA に GitHub App が `UI Tests` status を出すので required check は機能する。
   - **`autoAcceptChanges: 'main'`**: main は baseline ブランチとして自動 accept。squash マージで git 系譜が切れても main の baseline が確定し、以降の PR が正しく比較できる。差分の人間レビューは PR 段階 (`UI Tests`) で行う前提。
 - **TurboSnap** (`onlyChanged: true`): 変更 story と依存先だけ再撮影。依存の追跡は **Vite の module graph (import 連鎖)** で行うため、Tailwind / PostCSS 経由で CSS になるだけのファイル (`tokens/**` の source JSON と `preset.cjs`、`styles/**` の global CSS、`tailwind.config.cjs` / `postcss.config.js`) は graph の外にいて、変えても「影響 story 0 → 撮影 skip」になる。これらは workflow の **`externals`** に列挙し、1 つでも変わったら TurboSnap を無効化して全 story を撮り直す (全コンポーネントに波及するため妥当)。`.storybook/**` と `package.json` / lockfile は CLI が既定で全撮影扱い。**graph 外から見た目に効く経路を新しく足したら `externals` にも足す** (足し忘れは「変えたのに UI Tests が unchanged」として現れる。#107 がこの例)。
-- **複数 viewport は、幅で出方が変わる story だけ**: **Menu** と **Popover** (640px 未満は下から出る) の Overview / OverviewSingleChoice (Menu)・Overview / OverviewTextOnly (Popover) は `[375, 1280]` で撮り、撮影は動きを減らす設定 (`chromatic.prefersReducedMotion: 'reduce'`) で行う (開く動きの途中を撮らない)。レイアウト系は **AppShell / TwoColumn / SplitPane** の **EdgeCases** に `parameters.chromatic.viewports = [375, 1280]` を設定し mobile / desktop の構造切替を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。これら 3 つの **Overview は `[1280]` のみ** — prop カタログ (contentMax / split / listWidth) は desktop 機能で mobile では縦積みに潰れて重複ショットになるため (§7-10 のレイアウト系注意)。meta に `[375,1280]` を置き Overview で `[1280]` に override すると最小記述。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
+- **複数 viewport は、幅で出方が変わる story だけ**: **Menu** と **Popover** (640px 未満は下から出る) の Overview / OverviewSingleChoice (Menu)・Overview / OverviewTextOnly (Popover) は `[375, 1280]` で撮り、撮影は動きを減らす設定 (`chromatic.prefersReducedMotion: 'reduce'`) で行う (開く動きの途中を撮らない)。**FormDialog** (640px 未満は画面いっぱい) の Overview / EdgeCases と、**ConfirmDialog** (どの幅でも中央のカードだが、狭い幅でのボタンの並びを守る) の Overview / OverviewDestructive も `[375, 1280]` で撮る (2 つとも開閉の動きが無いので、動きを減らす設定は要らない)。レイアウト系は **AppShell / TwoColumn / SplitPane** の **EdgeCases** に `parameters.chromatic.viewports = [375, 1280]` を設定し mobile / desktop の構造切替を撮る (1280px は `shell`/`cols` breakpoint = `lg` = 1024px を超える幅)。これら 3 つの **Overview は `[1280]` のみ** — prop カタログ (contentMax / split / listWidth) は desktop 機能で mobile では縦積みに潰れて重複ショットになるため (§7-10 のレイアウト系注意)。meta に `[375,1280]` を置き Overview で `[1280]` に override すると最小記述。他 story は単一 viewport (snapshot 数を抑える)。dark / compact の `modes` は #60/#61 の実値導入後に追加 (今は設定しない)。
 - **`Tokens/*` は撮影対象外**: 各 token カタログ story の meta に `parameters.chromatic.disableSnapshot = true` を付ける。§8-4 の axe 除外と同じ線引き (値の可視化であり UI ではない)。**例外は `Tokens/Color/Regression`** ([`components/tokens/ColorRegression.stories.tsx`](./components/tokens/ColorRegression.stories.tsx)): 文字も角丸も無い平坦な swatch (primitive 全段 + semantic 全 token) を **`diffThreshold: 0`** で撮る。Chromatic の既定閾値 (0.063、アンチエイリアス吸収用) では token 値の微調整 (RGB で +22 程度、#115 の brand 変更) が部品の snapshot で「unchanged」に吸収され検出できなかったため (#109 Color-4)。平坦面にはアンチエイリアスが無いので閾値 0 でも誤検知しない。**token の値を変える PR では、この story の差分が出ることを確認する** (出なければ変更が CSS に届いていない)。
 - **Playground は撮影対象外**: 全 component story の `Playground` に `parameters.chromatic.disableSnapshot = true` を付ける (Controls 探索の起点で、静的な一覧の Overview と冗長なため。§5-3)。
-- **overlay / portal 系は開いた状態を Overview で撮る** (#78 / #90、§7-10 の 7): Modal / Popover / Menu は `open`、Tooltip は `defaultOpen`、Toast は `ToastProvider` の `duration=0` で、開いた状態を静的に Overview に置く。Playground は他の部品と同じく撮影対象外。
+- **overlay / portal 系は開いた状態を Overview で撮る** (#78 / #90、§7-10 の 7): ConfirmDialog / FormDialog / Popover / Menu は `open`、Tooltip は `defaultOpen`、Toast は `ToastProvider` の `duration=0` で、開いた状態を静的に Overview に置く。Playground は他の部品と同じく撮影対象外。
 - **人間ゲート (機械的に弾く §5-5-1 とは別レイヤー)**: 視覚差分の合否は人間が Chromatic UI でレビュー & accept する。`exitZeroOnChanges: true` のため Actions の `chromatic` job は視覚差分では赤にならず、PR の required check には Chromatic の **"UI Tests"** status を使う (branch protection)。初回 baseline の accept・token 登録 (`CHROMATIC_PROJECT_TOKEN` secret) も人間が行う。
 - **意図した見た目の変化は、PR の説明に前後の写真で示す** (#125): Overview は 1 部品 ≒ 1 枚の大きな画像なので、その中の 1px の変化は Chromatic の差分では探しにくい。見た目を変える PR では、変わる部分だけを切り出した「前 / 後」の写真を PR テンプレートの「見た目の変化」に並べ、良し悪しはそこで判断する。Chromatic は「想定外の場所が変わっていないか」の確認に使う (分担)。写真はブランチにコミットし、コミットを指す URL で表示する
 - semver: 視覚回帰の CI 追加は消費者向け契約 (§10-6) に影響せず **bump 不要**。ただし Chromatic が検出する**意図しない見た目変化**自体は visual break (§10-2) として CHANGELOG / semver の対象。
@@ -980,7 +982,7 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
   - **M = 3 ヶ月** (気づく→自分のサイクルに組む→走らせる の計画レイテンシ。保守的・大規模採用者向けは 6 ヶ月)。
 - **信号 (3 点セット必須)**: dev 限定 `console.warn` ([`components/_internal/deprecate.ts`](./components/_internal/deprecate.ts)、本番 no-op・warn-once) + `@deprecated` JSDoc + CHANGELOG。
 - **非推奨ごとに codemod / 移行手順を必須**にする (短い窓を正当化しているのはこれ。codemod 無しなら窓を伸ばす)。
-- **例外 — 外に利用者がいない間は、すぐ消してよい** (#157)。利用側が持ち主の手元のプロダクトだけの間は、非推奨の期間を置かずに MAJOR で直接消してよい (`DropdownMenu` → `Menu` がこの例)。移行手順は CHANGELOG の ⚠ BREAKING CHANGES に必ず書く。古い名前と新しい名前を二重に持つ期間を作らないため。外に利用者ができたら、この例外は使わず上の窓に戻す。
+- **例外 — 外に利用者がいない間は、すぐ消してよい** (#157)。利用側が持ち主の手元のプロダクトだけの間は、非推奨の期間を置かずに MAJOR で直接消してよい (`DropdownMenu` → `Menu`、`Modal` → `ConfirmDialog`・`FormDialog` がこの例)。移行手順は CHANGELOG の ⚠ BREAKING CHANGES に必ず書く。古い名前と新しい名前を二重に持つ期間を作らないため。外に利用者ができたら、この例外は使わず上の窓に戻す。
 
 ### 10-6. 3 つの versioned 契約 (#63)
 

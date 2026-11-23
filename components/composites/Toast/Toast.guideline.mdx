@@ -19,7 +19,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-操作直後の **一時的なフィードバック通知**。「保存しました」「エラーが発生しました」のような短いメッセージを画面の端 (top / bottom / right) に表示し、`duration` 秒後に自動消滅する。永続的な画面内通知は `<Alert>`、確認が必要な操作は `<Modal>`、空状態は `<EmptyState>` を使い分ける。
+操作直後の **一時的なフィードバック通知**。「保存しました」「エラーが発生しました」のような短いメッセージを画面の端 (top / bottom / right) に表示し、`duration` 秒後に自動消滅する。永続的な画面内通知は `<Alert>`、確認が必要な操作は `<ConfirmDialog>`、空状態は `<EmptyState>` を使い分ける。
 
 ---
 
@@ -91,9 +91,9 @@ const { showToast } = useToast();
   }
   doCaption="削除・アーカイブ等の destructive 操作には action ボタンで「元に戻す」を提供し、duration=0 で手動で閉じるまで残すと安全。"
   dontExample={
-    <Button onClick={() => alert('「本当に削除しますか?」(Modal) → 削除 → Toast (元に戻すなし)')}>削除</Button>
+    <Button onClick={() => alert('「本当に削除しますか?」(ConfirmDialog) → 削除 → Toast (元に戻すなし)')}>削除</Button>
   }
-  dontCaption="毎回 Modal で確認すると流れが分断される。元に戻せる操作は Toast + Undo が UX として優れる (Gmail / Twitter 等の慣習)。"
+  dontCaption="毎回 ConfirmDialog で確認すると流れが分断される。元に戻せる操作は Toast + Undo が UX として優れる (Gmail / Twitter 等の慣習)。"
 />
 
 <DoDontExample
@@ -117,7 +117,7 @@ const { showToast } = useToast();
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
 | **永続的な画面内通知** | `<Alert>` | Toast は自動消滅、永続表示は Alert |
-| **確認が必要な操作** ("削除しますか?") | `<Modal>` | フォーカストラップ + 確定/取消 |
+| **確認が必要な操作** ("削除しますか?") | `<ConfirmDialog>` | フォーカストラップ + 確定/取消 |
 | **データなしの代替表示** | `<EmptyState>` | 画面の一部を埋める用途 |
 | **ステータスを 1 単語で** | `<Badge>` | アクション通知ではなく状態表示 |
 

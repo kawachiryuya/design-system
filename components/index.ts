@@ -31,7 +31,7 @@ export * from './primitives/Textarea';
 export * from './primitives/Typography';
 export * from './primitives/VisuallyHidden';
 
-// ── Composites (28) ──
+// ── Composites (29) ──
 export * from './composites/Accordion';
 export * from './composites/ActionBar';
 export * from './composites/Alert';
@@ -40,11 +40,12 @@ export * from './composites/Avatar';
 export * from './composites/Breadcrumb';
 export * from './composites/Card';
 export * from './composites/Checkbox';
+export * from './composites/ConfirmDialog';
 export * from './composites/EmptyState';
 export * from './composites/FilterChip';
+export * from './composites/FormDialog';
 export * from './composites/Grid';
 export * from './composites/Menu';
-export * from './composites/Modal';
 export * from './composites/NumberInput';
 export * from './composites/Pagination';
 export * from './composites/Popover';

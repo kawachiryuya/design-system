@@ -60,6 +60,17 @@ function settleFocusAfterClose(returnFocusRef: React.RefObject<HTMLElement | nul
   }
 }
 
+/**
+ * 中に開いたまま残っている `<dialog>` (Menu・Popover の狭い幅の面) を先に閉じる。
+ * 外側だけ閉じると、中の面は見えないまま modal として残り、背景が押せなくなる (その場の DOM を見るだけで、状態は持たない)。
+ * 中の部品には自分の `close` が届くので、閉じた状態に戻る
+ */
+function closeInnerDialogs(dialog: HTMLDialogElement) {
+  dialog.querySelectorAll('dialog').forEach((inner) => {
+    if (inner.open) inner.close();
+  });
+}
+
 export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
   ({ open, onClose, getInitialFocus, returnFocusRef, children, onKeyDownCapture, onBlur, ...rest }, ref) => {
     const dialogRef = React.useRef<HTMLDialogElement | null>(null);
@@ -108,6 +119,7 @@ export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
         const target = back?.isConnected && dialog.contains(back) ? back : latest.current.getInitialFocus(dialog);
         (target ?? dialog).focus();
       } else if (!isOpen && dialog.open) {
+        closeInnerDialogs(dialog);
         const active = document.activeElement;
         const focusInside = !active || active === document.body || dialog.contains(active);
         if (!focusInside && allowDefer && active?.closest('dialog[open]')) {
@@ -134,6 +146,7 @@ export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
       () => () => {
         const dialog = dialogRef.current;
         if (!dialog?.open) return;
+        closeInnerDialogs(dialog);
         const active = document.activeElement;
         const focusInside = !active || active === document.body || dialog.contains(active);
         dialog.close();
@@ -179,7 +192,8 @@ export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
         onClose={handleNativeClose}
         onBlur={(e) => {
           onBlur?.(e);
-          // 中のフォーカスが行き先無しに外れた (押した確定ボタンが読み込み中で押せなくなった・中の要素が消えた):
+          // 中のフォーカスが行き先無しに外れた (押した確定ボタンが読み込み中で押せなくなった・欄が無効になった。
+          // DOM から外した要素にはブラウザが focusout を出さないので、消えた欄は扱えない。使う側が消す前にフォーカスを移す):
           // ブラウザは body へ落とし、Tab でブラウザの外へ出てしまう。dialog そのものに置き直す (読み上げは dialog の名前を読む。
           // そこから Tab で中の押せるものへ戻れる)。判断はその場の DOM だけで行う (落ちたかは、知らせの後に確かめる)
           if (e.relatedTarget) return;

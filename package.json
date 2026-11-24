@@ -13,7 +13,8 @@
     "node": ">=20"
   },
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "**/_internal/inputModality.*"
   ],
   "exports": {
     ".": {

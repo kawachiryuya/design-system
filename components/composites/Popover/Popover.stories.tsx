@@ -404,7 +404,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inFormDialog: FormDialog の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではパネルが消え、入口を押すと出し直す。別の Popover も並べる) / lateMicrotask・late0・late100・late500: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。text: 文だけ / actions: 押せるものがある / long: 長い文 (狭い幅では面の中でスクロール) / inFormDialog: FormDialog の中の Popover (Esc や外を押しても Popover だけ閉じる) / fromMenu: Menu で選んだら Popover を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではパネルが消え、入口を押すと出し直す。狭い幅では Esc を続けても面を出し直す。別の Popover も並べる) / lateMicrotask・late0・late100・late500: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / two: Popover を 2 つ並べる / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
       },
     },
   },

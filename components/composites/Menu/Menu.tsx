@@ -109,7 +109,12 @@ export interface MenuProps {
   offset?: number;
   /** 開閉の状態 (controlled)。省略時は uncontrolled。 */
   open?: boolean;
-  /** 開閉が変わるとき (入口を押す / 選ぶ / Esc / Tab / 外を押す / 閉じるボタン / 帯を引く / 幅が境目をまたぐ) に呼ばれる。 */
+  /**
+   * 開閉が変わるとき (入口を押す / 選ぶ / Esc / Tab / 外を押す / 閉じるボタン / 帯を引く / 幅が境目をまたぐ) に呼ばれる。
+   * controlled で親が閉じる要求を無視したとき、狭い幅の面は開いたまま、広い幅のメニューは消える (`aria-expanded` は
+   * true のまま。入口を押すとメニューを出し直す)。狭い幅で、無視されたまま Esc を続けるとブラウザが面を閉じる
+   * (止められない) が、そのときは閉じる要求を出した後、`open` が true のままなら面を出し直す (Popover と同じ)。
+   */
   onOpenChange?: (open: boolean) => void;
   /** 広い幅のメニューのパネルに付ける追加の class。**狭い幅 (下から出る面) には付かない**。 */
   className?: string;
@@ -163,7 +168,8 @@ export const Menu: React.FC<MenuProps> = ({
   const triggerRef = useTriggerRef(trigger, referenceRef);
   const itemRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const typeaheadRef = React.useRef<{ buffer: string; timer: number | null }>({ buffer: '', timer: null });
-  const triggerPressRef = React.useRef<boolean | null>(null);
+  /** 入口を押し始めた時点の開閉 (状態) と、広い幅のメニューが実際に出ていたか */
+  const triggerPressRef = React.useRef<{ open: boolean; panelShown: boolean } | null>(null);
   const menuId = React.useId();
   const isControlled = open !== undefined;
   const [internalOpen, setInternalOpen] = React.useState(false);
@@ -449,13 +455,33 @@ export const Menu: React.FC<MenuProps> = ({
     'aria-controls': menuId,
     onPointerDown: (e: React.PointerEvent) => {
       triggerNode.props.onPointerDown?.(e);
-      // 押し始めた時点の開閉を覚える (広い幅では、押した瞬間にブラウザが外を押したとして閉じることがある)
-      triggerPressRef.current = openRef.current;
+      // 押し始めた時点の開閉を覚える (広い幅では、押して離した瞬間にブラウザが外を押したとして閉じる。
+      // その後の click で開き直さない)。メニューが実際に出ていたかも覚える (親が閉じる要求を無視して消えたままのとき用)
+      triggerPressRef.current = { open: openRef.current, panelShown: !!panelRef.current?.matches(':popover-open') };
     },
     onClick: (e: React.MouseEvent) => {
       triggerNode.props.onClick?.(e);
-      const wasOpen = triggerPressRef.current ?? openRef.current;
+      // 覚えた値を使うのは、押して出た click (detail > 0) だけ。押しかけて離れた (click にならなかった) 後の
+      // キーボードの Enter・Space (detail 0) に、古い値を持ち越さない (Popover と同じ)
+      const pressed = triggerPressRef.current;
       triggerPressRef.current = null;
+      const usePressed = e.detail > 0 && pressed !== null;
+      const wasOpen = usePressed ? pressed.open : openRef.current;
+      const panel = panelRef.current;
+      const panelShown = usePressed ? pressed.panelShown : !!panel?.matches(':popover-open');
+      if (usePressed && pressed.open && pressed.panelShown && form === 'popover' && panel && !panel.matches(':popover-open')) {
+        // 広い幅で、メニューが出ている間に入口を押した: この押下でブラウザが外を押したとして閉じた (light dismiss)。
+        // 閉じる要求はその知らせ (toggle) の側が出すので、click の側では出さない (1 回の押下で onOpenChange(false) を 2 回呼ばない)
+        return;
+      }
+      if (wasOpen && form === 'popover' && panel && !panelShown) {
+        // 広い幅で、controlled の親が閉じる要求を無視したため、状態は開いたままメニューだけ消えている。
+        // 閉じる要求をもう一度出しても何も起きないので、メニューを出し直す (Popover と同じ)
+        if (!panel.matches(':popover-open')) panel.showPopover();
+        setOpenedByPointer(e.detail > 0);
+        itemRefs.current[initialIndexRef.current]?.focus();
+        return;
+      }
       if (!wasOpen) setOpenedByPointer(e.detail > 0);
       requestOpenChange(!wasOpen);
     },

@@ -197,7 +197,7 @@ type Scenario = 'text' | 'actions' | 'long' | 'inFormDialog' | 'fromMenu' | 'con
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
   const add = (m: string) => setLog((l) => [...l, m]);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const [noteOpen, setNoteOpen] = React.useState(false);
   const [controlledOpen, setControlledOpen] = React.useState(false);
   const [allowOpen, setAllowOpen] = React.useState(scenario !== 'gateOpen');
@@ -232,16 +232,16 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
       case 'inFormDialog':
         return (
           <>
-            <Button onClick={() => setModalOpen(true)}>条件を開く</Button>
+            <Button onClick={() => setDialogOpen(true)}>条件を開く</Button>
             <FormDialog
-              open={modalOpen}
+              open={dialogOpen}
               onClose={() => {
                 add('FormDialog の onClose');
-                setModalOpen(false);
+                setDialogOpen(false);
               }}
               onSubmit={() => {
                 add('FormDialog の onSubmit');
-                setModalOpen(false);
+                setDialogOpen(false);
               }}
               title="条件"
               submitLabel="適用"

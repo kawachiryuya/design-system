@@ -4,6 +4,7 @@ import { FormDialog } from './FormDialog';
 import { Button } from '../../primitives/Button';
 import { Input } from '../../primitives/Input';
 import { Popover } from '../Popover';
+import { ConfirmDialog } from '../ConfirmDialog';
 import { DoDontExample } from '@sb-blocks/DoDontExample';
 import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 import React from 'react';
@@ -139,6 +140,63 @@ import React from 'react';
   dontCaption="外を押しても閉じないので、読むだけのために取り消しか確定を押させることになる。"
 />
 
+<DoDontExample
+  label="入力を捨てる前に確かめるなら、FormDialog を開いたまま ConfirmDialog を重ねる (破棄の確認)"
+  doExample={
+    (() => {
+      function Demo() {
+        const [form, setForm] = React.useState(false);
+        const [confirm, setConfirm] = React.useState(false);
+        const [name, setName] = React.useState('');
+        // 取り消しの要求 (Esc・×・取り消し): 入力があれば閉じずに確認を開く
+        const requestClose = () => (name ? setConfirm(true) : setForm(false));
+        return (
+          <>
+            <Button variant="secondary" onClick={() => { setName(''); setForm(true); }}>名前を変更</Button>
+            <FormDialog open={form} onClose={requestClose} title="名前の変更" submitLabel="変更する" onSubmit={() => setForm(false)}>
+              <Input name="name" label="名前" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
+            </FormDialog>
+            <ConfirmDialog
+              open={confirm}
+              onClose={() => setConfirm(false)}
+              title="入力を破棄しますか？"
+              confirmLabel="破棄する"
+              cancelLabel="破棄をやめる"
+              destructive
+              onConfirm={() => { setConfirm(false); setForm(false); }}
+            >
+              入力した名前は保存されません。
+            </ConfirmDialog>
+          </>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  doCaption="「破棄をやめる」で確認だけ閉じ、フォーカスは打っていた欄に戻る。「破棄する」で 2 つとも閉じ、フォーカスは「名前を変更」へ戻る (戻り先を渡さなくてよい)。"
+  dontExample={
+    (() => {
+      function Demo() {
+        const [form, setForm] = React.useState(false);
+        const [confirm, setConfirm] = React.useState(false);
+        return (
+          <>
+            <Button variant="secondary" onClick={() => setForm(true)}>名前を変更</Button>
+            <FormDialog open={form} onClose={() => { setForm(false); setConfirm(true); }} title="名前の変更" submitLabel="変更する" onSubmit={() => setForm(false)}>
+              <Input name="name" label="名前" fullWidth />
+            </FormDialog>
+            <ConfirmDialog open={confirm} onClose={() => setConfirm(false)} title="入力を破棄しますか？" confirmLabel="破棄する" cancelLabel="破棄をやめる" destructive onConfirm={() => setConfirm(false)}>
+              入力した名前は保存されません。
+            </ConfirmDialog>
+          </>
+        );
+      }
+      return <Demo />;
+    })()
+  }
+  dontCaption="先に FormDialog を閉じてから確認を開くと、「破棄をやめる」を押しても入力は戻らない (もう閉じて消えている)。確かめる間は FormDialog を開いたままにする。"
+/>
+
 ### 別コンポーネントの方が適切な場面
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
@@ -152,12 +210,12 @@ import React from 'react';
 
 ## アクセシビリティ
 
-- **土台はネイティブの `<dialog>` の `showModal()`**: 背景は操作できず、フォーカスは中に閉じ込められる。開いている間は背景 (html と body) もスクロールしない
+- **土台はネイティブの `<dialog>` の `showModal()`**: 背景は操作できず、`Tab` は dialog の中を巡る (最後の要素から `Tab` を押すと、ブラウザのアドレスバーなどへ 1 度出てから中へ戻る。ネイティブの dialog の働き)。開いている間は背景 (html と body) もスクロールしない
 - **読み上げの名前は見出し** (`title`、`aria-labelledby`)。`role` は `dialog`
 - **中身は本物の `<form>`**: 入力欄で `Enter` を押すと確定する (`onSubmit`)。ページの移動 (既定の送信) は部品が止める。`required` などブラウザの入力チェックは効き、通らないと `onSubmit` は呼ばれない。確定ボタンが押せない (`submitDisabled`)・読み込み中 (`submitLoading`) の間は、Enter でも確定しない
 - **外 (背景) を押しても閉じない**。閉じ方は `Esc`・× (閉じるボタン)・取り消しボタンで、どれも取り消しとして `onClose` を呼ぶ。確定しても部品は閉じない (親が `open` を false にする)
 - **開いた直後のフォーカス**: 本体の中の最初の押せるもの (多くは最初の入力欄)。無ければ dialog そのもの。× には置かない
-- **閉じた後のフォーカス**: 開く前にフォーカスがあった要素へ戻す (ブラウザの働き)。開く前の要素が閉じた後に残らないとき (Menu の項目から開いたときなど) は、`returnFocusRef` に入口を渡す。戻すのは、閉じたときにフォーカスが dialog の中にあったときだけ
+- **閉じた後のフォーカス**: 開く前にフォーカスがあった要素へ戻す (ブラウザの働き)。開く前の要素が閉じた後に残らないとき (Menu の項目から開いたときなど) は、`returnFocusRef` に入口を渡す。戻すのは、閉じたときにフォーカスが dialog の中か、どこにも無い (body) ときだけ
 - **フォーカスの輪**: 指・マウスで開いた (直前の操作が指・マウス) ときは、中でキーが押されるまで輪を出さない (フォーカスは移す)。指・マウスで閉じて戻したフォーカスも同じ。キーボード・読み上げの「実行」で開いた・閉じたとき、まだ何も操作していないときは出す
 - **中に Menu・Popover を置いたとき**: それらの `Esc`・外を押す操作で閉じるのは、それらだけ。それらの中の入力欄で `Enter` を押しても、この dialog は確定しない
 - **ブラウザが閉じたとき**: 親が閉じる要求に応えないまま `Esc` を続けると、ブラウザは dialog を閉じる (止められない)。このときも `onClose` を呼び、`open` が true のままなら出し直す

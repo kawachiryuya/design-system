@@ -305,7 +305,7 @@ type Scenario = 'actions' | 'inFormDialog' | 'shrink' | 'throws' | 'confirm' | '
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
   const add = (m: string) => setLog((l) => [...l, m]);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const menuTriggerRef = React.useRef<HTMLButtonElement | null>(null);
   const [secondOpen, setSecondOpen] = React.useState(false);
   const [controlledOpen, setControlledOpen] = React.useState(false);
@@ -329,11 +329,11 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
       case 'inFormDialog':
         return (
           <>
-            <Button onClick={() => setModalOpen(true)}>条件を開く</Button>
+            <Button onClick={() => setDialogOpen(true)}>条件を開く</Button>
             <FormDialog
-              open={modalOpen}
-              onClose={() => { add('FormDialog の onClose'); setModalOpen(false); }}
-              onSubmit={() => { add('FormDialog の onSubmit'); setModalOpen(false); }}
+              open={dialogOpen}
+              onClose={() => { add('FormDialog の onClose'); setDialogOpen(false); }}
+              onSubmit={() => { add('FormDialog の onSubmit'); setDialogOpen(false); }}
               title="条件"
               submitLabel="適用"
             >
@@ -379,14 +379,14 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
               title="予約を変更"
               items={[
                 { label: '列車を変更', onSelect: () => add('列車を変更') },
-                { label: '予約を取り消す', destructive: true, onSelect: () => setModalOpen(true) },
+                { label: '予約を取り消す', destructive: true, onSelect: () => setDialogOpen(true) },
               ]}
             />
             {/* 狭い幅では Menu の面が閉じるので、閉じた後のフォーカスを Menu の入口へ戻す */}
             <ConfirmDialog
-              open={modalOpen}
-              onClose={() => { add('ConfirmDialog の onClose'); setModalOpen(false); }}
-              onConfirm={() => { add('予約を取り消す'); setModalOpen(false); }}
+              open={dialogOpen}
+              onClose={() => { add('ConfirmDialog の onClose'); setDialogOpen(false); }}
+              onConfirm={() => { add('予約を取り消す'); setDialogOpen(false); }}
               title="予約を取り消しますか？"
               confirmLabel="予約を取り消す"
               cancelLabel="戻る"

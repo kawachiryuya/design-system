@@ -75,7 +75,7 @@ export interface ConfirmDialogProps
   /**
    * 閉じたときにフォーカスを戻す要素。省略時は、開く前にフォーカスがあった要素。
    * Menu の項目から開いたときのように、開く前の要素が閉じた後に残らない場合に、入口を渡す。
-   * 戻すのは、閉じたときにフォーカスが dialog の中にあったときだけ。
+   * 戻すのは、閉じたときにフォーカスが dialog の中か、どこにも無い (body) ときだけ。
    */
   returnFocusRef?: React.RefObject<HTMLElement | null>;
   /** `<dialog>` に付ける追加の class。 */

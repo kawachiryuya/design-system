@@ -79,7 +79,7 @@ export interface FormDialogProps
   /**
    * 閉じたときにフォーカスを戻す要素。省略時は、開く前にフォーカスがあった要素。
    * Menu の項目から開いたときのように、開く前の要素が閉じた後に残らない場合に、入口を渡す。
-   * 戻すのは、閉じたときにフォーカスが dialog の中にあったときだけ。
+   * 戻すのは、閉じたときにフォーカスが dialog の中か、どこにも無い (body) ときだけ。
    */
   returnFocusRef?: React.RefObject<HTMLElement | null>;
   /** `<dialog>` に付ける追加の class。 */
@@ -92,7 +92,7 @@ const formDialog = tv({
       // 狭い幅: 画面いっぱい (UA の中央寄せ・最大幅・最大高さを上書き)。上端に端末の余白
       'p-0 m-0 w-full max-w-none h-[100dvh] max-h-none rounded-none shadow-none pt-[env(safe-area-inset-top)]',
       // 広い幅: 中央の大きいカード
-      'sm:m-auto sm:w-[calc(100%-2rem)] sm:max-w-2xl sm:h-auto sm:max-h-[85dvh] sm:rounded-md sm:shadow-lg sm:pt-0',
+      'sm:m-auto sm:w-[calc(100%-2rem)] sm:max-w-2xl sm:h-fit sm:max-h-[85dvh] sm:rounded-md sm:shadow-lg sm:pt-0',
       'open:flex open:flex-col overflow-hidden',
       'bg-surface text-onSurface',
       'backdrop:bg-surface-overlay',

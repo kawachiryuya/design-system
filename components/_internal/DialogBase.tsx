@@ -23,6 +23,14 @@ import { lastInputWasPointer, trackInputModality } from './inputModality';
  * ときは、閉じる要求を出して描き直す。親が閉じれば閉じたまま、`open` が true のままなら次の描画で出し直す
  * (「開いているはずなのに消えたまま」にしない)。
  *
+ * 親が閉じる要求に応えずに出し直したときは、ブラウザに閉じられる直前にフォーカスがあった中の要素へ戻す。
+ *
+ * この dialog から別の dialog を重ねて開き (破棄の確認など)、同じ描画で 2 つとも閉じるときは、上の dialog が閉じるのを待ってから閉じる
+ * (フォーカスが上の dialog → この中 → この入口と順に戻る。使う側が戻り先を渡さなくてよい)。
+ *
+ * 開いている間に中のフォーカスが行き先無しに外れたら (押した確定ボタンが読み込み中で押せなくなった等)、dialog そのものに置き直す
+ * (body に落ちると Tab でブラウザの外へ出てしまう)。
+ *
  * 中に置いた別の `<dialog>` (Menu・Popover の狭い幅の面) の `cancel`・`close` は、React では親のこの dialog まで届く。
  * 自分宛て (`e.target` が自分) でないものは扱わない。
  */
@@ -53,7 +61,7 @@ function settleFocusAfterClose(returnFocusRef: React.RefObject<HTMLElement | nul
 }
 
 export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
-  ({ open, onClose, getInitialFocus, returnFocusRef, children, onKeyDownCapture, ...rest }, ref) => {
+  ({ open, onClose, getInitialFocus, returnFocusRef, children, onKeyDownCapture, onBlur, ...rest }, ref) => {
     const dialogRef = React.useRef<HTMLDialogElement | null>(null);
     // 最新の props を effect / handler から読む
     const latest = React.useRef({ open, onClose, getInitialFocus, returnFocusRef });
@@ -73,24 +81,46 @@ export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
       trackInputModality();
     }, []);
 
-    // 開閉を `open` に合わせる。描くたびに走らせ、違うときだけ動かす (状態を持たない)
-    React.useEffect(() => {
+    /**
+     * 止められない Esc (親が閉じる要求を断ったまま Esc が続いた) でブラウザが閉じる直前に、フォーカスがあった中の要素。
+     * 役目は 1 つ: 出し直したときに、そこへフォーカスを戻す (ブラウザは閉じるときにフォーカスを外へ移すので、DOM からは分からない)。
+     * 出し直しで使ったら消す。`open` が false になったら (描画の後の同期で) 消す
+     */
+    const refocusOnReopenRef = React.useRef<HTMLElement | null>(null);
+
+    /**
+     * 開閉を `open` に合わせる。描くたびに走らせ、違うときだけ動かす (開閉の状態は持たない)。
+     * `allowDefer`: 閉じるとき、フォーカスが別の開いている dialog (この dialog から開いた破棄の確認など、上に重なったもの) の中にあれば、
+     * 今は閉じずに、同じ描画の effect が済んだ後 (マイクロタスク) に 1 度だけやり直す。上の dialog が先に閉じてフォーカスがこの中へ戻り、
+     * この dialog が閉じるときに、ブラウザが開く前の要素 (入口) へ戻せる (先に閉じると、上の dialog の戻り先がこの閉じた dialog の中になり、body に落ちる)
+     */
+    const sync = (allowDefer: boolean) => {
       const dialog = dialogRef.current;
       if (!dialog) return;
-      if (open && !dialog.open) {
+      const { open: isOpen } = latest.current;
+      if (isOpen && !dialog.open) {
         // 指・マウスで開いたときは、輪を出さない印を先に付ける (showModal がフォーカスを動かす前に)
         if (lastInputWasPointer()) dialog.setAttribute(HIDE_FOCUS_RING_ATTR, '');
         else dialog.removeAttribute(HIDE_FOCUS_RING_ATTR);
         dialog.showModal();
-        (latest.current.getInitialFocus(dialog) ?? dialog).focus();
-      } else if (!open && dialog.open) {
+        const back = refocusOnReopenRef.current;
+        refocusOnReopenRef.current = null;
+        const target = back?.isConnected && dialog.contains(back) ? back : latest.current.getInitialFocus(dialog);
+        (target ?? dialog).focus();
+      } else if (!isOpen && dialog.open) {
         const active = document.activeElement;
         const focusInside = !active || active === document.body || dialog.contains(active);
+        if (!focusInside && allowDefer && active?.closest('dialog[open]')) {
+          queueMicrotask(() => sync(false));
+          return;
+        }
         dialog.close();
         dialog.removeAttribute(HIDE_FOCUS_RING_ATTR);
         if (focusInside) settleFocusAfterClose(latest.current.returnFocusRef);
       }
-    });
+      if (!isOpen) refocusOnReopenRef.current = null;
+    };
+    React.useEffect(() => sync(true));
 
     // 背景のスクロール止め。`open` の prop に合わせる (ブラウザが dialog を閉じても、親が閉じるまでは止めたまま。出し直すので)
     React.useEffect(() => {
@@ -117,7 +147,12 @@ export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
     const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
       if (e.target !== e.currentTarget) return;
       e.preventDefault();
-      if (!e.nativeEvent.cancelable) return;
+      if (!e.nativeEvent.cancelable) {
+        // この後ブラウザが閉じる。出し直したときに戻すため、今フォーカスのある中の要素を覚える
+        const active = document.activeElement;
+        refocusOnReopenRef.current = active instanceof HTMLElement && e.currentTarget.contains(active) ? active : null;
+        return;
+      }
       latest.current.onClose();
     };
 
@@ -142,6 +177,21 @@ export const DialogBase = React.forwardRef<HTMLDialogElement, DialogBaseProps>(
         tabIndex={-1}
         onCancel={handleCancel}
         onClose={handleNativeClose}
+        onBlur={(e) => {
+          onBlur?.(e);
+          // 中のフォーカスが行き先無しに外れた (押した確定ボタンが読み込み中で押せなくなった・中の要素が消えた):
+          // ブラウザは body へ落とし、Tab でブラウザの外へ出てしまう。dialog そのものに置き直す (読み上げは dialog の名前を読む。
+          // そこから Tab で中の押せるものへ戻れる)。判断はその場の DOM だけで行う (落ちたかは、知らせの後に確かめる)
+          if (e.relatedTarget) return;
+          // 外れた要素が今も押せる・見えるなら、わざと外した (`blur()`) もの。扱わない
+          const lost = e.target as Element;
+          if (lost.isConnected && !lost.matches(':disabled') && lost.getClientRects().length > 0) return;
+          const dialog = e.currentTarget;
+          queueMicrotask(() => {
+            const active = document.activeElement;
+            if (dialog.open && latest.current.open && (!active || active === document.body)) dialog.focus();
+          });
+        }}
         onKeyDownCapture={(e) => {
           onKeyDownCapture?.(e);
           // キーが押されたら、そこから輪を出す (キーボードに持ち替えた)

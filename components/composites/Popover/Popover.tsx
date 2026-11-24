@@ -11,6 +11,7 @@ import {
 } from '@floating-ui/dom';
 import { BottomSheet, firstTabbable } from '../../_internal/BottomSheet/BottomSheet';
 import { useIsNarrowViewport } from '../../_internal/useIsNarrowViewport';
+import { useTriggerRef } from '../../_internal/useTriggerRef';
 import { useHideFocusRingUntilKey, hideFocusRingUntilKeyOrBlur } from '../../_internal/useHideFocusRingUntilKey';
 
 /** Popover の配置 (floating-ui の Placement)。`bottom-start` / `top` / `right-end` 等。広い幅でだけ効く。 */
@@ -98,6 +99,8 @@ export const Popover: React.FC<PopoverProps> = ({
   const form: Form = narrow ? 'sheet' : 'popover';
   const panelRef = React.useRef<HTMLDivElement | null>(null);
   const referenceRef = React.useRef<HTMLElement | null>(null);
+  // 入口自身の ref にも要素を渡す (React 18・19 の両方で警告なく読み、描き直しで呼び直さない)
+  const triggerRef = useTriggerRef(trigger, referenceRef);
   /** 入口を押し始めた時点の開閉 (状態) と、広い幅のパネルが実際に出ていたか */
   const triggerPressRef = React.useRef<{ open: boolean; panelShown: boolean } | null>(null);
   const panelId = React.useId();
@@ -282,13 +285,7 @@ export const Popover: React.FC<PopoverProps> = ({
 
   const triggerNode = trigger as React.ReactElement<any>;
   const triggerEl = React.cloneElement(triggerNode, {
-    ref: (node: HTMLElement | null) => {
-      referenceRef.current = node;
-      // 入口自身の ref にも渡す (使う側が入口を指せるように。React 18 は element.ref に持つ)
-      const own = (triggerNode as { ref?: React.Ref<HTMLElement> }).ref;
-      if (typeof own === 'function') own(node);
-      else if (own) (own as React.MutableRefObject<HTMLElement | null>).current = node;
-    },
+    ref: triggerRef,
     'aria-haspopup': 'dialog',
     'aria-expanded': shown,
     'aria-controls': panelId,

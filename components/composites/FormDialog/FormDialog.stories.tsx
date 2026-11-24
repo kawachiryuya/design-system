@@ -9,6 +9,7 @@ import { Checkbox } from '../Checkbox';
 import { Menu } from '../Menu';
 import { Popover } from '../Popover';
 import { ActionBar } from '../ActionBar';
+import { ConfirmDialog } from '../ConfirmDialog';
 
 /**
  * FormDialog stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
@@ -197,7 +198,7 @@ export const EdgeCases: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'nested' | 'actionBar' | 'ignore' | 'loading' | 'empty';
+type Scenario = 'nested' | 'actionBar' | 'ignore' | 'loading' | 'loadingFail' | 'empty' | 'discard';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
@@ -205,6 +206,7 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [sort, setSort] = React.useState('出発が早い順');
+  const [discardOpen, setDiscardOpen] = React.useState(false);
 
   const body = (() => {
     switch (scenario) {
@@ -257,15 +259,19 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
         open={open}
         onClose={() => {
           add('onClose');
-          if (scenario !== 'ignore') setOpen(false);
+          // discard: 閉じずに破棄の確認を開く (確認は FormDialog の後ろの兄弟に置く)
+          if (scenario === 'discard') setDiscardOpen(true);
+          else if (scenario !== 'ignore') setOpen(false);
         }}
         onSubmit={(e) => {
           add(`onSubmit ${JSON.stringify(Object.fromEntries(new FormData(e.currentTarget)))}`);
-          if (scenario === 'loading') {
+          if (scenario === 'loading' || scenario === 'loadingFail') {
             setLoading(true);
             window.setTimeout(() => {
               setLoading(false);
-              setOpen(false);
+              // loadingFail: 失敗したので開いたまま
+              if (scenario === 'loading') setOpen(false);
+              else add('失敗');
             }, 1500);
           } else {
             setOpen(false);
@@ -277,6 +283,26 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
       >
         {body}
       </FormDialog>
+      {scenario === 'discard' && (
+        <ConfirmDialog
+          open={discardOpen}
+          onClose={() => {
+            add('確認の onClose');
+            setDiscardOpen(false);
+          }}
+          onConfirm={() => {
+            add('破棄する');
+            setDiscardOpen(false);
+            setOpen(false);
+          }}
+          title="入力を破棄しますか？"
+          confirmLabel="破棄する"
+          cancelLabel="破棄をやめる"
+          destructive
+        >
+          入力した条件は保存されません。
+        </ConfirmDialog>
+      )}
       <p className="type-caption text-onSurface-subtle" data-testid="log">
         {log.join(' / ') || '（まだ何も起きていない）'}
       </p>
@@ -287,14 +313,14 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
 export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   args: { scenario: 'nested' },
   argTypes: {
-    scenario: { control: 'select', options: ['nested', 'actionBar', 'ignore', 'loading', 'empty'] },
+    scenario: { control: 'select', options: ['nested', 'actionBar', 'ignore', 'loading', 'loadingFail', 'empty', 'discard'] },
   },
   parameters: {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。nested: 中に Menu と Popover (Popover の中に入力欄。そこで Enter を押しても確定しない) / actionBar: 本体の中に ActionBar (幅 0 に潰れない) / ignore: 親が閉じる要求に応えない (確定だけで閉じる。Esc を続けても消えたままにならない) / loading: 確定から 1.5 秒待って閉じる (その間 Enter でも確定しない) / empty: 押せるものが無い中身。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。nested: 中に Menu と Popover (Popover の中に入力欄。そこで Enter を押しても確定しない) / actionBar: 本体の中に ActionBar (幅 0 に潰れない) / ignore: 親が閉じる要求に応えない (確定だけで閉じる。Esc を続けても消えたままにならない) / loading: 確定から 1.5 秒待って閉じる (その間 Enter でも確定しない) / loadingFail: 1.5 秒待った後、失敗して開いたまま / empty: 押せるものが無い中身 / discard: 取り消しの要求で閉じずに破棄の確認を開く (確認は FormDialog の後ろの兄弟。「破棄する」で 2 つとも閉じる)。',
       },
     },
   },

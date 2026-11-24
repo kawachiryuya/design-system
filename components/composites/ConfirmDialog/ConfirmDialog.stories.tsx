@@ -192,13 +192,14 @@ export const OverviewDestructive: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'ignore' | 'methodDialog' | 'externalClose' | 'externalCloseIgnored' | 'unmount' | 'basic';
+type Scenario = 'ignore' | 'methodDialog' | 'externalClose' | 'externalCloseIgnored' | 'unmount' | 'basic' | 'loadingFail' | 'conditional';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
   const add = (m: string) => setLog((l) => [...l, m]);
   const [open, setOpen] = React.useState(false);
   const [mounted, setMounted] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
   const ref = React.useRef<HTMLDialogElement | null>(null);
   const respond = scenario !== 'ignore' && scenario !== 'externalCloseIgnored';
 
@@ -215,7 +216,7 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   return (
     <div className="flex flex-col items-start gap-4">
       <Button onClick={openDialog}>確認を開く</Button>
-      {mounted && (
+      {mounted && (scenario !== 'conditional' || open) && (
         <ConfirmDialog
           ref={ref}
           open={open}
@@ -225,8 +226,16 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
           }}
           onConfirm={() => {
             add('onConfirm');
-            setOpen(false);
+            if (scenario === 'loadingFail') {
+              // 1.5 秒待った後、失敗して開いたまま
+              setLoading(true);
+              window.setTimeout(() => {
+                setLoading(false);
+                add('失敗');
+              }, 1500);
+            } else setOpen(false);
           }}
+          confirmLoading={loading}
           title="変更を保存しますか？"
           confirmLabel="保存"
         >
@@ -254,7 +263,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   argTypes: {
     scenario: {
       control: 'select',
-      options: ['ignore', 'methodDialog', 'externalClose', 'externalCloseIgnored', 'unmount', 'basic'],
+      options: ['ignore', 'methodDialog', 'externalClose', 'externalCloseIgnored', 'unmount', 'basic', 'loadingFail', 'conditional'],
     },
   },
   parameters: {
@@ -262,7 +271,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。ignore: 親が閉じる要求に応えない (確定だけで閉じる。Esc を続けても消えたままにならない) / methodDialog: 中の `<form method="dialog">` で閉じる (onClose が呼ばれ、背景の止めが外れる) / externalClose: 開いて 1 秒後に外から `dialog.close()` (親は閉じる) / externalCloseIgnored: 同じく、親は閉じない (出し直す) / unmount: 開いて 1 秒後に部品ごと外す / basic: 親が閉じる、基本の形。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。ignore: 親が閉じる要求に応えない (確定だけで閉じる。Esc を続けても消えたままにならない) / methodDialog: 中の `<form method="dialog">` で閉じる (onClose が呼ばれ、背景の止めが外れる) / externalClose: 開いて 1 秒後に外から `dialog.close()` (親は閉じる) / externalCloseIgnored: 同じく、親は閉じない (出し直す) / unmount: 開いて 1 秒後に部品ごと外す / basic: 親が閉じる、基本の形 / loadingFail: 確定から 1.5 秒読み込み中にし、失敗して開いたまま / conditional: `{open && <ConfirmDialog open … />}` の形 (開くときに部品ごと描く。ページで最初の dialog)。',
       },
     },
   },

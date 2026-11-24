@@ -12,6 +12,7 @@ import {
 import { Icon } from '../../primitives/Icon';
 import { BottomSheet } from '../../_internal/BottomSheet/BottomSheet';
 import { useIsNarrowViewport } from '../../_internal/useIsNarrowViewport';
+import { useTriggerRef } from '../../_internal/useTriggerRef';
 import { useHideFocusRingUntilKey, hideFocusRingUntilKeyOrBlur } from '../../_internal/useHideFocusRingUntilKey';
 import { tv } from '../../_internal/tv';
 
@@ -158,6 +159,8 @@ export const Menu: React.FC<MenuProps> = ({
   const panelRef = React.useRef<HTMLDivElement | null>(null);
   const sheetRef = React.useRef<HTMLDialogElement | null>(null);
   const referenceRef = React.useRef<HTMLElement | null>(null);
+  // 入口自身の ref にも要素を渡す (React 18・19 の両方で警告なく読み、描き直しで呼び直さない)
+  const triggerRef = useTriggerRef(trigger, referenceRef);
   const itemRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const typeaheadRef = React.useRef<{ buffer: string; timer: number | null }>({ buffer: '', timer: null });
   const triggerPressRef = React.useRef<boolean | null>(null);
@@ -440,13 +443,7 @@ export const Menu: React.FC<MenuProps> = ({
 
   const triggerNode = trigger as React.ReactElement<any>;
   const triggerEl = React.cloneElement(triggerNode, {
-    ref: (node: HTMLElement | null) => {
-      referenceRef.current = node;
-      // 入口自身の ref にも渡す (使う側が入口を指せるように。React 18 は element.ref に持つ)
-      const own = (triggerNode as { ref?: React.Ref<HTMLElement> }).ref;
-      if (typeof own === 'function') own(node);
-      else if (own) (own as React.MutableRefObject<HTMLElement | null>).current = node;
-    },
+    ref: triggerRef,
     'aria-haspopup': 'menu',
     'aria-expanded': shown,
     'aria-controls': menuId,

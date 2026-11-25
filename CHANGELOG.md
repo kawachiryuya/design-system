@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 
+## [7.0.0] - 2026-11-26
+
+**重なって出る部品を役割で選ぶ形にした (DDR-3、#157)** のと、**色・文字・ホバー・フォーカスの規則を 1 つずつにそろえた (#109 / DDR-1、DDR-2 #131)** 破壊的リリース。`DropdownMenu` → `Menu`、`Modal` → `ConfirmDialog`・`FormDialog` (別名は残していない)。Menu・Popover は幅 640px 未満で下から出る。文字は text style `type-*`、Typography の `variant` は役割名、フォーカスの輪は outline の `focus-ring*`、brand と warning の色相が変わる。6.0.1 からの移行は、下の ⚠ BREAKING CHANGES の各項目の Migration を上から順に当てる (型で落ちない変更が多いので、grep の手順も当てる)。
+
+各項目は、移行に要る手順を落とさないよう、圧縮せずにそのまま残している (5.0.0・6.0.0 と同じ)。
+
 ### Added
 
 - **ポインタ (指・マウス) で開いた重なりの中では、キーが押されるまでフォーカスの輪を出さない: 属性 `data-ds-hide-focus-ring`** (#157、AGENTS §3-2): preset の `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` は、この属性を持つ要素とその中では輪を出さず、ブラウザ既定の輪 (`outline-style: auto`) も消す (`:where()` で包むので詳細度は変わらない)。Menu が入口を指・マウスで押して開いたとき (click の `detail` > 0) に、メニュー (広い幅のパネル・狭い幅の面) に付け、中でキーが押されたら外す。フォーカスは今までどおり項目へ移す。閉じたときも同じで、ポインタで閉じたとき (外を押す・帯を引く・閉じるボタンや項目を押す) は入口に属性を付け、次にキーが押されるか入口からフォーカスが外れたら外す (入口は使う側の要素だが、付けるのはこの属性だけ)。iPhone の Safari で、指で開いた直後の項目と、閉じて戻った入口に輪が出ていた (`:focus-visible` の判断がブラウザごとに違う)。新しい配信契約 (属性名・`dist/styles.css` の `focus-ring*` のセレクタ)。属性を付けない限り見た目は変わらない
@@ -912,7 +918,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v6.0.1...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v7.0.0...HEAD
+[7.0.0]: https://github.com/kawachiryuya/design-system/compare/v6.0.1...v7.0.0
 [6.0.1]: https://github.com/kawachiryuya/design-system/compare/v6.0.0...v6.0.1
 [6.0.0]: https://github.com/kawachiryuya/design-system/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/kawachiryuya/design-system/compare/v4.0.0...v5.0.0

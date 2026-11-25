@@ -819,7 +819,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 - **インジケータ**: 2px の outline、下地との差 3:1 以上 (WCAG 1.4.11)。太さは 2.4.13 (AAA) 相当を目安にする。形は 3 つで、どれを使うかは §3-2「フォーカスの規則」。2.4.11 (AA) は「フォーカスが隠れない」(sticky ヘッダー等で覆わない)
 - **トラップ (ConfirmDialog / FormDialog)**: ネイティブ `<dialog>.showModal()` を使えばブラウザ標準でトラップ + Esc + 閉じ後 trigger 復帰。2 つの部品は共通の土台 ([`components/_internal/DialogBase.tsx`](./components/_internal/DialogBase.tsx)) に乗り、外を押しても閉じず、Esc は取り消しとして閉じる要求 (`onClose`) を出す。自前 modal は同等の挙動を実装
-- **modal の dialog を開いている間に出す部品 (Toast)**: dialog の外の要素は、一番上の層 (`popover`) に出しても押せない・フォーカスが入らない・読み上げられない (inert。Chromium で測った、#169)。押せる必要があるものは、開いている間だけ一番上の dialog の中へ置き場を移す (Toast の `useAboveModalDialogs`)。使う側に「dialog の中では使わない」と覚えさせない。dialog の中に入る部品の押せるものは、dialog の × と同じ読み上げ名にしない (Toast の閉じるは「通知を閉じる」。同じ名前が 2 つあると、読み上げで区別できず、名前で探すテストも落ちる)
+- **modal の dialog を開いている間に出す部品 (Toast)**: dialog の外の要素は、一番上の層 (`popover`) に出しても押せない・フォーカスが入らない・読み上げられない (inert。Chromium で測った、#169)。押せる必要があるものは、開いている間だけ一番上の dialog の中へ置き場を移す (Toast の `useAboveModalDialogs`)。使う側に「dialog の中では使わない」と覚えさせない。部品が自分で置き場を移して dialog の中に入るものの押せる要素は、dialog の × と同じ読み上げ名にしない (Toast の閉じるは「通知を閉じる」。同じ名前が 2 つあると、読み上げで区別できず、名前で探すテストも落ちる。使う側が dialog の中に置く Alert の閉じるは、この決まりの対象にしていない: 今は「閉じる」のまま)
 - **閉じた後のフォーカスの戻り先 (`returnFocusRef`)**: 開く前の要素が閉じた後に残らないとき (狭い幅の Menu の項目から ConfirmDialog を開いた等。Menu の面は閉じているので、ブラウザは body に戻す) は、`returnFocusRef` に入口を渡す。戻すのは、閉じたときにフォーカスが dialog の中か body のときだけ (下から出る面 `BottomSheet` と同じ線)。Menu・Popover の入口に付けた `ref` は入口の要素を指す
 - **動的コンテンツ追加時**: 追加要素に focus 移動 (例: 検索結果リスト)
 - **動的コンテンツ削除時**: 削除アイテムの **論理的な次** (なければ前) に focus 移動。`<body>` 戻りを避ける

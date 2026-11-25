@@ -299,7 +299,7 @@ export const SingleChoice: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'actions' | 'inModal' | 'shrink' | 'throws' | 'modal' | 'nested' | 'controlled' | 'empty' | 'allDisabled' | 'long' | 'strict' | 'bottom';
+type Scenario = 'actions' | 'inModal' | 'shrink' | 'throws' | 'modal' | 'nested' | 'controlled' | 'pinned' | 'late0' | 'late100' | 'gateOpen' | 'gateClose' | 'empty' | 'allDisabled' | 'long' | 'strict' | 'bottom';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
@@ -308,6 +308,12 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [secondOpen, setSecondOpen] = React.useState(false);
   const [controlledOpen, setControlledOpen] = React.useState(false);
   const [shrinkItems, setShrinkItems] = React.useState(4);
+  const [allowOpen, setAllowOpen] = React.useState(scenario !== 'gateOpen');
+  const [allowClose, setAllowClose] = React.useState(scenario !== 'gateClose');
+  const controlledItems = [
+    { label: '複製', onSelect: () => add('onSelect(複製)') },
+    { label: '削除', destructive: true, onSelect: () => add('onSelect(削除)') },
+  ];
 
   const body = (() => {
     switch (scenario) {
@@ -419,6 +425,65 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
             ]}
           />
         );
+      case 'pinned':
+        // 親が閉じる要求を無視する (開いたら開いたまま)。閉じるのは下のボタンだけ
+        return (
+          <div className="flex items-start gap-4">
+            <Button variant="tertiary" onClick={() => setControlledOpen(false)}>
+              親から閉じる
+            </Button>
+            <SortMenu onPick={(l) => add(l)} />
+            <Menu
+              trigger={<Button>操作</Button>}
+              title="操作"
+              open={controlledOpen}
+              onOpenChange={(o) => {
+                add(`onOpenChange(${o})`);
+                if (o) setControlledOpen(true);
+              }}
+              items={controlledItems}
+            />
+          </div>
+        );
+      case 'late0':
+      case 'late100':
+        // 親が 1 拍遅れて閉じる (onOpenChange(false) を受けてから、setTimeout 0 / 100ms 後に open を false に)
+        return (
+          <Menu
+            trigger={<Button>操作</Button>}
+            title="操作"
+            open={controlledOpen}
+            onOpenChange={(o) => {
+              add(`onOpenChange(${o})`);
+              if (o) setControlledOpen(true);
+              else window.setTimeout(() => setControlledOpen(false), scenario === 'late0' ? 0 : 100);
+            }}
+            items={controlledItems}
+          />
+        );
+      case 'gateOpen':
+      case 'gateClose':
+        // 親が条件付きで要求を断る (読み込み中は開かない / 保存中は閉じない など)。下のボタンで許可を切り替える
+        return (
+          <div className="flex items-start gap-4">
+            <Button variant="tertiary" onClick={() => setAllowOpen((v) => !v)}>
+              {`開く：${allowOpen ? '許可' : '断る'}`}
+            </Button>
+            <Button variant="tertiary" onClick={() => setAllowClose((v) => !v)}>
+              {`閉じる：${allowClose ? '許可' : '断る'}`}
+            </Button>
+            <Menu
+              trigger={<Button>操作</Button>}
+              title="操作"
+              open={controlledOpen}
+              onOpenChange={(o) => {
+                add(`onOpenChange(${o})`);
+                if (o ? allowOpen : allowClose) setControlledOpen(o);
+              }}
+              items={controlledItems}
+            />
+          </div>
+        );
       case 'empty':
         return <Menu trigger={<Button>操作</Button>} title="操作" items={[]} />;
       case 'allDisabled':
@@ -474,7 +539,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   argTypes: {
     scenario: {
       control: 'select',
-      options: ['actions', 'inModal', 'shrink', 'throws', 'modal', 'nested', 'controlled', 'empty', 'allDisabled', 'long', 'strict', 'bottom'],
+      options: ['actions', 'inModal', 'shrink', 'throws', 'modal', 'nested', 'controlled', 'pinned', 'late0', 'late100', 'gateOpen', 'gateClose', 'empty', 'allDisabled', 'long', 'strict', 'bottom'],
     },
   },
   parameters: {
@@ -482,7 +547,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。actions: 操作の一覧 (無効な項目あり) / inModal: Modal の中の Menu (Esc で Menu だけ閉じる) / shrink: 開いて 300ms 後に項目が減る / throws: onSelect が例外を投げる / modal: 選んだら Modal を開く / nested: 選んだら別の Menu を開く / controlled: open と onOpenChange の回数と順番を下に出す / empty: 項目が 0 個 / allDisabled: 全部無効 / long: 項目が多い (狭い幅では面の中でスクロール) / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。actions: 操作の一覧 (無効な項目あり) / inModal: Modal の中の Menu (Esc で Menu だけ閉じる) / shrink: 開いて 300ms 後に項目が減る / throws: onSelect が例外を投げる / modal: 選んだら Modal を開く / nested: 選んだら別の Menu を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではメニューが消え、入口を押すと出し直す。狭い幅では Esc を続けても面を出し直す。別の Menu も並べる) / late0・late100: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / empty: 項目が 0 個 / allDisabled: 全部無効 / long: 項目が多い (狭い幅では面の中でスクロール) / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
       },
     },
   },

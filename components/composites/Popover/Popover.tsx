@@ -69,8 +69,8 @@ export interface PopoverProps {
   /**
    * 開閉が変わるとき (入口を押す / Esc / 外を押す / 閉じるボタン / 帯を引く / 幅が境目をまたぐ) に呼ばれる。
    * controlled で親が閉じる要求を無視したとき、狭い幅の面は開いたまま、広い幅のパネルは消える (`aria-expanded` は
-   * true のまま。入口を押すとパネルを出し直す)。狭い幅でも、無視されたまま Esc を続けるとブラウザが面を閉じる
-   * (止められない。`aria-expanded` は true のまま。このときは入口を押しても出し直さず、閉じる要求が出る)。
+   * true のまま。入口を押すとパネルを出し直す)。狭い幅で、無視されたまま Esc を続けるとブラウザが面を閉じる
+   * (止められない) が、そのときは閉じる要求を出した後、`open` が true のままなら面を出し直す。
    */
   onOpenChange?: (open: boolean) => void;
   /** 広い幅のパネルに付ける追加の class。**狭い幅 (下から出る面) には付かない**。 */
@@ -234,7 +234,7 @@ export const Popover: React.FC<PopoverProps> = ({
 
   // 広い幅: 外を押す・Esc でブラウザが閉じた (light dismiss) ことを状態に伝える。
   // controlled で親が閉じる要求を無視したときは、パネルは消えたまま (状態は開いたまま、自分からは出し直さない。Menu と同じ)。
-  // その状態で入口を押したときは、入口の click でパネルを出し直す (Menu は何も起きない。main の Popover は押すと出た)
+  // その状態で入口を押したときは、入口の click でパネルを出し直す (Menu も同じ。main の Popover は押すと出た)
   React.useEffect(() => {
     if (form !== 'popover') return;
     const panel = panelRef.current;

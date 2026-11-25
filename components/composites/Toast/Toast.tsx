@@ -119,13 +119,97 @@ const positionStyles: Record<ToastPosition, string> = {
 };
 
 /**
- * 置き場 (固定して出す入れ物) の見た目。`popover` になったときのブラウザの既定 (余白・枠・背景・はみ出しの切り取り) を消す。
- * ふだんの div では既定と同じ値なので、見た目は変わらない
+ * 置き場 (固定して出す入れ物) の見た目。`popover` になったときのブラウザの既定 (余白・枠・背景・はみ出しの切り取り・文字色。
+ * 位置の `inset: 0` は `positionStyles` の反対側の辺で消す) を打ち消す。ふだんの div では既定と同じ値なので、見た目は変わらない
+ * (幅・高さの `fit-content` は、固定した div の中身なりの大きさと同じなので打ち消さない)
  */
-const layerStyles = 'fixed z-toast m-0 p-0 border-0 bg-transparent overflow-visible';
+const layerStyles = 'fixed z-toast m-0 p-0 border-0 bg-transparent overflow-visible text-inherit';
 
 /** layout effect はブラウザでだけ (サーバーでは何もしない effect にして、React の警告を出さない) */
 const useLayoutEffectOnClient = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+
+// ─────────────────────────────────────────────
+// dialog の上に出す (#169)
+// ─────────────────────────────────────────────
+
+/** 置き場 1 つ分 (ToastProvider 1 つ・開いている単発の Toast 1 つ) */
+interface ToastLayer {
+  /** 置き場 (固定して出す入れ物) */
+  host: HTMLDivElement;
+  /** 元の場所 (`display: contents` の目印) */
+  home: HTMLElement;
+}
+
+/**
+ * ページで 1 つの見張り。置き場が 1 つでもある間だけ動き、最後の置き場が外れたら止まって空になる。
+ * module では値を作るだけで、文書には触らない (触るのは最初の置き場が描かれた後、AGENTS §5-2)
+ */
+const watch = {
+  /** 今ある置き場 */
+  layers: new Set<ToastLayer>(),
+  /** 開いている modal の dialog を、開いた順に並べたもの (一番上は最後) */
+  modals: [] as HTMLDialogElement[],
+  /** 文書の `open` 属性と、要素の出し入れを見る */
+  observer: null as MutationObserver | null,
+};
+
+/** 一番上の modal の dialog。閉じた・文書から外れたものは一覧から抜く */
+function topModal(): HTMLDialogElement | undefined {
+  const { modals } = watch;
+  for (let i = modals.length - 1; i >= 0; i -= 1) {
+    if (!modals[i].isConnected || !modals[i].matches(':modal')) modals.splice(i, 1);
+  }
+  return modals[modals.length - 1];
+}
+
+/** 置き場を、一番上の dialog の中 (無ければ元の場所) に置く。もうそこにあれば何もしない */
+function placeLayer({ host, home }: ToastLayer, top: HTMLDialogElement | undefined) {
+  if (top) {
+    if (host.parentElement === top && host.matches(':popover-open')) return;
+    if (host.matches(':popover-open')) host.hidePopover();
+    top.appendChild(host);
+    host.setAttribute('popover', 'manual');
+    host.showPopover();
+  } else {
+    if (host.parentElement === home && !host.hasAttribute('popover')) return;
+    if (host.matches(':popover-open')) host.hidePopover();
+    host.removeAttribute('popover');
+    home.appendChild(host);
+  }
+}
+
+function placeAll() {
+  const top = topModal();
+  watch.layers.forEach((layer) => placeLayer(layer, top));
+}
+
+/**
+ * 見張りを始める。始める前から開いている dialog は、開いた順が分からないので文書の順に並べ、
+ * フォーカスを含む dialog があればそれを一番上とみなす (使う人が今操作している dialog)
+ */
+function startWatch() {
+  const open = Array.from(document.querySelectorAll<HTMLDialogElement>('dialog:modal'));
+  const focused = open.find((d) => d.contains(document.activeElement));
+  watch.modals = [...open.filter((d) => d !== focused), ...(focused ? [focused] : [])];
+  watch.observer = new MutationObserver((records) => {
+    for (const r of records) {
+      if (r.type !== 'attributes' || !(r.target instanceof HTMLDialogElement)) continue;
+      // 開いた・開き直した dialog は一番上へ、閉じたものは抜く (知らせの順 = 本当に開いた順)
+      const i = watch.modals.indexOf(r.target);
+      if (i >= 0) watch.modals.splice(i, 1);
+      if (r.target.matches(':modal')) watch.modals.push(r.target);
+    }
+    // 要素の出し入れ (childList) も見る: 開いたまま dialog が外された・中身を丸ごと置き換えられて置き場ごと外れた、を戻す
+    placeAll();
+  });
+  watch.observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['open'] });
+}
+
+function stopWatch() {
+  watch.observer?.disconnect();
+  watch.observer = null;
+  watch.modals = [];
+}
 
 /**
  * Toast の置き場を、開いている modal の dialog の上に出す (#169)。
@@ -135,14 +219,19 @@ const useLayoutEffectOnClient = typeof document !== 'undefined' ? React.useLayou
  * そこで、開いている間は置き場 (`host`) を**一番上の modal の dialog の中**へ移し、`popover="manual"` で一番上の層に出す
  * (dialog の中なので押せる・フォーカスが入る・読み上げられる。一番上の層なので、dialog の変形・はみ出しの切り取りに左右されない)。
  * 閉じたら元の場所 (`host` の親、描いた場所) へ戻し、`popover` を外す。dialog が無いときは何もしない (今までと同じ)。
- * 動かすのは DOM の要素だけなので、React は描き直さない (出ている Toast・タイマー・フォーカスはそのまま)。
+ * 動かすのは DOM の要素だけなので、React は描き直さない (出ている Toast・タイマーはそのまま)。
  *
- * 足す仕組みは 3 つ。どれも置き場を描いている間 (ToastProvider・開いている Toast) だけあり、外すときに消す:
- * - `modals`: 開いた順に並べた、開いている modal の dialog の一覧 (一番上は最後)。ブラウザに「どれが一番上か」を聞く手段が無いため
- * - 文書の `open` 属性を見る `MutationObserver`: dialog が開いた・閉じたら、一覧を直して置き場を移す
- * - 置き場の `keydown` (capture): Toast の中でキーが押されたら、今いる dialog の `data-ds-hide-focus-ring` を外す
+ * 仕組み:
+ * - ページで 1 つの見張り (`watch`): 開いた順の dialog の一覧と、文書の `open` 属性・要素の出し入れを見る `MutationObserver`。
+ *   最初の置き場が描かれたときに始め、最後の置き場が外れたら止める。どの置き場も同じ順を使う
+ * - 置き場ごとの `keydown` (capture): Toast の中でキーが押されたら、今いる dialog の `data-ds-hide-focus-ring` を外す
  *   (指・マウスで開いた dialog の中は、キーが押されるまで輪を出さない決まり。AGENTS §3-2。
  *   Toast は React では dialog の外の部品なので、dialog の「キーが押されたら外す」が Toast の中のキーに届かない)
+ * - 置き場ごとの `focusout`: dialog の中で、フォーカスを持ったまま Toast が消えたら (閉じる・操作ボタン・自動で消える)、
+ *   フォーカスを dialog そのものに置く (body に落ちると、次の Tab でブラウザの外へ出る。DialogBase と同じ線)。
+ *   残っている別の Toast へは移さない。dialog が無いページでは何もしない
+ *
+ * 外すとき (アンマウント) は置き場を元の場所へ戻す (dialog の中に置き去りにしない)。
  */
 function useAboveModalDialogs(hostRef: React.RefObject<HTMLDivElement | null>) {
   useLayoutEffectOnClient(() => {
@@ -150,45 +239,34 @@ function useAboveModalDialogs(hostRef: React.RefObject<HTMLDivElement | null>) {
     const home = host?.parentElement;
     if (!host || !home || typeof host.showPopover !== 'function') return;
 
-    // 描いた時点で開いているものは、文書の順に並べる (どれが一番上かは分からないので、後ろのものを上とみなす)
-    const modals: HTMLDialogElement[] = Array.from(document.querySelectorAll<HTMLDialogElement>('dialog:modal'));
-
-    const place = () => {
-      for (let i = modals.length - 1; i >= 0; i -= 1) {
-        if (!modals[i].isConnected || !modals[i].matches(':modal')) modals.splice(i, 1);
-      }
-      const top = modals[modals.length - 1];
-      if (top) {
-        if (host.parentElement === top && host.matches(':popover-open')) return;
-        if (host.matches(':popover-open')) host.hidePopover();
-        top.appendChild(host);
-        host.setAttribute('popover', 'manual');
-        host.showPopover();
-      } else {
-        if (host.parentElement === home && !host.hasAttribute('popover')) return;
-        if (host.matches(':popover-open')) host.hidePopover();
-        host.removeAttribute('popover');
-        home.appendChild(host);
-      }
-    };
-
-    const observer = new MutationObserver((records) => {
-      for (const { target } of records) {
-        if (target instanceof HTMLDialogElement && target.matches(':modal') && !modals.includes(target)) modals.push(target);
-      }
-      place();
-    });
-    observer.observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['open'] });
-    place();
+    const layer: ToastLayer = { host, home };
+    if (watch.layers.size === 0) startWatch();
+    watch.layers.add(layer);
+    placeLayer(layer, topModal());
 
     const showRingOnKey = () => host.closest('dialog')?.removeAttribute(HIDE_FOCUS_RING_ATTR);
+    const keepFocusInDialog = (e: FocusEvent) => {
+      if (e.relatedTarget) return;
+      const lost = e.target as Element;
+      queueMicrotask(() => {
+        const dialog = host.parentElement;
+        const active = document.activeElement;
+        if (!(dialog instanceof HTMLDialogElement) || !dialog.open) return;
+        if (active && active !== document.body) return;
+        // 外れた要素が今も見えるなら、わざと外した (`blur()`) もの。扱わない
+        if (lost.isConnected && lost.getClientRects().length > 0) return;
+        dialog.focus();
+      });
+    };
     host.addEventListener('keydown', showRingOnKey, true);
+    host.addEventListener('focusout', keepFocusInDialog);
 
     return () => {
       host.removeEventListener('keydown', showRingOnKey, true);
-      observer.disconnect();
-      modals.length = 0;
-      place();
+      host.removeEventListener('focusout', keepFocusInDialog);
+      watch.layers.delete(layer);
+      placeLayer(layer, undefined);
+      if (watch.layers.size === 0) stopWatch();
     };
   }, [hostRef]);
 }
@@ -304,7 +382,7 @@ const ToastBody: React.FC<ToastContent & {
       {onClose && (
         <button
           type="button"
-          aria-label="閉じる"
+          aria-label="通知を閉じる"
           onClick={onClose}
           className={[
             'absolute top-4 right-4 inline-flex items-center justify-center h-5 w-5 rounded',

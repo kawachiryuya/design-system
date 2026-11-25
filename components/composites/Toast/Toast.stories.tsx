@@ -100,7 +100,7 @@ export const Overview: Story = {
 
 // ── 撮影しない: dialog を開いている間の Toast (#169) ──────────────────
 
-type Scenario = 'dialogs' | 'providers';
+type Scenario = 'dialogs' | 'providers' | 'raw' | 'stacked' | 'unmount';
 
 /** 場面の部品: 押すと Toast を出すボタン 2 つ (元に戻す付き = 自動で消えない / 3 秒で消える) */
 function FireButtons({ where, onLog }: { where: string; onLog: (m: string) => void }) {
@@ -270,13 +270,148 @@ function ProvidersInner({ showOuter }: { showOuter: ReturnType<typeof useToast>[
   );
 }
 
+/** raw: 使う側の素の `<dialog>` (マウントしたら自分で `showModal()`)。閉じずに DOM から外す */
+function RawModal({ onRemove }: { onRemove: () => void }) {
+  const ref = React.useRef<HTMLDialogElement>(null);
+  const { showToast } = useToast();
+  React.useEffect(() => {
+    ref.current?.showModal();
+  }, []);
+  return (
+    <dialog ref={ref} aria-label="素の dialog" className="p-4 rounded-md bg-surface text-onSurface backdrop:bg-surface-overlay">
+      <div className="flex flex-col items-start gap-2">
+        <Button
+          variant="secondary"
+          onClick={() => showToast({ variant: 'info', description: '素の dialog の知らせ', action: { label: '元に戻す', onClick: () => {} } })}
+        >
+          Toast (素の dialog)
+        </Button>
+        <Button onClick={onRemove}>閉じずに外す</Button>
+      </div>
+    </dialog>
+  );
+}
+
+/** raw: 唯一の子が文字の素の `<dialog>`。開いている間、React が中身を丸ごと置き換え続ける。開いたら Toast を出す */
+function TextModal({ onClosed }: { onClosed: () => void }) {
+  const ref = React.useRef<HTMLDialogElement>(null);
+  const { showToast } = useToast();
+  const [n, setN] = React.useState(0);
+  const fired = React.useRef(false);
+  React.useEffect(() => {
+    ref.current?.showModal();
+    if (!fired.current) {
+      fired.current = true;
+      showToast({ variant: 'info', description: '文字だけの dialog の知らせ', action: { label: '元に戻す', onClick: () => {} } });
+    }
+    const t = window.setInterval(() => setN((x) => x + 1), 50);
+    return () => window.clearInterval(t);
+  }, [showToast]);
+  return (
+    <dialog ref={ref} aria-label="文字だけの dialog" onClose={onClosed} className="p-4 rounded-md bg-surface text-onSurface backdrop:bg-surface-overlay">
+      {`更新 ${n} 回 (Esc で閉じる)`}
+    </dialog>
+  );
+}
+
+function RawScenarioDemo() {
+  const [raw, setRaw] = React.useState(false);
+  const [text, setText] = React.useState(false);
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <FireButtons where="ページ" onLog={() => {}} />
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={() => setRaw(true)}>素の dialog を開く</Button>
+        <Button onClick={() => setText(true)}>文字だけの dialog を開く</Button>
+      </div>
+      {raw && <RawModal onRemove={() => setRaw(false)} />}
+      {text && <TextModal onClosed={() => setText(false)} />}
+    </div>
+  );
+}
+
+/** stacked: JSX では ConfirmDialog を FormDialog より前に置く。FormDialog の上に ConfirmDialog を重ね、その中から単発の Toast を開く */
+function StackedScenarioDemo() {
+  const [form, setForm] = React.useState(false);
+  const [confirm, setConfirm] = React.useState(false);
+  const [single, setSingle] = React.useState(false);
+  const [log, setLog] = React.useState<string[]>([]);
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <Button onClick={() => setForm(true)}>作業を開く</Button>
+      <ConfirmDialog
+        open={confirm}
+        onClose={() => setConfirm(false)}
+        onConfirm={() => setConfirm(false)}
+        title="入力を破棄しますか？"
+        confirmLabel="破棄する"
+        cancelLabel="破棄をやめる"
+      >
+        <Button variant="secondary" onClick={() => setSingle(true)}>単発の Toast</Button>
+      </ConfirmDialog>
+      <FormDialog open={form} onClose={() => setForm(false)} onSubmit={() => setForm(false)} title="絞り込み" submitLabel="適用">
+        <Button variant="secondary" onClick={() => setConfirm(true)}>確認を重ねる</Button>
+      </FormDialog>
+      <Toast
+        open={single}
+        onClose={() => setSingle(false)}
+        variant="info"
+        description="単発の知らせ"
+        action={{ label: '元に戻す', onClick: () => setLog((l) => [...l, '単発']) }}
+      />
+      <p className="type-caption text-onSurface-subtle" data-testid="log">
+        {log.join(' / ') || '（まだ何も起きていない）'}
+      </p>
+    </div>
+  );
+}
+
+/** unmount: FormDialog を開いている間に、内側の ToastProvider を外す */
+function UnmountScenarioDemo() {
+  const [open, setOpen] = React.useState(false);
+  const [inner, setInner] = React.useState(true);
+  const innerShow = React.useRef<ReturnType<typeof useToast>['showToast'] | null>(null);
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <Button onClick={() => setOpen(true)}>作業を開く</Button>
+      {inner && (
+        <ToastProvider position="top-right">
+          <CaptureShowToast target={innerShow} />
+        </ToastProvider>
+      )}
+      <FormDialog open={open} onClose={() => setOpen(false)} onSubmit={() => setOpen(false)} title="絞り込み" submitLabel="適用">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="secondary"
+            onClick={() => innerShow.current?.({ variant: 'info', description: '内側の知らせ', action: { label: '元に戻す', onClick: () => {} } })}
+          >
+            内側の Toast
+          </Button>
+          <Button variant="secondary" onClick={() => setInner(false)}>内側の Provider を外す</Button>
+        </div>
+      </FormDialog>
+    </div>
+  );
+}
+
+function CaptureShowToast({ target }: { target: React.MutableRefObject<ReturnType<typeof useToast>['showToast'] | null> }) {
+  const { showToast } = useToast();
+  React.useEffect(() => {
+    target.current = showToast;
+    return () => {
+      target.current = null;
+    };
+  }, [showToast, target]);
+  return null;
+}
+
 const SCENARIO_DOCS =
-  'いろいろな場面を手で触るための story (play は持たない)。dialogs: ConfirmDialog・FormDialog (取り消すと上に破棄の確認)・Menu・Popover を開いている間に Toast を出す。「1 秒後に Toast を出す」を押してから開くと、開いている間に届く。providers: Provider を 2 つ重ね、単発の `<Toast>` も置いて、FormDialog の中から 3 つとも出す。';
+  'いろいろな場面を手で触るための story (play は持たない)。dialogs: ConfirmDialog・FormDialog (取り消すと上に破棄の確認)・Menu・Popover を開いている間に Toast を出す。「1 秒後に Toast を出す」を押してから開くと、開いている間に届く。providers: Provider を 2 つ重ね、単発の `<Toast>` も置いて、FormDialog の中から 3 つとも出す。raw: 使う側の素の `<dialog>` (閉じずに DOM から外す) と、唯一の子が文字で中身が置き換わり続ける dialog。stacked: JSX で ConfirmDialog を FormDialog より前に置き、FormDialog の上に重ねて単発の Toast を開く。unmount: FormDialog を開いている間に内側の ToastProvider を外す。';
 
 export const Scenarios: StoryObj<{ scenario: Scenario; position: ToastPosition }> = {
   args: { scenario: 'dialogs', position: 'bottom-right' },
   argTypes: {
-    scenario: { control: 'select', options: ['dialogs', 'providers'] },
+    scenario: { control: 'select', options: ['dialogs', 'providers', 'raw', 'stacked', 'unmount'] },
     position: { control: 'select', options: ['top', 'top-right', 'bottom', 'bottom-right'] },
   },
   parameters: {
@@ -285,7 +420,15 @@ export const Scenarios: StoryObj<{ scenario: Scenario; position: ToastPosition }
   },
   render: ({ scenario, position }) => (
     <ToastProvider position={position}>
-      {scenario === 'providers' ? <ProvidersScenarioDemo /> : <DialogScenarioDemo />}
+      {
+        {
+          dialogs: <DialogScenarioDemo />,
+          providers: <ProvidersScenarioDemo />,
+          raw: <RawScenarioDemo />,
+          stacked: <StackedScenarioDemo />,
+          unmount: <UnmountScenarioDemo />,
+        }[scenario]
+      }
     </ToastProvider>
   ),
 };
@@ -300,13 +443,13 @@ function toastBody(text: string): HTMLElement {
 }
 
 /** Toast が見えて (一番上で)、ボタンにフォーカスが入り、置かれている dialog (無ければ null) を返す */
-async function expectUsable(text: string, dialogTitle: string | null) {
+async function expectUsable(text: string, dialogTitle: string | null, rawDialogLabel?: string) {
   const body = toastBody(text);
   const r = body.getBoundingClientRect();
   // 一番上: 真ん中の点に当たるのが Toast (dialog の背景・中身ではない)
   await expect(body.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2))).toBe(true);
   // フォーカスが入る (dialog の外に残ると inert で入らない)
-  const close = body.querySelector<HTMLElement>('button[aria-label="閉じる"]')!;
+  const close = body.querySelector<HTMLElement>('button[aria-label="通知を閉じる"]')!;
   const prev = document.activeElement as HTMLElement | null;
   close.focus();
   await expect(document.activeElement).toBe(close);
@@ -315,8 +458,10 @@ async function expectUsable(text: string, dialogTitle: string | null) {
   await expect(body.closest('[aria-live]')).not.toBeNull();
   // 置き場: dialog を開いている間は一番上の dialog の中、閉じたら元の場所 (popover を外す)
   const host = body.closest('.z-toast') as HTMLElement;
-  await expect(body.closest('dialog')?.querySelector('h2')?.textContent ?? null).toBe(dialogTitle);
-  await expect(host.hasAttribute('popover')).toBe(dialogTitle !== null);
+  const dialog = body.closest('dialog');
+  if (rawDialogLabel) await expect(dialog?.getAttribute('aria-label')).toBe(rawDialogLabel);
+  else await expect(dialog?.querySelector('h2')?.textContent ?? null).toBe(dialogTitle);
+  await expect(host.hasAttribute('popover')).toBe(dialogTitle !== null || !!rawDialogLabel);
 }
 
 const visibleButton = (name: string) =>
@@ -370,9 +515,16 @@ export const OverDialog: StoryObj = {
     await waitFor(() => toastBody('アーカイブしました (ページ)'));
     await userEvent.click(screen.getByRole('button', { name: '確認を開く' }));
     await expectUsable('アーカイブしました (ページ)', '予約を取り消しますか？');
+    // dialog の中で、Toast の閉じるをキーボードで押して Toast が消えたら、フォーカスは dialog そのものへ (body に落ちない)。
+    // 残っている別の Toast へは移さない
+    const confirmDialog = toastBody('アーカイブしました (ページ)').closest('dialog')!;
+    toastBody('アーカイブしました (ページ)').querySelector<HTMLElement>('button[aria-label="通知を閉じる"]')!.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(document.activeElement).toBe(confirmDialog));
+    await expectUsable(text, '予約を取り消しますか？');
     await expectUsable(text, '予約を取り消しますか？');
     await userEvent.click(screen.getByRole('button', { name: 'やめる' }));
-    await expectUsable('アーカイブしました (ページ)', null);
+    await expectUsable(text, null);
   },
 };
 
@@ -403,5 +555,91 @@ export const OverDialogProviders: StoryObj = {
     await userEvent.click(screen.getByRole('button', { name: 'キャンセル' }));
     await waitFor(() => expect(document.querySelector('dialog[open]')).toBeNull());
     for (const text of ['外側の知らせ', '内側の知らせ', '単発の知らせ']) await expectUsable(text, null);
+  },
+};
+
+export const OverDialogRemoved: StoryObj = {
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '守る play (撮影しない、#169)。使う側の素の `<dialog>` を開いたまま DOM から外しても、Toast は消えずにページへ戻り、その後も出せる。唯一の子が文字の dialog で、開いている間に中身が置き換わり続けても、Toast は dialog の上に残る。',
+      },
+    },
+  },
+  render: () => (
+    <ToastProvider>
+      <RawScenarioDemo />
+    </ToastProvider>
+  ),
+  play: async () => {
+    await userEvent.click(screen.getByRole('button', { name: '素の dialog を開く' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Toast (素の dialog)' }));
+    await waitFor(() => toastBody('素の dialog の知らせ'));
+    await expectUsable('素の dialog の知らせ', null, '素の dialog');
+    // 閉じずに外す → Toast はページへ戻る (置き場ごと消えない)
+    await userEvent.click(screen.getByRole('button', { name: '閉じずに外す' }));
+    await waitFor(() => expect(document.querySelector('dialog[open]')).toBeNull());
+    await waitFor(() => expectUsable('素の dialog の知らせ', null));
+    // その後に出した Toast も文書にある
+    await userEvent.click(screen.getByRole('button', { name: 'Toast (3 秒・ページ)' }));
+    await waitFor(() => toastBody('保存しました (ページ)'));
+    await expectUsable('保存しました (ページ)', null);
+
+    // 唯一の子が文字の dialog: 中身が置き換わっても、Toast は dialog の上に残る
+    await userEvent.click(screen.getByRole('button', { name: '文字だけの dialog を開く' }));
+    await waitFor(() => toastBody('文字だけの dialog の知らせ'));
+    const textDialog = document.querySelector<HTMLDialogElement>('dialog[aria-label="文字だけの dialog"]')!;
+    await waitFor(() => expect(textDialog.textContent).toMatch(/更新 [5-9]|更新 \d\d/));
+    await expectUsable('文字だけの dialog の知らせ', null, '文字だけの dialog');
+    textDialog.close();
+    await waitFor(() => expect(document.querySelector('dialog[open]')).toBeNull());
+    await expectUsable('文字だけの dialog の知らせ', null);
+  },
+};
+
+export const OverDialogStacked: StoryObj = {
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '守る play (撮影しない、#169)。ToastProvider が無いページで、FormDialog の上に ConfirmDialog を重ね (JSX では ConfirmDialog が先)、その中から単発の `<Toast>` を開くと、上の ConfirmDialog の上に出て押せる (見張りは Toast を開いたときに始まるので、フォーカスを含む dialog を一番上とみなす)。',
+      },
+    },
+  },
+  render: () => <StackedScenarioDemo />,
+  play: async () => {
+    await userEvent.click(screen.getByRole('button', { name: '作業を開く' }));
+    await userEvent.click(screen.getByRole('button', { name: '確認を重ねる' }));
+    await userEvent.click(await screen.findByRole('button', { name: '単発の Toast' }));
+    await waitFor(() => toastBody('単発の知らせ'));
+    await expectUsable('単発の知らせ', '入力を破棄しますか？');
+    await userEvent.click(screen.getByRole('button', { name: '破棄をやめる' }));
+    await waitFor(() => expectUsable('単発の知らせ', '絞り込み'));
+  },
+};
+
+export const OverDialogUnmount: StoryObj = {
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '守る play (撮影しない、#169)。FormDialog を開いている間に、その上に Toast を出している ToastProvider を外すと、置き場は dialog の中に残らない (置き去りの Toast が見え続けない)。',
+      },
+    },
+  },
+  render: () => <UnmountScenarioDemo />,
+  play: async () => {
+    await userEvent.click(screen.getByRole('button', { name: '作業を開く' }));
+    await userEvent.click(screen.getByRole('button', { name: '内側の Toast' }));
+    await waitFor(() => toastBody('内側の知らせ'));
+    await expectUsable('内側の知らせ', '絞り込み');
+    const dialog = toastBody('内側の知らせ').closest('dialog')!;
+    await userEvent.click(screen.getByRole('button', { name: '内側の Provider を外す' }));
+    await waitFor(() => expect(document.body.textContent).not.toContain('内側の知らせ'));
+    await expect(dialog.querySelector('.z-toast')).toBeNull();
   },
 };

@@ -6,6 +6,7 @@ import { ConfirmDialog } from '../ConfirmDialog';
 import { FormDialog } from '../FormDialog';
 import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';
+import { NARROW_RUN, expectRunWidth, expectMotion, afterOpenGuard, expectBottomSheet, pressBackdrop, pressEscape } from '../../../.storybook/narrow-play';
 
 /**
  * Menu stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
@@ -16,8 +17,9 @@ import { Icon } from '../../primitives/Icon';
  * 開いた状態は同時に 1 つしか出せない (popover="auto" / showModal) ので、「操作の一覧」(Overview) と
  * 「1 つ選ぶ」(OverviewSingleChoice) を別の story に分けて `open` で凍結する。
  * 撮影は動きを減らす設定で行う (開く動きの途中を撮らない)。
- * play はテストの既定の幅 (広い幅) で走る。狭い幅 (下から出る面) の操作は PR の表 (Playwright) で確かめた。
- * 下から出る面は開いてから 300ms ポインタを受け付けないので、狭い幅で play を書くときは 300ms 以上待ってから押す。
+ * play はテストの既定の幅 (広い幅) で走る。狭い幅 (下から出る面) の操作は、幅 375 で走る story (NarrowSheet /
+ * NarrowConfirm / NarrowReturnFocus。`globals: NARROW_RUN` で走る幅を宣言する、AGENTS §8-4) の play が確かめる。1 つの play は 1 つの幅の期待だけを書く。
+ * 下から出る面は開いてから 300ms ポインタを受け付けないので、狭い幅で play を書くときは 300ms 以上待ってから押す (`afterOpenGuard`)。
  */
 type PlaygroundArgs = {
   title: string;
@@ -613,5 +615,155 @@ export const ItemsShrink: StoryObj<{ scenario: Scenario }> = {
     await waitFor(() => expect(within(menu).getByRole('menuitem', { name: '名前を変更' })).toHaveFocus());
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(canvas.getByTestId('log')).toHaveTextContent('名前を変更'));
+  },
+};
+
+// ── 5. 狭い幅 (幅 375 で走る。視覚回帰対象外) ────────────
+// 走る幅は `globals: NARROW_RUN` で宣言する (test-runner が描く前にその幅にする。Storybook で開いても 375 に固定して見える、AGENTS §8-4)
+
+export const NarrowSheet: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'actions' },
+  globals: NARROW_RUN,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '幅 375 で走る (Storybook でも 375 に固定して見える)。開くと下から出る面・行は 48px 以上・項目を押すと選んで閉じる・Esc / 外 (背景) / 閉じるボタンで閉じる (選ばない)・閉じた後のフォーカスは入口、を確かめる。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    await expectRunWidth();
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: '操作' });
+    const log = canvas.getByTestId('log');
+    const open = async () => {
+      await userEvent.click(trigger);
+      await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+      const sheet = await screen.findByRole('dialog', { name: '操作' });
+      await expectBottomSheet(sheet);
+      return sheet;
+    };
+    const expectClosed = async (sheet: HTMLElement) => {
+      await waitFor(() => expect((sheet as HTMLDialogElement).open).toBe(false));
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await waitFor(() => expect(trigger).toHaveFocus());
+    };
+
+    // 開く: 下から出る面。項目は面の中、行は指で押せる 48px 以上。フォーカスは最初の有効な項目
+    let sheet = await open();
+    const items = within(sheet).getAllByRole('menuitem');
+    await expect(items).toHaveLength(4);
+    for (const it of items) await expect(it.getBoundingClientRect().height).toBeGreaterThanOrEqual(48);
+    await waitFor(() => expect(items[0]).toHaveFocus());
+
+    // 項目を押して選ぶ → onSelect が呼ばれ、閉じて、フォーカスは入口
+    await afterOpenGuard();
+    await userEvent.click(within(sheet).getByRole('menuitem', { name: '複製' }));
+    await waitFor(() => expect(log).toHaveTextContent('複製'));
+    await expectClosed(sheet);
+
+    // Esc → 閉じる (選ばない)
+    sheet = await open();
+    pressEscape(sheet);
+    await expectClosed(sheet);
+
+    // 外 (背景) を押す → 閉じる
+    sheet = await open();
+    await afterOpenGuard();
+    pressBackdrop(sheet);
+    await expectClosed(sheet);
+
+    // 閉じるボタン → 閉じる
+    sheet = await open();
+    await afterOpenGuard();
+    await userEvent.click(within(sheet).getByRole('button', { name: '閉じる' }));
+    await expectClosed(sheet);
+
+    // 選んだのは最初の 1 回だけ
+    await expect(log.textContent).toBe('複製');
+  },
+};
+
+export const NarrowConfirm: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'confirm' },
+  globals: NARROW_RUN,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    // 動きを減らす設定の強制を外す (test-runner)。守りたい道は「面が閉じる動きの間 (inert) に確認が開く」ときだけ起きる:
+    // 動きが無いと面はすぐ閉じてフォーカスが入口に戻ってから確認が開くので、`returnFocusRef` が無くても入口に戻り、play が守れない
+    reducedMotion: { disable: true },
+    docs: {
+      description: {
+        story:
+          '幅 375 で走る (Storybook でも 375 に固定して見える)。動きを減らす設定を外して走る。下から出る面の項目から ConfirmDialog を開き、閉じたらフォーカスが Menu の入口に戻る (確認は面が閉じる動きの間に開くので、`returnFocusRef` が無いとブラウザは body に戻す。AGENTS §8-3)。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    await expectRunWidth();
+    await expectMotion();
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: '予約を変更' });
+    const log = canvas.getByTestId('log');
+
+    for (const how of ['button', 'escape'] as const) {
+      await userEvent.click(trigger);
+      const sheet = await screen.findByRole('dialog', { name: '予約を変更' });
+      await expectBottomSheet(sheet);
+      await afterOpenGuard();
+      await userEvent.click(within(sheet).getByRole('menuitem', { name: '予約を取り消す' }));
+      // 面は閉じ、確認が開く。戻せない操作なので最初のフォーカスは取り消し (戻る)
+      const confirm = await screen.findByRole('alertdialog', { name: '予約を取り消しますか？' });
+      await waitFor(() => expect((sheet as HTMLDialogElement).open).toBe(false));
+      const back = within(confirm).getByRole('button', { name: '戻る' });
+      await waitFor(() => expect(back).toHaveFocus());
+      // 取り消す (戻るボタン / Esc) → 確認が閉じて、フォーカスは Menu の入口 (body ではない)
+      if (how === 'button') await userEvent.click(back);
+      else pressEscape(confirm);
+      await waitFor(() => expect((confirm as HTMLDialogElement).open).toBe(false));
+      await waitFor(() => expect(trigger).toHaveFocus());
+    }
+    await expect(log.textContent).toBe('ConfirmDialog の onClose / ConfirmDialog の onClose');
+  },
+};
+
+export const NarrowReturnFocus: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'nested' },
+  globals: NARROW_RUN,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    // 動きを減らす設定の強制を外す (test-runner)。2 つ目の面は 1 つ目の面が閉じる動きの間に開くので、ブラウザが覚える
+    // 「開く前のフォーカス」は 1 つ目の面の項目になり、閉じると戻せない。そこを下から出る面の戻し (`returnFocusRef`) が拾う。
+    // 動きを減らす設定では 1 つ目がすぐ閉じるので別の道になる (その道ではフォーカスが 1 つ目の入口に行く。#165 の PR に書いた)
+    reducedMotion: { disable: true },
+    docs: {
+      description: {
+        story:
+          '幅 375 で走る (Storybook でも 375 に固定して見える)。動きを減らす設定を外して走る。下から出る面の項目で選んだら別の Menu を開く (nested)。2 つ目の面を閉じたら、フォーカスは 2 つ目の入口 (並び順) に戻る (ブラウザは開く前のフォーカス = 1 つ目の面の項目へ戻そうとする)。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    await expectRunWidth();
+    await expectMotion();
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '操作' }));
+    const first = await screen.findByRole('dialog', { name: '操作' });
+    await expectBottomSheet(first);
+    await afterOpenGuard();
+    await userEvent.click(within(first).getByRole('menuitem', { name: '並び順を選ぶ' }));
+    const second = await screen.findByRole('dialog', { name: '並び順' });
+    await expectBottomSheet(second);
+    await waitFor(() => expect((first as HTMLDialogElement).open).toBe(false));
+    await afterOpenGuard();
+    await userEvent.click(within(second).getByRole('menuitem', { name: '所要時間順' }));
+    await waitFor(() => expect((second as HTMLDialogElement).open).toBe(false));
+    await expect(canvas.getByTestId('log')).toHaveTextContent('所要時間順');
+    await waitFor(() => expect(canvas.getByRole('button', { name: '並び順' })).toHaveFocus());
   },
 };

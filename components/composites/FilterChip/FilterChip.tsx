@@ -4,7 +4,7 @@ import React from 'react';
  * FilterChip Props
  *
  * 検索結果やリストの絞り込み・並び替え操作を 1 行に並べるための chip 風ボタン。
- * 「Modal を起動するエントリ」「Toggle」「アイコンのみのアクション」などフィルター
+ * 「Menu・FormDialog を開くエントリ」「Toggle」「アイコンのみのアクション」などフィルター
  * バー上の複合的な役割を 1 つのコンポーネントで表現する。
  *
  * 視覚的な特徴:
@@ -17,10 +17,10 @@ import React from 'react';
  * - アイコンのみで使う場合は `aria-label` 必須
  *
  * @example
- *   // 基本（ラベル + dropdown 矢印、タップで Modal 起動）
+ *   // 基本（ラベル + dropdown 矢印、タップで Menu か FormDialog を開く）
  *   <FilterChip
  *     iconRight={<Icon name="expand_more" size="sm" />}
- *     onClick={openSortModal}
+ *     onClick={openSortMenu}
  *   >
  *     並び順: 出発時刻順
  *   </FilterChip>
@@ -35,7 +35,7 @@ import React from 'react';
  *   </FilterChip>
  *
  * @example
- *   // アイコンのみ（Modal 起動、aria-label 必須）
+ *   // アイコンのみ（FormDialog を開く、aria-label 必須）
  *   <FilterChip
  *     iconLeft={<Icon name="tune" size="sm" />}
  *     aria-label="すべての条件で絞り込み"

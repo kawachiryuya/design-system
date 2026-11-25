@@ -12,6 +12,7 @@ import {
 import { Icon } from '../../primitives/Icon';
 import { BottomSheet } from '../../_internal/BottomSheet/BottomSheet';
 import { useIsNarrowViewport } from '../../_internal/useIsNarrowViewport';
+import { useTriggerRef } from '../../_internal/useTriggerRef';
 import { useHideFocusRingUntilKey, hideFocusRingUntilKeyOrBlur } from '../../_internal/useHideFocusRingUntilKey';
 import { tv } from '../../_internal/tv';
 
@@ -86,7 +87,7 @@ export interface MenuItem {
 export interface MenuProps {
   /**
    * 開閉の入口 (`<Button>` 等)。`aria-haspopup="menu"` / `aria-expanded` / `aria-controls` と
-   * ref / onClick / onPointerDown が自動で付く。入口自身の `ref` は上書きされる。
+   * ref / onClick / onPointerDown が自動で付く。入口自身の `ref` にも要素を渡す (`ConfirmDialog` の `returnFocusRef` などに使える)。
    */
   trigger: React.ReactElement;
   /** メニューの項目。並べた順に出る。 */
@@ -163,6 +164,8 @@ export const Menu: React.FC<MenuProps> = ({
   const panelRef = React.useRef<HTMLDivElement | null>(null);
   const sheetRef = React.useRef<HTMLDialogElement | null>(null);
   const referenceRef = React.useRef<HTMLElement | null>(null);
+  // 入口自身の ref にも要素を渡す (React 18・19 の両方で警告なく読み、描き直しで呼び直さない)
+  const triggerRef = useTriggerRef(trigger, referenceRef);
   const itemRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const typeaheadRef = React.useRef<{ buffer: string; timer: number | null }>({ buffer: '', timer: null });
   /** 入口を押し始めた時点の開閉 (状態) と、広い幅のメニューが実際に出ていたか */
@@ -446,9 +449,7 @@ export const Menu: React.FC<MenuProps> = ({
 
   const triggerNode = trigger as React.ReactElement<any>;
   const triggerEl = React.cloneElement(triggerNode, {
-    ref: (node: HTMLElement | null) => {
-      referenceRef.current = node;
-    },
+    ref: triggerRef,
     'aria-haspopup': 'menu',
     'aria-expanded': shown,
     'aria-controls': menuId,

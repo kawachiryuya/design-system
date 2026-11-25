@@ -28,7 +28,7 @@ dropdown → sticky → overlay → modal → popover → toast → tooltip の 
 - **primitive 層を持たず semantic 名のみ**: `z-index = 1000` という数値そのものに意味はなく「modal レイヤ」という役割名で初めて意図が立つ。詳細は [AGENTS.md §3-4](https://github.com/kawachiryuya/design-system/blob/main/AGENTS.md#3-4-semantic-only-スケール-z-index--opacity--focus-ring)
 - **7 layer 設計**: dropdown (inline) → sticky → overlay → modal → popover → toast → tooltip の重なり順
 - **値は 1000 から 100 刻み**: 衝突や挿入余地を持たせるため十分大きく
-- **Modal は実質 OS 管理**: ネイティブ `<dialog>` を採用しているため z-index 指定が不要。スケールは将来 Popover / Tooltip / Dropdown 追加時の予約
+- **ConfirmDialog / FormDialog は実質 OS 管理**: ネイティブ `<dialog>` (トップレイヤー) を採用しているため z-index 指定が不要 (token の名前 `modal` は変えない)。スケールは将来 Popover / Tooltip / Dropdown 追加時の予約
 
 ---
 

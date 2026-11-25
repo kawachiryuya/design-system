@@ -4,7 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Primitives Overview
 
-**Primitive** は、**単一の HTML 要素を装飾する薄いラッパー** で **状態管理を持たない** 最小単位のコンポーネント群です。Composite (Modal / Tabs / Card 等) はこれらを組み合わせて作られます。
+**Primitive** は、**単一の HTML 要素を装飾する薄いラッパー** で **状態管理を持たない** 最小単位のコンポーネント群です。Composite (ConfirmDialog / Tabs / Card 等) はこれらを組み合わせて作られます。
 
 実装の起点として「まず Primitive で表現できないか」を確認し、足りない場合だけ Composite に進む順序で設計します。
 
@@ -25,7 +25,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | `<Input>` / `<Textarea>` / `<Image>` | Primitive | 単一要素、controlled prop のみ |
 | `<Badge>` / `<Typography>` / `<Label>` | Primitive | 単一 `<span>` / heading / `<label>`、状態なし |
 | `<Switch>` / `<Checkbox>` / `<Radio>` | Composite | `<Label>` 内包 + group state |
-| `<Modal>` / `<Toast>` / `<Popover>` | Composite | portal / focus trap / overlay |
+| `<ConfirmDialog>` / `<FormDialog>` / `<Toast>` / `<Popover>` | Composite | portal / focus trap / overlay |
 
 ---
 

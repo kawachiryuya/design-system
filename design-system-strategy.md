@@ -120,7 +120,7 @@ Step 1  Token        (色 / spacing / typography 等の semantic 2 層化)
    ↓
 Step 2  Primitives   (Button / Input / Icon 等、単一 HTML 要素のラッパー)
    ↓
-Step 3  Composites   (Card / Modal / Form 等、Primitives の組合せ + 状態)
+Step 3  Composites   (Card / ConfirmDialog / Form 等、Primitives の組合せ + 状態)
    ↓
 Step 4  Layout      (ページ骨格 / グリッド / レスポンシブ / Navigation)
    ↓
@@ -167,7 +167,7 @@ if (featureFlag.newDesign) {
 
 画面上の要素に重要度の順序を与え、ユーザーが迷わず視線を動かせるようにする。手段は **サイズ / 色とコントラスト / 余白 / 位置 / 太さ** の 5 つ。単独でも機能するが、Primary アクションのように強い差をつけたい場面では複数を重ねる。
 
-- **1 画面に明確な「最重要要素」を 1 つ**。Primary Button が複数あると優先順位が消える ([`Modal.guideline.mdx`](./components/composites/Modal/Modal.guideline.mdx) で実例)
+- **1 画面に明確な「最重要要素」を 1 つ**。Primary Button が複数あると優先順位が消える ([`ConfirmDialog.guideline.mdx`](./components/composites/ConfirmDialog/ConfirmDialog.guideline.mdx) で実例。確定は部品が 1 つだけ持つ)
 - **段数は 3〜4 を超えない**。段数が増えると 1 段差が小さくなり階層が伝わらない
 - **強調 (bold / 色) は 1 段落 1〜2 箇所まで**。乱用すると "全部重要" = "何も強調されない"
 
@@ -241,9 +241,9 @@ if (featureFlag.newDesign) {
 
 ### オーバーレイ系コンポーネント (Popover / Menu / Tooltip)
 
-z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだが実体コンポーネントが無く、現状 Button guideline は「メニューは暫定で `<Modal>` 代用」と案内している。複数アクションの集約をモーダルで代替するのは操作コストが高く、デザイン的にも過剰な中断。
+z-index トークンには `dropdown` / `popover` / `tooltip` が予約済みだが実体コンポーネントが無く、当時の Button guideline は「メニューは暫定で `<Modal>` 代用」と案内していた。複数アクションの集約をモーダルで代替するのは操作コストが高く、デザイン的にも過剰な中断。
 
-- **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (`menu`/`menuitem` roving) → `Tooltip` (hover/focus delay)。実装済み。`DropdownMenu` は #157 で役割「選ぶ」の `Menu` に改名し、狭い幅では下から出る面 (内部の `BottomSheet`) で出す。`Popover` も #157 で役割「補足」として、狭い幅では同じ面で出す
+- **ロードマップ順**: `Popover` (anchor 配置 + dismiss の基盤) → `DropdownMenu` (`menu`/`menuitem` roving) → `Tooltip` (hover/focus delay)。実装済み。`DropdownMenu` は #157 で役割「選ぶ」の `Menu` に改名し、狭い幅では下から出る面 (内部の `BottomSheet`) で出す。`Popover` も #157 で役割「補足」として、狭い幅では同じ面で出す。`Modal` は #157 で役割ごとに `ConfirmDialog` (確認) と `FormDialog` (作業) に分けた (どちらも外を押しても閉じない。下から出る面は使わない)
 - いずれも実装は別 PR。着手時に native `popover` 属性 / CSS Anchor Positioning の採用可否を最初に判断する
 
 ### スタイルのカプセル化 (C-scoped 確定 / 完全カプセル化 D は保留) — #76
@@ -252,7 +252,7 @@ v4.0.0 で preflight を非同梱化 (#57) した結果、mode①(no-Tailwind) �
 
 - **C は当初から中継地点**であり、今回 C-scoped に精製した。グローバル footprint をほぼゼロに戻し、配信方針を回復した。`check:styles` が global footprint の再混入を機械ガードする。
 - **既知の残留リーク (受容)**: DS コンポーネントに `children` として渡された消費者コンテンツはサブツリー内なのでベースリセット (box-sizing / border 既定) を受ける。「DS の箱の中身は DS の箱モデルに従う」という意図的・許容範囲の挙動として受容する (さらに厳密に閉じるのは D の領域)。
-- **完全カプセル化 (D) は保留**。進める場合の手段は **build-time の scoped CSS であり、Shadow DOM ではない**。理由: 本 DS は (1) SSR/RSC セーフが契約、(2) overlay 系 (Modal / Popover / Tooltip 等) が top-layer を多用、(3) native フォーム参加に依存しており、Shadow DOM はこの 3 点すべてと衝突する。scoped CSS は RSC ネイティブで、portal / top-layer をまたいでも効き、フォームにも影響しない。
+- **完全カプセル化 (D) は保留**。進める場合の手段は **build-time の scoped CSS であり、Shadow DOM ではない**。理由: 本 DS は (1) SSR/RSC セーフが契約、(2) overlay 系 (ConfirmDialog / FormDialog / Popover / Tooltip 等) が top-layer を多用、(3) native フォーム参加に依存しており、Shadow DOM はこの 3 点すべてと衝突する。scoped CSS は RSC ネイティブで、portal / top-layer をまたいでも効き、フォームにも影響しない。
 - **forcing function (D 着手の合図)**: (a) 2 人目の実消費者が別 framework での利用を要求、または (b) 未知 / 敵対的な消費者 CSS からの隔離 (埋め込み等) が必要な案件が発生。**「スコア向上」「念のため」は合図にしない。**
 - **D の最初の一歩**: 全面着手の前に overlay 系を 1 コンポーネント (例 Popover) だけ scoped CSS で spike し、実コストと痛点を実測してから全体を判断する。
 

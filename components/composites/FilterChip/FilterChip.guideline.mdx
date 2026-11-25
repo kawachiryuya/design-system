@@ -19,7 +19,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-検索結果やリストの絞り込み・並び替え操作を 1 行に並べるための chip 風ボタン。「Modal 起動」「Toggle」「アイコンのみのアクション」など、**フィルターバー上の複合的な役割を 1 つの component で表現** する。`aria-pressed` で active 状態を伝達し、視覚的にも枠線/背景色で強調される。
+検索結果やリストの絞り込み・並び替え操作を 1 行に並べるための chip 風ボタン。「Menu・FormDialog を開く」「Toggle」「アイコンのみのアクション」など、**フィルターバー上の複合的な役割を 1 つの component で表現** する。`aria-pressed` で active 状態を伝達し、視覚的にも枠線/背景色で強調される。
 
 ---
 
@@ -34,7 +34,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 ## Do / Don't
 
 <DoDontExample
-  label="Modal 起動には右側に下矢印を置く"
+  label="Menu・FormDialog を開くものには右側に下矢印を置く"
   doExample={
     <FilterChip iconRight={<Icon name="expand_more" size="sm" color="inherit" />}>
       並び順: 出発時刻順
@@ -44,7 +44,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <FilterChip>並び順: 出発時刻順</FilterChip>
   }
-  dontCaption="矢印なしだと「タップしても何も起きない」と誤解される。Toggle (押下で状態反転) と Modal 起動の見分けが付かない。"
+  dontCaption="矢印なしだと「タップしても何も起きない」と誤解される。Toggle (押下で状態反転) と「開く」の見分けが付かない。"
 />
 
 <DoDontExample
@@ -114,7 +114,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 > 旧 EdgeCases の usage 合成例。VR (Overview) からは外し、ドキュメントとして保持。要不要は後で個別判断。
 
-**フィルターバー（横スクロール、Modal 起動 + Toggle 混在）**
+**フィルターバー（横スクロール、Menu・FormDialog を開くもの + Toggle 混在）**
 
 <div className="flex gap-2 overflow-x-auto pb-2">
   <FilterChip iconLeft={<Icon name="tune" size="sm" color="inherit" />} aria-label="すべての条件で絞り込み" />
@@ -142,7 +142,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 ## アクセシビリティ
 
 - **`aria-pressed`**: `active` prop の値が `aria-pressed` 属性として反映。SR は「並び順: 出発時刻順 押下」のように選択状態を読み上げる
-- **iconOnly + `aria-label`**: テキストなしで使う場合 (Modal 起動 chip 等) は `aria-label` で操作意図を必ず示す
+- **iconOnly + `aria-label`**: テキストなしで使う場合 (Menu・FormDialog を開く chip 等) は `aria-label` で操作意図を必ず示す
 - **キーボード操作**: `Tab` で focus、`Enter` / `Space` で onClick 発火 (button 標準)
 - **フォーカスの輪**: キーボードでフォーカスしたときだけ、外側 2px＋すき間 2px (`focus-ring`)。枠線の色は変えない (形の使い分けは AGENTS.md §3-2「フォーカスの規則」)
 - **タッチターゲット**: h-9 (36px)。WCAG 2.5.5 (44×44px) には未到達だが、フィルターバー用途では小型化が一般的。密集レイアウト時は `gap-2` 以上を確保

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppShell, Button, Card, Input, Checkbox, Modal } from '@kawachiryuya/design-system';
+import { AppShell, Button, Card, Input, Checkbox, FormDialog } from '@kawachiryuya/design-system';
 
 /**
  * mode①(no-Tailwind) 検証アプリ。
@@ -157,17 +157,23 @@ export const App = () => {
 
       {/* overlay / top-layer: data-ds-root を <dialog> に付与済。top-layer に昇格しても
           DOM 祖先は保たれるので、scope された reset が dialog の中身まで届くことを確認する面。 */}
-      <div style={sectionLabel}>Modal — overlay (top-layer) の中身も reset が届くか</div>
-      <Button variant="secondary" onClick={() => setModalOpen(true)}>モーダルを開く</Button>
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="top-layer の中身">
+      <div style={sectionLabel}>FormDialog — overlay (top-layer) の中身も reset が届くか</div>
+      <Button variant="secondary" onClick={() => setModalOpen(true)}>dialog を開く</Button>
+      <FormDialog
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={() => setModalOpen(false)}
+        title="top-layer の中身"
+        submitLabel="登録"
+      >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 360 }}>
           <p style={{ margin: 0, fontSize: 14, color: 'var(--color-on-surface-subtle)' }}>
             この内容は <code>&lt;dialog&gt;</code> の top-layer に出るが、枠線・チェックボックスが正しく描画されるはず。
           </p>
           <Input id="modal-email" type="email" placeholder="you@example.com" />
-          <Checkbox label="モーダル内のチェックボックス" />
+          <Checkbox label="dialog 内のチェックボックス" />
         </div>
-      </Modal>
+      </FormDialog>
     </AppShell>
 
     {/* ── DS の外側 (data-ds-root の配下でない) 素の要素 ── #76 C-scoped の核心:

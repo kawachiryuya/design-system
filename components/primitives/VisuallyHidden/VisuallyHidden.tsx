@@ -7,7 +7,7 @@ export type VisuallyHiddenElement = 'span' | 'div' | 'p' | 'label';
  * VisuallyHidden Props
  *
  * 視覚的には非表示だがスクリーンリーダには読まれるテキストを描画する。
- * icon-only Button の補助ラベル、フォームの追加説明、Modal close ボタンの代替テキストなど、
+ * icon-only Button の補助ラベル、フォームの追加説明、dialog の閉じるボタンの代替テキストなど、
  * 視覚的にはアイコンや図形で意味を伝えつつ a11y 上はテキストを提供したい場面で使う。
  *
  * @example
@@ -47,7 +47,7 @@ export interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLElement> {
  * VisuallyHidden — Atomic Design: Atom
  *
  * Tailwind の `sr-only` ユーティリティで視覚的に隠しつつ、DOM とアクセシビリティツリーには
- * 残る要素を描画する。a11y 補助の基盤として Modal の close ボタンや icon-only 操作で
+ * 残る要素を描画する。a11y 補助の基盤として dialog の閉じるボタンや icon-only 操作で
  * 多用される。
  *
  * @see VisuallyHiddenProps for usage examples.

@@ -340,7 +340,7 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
 
     /**
      * Esc。ブラウザに閉じさせず、親に閉じる要求を出す。
-     * cancel / close は React では DOM の親へ伝わる: この面が Modal など別の `<dialog>` の中に置かれていると、
+     * cancel / close は React では DOM の親へ伝わる: この面が FormDialog など別の `<dialog>` の中に置かれていると、
      * 親の dialog の onCancel / onClose まで呼ばれて親も閉じる。自分の分はここで止め、自分宛てでないもの (中に置いた別の面の分) は扱わない
      */
     const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
@@ -370,6 +370,9 @@ export const BottomSheet = React.forwardRef<HTMLDialogElement, BottomSheetProps>
       if (!wasOpen) return;
       onCloseRef.current();
       requestAnimationFrame(() => {
+        // 外側の dialog (ConfirmDialog・FormDialog) が閉じるときに、中のこの面も閉じられた場合は出し直さない
+        // (閉じた dialog の中で出し直すと、見えない面が modal として残り、背景が押せなくなる)
+        if (dialogRef.current?.parentElement?.closest('dialog:not([open])')) return;
         if (openPropRef.current) showFromClosed();
       });
     };

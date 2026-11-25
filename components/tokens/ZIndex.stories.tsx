@@ -18,7 +18,7 @@ const LAYERS: Layer[] = [
   { key: 'dropdown', value: 1000, description: 'Select / SearchBar suggest 等の inline overlay', example: 'Select の選択肢リスト' },
   { key: 'sticky',   value: 1100, description: 'sticky header / sticky table column',         example: 'スクロール時に固定される TableHeader' },
   { key: 'overlay',  value: 1200, description: '汎用 overlay (drawer / sheet 背景)',           example: 'Side Drawer の背景マスク' },
-  { key: 'modal',    value: 1300, description: 'modal 本体 (ネイティブ dialog は OS 管理)',     example: 'Modal / FullscreenDialog' },
+  { key: 'modal',    value: 1300, description: 'modal 本体 (ネイティブ dialog は OS 管理)',     example: 'ConfirmDialog / FormDialog' },
   { key: 'popover',  value: 1400, description: 'modal より前面の popover',                     example: 'モーダル内で表示するメニュー' },
   { key: 'toast',    value: 1500, description: '通知 (常に最前面のテンポラリ UI)',              example: 'Toast の通知エリア' },
   { key: 'tooltip',  value: 1600, description: 'tooltip (最後に被さる軽量説明)',                 example: 'icon-only Button の説明 tooltip' },

@@ -84,7 +84,7 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
    * 見出しは役割名で選び、HTML の見出しレベルは `as` で別に決める。
    * - `heroTitle`: LP ヒーロー・数値の強調（48px bold）。アプリ画面では使わない
    * - `pageTitle`: 画面のタイトル（30px bold）。1 画面に 1 つ
-   * - `sectionTitle`: 画面内のセクション、Modal / Drawer のタイトル（24px bold）
+   * - `sectionTitle`: 画面内のセクション、ConfirmDialog / FormDialog / Drawer のタイトル（24px bold）
    * - `itemTitle`: Card / Accordion / リストグループの見出し（20px bold）
    * - `body`: 読み物の本文・入力欄の文字（16px regular）
    * - `supporting`: 本文ではない UI 文言 — 補助説明・メニュー項目・通知・密な表（14px regular）

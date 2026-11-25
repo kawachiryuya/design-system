@@ -9,7 +9,7 @@
  * 使い方: `const release = lockScroll();` … 閉じるときに `release()`。`release` は何度呼んでも 1 回だけ数える。
  * ブラウザでだけ呼ぶ (effect / handler の中)。描画中には呼ばない。
  *
- * 使っている部品: 下から出る面 (`BottomSheet`)・`Modal`。背景を止める重なりを足すときは、ここに乗せる
+ * 使っている部品: 下から出る面 (`BottomSheet`)・`ConfirmDialog`・`FormDialog` (土台 `DialogBase`)。背景を止める重なりを足すときは、ここに乗せる
  * (自前で overflow を書き換えると、閉じる順によって止まったまま残る)。
  */
 

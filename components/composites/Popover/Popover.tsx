@@ -11,6 +11,7 @@ import {
 } from '@floating-ui/dom';
 import { BottomSheet, firstTabbable } from '../../_internal/BottomSheet/BottomSheet';
 import { useIsNarrowViewport } from '../../_internal/useIsNarrowViewport';
+import { useTriggerRef } from '../../_internal/useTriggerRef';
 import { useHideFocusRingUntilKey, hideFocusRingUntilKeyOrBlur } from '../../_internal/useHideFocusRingUntilKey';
 
 /** Popover の配置 (floating-ui の Placement)。`bottom-start` / `top` / `right-end` 等。広い幅でだけ効く。 */
@@ -26,7 +27,7 @@ export type PopoverPlacement = Placement;
  * (形を入れ替えない)。
  *
  * 開いた直後のフォーカスは、どちらの幅でも中の最初の押せるもの (無ければ面・パネルそのもの)。
- * 閉じたら入口に戻す。戻せない確認・まとまった入力は Modal、選択肢から 1 つ選ぶのは `Menu`。
+ * 閉じたら入口に戻す。戻せない確認は `ConfirmDialog`、まとまった入力は `FormDialog`、選択肢から 1 つ選ぶのは `Menu`。
  *
  * @example
  *   // 基本 (uncontrolled)
@@ -44,7 +45,7 @@ export type PopoverPlacement = Placement;
 export interface PopoverProps {
   /**
    * 開閉の入口 (`<Button>` 等)。押すと開閉し、`aria-haspopup="dialog"` / `aria-expanded` / `aria-controls` と
-   * ref / onClick / onPointerDown が自動で付く。入口自身の `ref` は上書きされる。
+   * ref / onClick / onPointerDown が自動で付く。入口自身の `ref` にも要素を渡す (`ConfirmDialog` の `returnFocusRef` などに使える)。
    */
   trigger: React.ReactElement;
   /** 中身。 */
@@ -98,6 +99,8 @@ export const Popover: React.FC<PopoverProps> = ({
   const form: Form = narrow ? 'sheet' : 'popover';
   const panelRef = React.useRef<HTMLDivElement | null>(null);
   const referenceRef = React.useRef<HTMLElement | null>(null);
+  // 入口自身の ref にも要素を渡す (React 18・19 の両方で警告なく読み、描き直しで呼び直さない)
+  const triggerRef = useTriggerRef(trigger, referenceRef);
   /** 入口を押し始めた時点の開閉 (状態) と、広い幅のパネルが実際に出ていたか */
   const triggerPressRef = React.useRef<{ open: boolean; panelShown: boolean } | null>(null);
   const panelId = React.useId();
@@ -222,8 +225,8 @@ export const Popover: React.FC<PopoverProps> = ({
       // 閉じたら入口にフォーカスを戻す (中にフォーカスがあった / 何も無い所を押した)。外の別の押せるものを押して
       // 閉じたときは、そちらへ移ったフォーカスを奪わない。ブラウザは popover を閉じるとき、開く前にフォーカスがあった要素へ
       // 戻す (別の Menu などから開いたときは入口でない) ので、閉じる直前に中にあったかで決める。
-      // 「何も無い所を押した」は、フォーカスが入口を含む入れ物に移ったとき: body のほか、Modal (`<dialog>`) の中の
-      // 何も無い所を押すと、フォーカスは Modal そのものに移る
+      // 「何も無い所を押した」は、フォーカスが入口を含む入れ物に移ったとき: body のほか、ConfirmDialog・FormDialog (`<dialog>`) の中の
+      // 何も無い所を押すと、フォーカスは dialog そのものに移る
       const active = document.activeElement;
       const inside = focusWasInsideRef.current;
       focusWasInsideRef.current = false;
@@ -253,9 +256,9 @@ export const Popover: React.FC<PopoverProps> = ({
     };
   }, [form, requestOpenChange]);
 
-  // 広い幅で Modal (`<dialog>`) の中に置かれたとき: 開いている間に Modal の背景を押すと、ブラウザがパネルを閉じ (light dismiss)、
-  // 同じ押下の click で Modal も閉じてしまう。1 回の押下で閉じるのは一番上の重なり (このパネル) だけにする
-  // (狭い幅の面と同じ。面の背景を押すと面だけ閉じる)。止めるのは、パネルが開いている間に押し始めて Modal そのもの
+  // 広い幅で FormDialog など (`<dialog>`) の中に置かれたとき: 開いている間に dialog の背景を押すと、ブラウザがパネルを閉じ (light dismiss)、
+  // 同じ押下の click で dialog も閉じてしまう (外を押すと閉じる dialog の場合)。1 回の押下で閉じるのは一番上の重なり (このパネル) だけにする
+  // (狭い幅の面と同じ。面の背景を押すと面だけ閉じる)。止めるのは、パネルが開いている間に押し始めて dialog そのもの
   // (背景・余白) で離した click だけ
   React.useEffect(() => {
     if (form !== 'popover' || !shown) return;
@@ -282,9 +285,7 @@ export const Popover: React.FC<PopoverProps> = ({
 
   const triggerNode = trigger as React.ReactElement<any>;
   const triggerEl = React.cloneElement(triggerNode, {
-    ref: (node: HTMLElement | null) => {
-      referenceRef.current = node;
-    },
+    ref: triggerRef,
     'aria-haspopup': 'dialog',
     'aria-expanded': shown,
     'aria-controls': panelId,

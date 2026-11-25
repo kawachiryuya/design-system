@@ -2,7 +2,8 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, screen, waitFor, fn } from 'storybook/test';
 import { Menu, type MenuItem } from './Menu';
-import { Modal } from '../Modal';
+import { ConfirmDialog } from '../ConfirmDialog';
+import { FormDialog } from '../FormDialog';
 import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';
 
@@ -299,12 +300,13 @@ export const SingleChoice: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'actions' | 'inModal' | 'shrink' | 'throws' | 'modal' | 'nested' | 'controlled' | 'pinned' | 'late0' | 'late100' | 'gateOpen' | 'gateClose' | 'empty' | 'allDisabled' | 'long' | 'strict' | 'bottom';
+type Scenario = 'actions' | 'inFormDialog' | 'shrink' | 'throws' | 'confirm' | 'nested' | 'controlled' | 'pinned' | 'late0' | 'late100' | 'gateOpen' | 'gateClose' | 'empty' | 'allDisabled' | 'long' | 'strict' | 'bottom';
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
   const add = (m: string) => setLog((l) => [...l, m]);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const menuTriggerRef = React.useRef<HTMLButtonElement | null>(null);
   const [secondOpen, setSecondOpen] = React.useState(false);
   const [controlledOpen, setControlledOpen] = React.useState(false);
   const [shrinkItems, setShrinkItems] = React.useState(4);
@@ -330,15 +332,19 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
             ]}
           />
         );
-      case 'inModal':
+      case 'inFormDialog':
         return (
           <>
-            <Button onClick={() => setModalOpen(true)}>条件を開く</Button>
-            <Modal open={modalOpen} onClose={() => { add('Modal の onClose'); setModalOpen(false); }} title="条件" size="sm">
-              <Modal.Body>
-                <SortMenu onPick={(l) => add(l)} />
-              </Modal.Body>
-            </Modal>
+            <Button onClick={() => setDialogOpen(true)}>条件を開く</Button>
+            <FormDialog
+              open={dialogOpen}
+              onClose={() => { add('FormDialog の onClose'); setDialogOpen(false); }}
+              onSubmit={() => { add('FormDialog の onSubmit'); setDialogOpen(false); }}
+              title="条件"
+              submitLabel="適用"
+            >
+              <SortMenu onPick={(l) => add(l)} />
+            </FormDialog>
           </>
         );
       case 'shrink':
@@ -371,25 +377,30 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
             ]}
           />
         );
-      case 'modal':
+      case 'confirm':
         return (
           <>
             <Menu
-              trigger={<Button>予約を変更</Button>}
+              trigger={<Button ref={menuTriggerRef}>予約を変更</Button>}
               title="予約を変更"
               items={[
                 { label: '列車を変更', onSelect: () => add('列車を変更') },
-                { label: '予約を取り消す', destructive: true, onSelect: () => setModalOpen(true) },
+                { label: '予約を取り消す', destructive: true, onSelect: () => setDialogOpen(true) },
               ]}
             />
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="予約を取り消しますか？" size="sm">
-              <Modal.Body>取り消すと元に戻せません。</Modal.Body>
-              <Modal.Footer>
-                <Button variant="tertiary" onClick={() => setModalOpen(false)}>
-                  戻る
-                </Button>
-              </Modal.Footer>
-            </Modal>
+            {/* 狭い幅では Menu の面が閉じるので、閉じた後のフォーカスを Menu の入口へ戻す */}
+            <ConfirmDialog
+              open={dialogOpen}
+              onClose={() => { add('ConfirmDialog の onClose'); setDialogOpen(false); }}
+              onConfirm={() => { add('予約を取り消す'); setDialogOpen(false); }}
+              title="予約を取り消しますか？"
+              confirmLabel="予約を取り消す"
+              cancelLabel="戻る"
+              destructive
+              returnFocusRef={menuTriggerRef}
+            >
+              取り消すと元に戻せません。
+            </ConfirmDialog>
           </>
         );
       case 'nested':
@@ -539,7 +550,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   argTypes: {
     scenario: {
       control: 'select',
-      options: ['actions', 'inModal', 'shrink', 'throws', 'modal', 'nested', 'controlled', 'pinned', 'late0', 'late100', 'gateOpen', 'gateClose', 'empty', 'allDisabled', 'long', 'strict', 'bottom'],
+      options: ['actions', 'inFormDialog', 'shrink', 'throws', 'confirm', 'nested', 'controlled', 'pinned', 'late0', 'late100', 'gateOpen', 'gateClose', 'empty', 'allDisabled', 'long', 'strict', 'bottom'],
     },
   },
   parameters: {
@@ -547,7 +558,7 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。actions: 操作の一覧 (無効な項目あり) / inModal: Modal の中の Menu (Esc で Menu だけ閉じる) / shrink: 開いて 300ms 後に項目が減る / throws: onSelect が例外を投げる / modal: 選んだら Modal を開く / nested: 選んだら別の Menu を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではメニューが消え、入口を押すと出し直す。狭い幅では Esc を続けても面を出し直す。別の Menu も並べる) / late0・late100: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / empty: 項目が 0 個 / allDisabled: 全部無効 / long: 項目が多い (狭い幅では面の中でスクロール) / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。actions: 操作の一覧 (無効な項目あり) / inFormDialog: FormDialog の中の Menu (Esc で Menu だけ閉じる) / shrink: 開いて 300ms 後に項目が減る / throws: onSelect が例外を投げる / confirm: 選んだら ConfirmDialog を開く (閉じたらフォーカスを Menu の入口へ戻す) / nested: 選んだら別の Menu を開く / controlled: open と onOpenChange の回数と順番を下に出す / pinned: 親が閉じる要求を無視する (広い幅ではメニューが消え、入口を押すと出し直す。狭い幅では Esc を続けても面を出し直す。別の Menu も並べる) / late0・late100: 親が遅れて閉じる / gateOpen・gateClose: 親が条件付きで開く・閉じる要求を断る (ボタンで許可に変える) / empty: 項目が 0 個 / allDisabled: 全部無効 / long: 項目が多い (狭い幅では面の中でスクロール) / strict: StrictMode / bottom: 入口が画面の下端 (二度押しの確かめ)。',
       },
     },
   },

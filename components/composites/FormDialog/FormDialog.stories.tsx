@@ -10,14 +10,16 @@ import { Menu } from '../Menu';
 import { Popover } from '../Popover';
 import { ActionBar } from '../ActionBar';
 import { ConfirmDialog } from '../ConfirmDialog';
+import { NARROW_RUN, expectRunWidth } from '../../../.storybook/narrow-play';
 
 /**
  * FormDialog stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
- * 構成: Playground / Overview / EdgeCases / Scenarios (撮影しない)。
+ * 構成: Playground / Overview / EdgeCases / Scenarios・NarrowFullScreen (撮影しない)。
  * 出方が幅で変わる (640px 未満は画面いっぱい、以上は中央の大きいカード) ので、撮影する story は
  * `chromatic.viewports = [375, 1280]` で両方の幅を撮る (フォーカスの輪の検査も同じ宣言を読んで両方の幅で走る、§8-4)。
- * 開閉の動きは無い (即時)。play はテストの既定の幅 (1280) で走る。狭い幅の操作は PR の表 (Playwright) で確かめた。
+ * 開閉の動きは無い (即時)。play はテストの既定の幅 (1280) で走る。狭い幅 (画面いっぱい) の操作は、幅 375 で走る story
+ * (NarrowFullScreen。`globals: NARROW_RUN` で走る幅を宣言する、AGENTS §8-4) の play が確かめる。
  */
 type PlaygroundArgs = {
   title: string;
@@ -198,7 +200,26 @@ export const EdgeCases: Story = {
 
 // ── 4. いろいろな場面 (視覚回帰対象外。手で触る・自動の操作で確かめる用) ────────────
 
-type Scenario = 'nested' | 'actionBar' | 'ignore' | 'loading' | 'loadingFail' | 'empty' | 'discard';
+type Scenario = 'nested' | 'actionBar' | 'ignore' | 'loading' | 'loadingFail' | 'empty' | 'discard' | 'long';
+
+/** 入力が多い中身 (乗る人 4 人ぶん)。画面に収まらず、本体がスクロールする */
+function PassengerFields() {
+  return (
+    <div className="flex flex-col gap-4">
+      {['1 人目', '2 人目', '3 人目', '4 人目'].map((who) => (
+        <fieldset key={who} className="flex flex-col gap-3">
+          <legend className="type-label text-onSurface mb-2">{who}</legend>
+          <Input name={`${who}-name`} label="氏名" fullWidth />
+          <Input name={`${who}-kana`} label="氏名 (カナ)" fullWidth />
+          <Select name={`${who}-type`} label="区分" fullWidth defaultValue="adult">
+            <option value="adult">大人</option>
+            <option value="child">子ども</option>
+          </Select>
+        </fieldset>
+      ))}
+    </div>
+  );
+}
 
 function ScenarioDemo({ scenario }: { scenario: Scenario }) {
   const [log, setLog] = React.useState<string[]>([]);
@@ -247,6 +268,8 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
         );
       case 'empty':
         return <p>押せるものが無い中身 (フォーカスは dialog そのもの)。</p>;
+      case 'long':
+        return <PassengerFields />;
       default:
         return <FilterFields />;
     }
@@ -313,16 +336,73 @@ function ScenarioDemo({ scenario }: { scenario: Scenario }) {
 export const Scenarios: StoryObj<{ scenario: Scenario }> = {
   args: { scenario: 'nested' },
   argTypes: {
-    scenario: { control: 'select', options: ['nested', 'actionBar', 'ignore', 'loading', 'loadingFail', 'empty', 'discard'] },
+    scenario: { control: 'select', options: ['nested', 'actionBar', 'ignore', 'loading', 'loadingFail', 'empty', 'discard', 'long'] },
   },
   parameters: {
     chromatic: { disableSnapshot: true },
     docs: {
       description: {
         story:
-          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。nested: 中に Menu と Popover (Popover の中に入力欄。そこで Enter を押しても確定しない) / actionBar: 本体の中に ActionBar (幅 0 に潰れない) / ignore: 親が閉じる要求に応えない (確定だけで閉じる。Esc を続けても消えたままにならない) / loading: 確定から 1.5 秒待って閉じる (その間 Enter でも確定しない) / loadingFail: 1.5 秒待った後、失敗して開いたまま / empty: 押せるものが無い中身 / discard: 取り消しの要求で閉じずに破棄の確認を開く (確認は FormDialog の後ろの兄弟。「破棄する」で 2 つとも閉じる)。',
+          'いろいろな場面を手で触るための story (`scenario` で切り替える。play は持たない)。nested: 中に Menu と Popover (Popover の中に入力欄。そこで Enter を押しても確定しない) / actionBar: 本体の中に ActionBar (幅 0 に潰れない) / ignore: 親が閉じる要求に応えない (確定だけで閉じる。Esc を続けても消えたままにならない) / loading: 確定から 1.5 秒待って閉じる (その間 Enter でも確定しない) / loadingFail: 1.5 秒待った後、失敗して開いたまま / empty: 押せるものが無い中身 / discard: 取り消しの要求で閉じずに破棄の確認を開く (確認は FormDialog の後ろの兄弟。「破棄する」で 2 つとも閉じる) / long: 入力が多く、本体がスクロールする。',
       },
     },
   },
   render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+};
+
+// ── 5. 狭い幅 (幅 375 で走る。視覚回帰対象外) ────────────
+// 走る幅は `globals: NARROW_RUN` で宣言する (test-runner が描く前にその幅にする。Storybook で開いても 375 に固定して見える、AGENTS §8-4)
+
+export const NarrowFullScreen: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'long' },
+  globals: NARROW_RUN,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '幅 375 で走る (Storybook でも 375 に固定して見える)。入力が多い中身を開き、画面いっぱい (幅・高さ)・本体だけがスクロールする (見出しとフッターは動かない)・取り消しで閉じてフォーカスが開いたボタンに戻る、を確かめる。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    await expectRunWidth();
+    const canvas = within(canvasElement);
+    const opener = canvas.getByRole('button', { name: '絞り込む' });
+    await userEvent.click(opener);
+    const dialog = (await screen.findByRole('dialog', { name: '絞り込み' })) as HTMLDialogElement;
+    await waitFor(() => expect(dialog.open).toBe(true));
+
+    // 画面いっぱい (幅・高さ)
+    const r = dialog.getBoundingClientRect();
+    await expect(Math.round(r.left)).toBe(0);
+    await expect(Math.round(r.top)).toBe(0);
+    await expect(Math.round(r.width)).toBe(window.innerWidth);
+    await expect(Math.round(r.height)).toBe(window.innerHeight);
+
+    // 本体だけがスクロールする: dialog 自体はスクロールせず、本体を下まで送っても見出しとフッターは動かない
+    const heading = within(dialog).getByRole('heading', { name: '絞り込み' });
+    const form = dialog.querySelector('form') as HTMLFormElement;
+    // form の中は 見出しの行 → 本体 → フッター の順
+    const body = form.children[1] as HTMLElement;
+    const footer = form.lastElementChild as HTMLElement;
+    await expect(footer).toContainElement(within(dialog).getByRole('button', { name: 'キャンセル' }));
+    await expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
+    await expect(dialog.scrollHeight).toBeLessThanOrEqual(dialog.clientHeight);
+    const headingTop = heading.getBoundingClientRect().top;
+    const footerTop = footer.getBoundingClientRect().top;
+    await expect(Math.abs(footer.getBoundingClientRect().bottom - window.innerHeight)).toBeLessThanOrEqual(1);
+    body.scrollTop = body.scrollHeight;
+    await waitFor(() => expect(body.scrollTop).toBeGreaterThan(0));
+    await expect(heading.getBoundingClientRect().top).toBe(headingTop);
+    await expect(footer.getBoundingClientRect().top).toBe(footerTop);
+    await expect(dialog.scrollTop).toBe(0);
+
+    // 取り消し → 閉じて (onClose)、フォーカスは開いたボタン
+    await userEvent.click(within(dialog).getByRole('button', { name: 'キャンセル' }));
+    await waitFor(() => expect(dialog.open).toBe(false));
+    await expect(canvas.getByTestId('log')).toHaveTextContent('onClose');
+    await waitFor(() => expect(opener).toHaveFocus());
+  },
 };

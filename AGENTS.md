@@ -825,7 +825,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 ### 8-4. a11y 自動検証 (axe) と例外の付け方
 
-CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test-runner`](./.storybook/test-runner.ts) + axe (`axe-playwright`) により自動監査する (smoke render + play + a11y)。`npm run test-storybook` でローカル実行可 (別端末で `npm run build-storybook` → `http-server storybook-static` を起動)。
+CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test-runner`](./.storybook/test-runner.ts) + axe (`axe-playwright`) により自動監査する (smoke render + play + a11y)。既定の幅は 1280px で、狭い幅は下の「幅で構造が変わる story」の宣言で走らせる。`npm run test-storybook` でローカル実行可 (別端末で `npm run build-storybook` → `http-server storybook-static` を起動)。
 
 意図的に許容する違反は **必ず理由を残して** 例外化する:
 
@@ -838,11 +838,23 @@ CI の **Run Storybook tests** ステップで、全 Story を [`@storybook/test
 
 **原則**: disabled 状態の意図的低コントラストは WCAG 1.4.3 が免除するため恒久例外でよい。それ以外の違反は「直す」が既定で、例外は finding として明示し追跡する。
 
+**幅で構造が変わる story** (#152 / #165): test-runner の既定の幅は 1280px。幅で構造が変わる部品 (Menu・Popover の下から出る面、FormDialog の画面いっぱい、AppShell の下のナビ等) は、2 つの宣言で狭い幅も守る。宣言は意味が違うので分ける:
+
+| 宣言 | 意味 | 読むもの |
+|---|---|---|
+| `parameters.chromatic.viewports` (§9-4) | 「この幅では別の見え方になる」= **見る幅**。撮影する story (Overview / EdgeCases) に書く | Chromatic の撮影・**axe**・フォーカスの輪の検査。既定の幅で見た後、宣言の残りの幅でも見る (落ちたときの報告に `[幅 375px]` が付く)。宣言は撮影と検査で 1 つにし、検査のための宣言を別に持たない |
+| `globals: { viewport: { value: '375-667' } }` (Storybook の viewport、[`.storybook/narrow-play.ts`](./.storybook/narrow-play.ts) の `NARROW_RUN`) | **走る幅**。その幅の操作を確かめる story (撮影しない) に書く | test-runner が描く前 (preVisit) にその幅にし、**play**・axe・輪の検査をその幅で走らせ、終わったら元の幅に戻す (次の story に持ち越さない)。人が Storybook で開いても、その幅に固定して見える。値は `'幅-高さ'` (px) の形だけを読み、読めない値は落とす |
+
+- **play は幅ごとに story を分ける**。1 つの play には 1 つの幅の期待だけを書き、play の中で幅を見て分けない (どちらの幅で何を守っているかが読めず、片方の枝が走らないまま通ることがあるため)。広い幅の play は今までどおり宣言なし (1280px)、狭い幅は `Narrow*` の名前で別の story にする (Menu の NarrowSheet / NarrowConfirm / NarrowReturnFocus、Popover の NarrowSheet、FormDialog の NarrowFullScreen、ConfirmDialog の NarrowButtons。どれも `chromatic.disableSnapshot`)。`render` は既存の `ScenarioDemo` 等を使い回す。play の最初に `expectRunWidth()` で、本当にその幅で走っているかを確かめる (宣言が効かずに既定の幅のまま通る、を防ぐ)
+- **狭い幅の play の書き方**: 下から出る面は開いてから 300ms ポインタを受け付けないので、指・マウスで面の中を押す前に `afterOpenGuard()` で待つ (動きの終わりを待つのではなく、時間の決まりそのもの)。開閉の終わりは `waitFor` で条件 (`dialog.open`・位置) を待ち、固定の時間で待たない。合成の Esc ではブラウザが dialog に cancel を出さないので `pressEscape()` (cancel を送る)、背景を押すのは `pressBackdrop()`。どれも `.storybook/narrow-play.ts`
+- **動きを減らす設定の強制を外す例外**: test-runner は全 story で `prefers-reduced-motion: reduce` を強制する (flake を避けるため)。動きがあるときにだけ通る道 (下から出る面が閉じる動きの間に次の dialog・面が開き、ブラウザが覚える「開く前のフォーカス」が面の中の項目になる) を守る play は、story の `parameters.reducedMotion = { disable: true }` (理由コメント必須) で外し、最初に `expectMotion()` で確かめる。今は Menu の NarrowConfirm (`returnFocusRef`) と NarrowReturnFocus (下から出る面の戻し) だけ。動きが無いと面はすぐ閉じてフォーカスが入口に戻ってから次が開くので、戻す仕組みを外しても通ってしまう
+- **狭い幅でだけ出る押せる要素・面を足したら**、撮影する story の `chromatic.viewports` にその幅があること (axe と輪の検査が見る) と、その操作を守る `Narrow*` の story があることを確かめる
+
 **フォーカスの輪の検査** (#139、[`.storybook/focus-ring-check.ts`](./.storybook/focus-ring-check.ts)): 同じステップで、出荷する部品の story (`Primitives/*` / `Composites/*`) について、(1) **検査を始めた時点でフォーカスがある要素** (部品がプログラムから移したフォーカス。Shift を押してキーボードで操作した状態にしてから見る) と、(2) 文書の先頭から **Tab キーで順に来る要素** の、描画後の outline を見る。合格は「実線・2px 以上・色が `border.focus`、または濃い塗りの内側 (outline-offset が負) の `onSurface.inverse`」(§3-2「フォーカスの規則」)。lint (§3-7) は書き方を縛るだけなので、こちらで「フォーカスが来るのに何も出ない」「ブラウザ任せの輪 (`outline-style: auto`)」「決めた色以外の輪」を捕まえる。
 
 - **矢印キーで中を動く部品** (Tabs のタブ / Menu の項目 / SegmentedControl / Radio): 検査は Tab で来る 1 つ (選択中など) だけを見る。矢印キーでだけ来る項目は、Tab で来る項目と同じクラスなら代表させてよい。**形が違う項目は、それが Tab で来る状態を story に用意する** (SegmentedControl: 選択中は `focus-ring-on-fill`、未選択は `focus-ring-inset`。何も選ばれていないと先頭の未選択が Tab の止まり先になるので、Overview にその行を置いている)
 - **overlay**: 検査はトリガーを押して開く操作をしない。見るのは story が開いた状態で描いている分だけ: Overview が `open` / `defaultOpen` で描いているもの (ConfirmDialog / FormDialog / Popover / Menu / Tooltip の中の要素) と、play の最後に開いたまま残したもの。story が `open` で直接開いた状態は、ポインタで開いたものとは扱わないので輪が出る (§3-2「フォーカスの規則」の「ポインタで開いた重なり」)。**Tab の順に入らないプログラムからのフォーカスは、開いたまま残して (1) で見せる** (Popover: 中に押せるものが無いと、広い幅はパネル自体、狭い幅は下から出る面そのものにフォーカスが移る。広い幅は Playground の play が最後にキーボードで開いて残す。クリックの後のプログラムからのフォーカスは `:focus-visible` にならないことがあるので、キーボードで開く。両方の幅は、文だけの中身を `open` で開いた OverviewTextOnly が `[375, 1280]` の宣言で見せる)
-- **幅で構造が変わる story**: 既定の幅 (1280px) で見た後、story が `parameters.chromatic.viewports` (§9-4) で宣言している残りの幅 (今は AppShell / TwoColumn / SplitPane の EdgeCases と、Menu の Overview / OverviewSingleChoice・Popover の Overview / OverviewTextOnly・ConfirmDialog の Overview / OverviewDestructive・FormDialog の Overview / EdgeCases の 375px) でも同じ検査をする (#152)。狭い幅でだけ出る要素 (AppShell の下のナビ等) は既定の幅では Tab が来ないため。「この幅では別の見え方になる」の宣言は撮影と検査で 1 つにし、検査のための宣言を別に持たない。**狭い幅でだけ出る押せる要素を足したら、その story の `chromatic.viewports` にその幅があることを確かめる** (無ければ検査は見ない)。落ちたときの報告には `[幅 375px]` が付く
+- **幅で構造が変わる story**: 既定の幅 (1280px) で見た後、story が `parameters.chromatic.viewports` (§9-4) で宣言している残りの幅 (今は AppShell / TwoColumn / SplitPane の EdgeCases と、Menu の Overview / OverviewSingleChoice・Popover の Overview / OverviewTextOnly・ConfirmDialog の Overview / OverviewDestructive・FormDialog の Overview / EdgeCases の 375px) でも同じ検査をする (#152。axe も同じ宣言を読む、上の「幅で構造が変わる story」)。狭い幅でだけ出る要素 (AppShell の下のナビ等) は既定の幅では Tab が来ないため。走る幅を宣言した story (`globals.viewport`) は、その幅で見る。**狭い幅でだけ出る押せる要素を足したら、その story の `chromatic.viewports` にその幅があることを確かめる** (無ければ検査は見ない)。落ちたときの報告には `[幅 375px]` が付く
 - **範囲に入れていないもの**: Tokens / Principles (UI ではない)。Tab で 1 つも要素に来ない story (表示だけの部品) は何も見ずに通る
 - **例外**: `FOCUS_RING_EXEMPT` ([`.storybook/test-runner.ts`](./.storybook/test-runner.ts)) に component 単位で理由付きで列挙する (`TODO(focus):` 付きは既知 finding)。story 単位は `parameters.focusRing = { disable: true }` (理由コメント必須)
 

@@ -46,6 +46,8 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | 左右 2 カラム (main / aside) | `<TwoColumn>` | レスポンシブで縦スタックに切替 |
 | 左右の領域分割 (master-detail) | `<SplitPane>` | 固定幅 list pane + 流動 detail pane。リサイズ機能はなし (`listWidth` で固定幅指定) |
 
+**重なって出る部品の規則 (DDR-3、#157)** — 使う側が選ぶのは**役割** (確認・選ぶ・補足・作業) で、どこに出るかは部品が画面の幅から決める (上の表の 4 行)。下から出る形は、外を押すと閉じる軽いもの (Menu・Popover) にだけ使う。出方を選ぶ prop は足さない。
+
 ### Primitive vs Composite
 
 判定基準を **構造と状態の 2 軸** で厳密化する (2026-06-04 Phase 1)。
@@ -205,7 +207,7 @@ primitive 色に半透明を載せた overlay (`state.hover-primary` 等) は、
 - **色は `border.focus` の一色**。エラー時 (Button destructive / エラーの Checkbox・Radio・入力欄) も、Alert・Toast の閉じるも同じ。輪は「今ここ」だけを表し、エラーは枠線と文言で表す。**すき間は塗らない** (下の面の色が見える。outline で描くので自然にそうなる)
 - **入力欄も例外にしない**: 外側の輪で、フォーカスで枠線の色は変えない (エラーの赤い枠線と輪が別々に見える)。文字の入力欄はブラウザがクリックでも `:focus-visible` にするので、入力欄はクリックでも出る
 - **フォーカスは輪だけ、ホバーは塗りだけ** (メニューの項目など矢印キーで動くものも)。塗り＝ポインタ、輪＝キーボードの現在地
-- **ポインタ (指・マウス) で開いた重なり (Menu・Popover・ConfirmDialog・FormDialog) の中では、キーが押されるまで輪を出さない。フォーカスは移す** (#157)。重なりの外側に `data-ds-hide-focus-ring` を付けると、preset の `focus-ring*` がその中で輪を出さない (ブラウザ既定の輪も)。`:focus-visible` の判断はブラウザごとに違う (iOS の Safari は指で開いても出す) ので、部品が「どうやって開いたか」(入口の click の `detail`) を持って決める ([`components/_internal/useHideFocusRingUntilKey.ts`](./components/_internal/useHideFocusRingUntilKey.ts))。キーボード・読み上げの「実行」・外から `open` で開いたときは、はじめから出す。**閉じて入口に戻したフォーカスも同じ**: ポインタで閉じたとき (外を押す・帯を引く・閉じるボタンや項目を指・マウスで押す) は、入口にこの属性を付け、次にキーが押されるか入口からフォーカスが外れるまで輪を出さない (`hideFocusRingUntilKeyOrBlur`、同じファイル)。キーボード (Esc・Tab・Enter / Space で選ぶ)・読み上げの「実行」(click の `detail` 0)・幅が変わって閉じた・外から `open` を閉じたときは、今までどおり出す。**入口を持たない ConfirmDialog・FormDialog** (使う側が `open` で開く) は、入口の click の代わりに**開いた・閉じた瞬間の直前の操作**で決める (文書の `pointerdown`・`keydown`・`click` の `detail` を覚える。[`components/_internal/inputModality.ts`](./components/_internal/inputModality.ts)): 指・マウスなら出さない、キー・読み上げの「実行」・まだ何も操作が無い (ページを開いた直後に `open` で開いた。story の Overview) なら出す。Menu の項目を指で選んで開いた確認は「指で開いた」になる
+- **ポインタ (指・マウス) で開いた重なり (Menu・Popover・ConfirmDialog・FormDialog) の中では、キーが押されるまで輪を出さない。フォーカスは移す** (DDR-3、#157)。重なりの外側に `data-ds-hide-focus-ring` を付けると、preset の `focus-ring*` がその中で輪を出さない (ブラウザ既定の輪も)。`:focus-visible` の判断はブラウザごとに違う (iOS の Safari は指で開いても出す) ので、部品が「どうやって開いたか」(入口の click の `detail`) を持って決める ([`components/_internal/useHideFocusRingUntilKey.ts`](./components/_internal/useHideFocusRingUntilKey.ts))。キーボード・読み上げの「実行」・外から `open` で開いたときは、はじめから出す。**閉じて入口に戻したフォーカスも同じ**: ポインタで閉じたとき (外を押す・帯を引く・閉じるボタンや項目を指・マウスで押す) は、入口にこの属性を付け、次にキーが押されるか入口からフォーカスが外れるまで輪を出さない (`hideFocusRingUntilKeyOrBlur`、同じファイル)。キーボード (Esc・Tab・Enter / Space で選ぶ)・読み上げの「実行」(click の `detail` 0)・幅が変わって閉じた・外から `open` を閉じたときは、今までどおり出す。**入口を持たない ConfirmDialog・FormDialog** (使う側が `open` で開く) は、入口の click の代わりに**開いた・閉じた瞬間の直前の操作**で決める (文書の `pointerdown`・`keydown`・`click` の `detail` を覚える。[`components/_internal/inputModality.ts`](./components/_internal/inputModality.ts)): 指・マウスなら出さない、キー・読み上げの「実行」・まだ何も操作が無い (ページを開いた直後に `open` で開いた。story の Overview) なら出す。Menu の項目を指で選んで開いた確認は「指で開いた」になる
 - **フォーカスが来るだけの領域**は、内側に輪が入るだけの余白を持たせる (中身を輪に重ねない。Tabs のパネル 16px、SplitPane の領域 8px)
 - **内側の輪の角は、接している枠の角丸に沿わせる** (`rounded-inner-sm` / `rounded-inner-md` = 枠の角丸 − 枠線 1px)。Accordion の見出し・NumberInput の −
 - **ホバーと重なったときは何も足さない** (フォーカスの輪が上。すき間にホバーの色が見える)

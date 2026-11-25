@@ -143,6 +143,9 @@
 
 ### Fixed
 
+- **Toast: dialog を開いている間に出した Toast が、背景の後ろに隠れて見えない・押せない・読み上げられなかった** (#169): `ConfirmDialog`・`FormDialog`・狭い幅の `Menu`・`Popover` (下から出る面) は `<dialog>.showModal()` で一番上の層に出て、ブラウザはその外をすべて inert にする (z-index は効かない。外の要素を `popover` で一番上の層に出しても、見えるだけで押せない・フォーカスが入らない)。`ToastProvider`・単発の `<Toast>` は、modal の dialog が開いている間だけ、置き場を**一番上の dialog の中**へ移して `popover="manual"` で一番上の層に出し、閉じたら元の場所へ戻す (DOM の要素を動かすだけで、出ている Toast・残り時間・フォーカスは作り直さない)。dialog を 2 段に重ねたときは上の dialog へ、上を閉じたら下へ移る。指・マウスで開いた dialog の中でも、Toast の中でキーを押せば輪が出る (AGENTS §3-2)。props は変わらない。dialog が無いときの位置・重なり順・見た目は変わらない (4 つの `position` × 幅 375・1280 で、写真が 1px も変わらないことを確かめた)
+  - **配信契約 (§10-6 (c)) の変更**: (1) DOM: 置き場 (`fixed z-toast` の div) の外側に `display: contents` の div (クラス `contents`) が 1 つ増えた (元の場所の目印。箱を作らないので配置は変わらない)。(2) クラス: 置き場に `m-0 p-0 border-0 bg-transparent overflow-visible` と、`position` の反対側の辺の `top-auto` / `bottom-auto` / `left-auto` / `right-auto` が増えた (`popover` になったときのブラウザの既定を消すため。ふだんは既定と同じ値)。配信 CSS に `top-auto` などのクラスが増える。(3) modal の dialog が開いている間だけ、置き場はその dialog の最後の子になり、`popover="manual"` が付く。消える・名前が変わるクラス・`data-*`・CSS 変数は無い。**BREAKING には当てていない**: 外れるのは、置き場を子の結合子 (`親 > .z-toast`) で直接指していたセレクタと、dialog の中の要素を数える処理 (dialog の子の数など) だけ
+  - guideline の「別コンポーネントの方が適切な場面」に「FormDialog の中の入力の誤り・保存の失敗は dialog の中の Alert・欄のエラー」を足した。`Scenarios`・`OverDialog`・`OverDialogProviders` の story を足した (撮影しない)
 - **Menu と下から出る面: #157 の本実装で持ち越した 3 つ** (#157): どれも props・見た目は変わらない
   - **Menu: 入口を押しかけて外で離した後、1 回目の Enter・Space が効かなかった** (main の DropdownMenu から)。押し始めた時点の開閉を、click にならなかった後のキーボードの click (detail 0) に持ち越していた。押して出た click (detail > 0) でだけ使う (Popover と同じ)
   - **Menu (広い幅): controlled で親が閉じる要求を無視した後、入口を押しても何も起きなかった** (メニューは消えて `aria-expanded` は true のまま)。入口を押すとメニューを出し直す (フォーカスは開いたときと同じ、選択中か最初の有効な項目へ。Popover と同じ)。あわせて、メニューが出ている間に入口を押して閉じたとき、ブラウザの閉じる知らせと click の両方で `onOpenChange(false)` を 2 回呼んでいたのを 1 回にした (Popover と同じ。親が閉じる要求を無視するときだけ起きていた)

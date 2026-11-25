@@ -3,16 +3,18 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within, screen, waitFor } from 'storybook/test';
 import { ConfirmDialog } from './ConfirmDialog';
 import { Button } from '../../primitives/Button';
+import { NARROW_RUN, expectRunWidth } from '../../../.storybook/narrow-play';
 
 /**
  * ConfirmDialog stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
- * 構成: Playground / Overview / OverviewDestructive / Scenarios (撮影しない)。
+ * 構成: Playground / Overview / OverviewDestructive / Scenarios・NarrowButtons (撮影しない)。
  * どの幅でも中央のカードだが、狭い幅でのボタンの並び (右寄せ・折り返し) を守るため、撮影する story は
  * `chromatic.viewports = [375, 1280]` で両方の幅を撮る (フォーカスの輪の検査も同じ宣言を読んで両方の幅で走る、§8-4)。
  * `<dialog>` は同時に 1 つずつ撮るので、確定ボタンが primary のもの (Overview。最初のフォーカスは確定) と
  * destructive のもの (OverviewDestructive。最初のフォーカスは取り消し) を別の story に分けて `open` で凍結する。
- * 開閉の動きは無い (即時)。play はテストの既定の幅 (1280) で走る。
+ * 開閉の動きは無い (即時)。play はテストの既定の幅 (1280) で走る。狭い幅でボタンが収まることは、幅 375 で走る story
+ * (NarrowButtons。`globals: NARROW_RUN` で走る幅を宣言する、AGENTS §8-4) の play が確かめる。
  */
 type PlaygroundArgs = {
   title: string;
@@ -276,4 +278,69 @@ export const Scenarios: StoryObj<{ scenario: Scenario }> = {
     },
   },
   render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+};
+
+// ── 5. 狭い幅 (幅 375 で走る。視覚回帰対象外) ────────────
+// 走る幅は `globals: NARROW_RUN` で宣言する (test-runner が描く前にその幅にする。Storybook で開いても 375 に固定して見える、AGENTS §8-4)
+
+function NarrowButtonsDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <Button onClick={() => setOpen(true)}>予約を取り消す</Button>
+      <ConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => setOpen(false)}
+        title="予約を取り消しますか？"
+        confirmLabel="予約を取り消す"
+        cancelLabel="戻る"
+        destructive
+      >
+        取り消すと元に戻せません。払い戻しの手数料がかかります。
+      </ConfirmDialog>
+    </div>
+  );
+}
+
+export const NarrowButtons: Story = {
+  globals: NARROW_RUN,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '幅 375 で走る (Storybook でも 375 に固定して見える)。中央のカードが画面に収まり、取り消しと確定のボタンがカードからはみ出さない (文字も切れない)、取り消しで閉じてフォーカスが開いたボタンに戻る、を確かめる。',
+      },
+    },
+  },
+  render: () => <NarrowButtonsDemo />,
+  play: async ({ canvasElement }) => {
+    await expectRunWidth();
+    const canvas = within(canvasElement);
+    const opener = canvas.getByRole('button', { name: '予約を取り消す' });
+    await userEvent.click(opener);
+    const dialog = (await screen.findByRole('alertdialog', { name: '予約を取り消しますか？' })) as HTMLDialogElement;
+    await waitFor(() => expect(dialog.open).toBe(true));
+
+    // カードは画面に収まり、横にスクロールしない
+    const card = dialog.getBoundingClientRect();
+    await expect(card.left).toBeGreaterThanOrEqual(0);
+    await expect(card.right).toBeLessThanOrEqual(window.innerWidth);
+    await expect(dialog.scrollWidth).toBeLessThanOrEqual(dialog.clientWidth);
+    // ボタンはカードの内側に収まり、文字も切れない
+    const buttons = within(dialog).getAllByRole('button').filter((b) => b.getAttribute('aria-label') !== '閉じる');
+    await expect(buttons.map((b) => b.textContent)).toEqual(expect.arrayContaining(['戻る', '予約を取り消す']));
+    for (const b of buttons) {
+      const r = b.getBoundingClientRect();
+      await expect(r.left).toBeGreaterThanOrEqual(card.left);
+      await expect(r.right).toBeLessThanOrEqual(card.right);
+      await expect(b.scrollWidth).toBeLessThanOrEqual(b.clientWidth);
+    }
+
+    // 取り消し (戻る) → 閉じて、フォーカスは開いたボタン
+    await userEvent.click(within(dialog).getByRole('button', { name: '戻る' }));
+    await waitFor(() => expect(dialog.open).toBe(false));
+    await waitFor(() => expect(opener).toHaveFocus());
+  },
 };

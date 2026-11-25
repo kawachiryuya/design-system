@@ -5,18 +5,20 @@ import { Popover } from './Popover';
 import { Menu } from '../Menu';
 import { FormDialog } from '../FormDialog';
 import { Button } from '../../primitives/Button';
+import { NARROW_RUN, expectRunWidth, afterOpenGuard, expectBottomSheet, pressBackdrop, pressEscape } from '../../../.storybook/narrow-play';
 
 /**
  * Popover stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
- * 構成: Playground / Overview / OverviewTextOnly / FirstFocus / Scenarios / ReturnFocus / LateClose0 / LateClose100 / GateOpen / GateClose。
+ * 構成: Playground / Overview / OverviewTextOnly / FirstFocus / Scenarios / ReturnFocus / LateClose0 / LateClose100 / GateOpen / GateClose / NarrowSheet。
  * 出方が幅で変わる (640px 未満は下から、以上は押した要素の近く) ので、撮影する story は
  * `chromatic.viewports = [375, 1280]` で両方の幅を撮る (フォーカスの輪の検査も同じ宣言を読んで両方の幅で走る、§8-4)。
  * 開いた状態は同時に 1 つしか出せない (popover="auto" / showModal) ので、「押せるものがある中身」(Overview) と
  * 「文だけの中身」(OverviewTextOnly。面・パネルそのものにフォーカスが来る) を別の story に分けて `open` で凍結する。
  * 撮影は動きを減らす設定で行う (開く動きの途中を撮らない)。
- * play はテストの既定の幅 (広い幅) で走る。狭い幅 (下から出る面) の操作は PR の表 (Playwright) で確かめた。
- * 下から出る面は開いてから 300ms ポインタを受け付けないので、狭い幅で play を書くときは 300ms 以上待ってから押す。
+ * play はテストの既定の幅 (広い幅) で走る。狭い幅 (下から出る面) の操作は、幅 375 で走る story (NarrowSheet。
+ * `globals: NARROW_RUN` で走る幅を宣言する、AGENTS §8-4) の play が確かめる。1 つの play は 1 つの幅の期待だけを書く。
+ * 下から出る面は開いてから 300ms ポインタを受け付けないので、狭い幅で play を書くときは 300ms 以上待ってから押す (`afterOpenGuard`)。
  * variant / size prop は無し。
  */
 type PlaygroundArgs = {
@@ -573,5 +575,61 @@ export const GateClose: StoryObj<{ scenario: Scenario }> = {
     trigger.click();
     await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
     await expect(log).toHaveTextContent(['onOpenChange(true)', ...Array(5).fill('onOpenChange(false)')].join(' / '));
+  },
+};
+
+// ── 5. 狭い幅 (幅 375 で走る。視覚回帰対象外) ────────────
+// 走る幅は `globals: NARROW_RUN` で宣言する (test-runner が描く前にその幅にする。Storybook で開いても 375 に固定して見える、AGENTS §8-4)
+
+export const NarrowSheet: StoryObj<{ scenario: Scenario }> = {
+  args: { scenario: 'two' },
+  globals: NARROW_RUN,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '幅 375 で走る (Storybook でも 375 に固定して見える)。文だけの中身 (自由席について) と押せるものがある中身 (アカウント) を並べ、開くと下から出る面・最初のフォーカス (中に押せるものが無ければ面そのもの、あれば最初の押せるもの)・閉じるボタン / Esc / 外 (背景) で閉じる・閉じた後のフォーカスは入口、を確かめる。',
+      },
+    },
+  },
+  render: ({ scenario }) => <ScenarioDemo scenario={scenario} />,
+  play: async ({ canvasElement }) => {
+    await expectRunWidth();
+    const canvas = within(canvasElement);
+    const open = async (trigger: HTMLElement, name: string) => {
+      await userEvent.click(trigger);
+      await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+      const sheet = await screen.findByRole('dialog', { name });
+      await expectBottomSheet(sheet);
+      return sheet;
+    };
+    const expectClosed = async (sheet: HTMLElement, trigger: HTMLElement) => {
+      await waitFor(() => expect((sheet as HTMLDialogElement).open).toBe(false));
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await waitFor(() => expect(trigger).toHaveFocus());
+    };
+
+    // 文だけの中身: 中に押せるものが無いので、フォーカスは面そのもの (閉じるボタンではない)
+    const note = canvas.getByRole('button', { name: '自由席について' });
+    let sheet = await open(note, '自由席について');
+    await waitFor(() => expect(sheet).toHaveFocus());
+    // 閉じるボタン → 閉じて、フォーカスは入口
+    await afterOpenGuard();
+    await userEvent.click(within(sheet).getByRole('button', { name: '閉じる' }));
+    await expectClosed(sheet, note);
+    // Esc → 閉じて、フォーカスは入口
+    sheet = await open(note, '自由席について');
+    await waitFor(() => expect(sheet).toHaveFocus());
+    pressEscape(sheet);
+    await expectClosed(sheet, note);
+
+    // 押せるものがある中身: フォーカスは最初の押せるもの。外 (背景) を押す → 閉じて、フォーカスは入口
+    const account = canvas.getByRole('button', { name: 'アカウント' });
+    sheet = await open(account, 'アカウント');
+    await waitFor(() => expect(within(sheet).getByRole('button', { name: 'プロフィール' })).toHaveFocus());
+    await afterOpenGuard();
+    pressBackdrop(sheet);
+    await expectClosed(sheet, account);
   },
 };

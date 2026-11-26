@@ -7,10 +7,12 @@ import { Caption } from '@sb-blocks/Caption';
 /**
  * Input stories — VR 集約モデル (§5-3)
  *
- * 2 節構成: Playground / Overview。
+ * 3 節構成: Playground / Overview / EdgeCases。
  * `type` は behavior 軸 (mobile keyboard 等) で視覚差が小さいため Overview には含めない。
- * EdgeCases は無し: 旧「fullWidth + 長文 placeholder の ellipsis」は内蔵挙動で fullWidth(bool) +
- * placeholder(text) の Control で再現できるため Playground の役目 (§5-3 の尖らせた基準)。
+ * 例外は `date`: 日付の欄だけ見た目の指定 (appearance: none・flex で縦の中央) を持つので行を置く (#181)。
+ * EdgeCases は狭い親 (120px) の中の日付の欄だけ (コンテナ幅依存なので固定幅で見せる)。
+ * 「fullWidth + 長文 placeholder の ellipsis」は fullWidth(bool) + placeholder(text) の Control で
+ * 再現できるため Playground の役目 (§5-3 の尖らせた基準)。
  *
  * Docs (Guideline) は Input.guideline.mdx 側で `<Meta of={...} />` 経由で統合される。
  */
@@ -73,13 +75,50 @@ export const Overview: Story = {
     noWrap: true,
     docs: {
       description: {
-        story: '視覚回帰用の総覧。size (sm/md/lg) / state (Default/Hover/Focus/Filled/Error/Disabled) / icon (leading/trailing/both) / required・helpText を 1 枚に集約。',
+        story: '視覚回帰用の総覧。size (sm/md/lg) / state (Default/Hover/Focus/Filled/Error/Disabled) / icon (leading/trailing/both) / required・helpText / 日付の欄 (type="date") を 1 枚に集約。',
       },
     },
     pseudo: {
       hover: ['#input-hover'],
-      focusVisible: ['#input-focus'],
+      focusVisible: ['#input-focus', '#input-date-focus'],
     },
+  },
+  // 日付の欄が iPhone の Safari で親の右にはみ出す不具合 (#181) は WebKit でしか起きず、ここ (Chromium) では
+  // 再現しない。代わりに、直すために効いているべき宣言を守る:
+  // (1) 欄の計算後の値 (appearance: none・min-width: 0・display: block。欄を flex にしない)
+  // (2) 中の値の擬似要素 (::-webkit-date-and-time-value) は iOS の Safari にしか無く、Chromium の計算後の値では
+  //     見られない。Storybook の CSS にその規則 (flex・items-center・高さいっぱい・左揃え) が出ていることを見る。
+  //     規則が出ていることまでで、Safari で当たることは確かめられない。
+  play: async ({ canvasElement }) => {
+    const input = canvasElement.querySelector<HTMLInputElement>('#input-date-md');
+    await expect(input).not.toBeNull();
+    const cs = getComputedStyle(input!);
+    await expect(cs.appearance).toBe('none');
+    await expect(cs.minWidth).toBe('0px');
+    await expect(cs.display).toBe('block');
+    const decls: Record<string, string> = {};
+    for (const sheet of Array.from(document.styleSheets)) {
+      let rules: CSSRuleList;
+      try { rules = sheet.cssRules; } catch { continue; }
+      const walk = (list: CSSRuleList) => {
+        for (const r of Array.from(list)) {
+          if (r instanceof CSSStyleRule && r.selectorText.includes('::-webkit-date-and-time-value')
+            && input!.matches(r.selectorText.replace(/::-webkit-date-and-time-value/g, ''))) {
+            for (const p of Array.from(r.style)) decls[p] = r.style.getPropertyValue(p);
+          } else if ('cssRules' in r) {
+            walk((r as CSSGroupingRule).cssRules);
+          }
+        }
+      };
+      walk(rules);
+    }
+    await expect(decls).toMatchObject({
+      display: 'flex',
+      'align-items': 'center',
+      height: '100%',
+      'min-height': '1.5em',
+      'text-align': 'left',
+    });
   },
   render: () => (
     <div className="flex flex-col gap-8">
@@ -131,6 +170,39 @@ export const Overview: Story = {
           <Input label="ユーザー名" required helpText="3〜16 文字の英数字" placeholder="例: alice123" fullWidth />
         </div>
       </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="type-caption text-onSurface-subtle">type="date" (size sm / md / lg・空 / 入力済み・Focus / Error / Disabled)</div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 items-start [&>*]:w-full w-[40rem] max-w-full">
+          <Input id="input-date-sm" label="Small (空)" type="date" size="sm" fullWidth />
+          <Input label="Small (入力済み)" type="date" size="sm" defaultValue="2026-12-01" fullWidth />
+          <Input id="input-date-md" label="Medium (空)" type="date" size="md" fullWidth />
+          <Input label="Medium (入力済み)" type="date" size="md" defaultValue="2026-12-01" fullWidth />
+          <Input label="Large (空)" type="date" size="lg" fullWidth />
+          <Input label="Large (入力済み)" type="date" size="lg" defaultValue="2026-12-01" fullWidth />
+          <Input id="input-date-focus" label="Focus" type="date" defaultValue="2026-12-01" fullWidth />
+          <Input label="Error" type="date" error errorMessage="今日より後の日付を選んでください" defaultValue="2026-01-01" fullWidth />
+          <Input label="Disabled" type="date" disabled defaultValue="2026-12-01" fullWidth />
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// ── 3. EdgeCases (視覚回帰対象) ─────────────────────────────────
+
+export const EdgeCases: Story = {
+  parameters: {
+    noWrap: true,
+    docs: {
+      description: {
+        story: '狭い親 (120px) の中の日付の欄。欄が親の幅を越えない (iPhone の Safari で右にはみ出していた #181。Chromium では元から出ない)。',
+      },
+    },
+  },
+  render: () => (
+    <div className="w-[120px] border border-dashed border-border-default">
+      <Input label="乗車日" type="date" defaultValue="2026-12-01" fullWidth />
     </div>
   ),
 };

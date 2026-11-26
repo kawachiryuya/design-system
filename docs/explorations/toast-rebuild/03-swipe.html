@@ -7,9 +7,15 @@
 .ts-tab[data-on="1"]{color:var(--text-accent);font-weight:500}
 .ts-toast{position:absolute;left:10px;right:10px;bottom:10px;display:flex;align-items:center;gap:8px;background:var(--surface-0);border:0.5px solid var(--border-stronger);border-radius:var(--radius);padding:12px;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .2s,opacity .2s}
 .ts-undo{margin-left:auto;font-weight:500;color:var(--text-accent);border:0;background:transparent;padding:4px}
+.ts-seg button[data-on="1"]{border:2px solid var(--border-accent);color:var(--text-accent);font-weight:500}
 .ts-log{font-size:13px;color:var(--text-secondary);margin:0;min-height:20px;text-align:center}
 </style>
 <div class="ts-wrap">
+  <div class="ts-seg" id="ts-seg" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;max-width:320px">
+    <button data-s="5">5 秒</button>
+    <button data-s="7" data-on="1">7 秒</button>
+    <button data-s="10">10 秒</button>
+  </div>
   <div class="ts-ph" id="ts-ph">
     <div style="padding:14px;font-weight:500;font-size:16px" id="ts-title">予約一覧</div>
     <div style="padding:0 14px"><button id="ts-go" style="width:100%">予約をアーカイブする</button></div>
@@ -24,16 +30,16 @@
 </div>
 <script>
 (function(){
-var ph=document.getElementById('ts-ph'),log=document.getElementById('ts-log'),toast=null,timer=null,left=0,started=0;
+var ph=document.getElementById('ts-ph'),log=document.getElementById('ts-log'),toast=null,timer=null,left=0,started=0,dur=7;
 function say(t){log.textContent=t}
 function gone(why){if(!toast)return;clearTimeout(timer);var el=toast;toast=null;el.style.transform='translateY(90px)';el.style.opacity='0';setTimeout(function(){el.remove()},200);say(why)}
-function run(){started=Date.now();timer=setTimeout(function(){gone('10 秒たって、自動で消えました')},left)}
+function run(){started=Date.now();timer=setTimeout(function(){gone(dur+' 秒たって、自動で消えました')},left)}
 function pause(){clearTimeout(timer);left-=Date.now()-started}
 function show(){
 if(toast){clearTimeout(timer);toast.remove()}
 var el=document.createElement('div');el.className='ts-toast';
 el.innerHTML='<i class="ti ti-check" style="font-size:18px;color:var(--text-success)" aria-hidden="true"></i><span>アーカイブしました</span><button class="ts-undo">元に戻す</button>';
-ph.appendChild(el);toast=el;left=10000;run();say('下へ払うと消えます。何もしなければ 10 秒で消えます');
+ph.appendChild(el);toast=el;left=dur*1000;run();say(dur+' 秒で消えます。下へ払っても消えます');
 var y0=null,dy=0;
 el.addEventListener('pointerdown',function(e){if(e.target.closest('.ts-undo'))return;y0=e.clientY;dy=0;el.setPointerCapture(e.pointerId);el.style.transition='none';pause()});
 el.addEventListener('pointermove',function(e){if(y0===null)return;dy=Math.max(0,e.clientY-y0);el.style.transform='translateY('+dy+'px)';el.style.opacity=String(Math.max(0.3,1-dy/120))});
@@ -42,6 +48,8 @@ el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
 el.querySelector('.ts-undo').addEventListener('click',function(){gone('元に戻しました')});
 }
 document.getElementById('ts-go').addEventListener('click',show);
+document.getElementById('ts-seg').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+Array.prototype.forEach.call(this.children,function(c){c.removeAttribute('data-on')});b.setAttribute('data-on','1');dur=Number(b.getAttribute('data-s'));say(dur+' 秒にしました')});
 document.getElementById('ts-nav').addEventListener('click',function(e){var b=e.target.closest('.ts-tab');if(!b)return;
 Array.prototype.forEach.call(this.children,function(c){c.removeAttribute('data-on')});b.setAttribute('data-on','1');
 document.getElementById('ts-title').textContent=b.getAttribute('data-n');say('下のナビ「'+b.getAttribute('data-n')+'」を押せました')});

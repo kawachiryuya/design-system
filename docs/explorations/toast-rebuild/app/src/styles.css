@@ -1,0 +1,6 @@
+/* 本物の token (Style Dictionary の出力) と、preset の base / components / utilities。Storybook と同じ組み方 */
+@import "../../../../../tokens/build/variables.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

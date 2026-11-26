@@ -1,0 +1,26 @@
+<h2 class="sr-only">Toast の置き場所の 3 案を、狭い幅の FormDialog の画面で並べた絵</h2>
+<style>
+.tp-lab{font-size:14px;font-weight:500;margin:0 0 2px}
+.tp-sub{font-size:13px;color:var(--text-secondary);margin:0 0 10px}
+.tp-wrap{background:var(--bg-neutral);border-radius:12px;padding:14px;margin:0 0 1.5rem;display:flex;justify-content:center}
+.tp-ph{position:relative;width:240px;height:330px;background:var(--surface-2);border:0.5px solid var(--border-strong);border-radius:12px;overflow:hidden;font-size:13px}
+.tp-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-weight:500;font-size:15px}
+.tp-line{height:30px;margin:8px 14px;border:0.5px solid var(--border-strong);border-radius:var(--radius)}
+.tp-foot{position:absolute;left:0;right:0;bottom:0;height:56px;border-top:0.5px solid var(--border);display:flex;justify-content:flex-end;align-items:center;gap:14px;padding:0 14px;background:var(--surface-2)}
+.tp-ok{background:var(--fill-primary);color:var(--on-primary);border-radius:var(--radius);padding:8px 14px}
+.tp-toast{position:absolute;left:10px;right:10px;display:flex;align-items:center;gap:8px;background:var(--surface-0);border:0.5px solid var(--border-stronger);border-radius:var(--radius);padding:10px 12px}
+.tp-act{margin-left:auto;font-weight:500;color:var(--text-accent);white-space:nowrap}
+</style>
+<!-- 3 つの違いは .tp-toast の位置だけ: 今のまま bottom:10px / A 案 bottom:66px (フッターの上) / B 案 top:8px -->
+<p class="tp-lab">今のまま — 使う側が選ぶ（何もしなければ下端）</p>
+<p class="tp-sub">「適用」に重なる</p>
+<div class="tp-wrap"><div class="tp-ph">
+  <div class="tp-head"><span>絞り込み</span><i class="ti ti-x" style="font-size:18px" aria-hidden="true"></i></div>
+  <div class="tp-line"></div><div class="tp-line"></div><div class="tp-line"></div>
+  <div class="tp-foot"><span>キャンセル</span><span class="tp-ok">適用</span></div>
+  <div class="tp-toast" style="bottom:10px"><i class="ti ti-check" style="font-size:16px;color:var(--text-success)" aria-hidden="true"></i><span>アーカイブしました</span><span class="tp-act">元に戻す</span></div>
+</div></div>
+<p class="tp-lab">A 案 — 下。ただし下に固定のものは避ける</p>
+<p class="tp-sub">フッターのすぐ上に出る。「適用」は押せる（.tp-toast を bottom:66px に）</p>
+<p class="tp-lab">B 案 — 上</p>
+<p class="tp-sub">下には重ならない。見出しと × に重なる（.tp-toast を top:8px に）</p>

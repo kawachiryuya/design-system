@@ -1,8 +1,7 @@
 /* CSS variables auto-generated from tokens/source/ via Style Dictionary. */
 /* Edit tokens/source/*.json and run `npm run tokens:build` to regenerate. */
 @import "../tokens/build/variables.css";
-/* 出荷する非 utility のコンポーネント CSS (Checkbox/Radio/keyframe)。配信バンドルと共有の SSoT。 */
-@import "../styles/components.css";
+/* 出荷する非 utility の部品の CSS (Checkbox/Radio/keyframe) は preset が生成する (tokens/preset.cjs、#178)。 */
 
 @tailwind base;
 @tailwind components;

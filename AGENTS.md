@@ -93,6 +93,8 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 
 > **配信ベースリセットの scope (#76, C-scoped)**: 各コンポーネントの最外要素と overlay (ConfirmDialog / FormDialog / Popover 等) には識別属性 **`data-ds-root`** を付ける。配信 `styles.css` の最小ベース (box-sizing/border/form 正規化) は `:where([data-ds-root]…)` に scope され、消費者の素の要素には触れない。完全カプセル化 (D) の保留判断・forcing function は [`design-system-strategy.md`](./design-system-strategy.md) ロードマップ節を参照。`check:styles` が global footprint の再混入をガードする。
 
+> **出荷する非 utility の CSS は preset に書く (#178)**: 部品の動きに要る utility でない CSS (Checkbox / Radio の印・`@keyframes` など) は `tokens/preset.cjs` に書き (正本はそこだけ)、Storybook や `styles/dist.css` の入力 CSS に足さない。入力 CSS にだけ書くと、preset で使う利用側 (README のモード 2) に届かない。2 つの配信の形の両方に届くことは、`check:styles` (モード 1、`dist/styles.css`) と `check:preset-styles` (モード 2 の最小ビルド) が、同じ一覧 ([`scripts/component-css-rules.mjs`](./scripts/component-css-rules.mjs)、セレクタと効いている宣言) で守る。規則を足す・変えるときは一覧も変える。
+
 ---
 
 ## 3. トークン参照ルール
@@ -484,7 +486,7 @@ themeable トークンを 3 層に分け、機械可読な manifest [`tokens/the
 | **コミット前の最終確認 (全体)** | `npm run verify` |
 | 視覚・a11y も含む全確認 | `npm run verify:full` |
 
-- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:mdx-typography → check:conventions → typecheck → check:styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
+- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:mdx-typography → check:conventions → typecheck → check:styles → check:preset-styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
 - `typecheck` は incremental (`.tsbuildinfo`) のため 2 回目以降が速い。
 - **イテレーション中はスコープ版、全体走査はコミット前のみ** という方針を守る。
 
@@ -631,6 +633,7 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 | `tokens/preset.cjs` が require する外部パッケージが dependencies / peerDependencies に宣言済み (mode② consumer の preset 解決を守る。devDependency 止まりだと `Cannot find module` で落ちる packaging silent break を弾く) | **Check preset deps** (`npm run check:preset-deps`、[`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs)) |
 | story・`.storybook`・mdx でも文字の大きさ・行間・字間を直書きしない (`type-*` で書く。tsx は Lint、mdx は `className` の中を見る、§3-7) | **Lint** (`npm run lint`) / **Check mdx typography** (`npm run check:mdx-typography`、[`scripts/check-mdx-typography.mjs`](./scripts/check-mdx-typography.mjs)) |
 | 書いた Tailwind utility が実際に CSS を生成している (出荷コンポーネント ↔ 配信 CSS、stories / `.storybook` / mdx ↔ Storybook CSS。存在しないクラスを書いても型・lint では止まらない silent break を弾く、§3-7) | **Check utilities** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)) |
+| 部品の動きに要る非 utility の CSS が、2 つの配信の形 (モード 1 の `dist/styles.css` は Check styles、モード 2 の最小ビルドはこちら) に届く。期待する一覧 ([`scripts/component-css-rules.mjs`](./scripts/component-css-rules.mjs)) のセレクタ (擬似クラスまで) と効いている宣言で 1 回ずつ、`checked:*` の utility より前に出る。部品が使う `ds-*` のクラス・`animate-[…]` の `@keyframes` が一覧に無くても落ちる。focus-ring* 等もモード 2 に出る (§2「出荷する非 utility の CSS は preset に書く」、#178) | **Check preset styles** (`npm run check:preset-styles`、[`scripts/check-preset-styles.mjs`](./scripts/check-preset-styles.mjs)) |
 | semantic color token がテーマ契約 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)) のどれか 1 層にちょうど 1 回出る (層を決めずに token を足せない。rename / 削除の取り残しも弾く、§3-8) | **Check theme contract** (`npm run check:theme-contract`、[`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)) |
 | semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
 | 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 + 部品の story で Tab で来る要素に決めた形のフォーカスの輪が出る (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |

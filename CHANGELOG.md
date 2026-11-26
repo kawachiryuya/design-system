@@ -7,7 +7,7 @@
 
 ## [Unreleased]
 
-## [7.0.0] - 2026-11-26
+## [7.0.0] - 2026-11-27
 
 **重なって出る部品を役割で選ぶ形にした (DDR-3、#157)** のと、**色・文字・ホバー・フォーカスの規則を 1 つずつにそろえた (#109 / DDR-1、DDR-2 #131)** 破壊的リリース。`DropdownMenu` → `Menu`、`Modal` → `ConfirmDialog`・`FormDialog` (別名は残していない)。Menu・Popover は幅 640px 未満で下から出る。文字は text style `type-*`、Typography の `variant` は役割名、フォーカスの輪は outline の `focus-ring*`、brand と warning の色相が変わる。6.0.1 からの移行は、下の ⚠ BREAKING CHANGES の各項目の Migration を上から順に当てる (型で落ちない変更が多いので、grep の手順も当てる)。
 

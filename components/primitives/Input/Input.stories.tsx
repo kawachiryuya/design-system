@@ -84,15 +84,41 @@ export const Overview: Story = {
     },
   },
   // 日付の欄が iPhone の Safari で親の右にはみ出す不具合 (#181) は WebKit でしか起きず、ここ (Chromium) では
-  // 再現しない。代わりに、直すために効いているべき宣言が日付の欄に当たっていることを守る。
+  // 再現しない。代わりに、直すために効いているべき宣言を守る:
+  // (1) 欄の計算後の値 (appearance: none・min-width: 0・display: block。欄を flex にしない)
+  // (2) 中の値の擬似要素 (::-webkit-date-and-time-value) は iOS の Safari にしか無く、Chromium の計算後の値では
+  //     見られない。Storybook の CSS にその規則 (flex・items-center・高さいっぱい・左揃え) が出ていることを見る。
+  //     規則が出ていることまでで、Safari で当たることは確かめられない。
   play: async ({ canvasElement }) => {
     const input = canvasElement.querySelector<HTMLInputElement>('#input-date-md');
     await expect(input).not.toBeNull();
     const cs = getComputedStyle(input!);
     await expect(cs.appearance).toBe('none');
     await expect(cs.minWidth).toBe('0px');
-    await expect(cs.display).toBe('flex');
-    await expect(cs.alignItems).toBe('center');
+    await expect(cs.display).toBe('block');
+    const decls: Record<string, string> = {};
+    for (const sheet of Array.from(document.styleSheets)) {
+      let rules: CSSRuleList;
+      try { rules = sheet.cssRules; } catch { continue; }
+      const walk = (list: CSSRuleList) => {
+        for (const r of Array.from(list)) {
+          if (r instanceof CSSStyleRule && r.selectorText.includes('::-webkit-date-and-time-value')
+            && input!.matches(r.selectorText.replace(/::-webkit-date-and-time-value/g, ''))) {
+            for (const p of Array.from(r.style)) decls[p] = r.style.getPropertyValue(p);
+          } else if ('cssRules' in r) {
+            walk((r as CSSGroupingRule).cssRules);
+          }
+        }
+      };
+      walk(rules);
+    }
+    await expect(decls).toMatchObject({
+      display: 'flex',
+      'align-items': 'center',
+      height: '100%',
+      'min-height': '1.5em',
+      'text-align': 'left',
+    });
   },
   render: () => (
     <div className="flex flex-col gap-8">

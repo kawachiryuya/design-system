@@ -8,7 +8,8 @@
  *
  * MUST 含む:
  *  - semantic utility が焼き込まれている (例 .bg-surface-primary)
- *  - 出荷する非 utility コンポーネント CSS (.ds-checkbox / .ds-radio / @keyframes indeterminate。preset が生成、モード 2 側は check:preset-styles #178)
+ *  - 出荷する非 utility コンポーネント CSS: scripts/component-css-rules.mjs の一覧のセレクタ (擬似クラスまで) と
+ *    効いている宣言が 1 回ずつ、checked:* の utility より前 (preset が生成。モード 2 側は check:preset-styles、#178)
  *  - a11y の reduced-motion base (preflight off でも addBase は出る)
  *  - utility は var(--color-...) 参照のまま (テーマ override 追従)
  *  - utility/フォームが動く前提の最小 base (box-sizing:border-box + border-style:solid。styles/base.css、
@@ -24,6 +25,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { checkComponentCss } from './component-css-rules.mjs';
 
 const ROOT = process.cwd();
 const out = path.join(os.tmpdir(), `ds-styles-check-${process.pid}.css`);
@@ -42,18 +44,13 @@ try {
 const css = fs.readFileSync(out, 'utf8');
 fs.rmSync(out, { force: true });
 
-const count = (re) => (css.match(re) || []).length;
 const fails = [];
 
 // ── MUST 含む ──
 if (!css.includes('.bg-surface-primary'))
   fails.push('semantic utility (.bg-surface-primary) が無い — content スキャン / preset が壊れている可能性');
-if (count(/\.ds-checkbox/g) < 1)
-  fails.push('.ds-checkbox の出荷コンポーネント CSS が無い — preset (tokens/preset.cjs) の部品の CSS が出ていない (#178)');
-if (!css.includes('.ds-radio'))
-  fails.push('.ds-radio の出荷コンポーネント CSS が無い — preset (tokens/preset.cjs) の部品の CSS が出ていない (#178)');
-if (!/@keyframes\s+indeterminate/.test(css))
-  fails.push('@keyframes indeterminate が無い — ProgressBar の indeterminate アニメーションが壊れる');
+// 出荷する非 utility の部品の CSS: セレクタ (擬似クラスまで) と効いている宣言で見る (一覧は check:preset-styles と共有、#178)
+fails.push(...checkComponentCss(css, { mode: 'モード 1', orderBefore: '.checked\\:bg-surface-primary:checked' }));
 if (!css.includes('prefers-reduced-motion'))
   fails.push('reduced-motion (a11y) base が無い — preset の addBase が出力されていない');
 if (!css.includes('var(--color-'))

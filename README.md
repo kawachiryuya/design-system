@@ -117,6 +117,6 @@ design-system/
 
 > **消費は 2 つの一級モード** (v4.0.0〜、Tailwind は本リポの内部オーサリング専用)。「自社で Tailwind を使うか」で分岐し、**併用は不可**:
 > - **モード 1 (Tailwind 不使用)**: `tokens/variables.css` + `styles.css` (プリコンパイル CSS) を import するだけ。
-> - **モード 2 (Tailwind 使用)**: `tokens/preset.cjs` を継承し content に DS dist を含めた**単一 Tailwind ビルド** (`styles.css` は import しない)。自社コードで DS の semantic utility を書く場合はこちら。部品の動きに要る CSS (Checkbox・Radio の印、フォーカスの輪など) は preset だけで届き、ほかの CSS を足す必要は無い (`check:preset-styles` が守る)。
+> - **モード 2 (Tailwind 使用)**: `tokens/preset.cjs` を継承し content に DS dist を含めた**単一 Tailwind ビルド** (`styles.css` は import しない)。自社コードで DS の semantic utility を書く場合はこちら。部品の動きに要る CSS (Checkbox・Radio の印、フォーカスの輪など) は preset だけで届き、ほかの CSS を足す必要は無い (`check:preset-styles` が守る)。ただし CSS に `@tailwind components` が要る (preset はそこに部品の CSS と `type-*`・`focus-ring*` を出す)。
 >
 > 両モード併用は base/responsive utility の source 順衝突で壊れる。導入手順は Storybook の [Introduction](https://design-system-storybook-murex.vercel.app/?path=/docs/introduction--docs)「Product 側で使う際の setup」/ CHANGELOG `4.0.0` Migration を参照。

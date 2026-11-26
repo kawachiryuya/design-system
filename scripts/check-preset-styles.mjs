@@ -10,9 +10,10 @@
  * モード 2 にだけ出なかった)。
  *
  * MUST:
- *  - 出荷する部品の string literal に出てくる `ds-*` のクラス (data-ds-* / --ds-* の変数は除く) の規則が出ている
- *  - 部品が `animate-[name_…]` で参照する @keyframes name が出ている
- *  - 上の部品の規則は 1 回だけ出る (二重に持たない)
+ *  - 期待する一覧 (scripts/component-css-rules.mjs、check:styles と共有) の規則が、セレクタ (擬似クラスまで)
+ *    と効いている宣言 (Radio は box-shadow、Checkbox は background-image など) で、1 回だけ出ている
+ *  - 出荷する部品の string literal に出てくる `ds-*` のクラス (data-ds-* / --ds-* の変数は除く) と、
+ *    `animate-[name_…]` で参照する @keyframes が、その一覧に載っている (足したのに書き忘れ・載せ忘れを落とす)
  *  - 部品の規則は、同じ性質を争う variant 付きの utility (`checked:bg-surface-primary` / `checked:hover:shadow-[…]` など) より
  *    前に出る (詳細度が同じとき utility が後で勝つ、今までの順序)
  *  - preset が持つ非 utility の CSS (focus-ring* と data-ds-hide-focus-ring・reduced-motion・type-*) が出ている
@@ -26,6 +27,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { COMPONENT_CLASSES, COMPONENT_KEYFRAMES, COMPONENT_RULES, checkComponentCss } from './component-css-rules.mjs';
 
 const ROOT = process.cwd();
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-preset-styles-'));
@@ -66,7 +68,6 @@ const css = fs.readFileSync(out, 'utf8');
 fs.rmSync(tmp, { recursive: true, force: true });
 
 const fails = [];
-const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // ── 部品が使う ds-* のクラスと keyframes を source から集める ──
 const dsClasses = new Set();
@@ -84,29 +85,18 @@ for (const f of files) {
 }
 if (dsClasses.size === 0) fails.push('部品の source に ds-* のクラスが 1 つも見つからない — 走査が壊れている可能性');
 
-// 部品の規則と性質を争う variant 付き utility のうち、最初に出るもの (Tailwind は variant 付きを utilities の後ろに出す)
-const firstUtility = css.search(/\n\.checked\\:bg-surface-primary:checked\s*\{/);
-if (firstUtility < 0)
-  fails.push('`checked:bg-surface-primary` の utility が無い — content の走査が壊れている可能性');
+// ── source に出てくる ds-* / keyframes が、期待する一覧 (component-css-rules.mjs) にあるか ──
+for (const cls of dsClasses)
+  if (!COMPONENT_CLASSES.includes(cls))
+    fails.push(`部品が使う .${cls} が scripts/component-css-rules.mjs の一覧に無い — preset に規則を書き、一覧にも足す (#178)`);
+for (const k of keyframes)
+  if (!COMPONENT_KEYFRAMES.some((x) => x.name === k))
+    fails.push(`部品が参照する @keyframes ${k} が scripts/component-css-rules.mjs の一覧に無い — preset に書き、一覧にも足す (#178)`);
 
-for (const cls of dsClasses) {
-  const rules = [...css.matchAll(new RegExp(`(^|[\\s,}])\\.${esc(cls)}(?![\\w-])[^{]*\\{`, 'g'))];
-  if (rules.length === 0) {
-    fails.push(`.${cls} の規則がモード 2 に届いていない — 部品が使う非 utility の CSS は preset (tokens/preset.cjs) に書く (#178)`);
-    continue;
-  }
-  const selectors = rules.map((r) => r[0].replace(/^[\s,}]+/, '').replace(/\s*\{$/, ''));
-  const dup = selectors.filter((s, i) => selectors.indexOf(s) !== i);
-  if (dup.length) fails.push(`.${cls} の規則が 2 回出ている (${[...new Set(dup)].join(', ')}) — 二重に持たない`);
-  if (firstUtility >= 0 && rules.some((r) => r.index > firstUtility))
-    fails.push(`.${cls} の規則が \`checked:bg-surface-primary\` の utility より後に出ている — \`checked:*\` / \`hover:*\` の utility に勝ってしまう (components 層に置く)`);
-}
-for (const k of keyframes) {
-  const n = (css.match(new RegExp(`@keyframes\\s+${esc(k)}\\s*\\{`, 'g')) || []).length;
-  if (n === 0)
-    fails.push(`@keyframes ${k} がモード 2 に届いていない — 部品が animate-[${k}_…] で参照している (preset に書く、#178)`);
-  if (n > 1) fails.push(`@keyframes ${k} が ${n} 回出ている — 二重に持たない`);
-}
+// ── 一覧の規則が、セレクタ (擬似クラスまで) と効いている宣言で、1 回ずつ、utility より前に出ているか ──
+fails.push(
+  ...checkComponentCss(css, { mode: 'モード 2', orderBefore: '.checked\\:bg-surface-primary:checked' })
+);
 
 // ── preset が持つ非 utility の CSS ──
 for (const [name, re] of [
@@ -127,7 +117,5 @@ if (fails.length) {
   process.exit(1);
 }
 console.log(
-  `✓ check:preset-styles OK — モード 2 の最小ビルドに、部品の CSS (${[...dsClasses].map((c) => '.' + c).join(' / ')}${
-    keyframes.size ? ' / ' + [...keyframes].map((k) => '@keyframes ' + k).join(' / ') : ''
-  }) と focus-ring*・reduced-motion・type-* が出ている (部品の規則は 1 回ずつ、checked:* の utility より前).`
+  `✓ check:preset-styles OK — モード 2 の最小ビルドに、部品の CSS (${COMPONENT_RULES.map((r) => r.selector).join(' / ')} / ${COMPONENT_KEYFRAMES.map((k) => '@keyframes ' + k.name).join(' / ')}) が要る宣言を持って 1 回ずつ checked:* の utility より前に出ていて、focus-ring*・reduced-motion・type-*・::backdrop も出ている.`
 );

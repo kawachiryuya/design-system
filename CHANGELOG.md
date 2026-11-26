@@ -145,9 +145,9 @@
 ### Fixed
 
 - **preset で使う利用側 (モード 2) で、選んだ Radio の白い点・チェックした Checkbox のチェックの絵 (indeterminate の横棒も)・ProgressBar の indeterminate の動きが出なかった** (#178): これらの規則 (`.ds-radio:checked` / `.ds-checkbox:checked` / `.ds-checkbox:indeterminate` / `@keyframes indeterminate`) は `styles/components.css` にあり、Storybook と配信バンドル (`dist/styles.css`) だけが @import していた。preset がこれらを components 層に生成するようにし、`styles/components.css` は消した (正本は `tokens/preset.cjs` だけ)。モード 2 の利用側は、DS を上げて再ビルドするだけで直る (設定の変更は要らない)
-  - **配信契約 (§10-6 (c))**: BREAKING ではない。出荷するクラス名・属性・CSS 変数名は変わらない。`dist/styles.css` (モード 1) の中身は、同じ 4 つの規則が 1 回ずつ、場所が `@tailwind base` の前から components 層 (focus-ring の後、utilities の前) に移っただけで、utilities との順序と値は同じ。`styles/components.css` は exports にも files にも無かったので、消しても利用側は壊れない
-  - **Radio の点の色を `white` の直書きから `var(--color-on-surface-inverse)` にした**: 既定の値は同じ白 (`#ffffff`) で、見た目は変わらない。`--color-on-surface-inverse` を上書きしたテーマでは、点もその色になる (塗りの上の色と揃う)。Checkbox のチェックの絵は data URL の SVG で CSS 変数を読めないので、白のまま
-  - **検査 `check:preset-styles` を `verify` に足した** (AGENTS §5-5-1): モード 2 の最小のビルド (preset だけを継承し、content に出荷する部品を含める) で、部品が使う `ds-*` のクラスと `animate-[…]` が参照する `@keyframes` の規則が 1 回ずつ、`checked:*` の utility より前に出ていること、focus-ring*・reduced-motion・type-*・`::backdrop` が出ていることを確かめる
+  - **配信契約 (§10-6 (c))**: BREAKING ではない。出荷するクラス名・属性・CSS 変数名は変わらない。`dist/styles.css` (モード 1) の中身は、同じ 4 つの規則が同じ値で 1 回ずつ、場所が `@tailwind base` の前から components 層 (focus-ring の後、utilities の前) に移っただけで、utilities との順序も同じ。`styles/components.css` は exports にも files にも無かったので、消しても利用側は壊れない
+  - **検査 `check:preset-styles` を `verify` に足した** (AGENTS §5-5-1): モード 2 の最小のビルド (preset だけを継承し、content に出荷する部品を含める) で、要る規則がセレクタ (擬似クラスまで) と効いている宣言 (Radio は `box-shadow`、Checkbox は `background-image`、indeterminate は `background-color` と `background-image`) で 1 回ずつ、`checked:*` の utility より前に出ていること、focus-ring*・reduced-motion・type-*・`::backdrop` が出ていることを確かめる。期待する一覧は `scripts/component-css-rules.mjs` に置き、`check:styles` (モード 1) も同じ見方で読む (前はクラス名があるかだけを見ていた)。部品が使う `ds-*` のクラスや `animate-[…]` がその一覧に無いときも落ちる
+  - **モード 2 の前提**: 利用側の CSS に `@tailwind components` が要る (focus-ring・`type-*` と同じ)
 
 - **Menu と下から出る面: #157 の本実装で持ち越した 3 つ** (#157): どれも props・見た目は変わらない
   - **Menu: 入口を押しかけて外で離した後、1 回目の Enter・Space が効かなかった** (main の DropdownMenu から)。押し始めた時点の開閉を、click にならなかった後のキーボードの click (detail 0) に持ち越していた。押して出た click (detail > 0) でだけ使う (Popover と同じ)

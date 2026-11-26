@@ -324,7 +324,8 @@ module.exports = {
     //   `checked:hover:shadow-[…]` などの utility との順序は以前と同じ (utility が後)。
     // - `.ds-checkbox` / `.ds-radio` は content にそのクラスが出てこなければ捨てられる (使わない利用側は払わない)。
     //   `@keyframes` はクラスを持たないので常に出る。
-    // - 届いていることは check:preset-styles (scripts/check-preset-styles.mjs) が確かめる。
+    // - 届いていることは check:preset-styles (モード 2) と check:styles (モード 1) が、
+    //   scripts/component-css-rules.mjs の一覧 (セレクタと効いている宣言) で確かめる。ここを変えたら一覧も変える。
     plugin(function ({ addComponents }) {
       // チェックの絵は data URL の SVG なので、CSS 変数を読めない。白 (onSurface.inverse の既定値) を直に持つ
       const svg = (body) =>
@@ -347,9 +348,11 @@ module.exports = {
           backgroundImage: svg("%3Crect x='3' y='7' width='10' height='2' rx='1'/%3E"),
           ...mark,
         },
-        // 選んだ Radio の点: 塗り (surface.primary / error) の内側 3px を、塗りの上の色 (onSurface.inverse) で抜く
+        // 選んだ Radio の点: 塗り (surface.primary / error) の内側 3px を白で抜く。
+        // Checkbox のチェックの絵 (data URL の SVG で CSS 変数を読めない、白) と揃えて固定の白にする。
+        // token (onSurface.inverse) に揃えるのは、Checkbox を別の描き方にするときに 2 つまとめて (#178)
         '.ds-radio:checked': {
-          boxShadow: 'inset 0 0 0 3px var(--color-on-surface-inverse)',
+          boxShadow: 'inset 0 0 0 3px white',
         },
         // ProgressBar の indeterminate が animate-[indeterminate_1.5s_ease-in-out_infinite] (arbitrary) で参照する。
         // Tailwind は animation の値は出すが @keyframes 本体は出さないので、ここで定義する

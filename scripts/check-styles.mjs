@@ -8,7 +8,7 @@
  *
  * MUST 含む:
  *  - semantic utility が焼き込まれている (例 .bg-surface-primary)
- *  - 出荷する非 utility コンポーネント CSS (.ds-checkbox / .ds-radio / @keyframes indeterminate)
+ *  - 出荷する非 utility コンポーネント CSS (.ds-checkbox / .ds-radio / @keyframes indeterminate。preset が生成、モード 2 側は check:preset-styles #178)
  *  - a11y の reduced-motion base (preflight off でも addBase は出る)
  *  - utility は var(--color-...) 参照のまま (テーマ override 追従)
  *  - utility/フォームが動く前提の最小 base (box-sizing:border-box + border-style:solid。styles/base.css、
@@ -49,9 +49,9 @@ const fails = [];
 if (!css.includes('.bg-surface-primary'))
   fails.push('semantic utility (.bg-surface-primary) が無い — content スキャン / preset が壊れている可能性');
 if (count(/\.ds-checkbox/g) < 1)
-  fails.push('.ds-checkbox の出荷コンポーネント CSS が無い — styles/components.css の @import が効いていない');
+  fails.push('.ds-checkbox の出荷コンポーネント CSS が無い — preset (tokens/preset.cjs) の部品の CSS が出ていない (#178)');
 if (!css.includes('.ds-radio'))
-  fails.push('.ds-radio の出荷コンポーネント CSS が無い — styles/components.css の @import が効いていない');
+  fails.push('.ds-radio の出荷コンポーネント CSS が無い — preset (tokens/preset.cjs) の部品の CSS が出ていない (#178)');
 if (!/@keyframes\s+indeterminate/.test(css))
   fails.push('@keyframes indeterminate が無い — ProgressBar の indeterminate アニメーションが壊れる');
 if (!css.includes('prefers-reduced-motion'))

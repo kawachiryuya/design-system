@@ -316,6 +316,49 @@ module.exports = {
         },
       });
     }),
+    // ── 出荷する非 utility の部品の CSS (Checkbox / Radio / ProgressBar) ──
+    // 正本はここだけ。preset を通るビルド (モード 2 の利用側・Storybook・配信の dist/styles.css) の
+    // すべてに同じ規則が入る。以前は styles/components.css にあり、Storybook と dist だけが @import していたので、
+    // モード 2 の利用側では選んだ Radio の点・Checkbox のチェックの絵が出なかった (#178)。
+    // - components 層 (addComponents): utilities より前に出るので、`checked:bg-surface-primary` や
+    //   `checked:hover:shadow-[…]` などの utility との順序は以前と同じ (utility が後)。
+    // - `.ds-checkbox` / `.ds-radio` は content にそのクラスが出てこなければ捨てられる (使わない利用側は払わない)。
+    //   `@keyframes` はクラスを持たないので常に出る。
+    // - 届いていることは check:preset-styles (scripts/check-preset-styles.mjs) が確かめる。
+    plugin(function ({ addComponents }) {
+      // チェックの絵は data URL の SVG なので、CSS 変数を読めない。白 (onSurface.inverse の既定値) を直に持つ
+      const svg = (body) =>
+        `url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E${body}%3C/svg%3E")`;
+      const mark = {
+        backgroundSize: '100% 100%',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      };
+      addComponents({
+        '.ds-checkbox:checked': {
+          backgroundImage: svg(
+            "%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2.5-2.5a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E"
+          ),
+          ...mark,
+        },
+        '.ds-checkbox:indeterminate': {
+          backgroundColor: 'var(--color-surface-primary)',
+          borderColor: 'var(--color-surface-primary)',
+          backgroundImage: svg("%3Crect x='3' y='7' width='10' height='2' rx='1'/%3E"),
+          ...mark,
+        },
+        // 選んだ Radio の点: 塗り (surface.primary / error) の内側 3px を、塗りの上の色 (onSurface.inverse) で抜く
+        '.ds-radio:checked': {
+          boxShadow: 'inset 0 0 0 3px var(--color-on-surface-inverse)',
+        },
+        // ProgressBar の indeterminate が animate-[indeterminate_1.5s_ease-in-out_infinite] (arbitrary) で参照する。
+        // Tailwind は animation の値は出すが @keyframes 本体は出さないので、ここで定義する
+        '@keyframes indeterminate': {
+          '0%': { width: '0%' },
+          '100%': { width: '100%' },
+        },
+      });
+    }),
     plugin(function ({ addUtilities }) {
       addUtilities({
         // -- container: 大外 page wrapper の左右 / 上下 padding (breakpoint 内蔵) --

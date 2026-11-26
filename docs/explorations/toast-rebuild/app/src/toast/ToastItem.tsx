@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '../../../../../../components/primitives/Button';
 import { Icon } from '../../../../../../components/primitives/Icon';
 import type { Look } from '../options';
-import { FORMS } from './forms';
+import { ERRORS, ON_FILL_BUTTON, SHAPE, SUCCESS } from './forms';
 import { durationOf, type DismissReason, type ToastEntry } from './types';
 
 /** 下へこれより多く動かして離すと消える (03-swipe.html と同じ) */
@@ -73,7 +73,6 @@ export interface ToastItemProps {
 
 export const ToastItem: React.FC<ToastItemProps> = ({ entry, look, onDismiss }) => {
   const { id, variant, message, action, exiting } = entry;
-  const form = FORMS[look.form];
   const ref = React.useRef<HTMLDivElement>(null);
   const [shown, setShown] = React.useState(prefersReducedMotion);
   const [dragging, setDragging] = React.useState(false);
@@ -142,12 +141,48 @@ export const ToastItem: React.FC<ToastItemProps> = ({ entry, look, onDismiss }) 
     }
   };
 
-  const hasClose = variant === 'error';
-  const actionRight = !!action && look.action === 'right';
-  const actionBelow = !!action && look.action === 'below';
-  const trailingButton = actionRight || hasClose;
-  const centered = look.icon === 'middle';
+  const isError = variant === 'error';
+  const face = isError ? ERRORS[look.error].face : SUCCESS.face;
+  const iconColor = isError ? ERRORS[look.error].icon : SUCCESS.icon;
+  const disk = isError && ERRORS[look.error].disk;
+  const closeText = isError && look.close === 'text';
+  const closeIcon = isError && look.close === 'icon';
+  // 文字のボタンの並び: 「閉じる」が左、操作 (主) が右端
+  const buttonCount = (closeText ? 1 : 0) + (action ? 1 : 0);
+  // ボタンの位置。× は並びに数えず、いつも右上 (1 行目)
+  const below = buttonCount > 0 && (look.place === 'below' || (look.place === 'auto' && buttonCount >= 2));
+  const right = buttonCount > 0 && !below;
+  const trailingButton = right || closeIcon;
   const state = exiting ? 'exiting' : shown ? 'open' : 'entering';
+
+  const buttons = (
+    <>
+      {closeText && (
+        <Button
+          variant="tertiary"
+          size="sm"
+          aria-label="通知を閉じる"
+          className={['shrink-0 whitespace-nowrap font-regular', ON_FILL_BUTTON].join(' ')}
+          onClick={() => leave('close')}
+        >
+          閉じる
+        </Button>
+      )}
+      {action && (
+        <Button
+          variant="tertiary"
+          size="sm"
+          className={['shrink-0 whitespace-nowrap font-bold', ON_FILL_BUTTON].join(' ')}
+          onClick={() => {
+            action.onClick();
+            leave('action');
+          }}
+        >
+          {action.label}
+        </Button>
+      )}
+    </>
+  );
 
   return (
     <div
@@ -170,8 +205,8 @@ export const ToastItem: React.FC<ToastItemProps> = ({ entry, look, onDismiss }) 
       className={[
         'pointer-events-auto mt-2 flex gap-2 py-2 pl-4 touch-none select-none',
         trailingButton ? 'pr-2' : 'pr-4',
-        form.face[variant],
-        form.shape,
+        face,
+        SHAPE,
         // 動き: 位置は CSS 変数 (払っている間の指の位置) を読む。出る前・消えるときは data-state で決める
         '[transform:translateY(var(--toast-dy,0px))] opacity-[var(--toast-opacity,1)]',
         'transition-[transform,opacity] duration-normal ease-out motion-reduce:transition-none',
@@ -181,50 +216,32 @@ export const ToastItem: React.FC<ToastItemProps> = ({ entry, look, onDismiss }) 
       ].join(' ')}
     >
       <div className="flex min-w-0 flex-1 flex-col self-center">
-        <div className={['flex gap-3 py-2.5', centered ? 'items-center' : 'items-start'].join(' ')}>
-          {/* 1 行目に固定: アイコンの入れ物を 1 行の高さ (type-supporting の行間 1.5em) にして、その中で上下の真ん中 */}
-          <span className={['type-supporting flex shrink-0 items-center', centered ? '' : 'h-[1.5em]', form.icon[variant]].join(' ')}>
-            <Icon name={variant === 'success' ? 'check_circle' : 'error'} size="sm" />
+        <div className="flex items-start gap-3 py-2.5">
+          {/* アイコンは 1 行目に固定: 入れ物を 1 行の高さ (type-supporting の行間 1.5em) にして、その中で上下の真ん中 */}
+          <span className={['type-supporting flex h-[1.5em] shrink-0 items-center', iconColor].join(' ')}>
+            {disk ? (
+              // A3: 赤い塗りの丸 (surface.error) に白い「!」(onSurface.inverse)
+              <Icon size="sm" variant="fill">
+                <circle cx="12" cy="12" r="10" className="fill-[var(--color-surface-error)]" />
+                <path d="M13 17h-2v-2h2v2zm0-4h-2V7h2v6z" className="fill-[var(--color-on-surface-inverse)]" />
+              </Icon>
+            ) : (
+              <Icon name={isError ? 'error' : 'check_circle'} size="sm" />
+            )}
           </span>
           <p className="type-supporting min-w-0 flex-1">{message}</p>
         </div>
-        {actionBelow && action && (
-          <div className="-mt-1 flex justify-end">
-            <Button
-              variant="tertiary"
-              size="sm"
-              className={form.action[variant]}
-              onClick={() => {
-                action.onClick();
-                leave('action');
-              }}
-            >
-              {action.label}
-            </Button>
-          </div>
-        )}
+        {below && <div className="-mt-1 flex justify-end gap-1">{buttons}</div>}
       </div>
-      {actionRight && action && (
-        <Button
-          variant="tertiary"
-          size="sm"
-          className={['shrink-0 self-center whitespace-nowrap', form.action[variant]].join(' ')}
-          onClick={() => {
-            action.onClick();
-            leave('action');
-          }}
-        >
-          {action.label}
-        </Button>
-      )}
-      {hasClose && (
+      {right && <div className="flex shrink-0 items-center gap-1 self-center">{buttons}</div>}
+      {closeIcon && (
         <Button
           variant="tertiary"
           size="sm"
           iconOnly
           icon={<Icon name="close" size="sm" />}
-          aria-label="閉じる"
-          className={['shrink-0', centered ? 'self-center' : 'self-start', form.close[variant]].join(' ')}
+          aria-label="通知を閉じる"
+          className={['shrink-0 self-start', ON_FILL_BUTTON].join(' ')}
           onClick={() => leave('close')}
         />
       )}

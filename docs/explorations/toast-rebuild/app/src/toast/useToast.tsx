@@ -76,12 +76,10 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ look, onDismissed,
     <ToastContext.Provider value={value}>
       {children}
       {/* 置き場: 下に出す。下のナビは避けずに、その上に重ねる (z-toast)。
-          狭い幅 (AppShell の下のナビが出る幅 = shell 未満) は左右に余白を取って下の中央、
-          広い幅は帯で「下の中央」「右下」を選ぶ。最大幅は content.max-width.sm (28rem) */}
+          どの幅も下の中央 (広い幅も中央、1 回目で決まった)。狭い幅は左右に余白を取る。最大幅は content.max-width.sm (28rem) */}
       <div
         data-ds-root
-        data-wide={look.wide}
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-toast flex justify-center px-4 pb-4 shell:px-6 shell:pb-6 shell:data-[wide=right]:justify-end"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-toast flex justify-center px-4 pb-4 shell:px-6 shell:pb-6"
       >
         <div className="flex w-full max-w-content-sm flex-col">
           <div role="status" aria-live="polite" aria-relevant="additions" className="flex flex-col">

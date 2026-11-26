@@ -1,10 +1,9 @@
 import React from 'react';
 import { Radio, RadioGroup } from '../../../../../components/composites/Radio';
 import {
-  ACTION_CHOICES,
-  FORM_CHOICES,
-  ICON_CHOICES,
-  WIDE_CHOICES,
+  CLOSE_CHOICES,
+  ERROR_CHOICES,
+  PLACE_CHOICES,
   summaryOf,
   type Look,
 } from './options';
@@ -45,10 +44,9 @@ export const OptionsBand: React.FC<{ look: Look; onChange: (next: Look) => void 
       <span data-testid="band-summary">{summaryOf(look)}</span>
     </summary>
     <div className="flex flex-col gap-4 px-4 pb-4">
-      <Group name="form" legend="形と色" choices={FORM_CHOICES} look={look} onChange={onChange} />
-      <Group name="icon" legend="文が 2 行以上のときのアイコン" choices={ICON_CHOICES} look={look} onChange={onChange} />
-      <Group name="action" legend="操作の位置" choices={ACTION_CHOICES} look={look} onChange={onChange} />
-      <Group name="wide" legend="広い幅での置き場所（狭い幅はどちらも下の中央）" choices={WIDE_CHOICES} look={look} onChange={onChange} />
+      <Group name="error" legend="「できなかった」の色（できた、はどれも濃い面）" choices={ERROR_CHOICES} look={look} onChange={onChange} />
+      <Group name="close" legend="閉じるの形" choices={CLOSE_CHOICES} look={look} onChange={onChange} />
+      <Group name="place" legend="ボタンの位置" choices={PLACE_CHOICES} look={look} onChange={onChange} />
     </div>
   </details>
 );

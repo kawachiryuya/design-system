@@ -18,9 +18,8 @@
  * .border 等の utility が最小 base を上書きできる順序にする。詳細は base.css 冒頭。 */
 @import "./base.css";
 
-/* 非 utility のコンポーネント CSS (Checkbox/Radio/keyframe)。Storybook と共有の SSoT。 */
-@import "./components.css";
-
+/* 非 utility の部品の CSS (Checkbox / Radio の印・ProgressBar の keyframe) は preset が components 層に生成する
+ * (正本は tokens/preset.cjs。モード 2 の利用側にも同じ規則が届く #178)。 */
 @tailwind base;
 /* text style `type-{role}` (preset が addComponents で生成、#109 Typo-2)。utilities より前に置き、
  * `font-bold` 等の weight 上書き (utilities 層) が後勝ちする順序にする。 */

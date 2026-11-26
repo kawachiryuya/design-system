@@ -38,7 +38,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | 補足 (押した要素についての説明・軽い操作。外を押すと閉じる) | `<Popover>` | 狭い幅 (640px 未満) は下から、広い幅は押した要素の近くに出る (部品が決める)。見出しの `title` は必須。確認・重要操作は ConfirmDialog、まとまった入力は FormDialog、選択肢から 1 つ選ぶのは Menu |
 | 選ぶ (押した要素に属する選択肢・操作から 1 つ。選んだら閉じる) | `<Menu>` | 狭い幅 (640px 未満) は下から、広い幅は押した要素の近くに出る (部品が決める)。「1 つ選ぶ」(`selected` でチェック) と「操作の一覧」。フォームの欄で値を送るのは Select |
 | hover/focus の短い補足 | `<Tooltip>` | Popover 基盤 + `role="tooltip"`/`aria-describedby`。操作・複数行は Popover |
-| 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け |
+| 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け。dialog を開いている間に出しても、その上に見えて押せる (部品が置き場を移す、#169)。FormDialog の中の入力の誤り・保存の失敗は Toast でなく dialog の中の Alert・欄のエラー |
 | 要素の縦並び | `<Stack>` | 等間隔で縦積み。spacing は token 経由 |
 | 要素の横並び | `<Cluster>` | 等間隔で横並び + 折返し対応 |
 | 中央配置 | `<Center>` | 縦横中央、内側コンテナ用 |
@@ -92,6 +92,8 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 > 状態の「class 条件付加」検知の自動化は難しいため、規律 2 は当面**規約 + レビュー運用** (規律 1 は §3-7 lint で機械強制)。移行は §7 の手順で 1 コンポーネント = 1 PR で段階的に進める。出荷する `data-*` 属性名は silent-break 面 (§10-2)。
 
 > **配信ベースリセットの scope (#76, C-scoped)**: 各コンポーネントの最外要素と overlay (ConfirmDialog / FormDialog / Popover 等) には識別属性 **`data-ds-root`** を付ける。配信 `styles.css` の最小ベース (box-sizing/border/form 正規化) は `:where([data-ds-root]…)` に scope され、消費者の素の要素には触れない。完全カプセル化 (D) の保留判断・forcing function は [`design-system-strategy.md`](./design-system-strategy.md) ロードマップ節を参照。`check:styles` が global footprint の再混入をガードする。
+
+> **出荷する非 utility の CSS は preset に書く (#178)**: 部品の動きに要る utility でない CSS (Checkbox / Radio の印・`@keyframes` など) は `tokens/preset.cjs` に書き (正本はそこだけ)、Storybook や `styles/dist.css` の入力 CSS に足さない。入力 CSS にだけ書くと、preset で使う利用側 (README のモード 2) に届かない。2 つの配信の形の両方に届くことは、`check:styles` (モード 1、`dist/styles.css`) と `check:preset-styles` (モード 2 の最小ビルド) が、同じ一覧 ([`scripts/component-css-rules.mjs`](./scripts/component-css-rules.mjs)、セレクタと効いている宣言) で守る。規則を足す・変えるときは一覧も変える。
 
 ---
 
@@ -283,6 +285,7 @@ Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `gre
 「具体値より役割名で意図が伝わる」種類のスケールは **primitive 層を持たず semantic 名のみ** で運用する。生数値での参照は禁止。
 
 - `z-index`: `dropdown / sticky / overlay / modal / popover / toast / tooltip` の 7 layer。`z-modal` のように使う (`z-50` 等の Tailwind 既定は並存するが新規利用は避ける)
+  - z-index が効くのはページの上の重なりだけ。`<dialog>.showModal()` (ConfirmDialog・FormDialog・下から出る面) と `popover` は z-index の外の一番上の層に出る。modal の dialog が開いている間は、`z-toast` でも dialog の後ろに隠れ、dialog の外は押せない (inert)。Toast は開いている間だけ置き場を一番上の dialog の中へ移し、`popover` で一番上の層に出す (#169)
 - `opacity`: `disabled / muted / spinner-track / spinner-spin` の意味付き 4 値。`opacity-disabled` のように使う
 - `focus-ring`: `width` (2px) / `offset` (2px)。CSS 変数 `--focus-ring-width` / `--focus-ring-offset` として出し、utility `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` が色 (`border.focus` / `onSurface.inverse`) と組み合わせて読む。どの部品にどの形かは §3-2「フォーカスの規則」
 
@@ -483,7 +486,7 @@ themeable トークンを 3 層に分け、機械可読な manifest [`tokens/the
 | **コミット前の最終確認 (全体)** | `npm run verify` |
 | 視覚・a11y も含む全確認 | `npm run verify:full` |
 
-- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:mdx-typography → check:conventions → typecheck → check:styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
+- `npm run verify` = `tokens:build → check:preset-deps → check:contrast → check:links → check:refs → lint → check:mdx-typography → check:conventions → typecheck → check:styles → check:preset-styles → check:utilities → check:theme-contract` (**安い順 fail-fast**)。`verify:full` はこれに `build-storybook + test-storybook:local` を足す。
 - `typecheck` は incremental (`.tsbuildinfo`) のため 2 回目以降が速い。
 - **イテレーション中はスコープ版、全体走査はコミット前のみ** という方針を守る。
 
@@ -630,6 +633,7 @@ CI は `npm run verify` を 1 ステップで呼ぶ ([`ci.yml`](./.github/workfl
 | `tokens/preset.cjs` が require する外部パッケージが dependencies / peerDependencies に宣言済み (mode② consumer の preset 解決を守る。devDependency 止まりだと `Cannot find module` で落ちる packaging silent break を弾く) | **Check preset deps** (`npm run check:preset-deps`、[`scripts/check-preset-deps.mjs`](./scripts/check-preset-deps.mjs)) |
 | story・`.storybook`・mdx でも文字の大きさ・行間・字間を直書きしない (`type-*` で書く。tsx は Lint、mdx は `className` の中を見る、§3-7) | **Lint** (`npm run lint`) / **Check mdx typography** (`npm run check:mdx-typography`、[`scripts/check-mdx-typography.mjs`](./scripts/check-mdx-typography.mjs)) |
 | 書いた Tailwind utility が実際に CSS を生成している (出荷コンポーネント ↔ 配信 CSS、stories / `.storybook` / mdx ↔ Storybook CSS。存在しないクラスを書いても型・lint では止まらない silent break を弾く、§3-7) | **Check utilities** (`npm run check:utilities`、[`scripts/check-utilities.mjs`](./scripts/check-utilities.mjs)) |
+| 部品の動きに要る非 utility の CSS が、2 つの配信の形 (モード 1 の `dist/styles.css` は Check styles、モード 2 の最小ビルドはこちら) に届く。期待する一覧 ([`scripts/component-css-rules.mjs`](./scripts/component-css-rules.mjs)) のセレクタ (擬似クラスまで) と効いている宣言で 1 回ずつ、`checked:*` の utility より前に出る。部品が使う `ds-*` のクラス・`animate-[…]` の `@keyframes` が一覧に無くても落ちる。focus-ring* 等もモード 2 に出る (§2「出荷する非 utility の CSS は preset に書く」、#178) | **Check preset styles** (`npm run check:preset-styles`、[`scripts/check-preset-styles.mjs`](./scripts/check-preset-styles.mjs)) |
 | semantic color token がテーマ契約 ([`tokens/theme-contract.json`](./tokens/theme-contract.json)) のどれか 1 層にちょうど 1 回出る (層を決めずに token を足せない。rename / 削除の取り残しも弾く、§3-8) | **Check theme contract** (`npm run check:theme-contract`、[`scripts/check-theme-contract.mjs`](./scripts/check-theme-contract.mjs)) |
 | semantic 配色ペアが WCAG 2 AA を満たす + パレットの階調不変条件 (アンカー / step 差 / L 正規化) が壊れていない (§8-5) | **Check contrast** (`npm run check:contrast`、[`tokens/contrast-pairs.json`](./tokens/contrast-pairs.json)) |
 | 全 Story がレンダリングエラー無し + play test が pass + axe a11y 違反 0 + 部品の story で Tab で来る要素に決めた形のフォーカスの輪が出る (例外は理由付き、§8-4) | **Run Storybook tests** (`npm run test-storybook`) |
@@ -818,6 +822,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 - **インジケータ**: 2px の outline、下地との差 3:1 以上 (WCAG 1.4.11)。太さは 2.4.13 (AAA) 相当を目安にする。形は 3 つで、どれを使うかは §3-2「フォーカスの規則」。2.4.11 (AA) は「フォーカスが隠れない」(sticky ヘッダー等で覆わない)
 - **トラップ (ConfirmDialog / FormDialog)**: ネイティブ `<dialog>.showModal()` を使えばブラウザ標準でトラップ + Esc + 閉じ後 trigger 復帰。2 つの部品は共通の土台 ([`components/_internal/DialogBase.tsx`](./components/_internal/DialogBase.tsx)) に乗り、外を押しても閉じず、Esc は取り消しとして閉じる要求 (`onClose`) を出す。自前 modal は同等の挙動を実装
+- **modal の dialog を開いている間に出す部品 (Toast)**: dialog の外の要素は、一番上の層 (`popover`) に出しても押せない・フォーカスが入らない・読み上げられない (inert。Chromium で測った、#169)。押せる必要があるものは、開いている間だけ一番上の dialog の中へ置き場を移す (Toast の `useAboveModalDialogs`)。使う側に「dialog の中では使わない」と覚えさせない。部品が自分で置き場を移して dialog の中に入るものの押せる要素は、dialog の × と同じ読み上げ名にしない (Toast の閉じるは「通知を閉じる」。同じ名前が 2 つあると、読み上げで区別できず、名前で探すテストも落ちる。使う側が dialog の中に置く Alert の閉じるは、この決まりの対象にしていない: 今は「閉じる」のまま)
 - **閉じた後のフォーカスの戻り先 (`returnFocusRef`)**: 開く前の要素が閉じた後に残らないとき (狭い幅の Menu の項目から ConfirmDialog を開いた等。Menu の面は閉じているので、ブラウザは body に戻す) は、`returnFocusRef` に入口を渡す。戻すのは、閉じたときにフォーカスが dialog の中か body のときだけ (下から出る面 `BottomSheet` と同じ線)。Menu・Popover の入口に付けた `ref` は入口の要素を指す
 - **動的コンテンツ追加時**: 追加要素に focus 移動 (例: 検索結果リスト)
 - **動的コンテンツ削除時**: 削除アイテムの **論理的な次** (なければ前) に focus 移動。`<body>` 戻りを避ける

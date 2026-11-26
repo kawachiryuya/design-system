@@ -120,6 +120,7 @@ const { showToast } = useToast();
 | **確認が必要な操作** ("削除しますか?") | `<ConfirmDialog>` | フォーカストラップ + 確定/取消 |
 | **データなしの代替表示** | `<EmptyState>` | 画面の一部を埋める用途 |
 | **ステータスを 1 単語で** | `<Badge>` | アクション通知ではなく状態表示 |
+| **FormDialog の中の入力の誤り・保存の失敗** ("保存できませんでした") | dialog の中の `<Alert>`・欄のエラー (`error`) | 直す場所のそばに、直すまで残す。Toast は数秒で消え、dialog から離れた画面の端に出るので、どこを直すか見失う。Toast は操作の結果の一時的な知らせ (dialog を開いている間に出しても、dialog の上に見えて押せる) |
 
 ---
 
@@ -127,8 +128,11 @@ const { showToast } = useToast();
 
 - **常設の live region コンテナ**: Provider は `role="status"`/`aria-live="polite"` と `role="alert"`/`aria-live="assertive"` の **2 コンテナを空でも常設**し、Toast を variant で振り分けて注入する (live region のマウント遅延を避け、告知の確実性を上げる)。個別 Toast 自体は live 属性を持たない
 - **error は assertive、それ以外は polite**: error variant は alert コンテナで即時読み上げ、他は status コンテナで次の文末に読まれる (単発 `<Toast>` API はラッパに同等の role/aria-live を付与)
-- **close ボタン**: `<VisuallyHidden>` で「閉じる」を SR 用テキストで付与
+- **close ボタン**: 読み上げ名は「通知を閉じる」(`aria-label`)。dialog の中に出たとき、dialog の × (「閉じる」) と同じ名前にならないため
 - **focus 管理**: 自動消滅 / overlay ではないため focus trap なし。トリガー (button 等) の focus はそのまま
+- **dialog を開いている間** (ConfirmDialog・FormDialog・狭い幅の Menu・Popover の下から出る面): ブラウザは一番上の dialog の外を押せなくし、読み上げからも外す。そこで Toast の置き場は、開いている間だけ**一番上の dialog の中**へ移り、一番上の層に出る (見える・押せる・フォーカスが入る・読み上げられる。使う側は何もしなくてよい)。Tab の巡りでは dialog の最後 (確定のボタンの後) に入る。dialog を閉じると置き場は元の場所へ戻り、出ている Toast と残り時間はそのまま。フォーカスは dialog のふつうの戻り先 (開く前の要素・`returnFocusRef`) へ戻る (Toast の中にあっても Toast には残らない)。dialog の中で Toast の閉じる・操作ボタンをキーボードで押して Toast が消えたら、フォーカスは dialog そのものへ移る (body に落ちない)。指・マウスで開いた dialog の中でも、Toast の中でキーを押せば輪が出る。下から出る面が閉じる動きの間 (200ms) だけは、中の Toast も押せない
+- **どの dialog が一番上か**: Toast は、ページで最初の Toast (ToastProvider か開いた単発の `<Toast>`) が描かれてから開いた dialog の順を覚える。それより前から開いていた dialog の順は分からないので、フォーカスを含む dialog を一番上とみなす (無ければ文書の後ろのもの)。ToastProvider をアプリの root に置けば、順はいつも正しい
+- **画面いっぱいの FormDialog を開いている間に、操作つきの Toast を出さない** (狭い幅): 右下・下の Toast は確定のボタン (「適用」など) に重なり、操作つきの Toast は自動で消えないので、Toast を閉じるまで確定が押せない。dialog の中の知らせは dialog の中の `<Alert>` に出す
 - **キーボード操作**: close ボタンに Tab で focus 可、Enter / Space で発火
 - **autohide の一時停止 (WCAG 2.2.1)**: hover / focus 中は自動消滅タイマーを停止し、離脱で残り時間から再開する。読んでいる / 操作しようとしている途中に消えない
 - **action 付きは無期限 + 明示 close**: `action` を持つ Toast は到達性 (キーボード / SR ユーザーが操作ボタンへ届く時間) のため自動消滅を無期限化する。明示 `duration` を渡しても最低 10000ms にクランプされる。確実に伝えたい / 操作させたい場合は close ボタンでの明示クローズを基本とする
@@ -142,4 +146,3 @@ const { showToast } = useToast();
 
 - [`<Icon>`](?path=/docs/primitives-icon--guideline) — variant ごとの先頭アイコン (`check_circle` / `error` / `warning` / `info`) と close アイコン
 - [`<Button>`](?path=/docs/primitives-button--guideline) — action ボタン / close ボタン
-- [`<VisuallyHidden>`](?path=/docs/primitives-visuallyhidden--guideline) — 「閉じる」の SR 用テキスト

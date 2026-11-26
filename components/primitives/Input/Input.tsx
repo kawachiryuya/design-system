@@ -112,6 +112,7 @@ type _InternalInputProps = InputBaseProps & {
  * - variants.size: 高さ + テキストサイズ (パディングは compound で決定)
  * - variants.error: 通常 (border-border) vs エラー (border-error + bg-error-muted)
  * - variants.fullWidth: w-full の付与
+ * - variants.isDate: 日付の欄 (type="date") だけの指定 (iPhone の Safari のはみ出し対策 #181)
  * - variants.hasLeadingIcon / hasTrailingIcon: padding 計算用 (見た目に直接影響しない)
  * - compoundVariants: size × hasLeadingIcon / hasTrailingIcon で左右の padding を決定
  *   (アイコンスペース確保のため `pl-{N}` / `pr-{N}`)
@@ -148,6 +149,27 @@ const inputVariants = tv({
       true:  'w-full',
       false: '',
     },
+    // 日付の欄 (type="date") だけの指定 (#181)。iPhone の Safari は端末の見た目 (appearance: auto) の
+    // 日付の欄に中身からの幅の下限を持たせ、w-full より広くなって親の右にはみ出す。
+    // min-width / max-width だけでは直らず、appearance: none で端末の見た目を外すと直る (実機で確認)。
+    // 外すと中の文字が上に寄るので、中の値の擬似要素 (::-webkit-date-and-time-value、iOS の Safari にだけある)
+    // を flex + items-center + 高さいっぱいにして縦の中央に置き、左に揃える (Safari は中央寄せにする)。
+    // 欄そのものは block のまま (欄を flex にすると Chromium でカレンダーの絵が文字の直後に動くため)。
+    // 擬似要素の指定は Chromium・Firefox には当たらない (その擬似要素が無い)。
+    isDate: {
+      true: [
+        'appearance-none',
+        '[-webkit-appearance:none]',
+        'min-w-0',
+        'max-w-full',
+        '[&::-webkit-date-and-time-value]:flex',
+        '[&::-webkit-date-and-time-value]:items-center',
+        '[&::-webkit-date-and-time-value]:h-full',
+        '[&::-webkit-date-and-time-value]:min-h-[1.5em]',
+        '[&::-webkit-date-and-time-value]:text-left',
+      ],
+      false: '',
+    },
     hasLeadingIcon: { true: '', false: '' },
     hasTrailingIcon: { true: '', false: '' },
   },
@@ -167,7 +189,7 @@ const inputVariants = tv({
     { size: 'lg', hasTrailingIcon: true,  class: 'pr-12' },
     { size: 'lg', hasTrailingIcon: false, class: 'pr-4' },
   ],
-  defaultVariants: { size: 'md', error: false, fullWidth: false, hasLeadingIcon: false, hasTrailingIcon: false },
+  defaultVariants: { size: 'md', error: false, fullWidth: false, isDate: false, hasLeadingIcon: false, hasTrailingIcon: false },
 });
 
 /** アイコン absolute 配置の left/right クラス (size 別) */
@@ -244,6 +266,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               size,
               error,
               fullWidth,
+              isDate: type === 'date',
               hasLeadingIcon: Boolean(leadingIcon),
               hasTrailingIcon: Boolean(trailingIcon),
               className,

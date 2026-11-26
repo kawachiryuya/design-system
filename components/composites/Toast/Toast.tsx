@@ -3,6 +3,7 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
 import { Button } from '../../primitives/Button';
+import { HIDE_FOCUS_RING_ATTR } from '../../_internal/useHideFocusRingUntilKey';
 
 /** Toast のセマンティックカラーバリアント */
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral';
@@ -108,12 +109,167 @@ const variantConfig: Record<ToastVariant, {
   },
 };
 
+// 反対側の辺は `auto` と書く: dialog を開いている間は置き場が `popover` になり、ブラウザの既定 (`inset: 0`・`margin: auto`) が
+// 当たるため (#169)。ふだんの div では既定と同じ値なので、見た目は変わらない
 const positionStyles: Record<ToastPosition, string> = {
-  'top':          'top-4 left-1/2 -translate-x-1/2',
-  'top-right':    'top-4 right-4',
-  'bottom':       'bottom-4 left-1/2 -translate-x-1/2',
-  'bottom-right': 'bottom-4 right-4',
+  'top':          'top-4 bottom-auto left-1/2 right-auto -translate-x-1/2',
+  'top-right':    'top-4 bottom-auto right-4 left-auto',
+  'bottom':       'bottom-4 top-auto left-1/2 right-auto -translate-x-1/2',
+  'bottom-right': 'bottom-4 top-auto right-4 left-auto',
 };
+
+/**
+ * 置き場 (固定して出す入れ物) の見た目。`popover` になったときのブラウザの既定 (余白・枠・背景・はみ出しの切り取り・文字色。
+ * 位置の `inset: 0` は `positionStyles` の反対側の辺で消す) を打ち消す。ふだんの div では既定と同じ値なので、見た目は変わらない
+ * (幅・高さの `fit-content` は、固定した div の中身なりの大きさと同じなので打ち消さない)
+ */
+const layerStyles = 'fixed z-toast m-0 p-0 border-0 bg-transparent overflow-visible text-inherit';
+
+/** layout effect はブラウザでだけ (サーバーでは何もしない effect にして、React の警告を出さない) */
+const useLayoutEffectOnClient = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+
+// ─────────────────────────────────────────────
+// dialog の上に出す (#169)
+// ─────────────────────────────────────────────
+
+/** 置き場 1 つ分 (ToastProvider 1 つ・開いている単発の Toast 1 つ) */
+interface ToastLayer {
+  /** 置き場 (固定して出す入れ物) */
+  host: HTMLDivElement;
+  /** 元の場所 (`display: contents` の目印) */
+  home: HTMLElement;
+}
+
+/**
+ * ページで 1 つの見張り。置き場が 1 つでもある間だけ動き、最後の置き場が外れたら止まって空になる。
+ * module では値を作るだけで、文書には触らない (触るのは最初の置き場が描かれた後、AGENTS §5-2)
+ */
+const watch = {
+  /** 今ある置き場 */
+  layers: new Set<ToastLayer>(),
+  /** 開いている modal の dialog を、開いた順に並べたもの (一番上は最後) */
+  modals: [] as HTMLDialogElement[],
+  /** 文書の `open` 属性と、要素の出し入れを見る */
+  observer: null as MutationObserver | null,
+};
+
+/** 一番上の modal の dialog。閉じた・文書から外れたものは一覧から抜く */
+function topModal(): HTMLDialogElement | undefined {
+  const { modals } = watch;
+  for (let i = modals.length - 1; i >= 0; i -= 1) {
+    if (!modals[i].isConnected || !modals[i].matches(':modal')) modals.splice(i, 1);
+  }
+  return modals[modals.length - 1];
+}
+
+/** 置き場を、一番上の dialog の中 (無ければ元の場所) に置く。もうそこにあれば何もしない */
+function placeLayer({ host, home }: ToastLayer, top: HTMLDialogElement | undefined) {
+  if (top) {
+    if (host.parentElement === top && host.matches(':popover-open')) return;
+    if (host.matches(':popover-open')) host.hidePopover();
+    top.appendChild(host);
+    host.setAttribute('popover', 'manual');
+    host.showPopover();
+  } else {
+    if (host.parentElement === home && !host.hasAttribute('popover')) return;
+    if (host.matches(':popover-open')) host.hidePopover();
+    host.removeAttribute('popover');
+    home.appendChild(host);
+  }
+}
+
+function placeAll() {
+  const top = topModal();
+  watch.layers.forEach((layer) => placeLayer(layer, top));
+}
+
+/**
+ * 見張りを始める。始める前から開いている dialog は、開いた順が分からないので文書の順に並べ、
+ * フォーカスを含む dialog があればそれを一番上とみなす (使う人が今操作している dialog)
+ */
+function startWatch() {
+  const open = Array.from(document.querySelectorAll<HTMLDialogElement>('dialog:modal'));
+  const focused = open.find((d) => d.contains(document.activeElement));
+  watch.modals = [...open.filter((d) => d !== focused), ...(focused ? [focused] : [])];
+  watch.observer = new MutationObserver((records) => {
+    for (const r of records) {
+      if (r.type !== 'attributes' || !(r.target instanceof HTMLDialogElement)) continue;
+      // 開いた・開き直した dialog は一番上へ、閉じたものは抜く (知らせの順 = 本当に開いた順)
+      const i = watch.modals.indexOf(r.target);
+      if (i >= 0) watch.modals.splice(i, 1);
+      if (r.target.matches(':modal')) watch.modals.push(r.target);
+    }
+    // 要素の出し入れ (childList) も見る: 開いたまま dialog が外された・中身を丸ごと置き換えられて置き場ごと外れた、を戻す
+    placeAll();
+  });
+  watch.observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['open'] });
+}
+
+function stopWatch() {
+  watch.observer?.disconnect();
+  watch.observer = null;
+  watch.modals = [];
+}
+
+/**
+ * Toast の置き場を、開いている modal の dialog の上に出す (#169)。
+ *
+ * `<dialog>.showModal()` (ConfirmDialog・FormDialog・狭い幅の Menu・Popover の下から出る面) が開いている間、
+ * ブラウザは一番上の dialog の外をすべて押せなくする (inert。一番上の層 `popover` に出しても同じ。#169 で測った)。
+ * そこで、開いている間は置き場 (`host`) を**一番上の modal の dialog の中**へ移し、`popover="manual"` で一番上の層に出す
+ * (dialog の中なので押せる・フォーカスが入る・読み上げられる。一番上の層なので、dialog の変形・はみ出しの切り取りに左右されない)。
+ * 閉じたら元の場所 (`host` の親、描いた場所) へ戻し、`popover` を外す。dialog が無いときは何もしない (今までと同じ)。
+ * 動かすのは DOM の要素だけなので、React は描き直さない (出ている Toast・タイマーはそのまま)。
+ *
+ * 仕組み:
+ * - ページで 1 つの見張り (`watch`): 開いた順の dialog の一覧と、文書の `open` 属性・要素の出し入れを見る `MutationObserver`。
+ *   最初の置き場が描かれたときに始め、最後の置き場が外れたら止める。どの置き場も同じ順を使う
+ * - 置き場ごとの `keydown` (capture): Toast の中でキーが押されたら、今いる dialog の `data-ds-hide-focus-ring` を外す
+ *   (指・マウスで開いた dialog の中は、キーが押されるまで輪を出さない決まり。AGENTS §3-2。
+ *   Toast は React では dialog の外の部品なので、dialog の「キーが押されたら外す」が Toast の中のキーに届かない)
+ * - 置き場ごとの `focusout`: dialog の中で、フォーカスを持ったまま Toast が消えたら (閉じる・操作ボタン・自動で消える)、
+ *   フォーカスを dialog そのものに置く (body に落ちると、次の Tab でブラウザの外へ出る。DialogBase と同じ線)。
+ *   残っている別の Toast へは移さない。dialog が無いページでは何もしない
+ *
+ * 外すとき (アンマウント) は置き場を元の場所へ戻す (dialog の中に置き去りにしない)。
+ */
+function useAboveModalDialogs(hostRef: React.RefObject<HTMLDivElement | null>) {
+  useLayoutEffectOnClient(() => {
+    const host = hostRef.current;
+    const home = host?.parentElement;
+    if (!host || !home || typeof host.showPopover !== 'function') return;
+
+    const layer: ToastLayer = { host, home };
+    if (watch.layers.size === 0) startWatch();
+    watch.layers.add(layer);
+    placeLayer(layer, topModal());
+
+    const showRingOnKey = () => host.closest('dialog')?.removeAttribute(HIDE_FOCUS_RING_ATTR);
+    const keepFocusInDialog = (e: FocusEvent) => {
+      if (e.relatedTarget) return;
+      const lost = e.target as Element;
+      queueMicrotask(() => {
+        const dialog = host.parentElement;
+        const active = document.activeElement;
+        if (!(dialog instanceof HTMLDialogElement) || !dialog.open) return;
+        if (active && active !== document.body) return;
+        // 外れた要素が今も見えるなら、わざと外した (`blur()`) もの。扱わない
+        if (lost.isConnected && lost.getClientRects().length > 0) return;
+        dialog.focus();
+      });
+    };
+    host.addEventListener('keydown', showRingOnKey, true);
+    host.addEventListener('focusout', keepFocusInDialog);
+
+    return () => {
+      host.removeEventListener('keydown', showRingOnKey, true);
+      host.removeEventListener('focusout', keepFocusInDialog);
+      watch.layers.delete(layer);
+      placeLayer(layer, undefined);
+      if (watch.layers.size === 0) stopWatch();
+    };
+  }, [hostRef]);
+}
 
 /**
  * 実効 duration を解決する。`action` 付き Toast は SR / キーボードユーザーが操作ボタンへ
@@ -226,7 +382,7 @@ const ToastBody: React.FC<ToastContent & {
       {onClose && (
         <button
           type="button"
-          aria-label="閉じる"
+          aria-label="通知を閉じる"
           onClick={onClose}
           className={[
             'absolute top-4 right-4 inline-flex items-center justify-center h-5 w-5 rounded',
@@ -261,18 +417,30 @@ export const Toast: React.FC<ToastProps> = ({
   const { pause, resume } = useAutoDismiss(open ? effectiveDuration : 0, onClose);
 
   if (!open) return null;
+  return <ToastSingleLayer {...content} position={position} onClose={onClose} onPause={pause} onResume={resume} />;
+};
 
+/** 単発 API の置き場 (開いている間だけ描く)。dialog を開いている間はその上に出す (`useAboveModalDialogs`) */
+const ToastSingleLayer: React.FC<React.ComponentProps<typeof ToastBody> & { position: ToastPosition }> = ({
+  position,
+  ...body
+}) => {
+  const hostRef = React.useRef<HTMLDivElement>(null);
+  useAboveModalDialogs(hostRef);
   // 単発 API は live region コンテナを持たないため、ラッパに role/aria-live を付与する。
-  const liveConfig = variantConfig[content.variant ?? 'info'];
-
+  const liveConfig = variantConfig[body.variant ?? 'info'];
+  // 外側の div は元の場所の目印 (`display: contents` で箱を作らない)。dialog を閉じたら置き場をここへ戻す
   return (
-    <div
-      role={liveConfig.role}
-      aria-live={liveConfig.ariaLive}
-      aria-atomic="true"
-      className={['fixed z-toast', positionStyles[position]].join(' ')}
-    >
-      <ToastBody {...content} onClose={onClose} onPause={pause} onResume={resume} />
+    <div className="contents">
+      <div
+        ref={hostRef}
+        role={liveConfig.role}
+        aria-live={liveConfig.ariaLive}
+        aria-atomic="true"
+        className={[layerStyles, positionStyles[position]].join(' ')}
+      >
+        <ToastBody {...body} />
+      </div>
     </div>
   );
 };
@@ -346,6 +514,8 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 }) => {
   const [toasts, setToasts] = React.useState<ToastEntry[]>([]);
   const counterRef = React.useRef(0);
+  const hostRef = React.useRef<HTMLDivElement>(null);
+  useAboveModalDialogs(hostRef);
 
   const dismissToast = React.useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -384,12 +554,15 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className={['fixed z-toast flex flex-col gap-2', positionStyles[position]].join(' ')}>
-        <div role="status" aria-live="polite" aria-relevant="additions" className={stackClass}>
-          {renderEntries(politeToasts)}
-        </div>
-        <div role="alert" aria-live="assertive" aria-relevant="additions" className={stackClass}>
-          {renderEntries(assertiveToasts)}
+      {/* 外側の div は元の場所の目印 (`display: contents` で箱を作らない)。dialog を開いている間、置き場はその中へ移り、閉じたらここへ戻る */}
+      <div className="contents">
+        <div ref={hostRef} className={[layerStyles, 'flex flex-col gap-2', positionStyles[position]].join(' ')}>
+          <div role="status" aria-live="polite" aria-relevant="additions" className={stackClass}>
+            {renderEntries(politeToasts)}
+          </div>
+          <div role="alert" aria-live="assertive" aria-relevant="additions" className={stackClass}>
+            {renderEntries(assertiveToasts)}
+          </div>
         </div>
       </div>
     </ToastContext.Provider>

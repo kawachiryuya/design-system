@@ -38,7 +38,7 @@ Claude Code / Cursor などの AI コーディングエージェントが本リ�
 | 補足 (押した要素についての説明・軽い操作。外を押すと閉じる) | `<Popover>` | 狭い幅 (640px 未満) は下から、広い幅は押した要素の近くに出る (部品が決める)。見出しの `title` は必須。確認・重要操作は ConfirmDialog、まとまった入力は FormDialog、選択肢から 1 つ選ぶのは Menu |
 | 選ぶ (押した要素に属する選択肢・操作から 1 つ。選んだら閉じる) | `<Menu>` | 狭い幅 (640px 未満) は下から、広い幅は押した要素の近くに出る (部品が決める)。「1 つ選ぶ」(`selected` でチェック) と「操作の一覧」。フォームの欄で値を送るのは Select |
 | hover/focus の短い補足 | `<Tooltip>` | Popover 基盤 + `role="tooltip"`/`aria-describedby`。操作・複数行は Popover |
-| 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け |
+| 一時通知 | `<Toast>` / `useToast()` | 操作結果の一時表示。Alert (インライン定常) と棲み分け。dialog を開いている間に出しても、その上に見えて押せる (部品が置き場を移す、#169)。FormDialog の中の入力の誤り・保存の失敗は Toast でなく dialog の中の Alert・欄のエラー |
 | 要素の縦並び | `<Stack>` | 等間隔で縦積み。spacing は token 経由 |
 | 要素の横並び | `<Cluster>` | 等間隔で横並び + 折返し対応 |
 | 中央配置 | `<Center>` | 縦横中央、内側コンテナ用 |
@@ -283,6 +283,7 @@ Primitive 層 (`tokens/source/colors.json`) は **hue 名のみ** (`teal` / `gre
 「具体値より役割名で意図が伝わる」種類のスケールは **primitive 層を持たず semantic 名のみ** で運用する。生数値での参照は禁止。
 
 - `z-index`: `dropdown / sticky / overlay / modal / popover / toast / tooltip` の 7 layer。`z-modal` のように使う (`z-50` 等の Tailwind 既定は並存するが新規利用は避ける)
+  - z-index が効くのはページの上の重なりだけ。`<dialog>.showModal()` (ConfirmDialog・FormDialog・下から出る面) と `popover` は z-index の外の一番上の層に出る。modal の dialog が開いている間は、`z-toast` でも dialog の後ろに隠れ、dialog の外は押せない (inert)。Toast は開いている間だけ置き場を一番上の dialog の中へ移し、`popover` で一番上の層に出す (#169)
 - `opacity`: `disabled / muted / spinner-track / spinner-spin` の意味付き 4 値。`opacity-disabled` のように使う
 - `focus-ring`: `width` (2px) / `offset` (2px)。CSS 変数 `--focus-ring-width` / `--focus-ring-offset` として出し、utility `focus-ring` / `focus-ring-inset` / `focus-ring-on-fill` が色 (`border.focus` / `onSurface.inverse`) と組み合わせて読む。どの部品にどの形かは §3-2「フォーカスの規則」
 
@@ -818,6 +819,7 @@ WCAG 2.1 の POUR 原則 (Perceivable / Operable / Understandable / Robust) に�
 
 - **インジケータ**: 2px の outline、下地との差 3:1 以上 (WCAG 1.4.11)。太さは 2.4.13 (AAA) 相当を目安にする。形は 3 つで、どれを使うかは §3-2「フォーカスの規則」。2.4.11 (AA) は「フォーカスが隠れない」(sticky ヘッダー等で覆わない)
 - **トラップ (ConfirmDialog / FormDialog)**: ネイティブ `<dialog>.showModal()` を使えばブラウザ標準でトラップ + Esc + 閉じ後 trigger 復帰。2 つの部品は共通の土台 ([`components/_internal/DialogBase.tsx`](./components/_internal/DialogBase.tsx)) に乗り、外を押しても閉じず、Esc は取り消しとして閉じる要求 (`onClose`) を出す。自前 modal は同等の挙動を実装
+- **modal の dialog を開いている間に出す部品 (Toast)**: dialog の外の要素は、一番上の層 (`popover`) に出しても押せない・フォーカスが入らない・読み上げられない (inert。Chromium で測った、#169)。押せる必要があるものは、開いている間だけ一番上の dialog の中へ置き場を移す (Toast の `useAboveModalDialogs`)。使う側に「dialog の中では使わない」と覚えさせない。部品が自分で置き場を移して dialog の中に入るものの押せる要素は、dialog の × と同じ読み上げ名にしない (Toast の閉じるは「通知を閉じる」。同じ名前が 2 つあると、読み上げで区別できず、名前で探すテストも落ちる。使う側が dialog の中に置く Alert の閉じるは、この決まりの対象にしていない: 今は「閉じる」のまま)
 - **閉じた後のフォーカスの戻り先 (`returnFocusRef`)**: 開く前の要素が閉じた後に残らないとき (狭い幅の Menu の項目から ConfirmDialog を開いた等。Menu の面は閉じているので、ブラウザは body に戻す) は、`returnFocusRef` に入口を渡す。戻すのは、閉じたときにフォーカスが dialog の中か body のときだけ (下から出る面 `BottomSheet` と同じ線)。Menu・Popover の入口に付けた `ref` は入口の要素を指す
 - **動的コンテンツ追加時**: 追加要素に focus 移動 (例: 検索結果リスト)
 - **動的コンテンツ削除時**: 削除アイテムの **論理的な次** (なければ前) に focus 移動。`<body>` 戻りを避ける

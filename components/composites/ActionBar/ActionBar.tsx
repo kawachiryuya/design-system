@@ -28,7 +28,7 @@ export type ActionBarAlign = 'start' | 'center' | 'end' | 'between';
  * ActionBar の gap。Stack / Cluster と同一スケール。
  * @see ClusterGap
  */
-export type ActionBarGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+export type ActionBarGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
  * `responsive` 時に縦→横へ切り替わる container 幅の閾値 (token)。
@@ -140,7 +140,6 @@ const actionBarVariants = tv({
       md: 'gap-3', // 12px
       lg: 'gap-4', // 16px
       xl: 'gap-6', // 24px
-      '2xl': 'gap-12', // 48px
     },
   },
   defaultVariants: {

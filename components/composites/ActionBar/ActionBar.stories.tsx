@@ -24,7 +24,7 @@ const meta: Meta<typeof ActionBar> = {
     orientation: { control: 'radio', options: ['responsive', 'vertical', 'horizontal'] },
     align: { control: 'radio', options: ['start', 'center', 'end', 'between'] },
     collapseAt: { control: 'radio', options: ['sm', 'md', 'lg'] },
-    gap: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] },
+    gap: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl'] },
     children: { control: false },
   },
   args: {

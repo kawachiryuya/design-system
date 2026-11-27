@@ -41,6 +41,11 @@
     showToast({ variant: 'error', message: '送信できませんでした' }); // 単発の <Toast> は useToast() に
     ```
     探し方: `grep -rnE "<Toast[ >]|ToastProps|ToastContent|ToastPosition|position=|defaultDuration|maxToasts|description:|title:|duration:|variant: '(warning|info|neutral)'" src` (Toast の呼び出しの中だけ直す)。`title` と `description` は 1 文にまとめる。操作の文言が別の画面への案内 (「一覧を見る」など) なら、本文の Link に移す。Toast の閉じるを `×` のアイコンで探すテストは、文字のボタン (`getByRole('button', { name: '通知を閉じる' })`) に。右上・上に出ることを前提にした余白 (Toast を避けるための padding など) は外す
+- **Cluster・ActionBar の `gap` から `2xl` (48px) を消した。間の段は Stack と同じ `xs`〜`xl` の 5 つ (型・配信 CSS の変更、#51)**: Stack は 3.0.0 で `2xl` を消した (#47) が、「Stack と同じ段」と書いている Cluster と ActionBar には残っていた。design-system の中でも rail-demo でも使われていない。非推奨の期間は置かずに消した (AGENTS §10-5 の例外。利用側は rail-demo だけ)
+  - **消えるもの (型で落ちる)**: `ClusterGap`・`ActionBarGap` の `'2xl'` (`<Cluster gap="2xl">`・`<ActionBar gap="2xl">`)
+  - **配信 CSS (型では分からない)**: `dist/styles.css` から `.gap-12` が消える (この 2 つの部品だけが使っていた)。利用側が Tailwind を通さずに `dist/styles.css` の `gap-12` を当てにしている所があれば、効かなくなる
+  - **story**: Cluster の Overview から `gap=2xl` の行が消える (URL は変わらない)。Cluster・ActionBar の Playground の `gap` の Control から `2xl` が消える
+  - Migration: 型検査 (`tsc`) が全部落とす。型を通らない所 (mdx など) は ``grep -rnE "gap[=:][[:space:]{\"'`]*2xl" src`` で探す (Cluster・ActionBar のものだけ直す)。グループの中の間なら `gap="xl"` (24px) に。離して置きたいなら `justify="between"` か、グループを分ける。48px のページの区切りは `<Section>`
 
 ## [7.0.0] - 2026-11-27
 

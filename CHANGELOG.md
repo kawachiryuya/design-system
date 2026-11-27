@@ -55,7 +55,7 @@
   - **消えるもの (型で落ちる)**: `ClusterGap`・`ActionBarGap` の `'2xl'` (`<Cluster gap="2xl">`・`<ActionBar gap="2xl">`)
   - **配信 CSS (型では分からない)**: `dist/styles.css` から `.gap-12` が消える (この 2 つの部品だけが使っていた)。利用側が Tailwind を通さずに `dist/styles.css` の `gap-12` を当てにしている所があれば、効かなくなる
   - **story**: Cluster の Overview から `gap=2xl` の行が消える (URL は変わらない)。Cluster・ActionBar の Playground の `gap` の Control から `2xl` が消える
-  - Migration: `grep -rnE "<(Cluster|ActionBar)[^>]*gap=[\"'{]+2xl" src` で探す。グループの中の間なら `gap="xl"` (24px) に。離して置きたいなら `justify="between"` か、グループを分ける。48px のページの区切りは `<Section>`
+  - Migration: 型検査 (`tsc`) が全部落とす。型を通らない所 (mdx など) は ``grep -rnE "gap[=:][[:space:]{\"'`]*2xl" src`` で探す (Cluster・ActionBar のものだけ直す)。グループの中の間なら `gap="xl"` (24px) に。離して置きたいなら `justify="between"` か、グループを分ける。48px のページの区切りは `<Section>`
 
 ## [7.0.0] - 2026-11-27
 

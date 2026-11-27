@@ -2,7 +2,7 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, screen, userEvent, waitFor } from 'storybook/test';
 import { ToastProvider, useToast, type ToastOptions, type ToastVariant } from './Toast';
-import { ToastStoryContext } from '../../_internal/toastStory';
+import { ToastPropsTable, ToastStoryContext } from '../../_internal/toastStory';
 import { Button } from '../../primitives/Button';
 import { Icon } from '../../primitives/Icon';
 import { Input } from '../../primitives/Input';
@@ -12,24 +12,27 @@ import { ConfirmDialog } from '../ConfirmDialog';
 import { FormDialog } from '../FormDialog';
 import { Menu } from '../Menu';
 import { Popover } from '../Popover';
+import { expectRunWidth } from '../../../.storybook/narrow-play';
 
 /**
  * Toast stories — VR 集約モデル (§5-3) + overlay 特例 (§7-10)
  *
  * 出し方は `useToast()` だけで、秒数は部品が決める (使う側に止める手段は無い)。撮影・axe・フォーカスの輪の検査のあいだ
- * 出した Toast を残すため、撮影する story は内側の `ToastStoryContext` (公開しない、`components/_internal/toastStory.ts`) で
+ * 出した Toast を残すため、撮影する story は内側の `ToastStoryContext` (公開しない、`components/_internal/toastStory.tsx`) で
  * タイマーを止める (`frozen`)。Overview はさらに置き場をその場に置き (`inline`)、いくつもの形を 1 枚に並べる。
  * 置き場所 (画面の下の中央・下のナビに重ねる) は EdgeCases で撮る。どちらも幅で見え方が変わる
  * (ボタンが下の段に落ちる・下のナビに重なる) ので `[375, 1280]`。
  * 秒数・払う・枚数・フォーカスの戻り (#176)・dialog の上 (#169) は、撮影しない play で守る。
  */
-const meta: Meta<typeof ToastProvider> = {
+// Props 表 (guideline の <ArgTypes>) に `ToastProvider` の children と `showToast()` に渡すもの (ToastOptions) の
+// JSDoc を出すため、meta の component は描かない表の部品 (ToastPropsTable) にしている
+const meta: Meta<typeof ToastPropsTable> = {
   title: 'Composites/Toast',
-  component: ToastProvider,
+  component: ToastPropsTable,
 };
 
 export default meta;
-type Story = StoryObj<typeof ToastProvider>;
+type Story = StoryObj<typeof ToastPropsTable>;
 
 /** 描いたときに 1 度だけ Toast を出す (StrictMode の二重の effect でも 1 度) */
 function Fire({ toasts }: { toasts: ToastOptions[] }) {
@@ -61,14 +64,24 @@ const noop = () => {};
 
 // ── 1. Playground (視覚回帰対象外) ──────────────────────────────
 
-type PlaygroundArgs = { variant: ToastVariant; message: string; action: 'なし' | '元に戻す' | '再試行'; onAction: () => void };
+const onAction = fn();
 
-export const Playground: StoryObj<PlaygroundArgs> = {
-  args: { variant: 'success', message: '保存しました', action: 'なし', onAction: fn() },
+export const Playground: Story = {
+  args: { variant: 'success', message: '保存しました', action: undefined },
   argTypes: {
     variant: { control: 'inline-radio', options: ['success', 'error'] },
     message: { control: 'text' },
-    action: { control: 'inline-radio', options: ['なし', '元に戻す', '再試行'] },
+    // action は { label, onClick } の形。Controls ではラベルで選ぶ (mapping)
+    action: {
+      options: ['なし', '元に戻す', '再試行'],
+      mapping: {
+        なし: undefined,
+        元に戻す: { label: '元に戻す', onClick: onAction },
+        再試行: { label: '再試行', onClick: onAction },
+      },
+      control: 'inline-radio',
+    },
+    children: { control: false },
   },
   parameters: {
     chromatic: { disableSnapshot: true },
@@ -78,18 +91,10 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       },
     },
   },
-  render: ({ variant, message, action, onAction }) => {
+  render: ({ variant, message, action }) => {
     function Demo() {
       const { showToast } = useToast();
-      return (
-        <Button
-          onClick={() =>
-            showToast({ variant, message, action: action === 'なし' ? undefined : { label: action, onClick: onAction } })
-          }
-        >
-          Toast を出す
-        </Button>
-      );
+      return <Button onClick={() => showToast({ variant, message, action })}>Toast を出す</Button>;
     }
     return (
       <ToastProvider>
@@ -98,14 +103,30 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     );
   },
   play: async ({ args }) => {
-    // 操作を押すと onClick を呼んでから、その Toast は閉じる
+    // guideline の Props 表: 表の部品に .tsx の JSDoc が届いている (docgen が付ける __docgenInfo。displayName を変えると付かない)
+    const docgen = (ToastPropsTable as unknown as { __docgenInfo?: { props?: Record<string, { description?: string }> } }).__docgenInfo;
+    for (const key of ['variant', 'message', 'action', 'children']) await expect(docgen?.props?.[key]?.description).toBeTruthy();
+    await expect(docgen?.props?.action?.description).toContain('{ label, onClick }');
+    // 読み上げの入れ物は、Toast を出す前から木にある (空でも display: none にしない。中身を足したときに確実に読まれる)
+    for (const role of ['status', 'alert']) {
+      const region = document.querySelector<HTMLElement>(`[data-ds-toast-layer] [role="${role}"]`);
+      await expect(region).not.toBeNull();
+      await expect(region!.childElementCount).toBe(0);
+      await expect(getComputedStyle(region!).display).not.toBe('none');
+      await expect(getComputedStyle(region!).visibility).not.toBe('hidden');
+    }
+    // 下の余白は safe-area を見て決め、今の余白 (16px) より小さくしない
+    const layer = document.querySelector<HTMLElement>('[data-ds-toast-layer]')!;
+    await expect(layer.className).toContain('safe-area-inset-bottom');
+    await expect(parseFloat(getComputedStyle(layer).paddingBottom)).toBeGreaterThanOrEqual(16);
     await userEvent.click(screen.getByRole('button', { name: 'Toast を出す' }));
-    await expect(await screen.findByText(args.message)).toBeInTheDocument();
+    await expect(await screen.findByText(args.message!)).toBeInTheDocument();
   },
 };
 
 // ── 2. Overview (視覚回帰対象) — タイマーを止め、その場に並べる ──
 
+const URL_MESSAGE = 'https://example.com/reservations/2026/11/27/NOZOMI21-TOKYO-SHINOSAKA-8F3A9C2D を開けませんでした';
 const LONG = '「東京 → 新大阪」のぞみ 21 号の予約を取り消しました。払い戻しは 3 日ほどで届きます';
 
 export const Overview: Story = {
@@ -133,6 +154,7 @@ export const Overview: Story = {
         toasts={[{ variant: 'error', message: '送信できませんでした', action: { label: '再試行', onClick: noop } }]}
       />
       <Still label="長い文 (1 行に収まらないと、ボタンは下の段に右寄せ)" toasts={[{ message: LONG, action: { label: '元に戻す', onClick: noop } }]} />
+      <Still label="長い 1 語 (URL・英数字の連続も面の中で折り返す)" toasts={[{ variant: 'error', message: URL_MESSAGE }]} />
       <Still
         label="2 枚 (できなかったを残し、新しい 1 枚を上に)"
         toasts={[
@@ -459,6 +481,140 @@ export const FocusReturn: StoryObj = {
     swipe(toastBody('行を削除しました'), 40);
     await waitFor(() => expect(findToast('行を削除しました')).toBeUndefined());
     await expect(document.activeElement).toBe(next);
+  },
+};
+
+/** 合成の pointer を 1 つ送る (マウス) */
+function pointer(type: string, el: Element, init: PointerEventInit = {}) {
+  el.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, ...init }));
+}
+
+export const PressReleasedOutside: StoryObj = {
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story: '守る play (撮影しない)。ボタンの上で押して Toast の外で離しても、押している間の止めは解け、残り時間から再開して消える (7 秒)。',
+      },
+    },
+  },
+  render: () => (
+    <ToastProvider>
+      <FireButton label="アーカイブ" toast={{ message: 'アーカイブしました', action: { label: '元に戻す', onClick: noop } }} />
+    </ToastProvider>
+  ),
+  play: async () => {
+    screen.getByRole('button', { name: 'アーカイブ' }).focus();
+    await userEvent.keyboard('{Enter}');
+    const shown = Date.now();
+    await waitFor(() => toastBody('アーカイブしました'));
+    // ボタンの上で押し (pointerdown)、1 秒後に Toast の外 (body) で離す
+    pointer('pointerdown', toastBody('アーカイブしました').querySelector('button')!);
+    await sleep(1000);
+    pointer('pointerup', document.body);
+    // 止まっていたのは 1 秒: 期限は約 8 秒。7.5 秒ではまだあり、9 秒までに消える
+    await sleep(Math.max(0, 7500 - (Date.now() - shown)));
+    await expect(findToast('アーカイブしました')).toBeDefined();
+    await waitFor(() => expect(findToast('アーカイブしました')).toBeUndefined(), { timeout: 1800 });
+  },
+};
+
+export const HoverReplaced: StoryObj = {
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '守る play (撮影しない)。マウスを乗せている Toast が別の Toast に入れ替わっても、新しい Toast は止まる (外から入る pointerenter は来ない。上でポインタが動けば止める。出た時点で :hover なら止める)。',
+      },
+    },
+  },
+  render: () => (
+    <ToastProvider>
+      <StackDemo />
+    </ToastProvider>
+  ),
+  play: async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'できた A' }));
+    await waitFor(() => toastBody('(A)'));
+    await userEvent.hover(toastBody('(A)'));
+    // マウスはそのまま、キーボードで次を出す (A と入れ替わる)
+    screen.getByRole('button', { name: 'できた B' }).focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => toastBody('(B)'));
+    // 新しい Toast の上でマウスが動く (pointerenter は送らない)
+    pointer('pointermove', toastBody('(B)'));
+    await sleep(5600);
+    await expect(findToast('(B)')).toBeDefined();
+  },
+};
+
+export const BlurToOtherWindow: StoryObj = {
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '守る play (撮影しない)。Toast の中にフォーカスがあるまま別のウィンドウへ移った (relatedTarget の無い blur で、フォーカスはまだ Toast の中) ときは、残り時間を再開しない。',
+      },
+    },
+  },
+  render: () => (
+    <ToastProvider>
+      <FireButton label="アーカイブ" toast={{ message: 'アーカイブしました', action: { label: '元に戻す', onClick: noop } }} />
+    </ToastProvider>
+  ),
+  play: async () => {
+    screen.getByRole('button', { name: 'アーカイブ' }).focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => toastBody('アーカイブしました'));
+    const undo = toastBody('アーカイブしました').querySelector<HTMLElement>('button')!;
+    undo.focus();
+    // 窓からフォーカスが外れた: blur / focusout は来るが、document.activeElement は Toast の中のまま
+    undo.dispatchEvent(new FocusEvent('blur', { relatedTarget: null }));
+    undo.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }));
+    await expect(document.activeElement).toBe(undo);
+    await sleep(7600);
+    await expect(findToast('アーカイブしました')).toBeDefined();
+  },
+};
+
+/** 面の中に収まっているか: 文もボタンも面の左右の内側 */
+function expectInside(item: HTMLElement) {
+  const r = item.getBoundingClientRect();
+  if (r.right > window.innerWidth || r.left < 0) throw new Error(`面が画面の外に出ている: ${r.left}-${r.right} / 幅 ${window.innerWidth}`);
+  for (const el of Array.from(item.querySelectorAll<HTMLElement>('p, button'))) {
+    const b = el.getBoundingClientRect();
+    if (b.left < r.left - 0.5 || b.right > r.right + 0.5) throw new Error(`面の外に出ている: ${el.textContent} (${b.left}-${b.right} / 面 ${r.left}-${r.right})`);
+    if (el.scrollWidth > el.clientWidth + 1) throw new Error(`中身がはみ出している: ${el.textContent}`);
+  }
+}
+
+export const NarrowLongContent: StoryObj = {
+  globals: { viewport: { value: '260-640', isRotated: false } },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: {
+      description: {
+        story:
+          '守る play (撮影しない、幅 260)。長い 1 語 (URL) も、10 文字の操作のラベルも、閉じると操作が並んでも、文とボタンは面の外に出ない。',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex w-full flex-col gap-4">
+      <Still label="URL" toasts={[{ variant: 'error', message: URL_MESSAGE, action: { label: 'もう一度読み込みなおす', onClick: noop } }]} />
+      <Still label="10 文字の操作" toasts={[{ message: 'アーカイブしました', action: { label: '元に戻して一覧を開く', onClick: noop } }]} />
+      <Still label="英数字の連続" toasts={[{ message: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJ を保存しました' }]} />
+    </div>
+  ),
+  play: async () => {
+    await expectRunWidth(260);
+    await screen.findByText(URL_MESSAGE);
+    const items = Array.from(document.querySelectorAll<HTMLElement>('[data-ds-toast-layer] [aria-live] > [data-ds-root]'));
+    await expect(items.length).toBe(3);
+    for (const item of items) expectInside(item);
+    await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   },
 };
 

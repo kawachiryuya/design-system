@@ -30,7 +30,10 @@ export interface ToastOptions {
   variant?: ToastVariant;
   /** 結果の 1 文 (「保存しました」「送信できませんでした」)。見出しは持たない */
   message: string;
-  /** 操作 (1 つまで)。押すと `onClick` を呼んでから閉じる */
+  /**
+   * 操作 (1 つまで)。`{ label, onClick }` の形: `label` は短い動詞 (「元に戻す」「再試行」)、`onClick` は押したときに呼ぶ。
+   * 押すと `onClick` を呼んでから、その Toast は閉じる。別の画面への案内には使わない
+   */
   action?: ToastAction;
 }
 
@@ -74,12 +77,15 @@ const toastVariants = tv({
     text: 'flex min-w-0 flex-[1_1_auto] items-start gap-3 py-2.5',
     // アイコンは 1 行目に固定: 入れ物を 1 行の高さ (type-supporting の行間 1.5em) にして、その中で上下の真ん中
     icon: 'type-supporting flex h-[1.5em] shrink-0 items-center',
-    message: 'type-supporting min-w-0',
-    buttons: 'ml-auto flex shrink-0 items-center gap-1 pl-2',
+    // 長い 1 語 (URL・英数字の連続) も面の中で折り返す (anywhere は最小幅も縮めるので、面が広がらない)。最後の行に 1 文字だけ残さない (text-pretty)
+    message: 'type-supporting min-w-0 [overflow-wrap:anywhere] text-pretty',
+    // ボタンの群は面の幅を超えない: 下の段でも入らなければ、群の中で折り返す (max-w-full + flex-wrap)
+    buttons: 'ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-1 pl-2',
     // 濃い面の上のボタン: 白い文字、ホバーは黒 8% (DDR-1 の「濃い塗り・役割色の面」)、
     // フォーカスは白い内側の輪 (border.focus は濃い面で 1.62:1・赤い面で 1.21:1 で見えない、DDR-2)、押せる高さ 44px
     button: [
-      'shrink-0 whitespace-nowrap min-h-[44px] text-onSurface-inverse focus-ring-on-fill',
+      // 文言は基本 1 行。1 つでも面の幅に入らないときだけ、ボタンの中で折り返す (max-w-full + overflow-wrap: anywhere)
+      'max-w-full [overflow-wrap:anywhere] min-h-[44px] text-onSurface-inverse focus-ring-on-fill',
       'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)] active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
     ],
   },
@@ -102,7 +108,8 @@ const toastVariants = tv({
 // ふだんの div では既定と同じ値なので、見た目は変わらない
 const layerStyles =
   'fixed z-toast inset-x-0 bottom-0 top-auto w-auto h-auto m-0 border-0 bg-transparent overflow-visible text-inherit ' +
-  'pointer-events-none flex justify-center px-4 pb-4 shell:px-6 shell:pb-6';
+  // 下の余白は iPhone のホームバー (safe-area) を見て決める。今の余白 (16px / 広い幅 24px) より小さくはしない
+  'pointer-events-none flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))] shell:px-6 shell:pb-[max(1.5rem,env(safe-area-inset-bottom))]';
 /** story だけの「その場に置く」(固定しない) 置き場 */
 const inlineLayerStyles = 'flex justify-center';
 
@@ -373,6 +380,36 @@ const ToastItem: React.FC<{
     };
   }, [entry.returnFocus]);
 
+  // マウスの下に出た (入れ替わった) Toast は、外から入る pointerenter が来ない。出た時点でポインタが上にあれば止める。
+  // 指の端末は離した後も :hover が残るので、マウスのある端末 (hover: hover) だけ
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el || !window.matchMedia('(hover: hover)').matches) return;
+    const check = () => {
+      if (el.matches(':hover')) pause('hover');
+    };
+    check();
+    const raf = requestAnimationFrame(check);
+    return () => cancelAnimationFrame(raf);
+  }, [pause]);
+
+  // 押下の止めは、Toast の外で離しても必ず解く (ボタンの上で押すとポインタを捕まえないので、pointerup が Toast に届かない)
+  const releasePress = React.useRef<(() => void) | null>(null);
+  React.useEffect(() => () => releasePress.current?.(), []);
+  const holdPress = () => {
+    pause('press');
+    if (releasePress.current) return;
+    const release = () => {
+      window.removeEventListener('pointerup', release, true);
+      window.removeEventListener('pointercancel', release, true);
+      releasePress.current = null;
+      resume('press');
+    };
+    window.addEventListener('pointerup', release, true);
+    window.addEventListener('pointercancel', release, true);
+    releasePress.current = release;
+  };
+
   // 出る動き: 1 フレーム目は下にずらして透明、次のフレームで定位置へ (動きを減らす設定では最初から定位置)
   React.useEffect(() => {
     if (shown) return;
@@ -402,7 +439,7 @@ const ToastItem: React.FC<{
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (exiting) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    pause('press');
+    holdPress();
     if ((e.target as Element).closest('button')) return;
     drag.current = { pointerId: e.pointerId, y0: e.clientY, dy: 0 };
     try {
@@ -413,13 +450,14 @@ const ToastItem: React.FC<{
     setDragging(true);
   };
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    // マウスが上で動いたら止める (下に出た・入れ替わった Toast には pointerenter が来ない)
+    if (e.pointerType === 'mouse') pause('hover');
     const d = drag.current;
     if (!d || d.pointerId !== e.pointerId) return;
     d.dy = Math.max(0, e.clientY - d.y0);
     setOffset(d.dy);
   };
   const onPointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
-    resume('press');
     const d = drag.current;
     if (!d || d.pointerId !== e.pointerId) return;
     drag.current = null;
@@ -454,7 +492,10 @@ const ToastItem: React.FC<{
         pause('focus');
       }}
       onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) resume('focus');
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        // 窓からフォーカスが外れただけ (別のウィンドウへ移った) なら、フォーカスはまだ Toast の中にある。再開しない
+        if (!e.relatedTarget && e.currentTarget.contains(document.activeElement)) return;
+        resume('focus');
       }}
       className={s.root()}
     >
@@ -527,6 +568,7 @@ function nextStack(current: ToastEntry[], added: ToastEntry): ToastEntry[] {
 }
 
 export interface ToastProviderProps {
+  /** アプリ (の root)。この中の `useToast()` から Toast を出す */
   children: React.ReactNode;
 }
 
@@ -606,11 +648,12 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
       {/* 外側の div は元の場所の目印 (`display: contents` で箱を作らない)。dialog を開いている間、置き場はその中へ移り、閉じたらここへ戻る */}
       <div className="contents">
         <div ref={hostRef} data-ds-toast-layer="" className={story.inline ? inlineLayerStyles : layerStyles}>
-          <div className="flex w-full max-w-content-sm flex-col gap-2">
-            <div role="status" aria-live="polite" aria-relevant="additions" className="flex flex-col gap-2 empty:hidden">
+          {/* 読み上げの入れ物は空でも常に木に残す (display: none にしない)。空の入れ物は高さ 0 で、間のすき間は 2 つとも中身があるときだけ */}
+          <div className="flex w-full min-w-0 max-w-content-sm flex-col">
+            <div role="status" aria-live="polite" aria-relevant="additions" className="flex flex-col gap-2">
               {render(successes)}
             </div>
-            <div role="alert" aria-live="assertive" aria-relevant="additions" className="flex flex-col gap-2 empty:hidden">
+            <div role="alert" aria-live="assertive" aria-relevant="additions" className="flex flex-col gap-2 [&:not(:empty)]:mt-2">
               {render(errors)}
             </div>
           </div>

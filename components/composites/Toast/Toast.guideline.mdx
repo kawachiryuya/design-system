@@ -47,7 +47,7 @@ export const Still = ({ toasts }) => {
 
 ## Props
 
-`<ToastProvider>` は `children` だけを受け取る。出す内容は `showToast()` に渡す (`variant` / `message` / `action`。型は `ToastOptions`)。
+入口は 2 つ: `<ToastProvider>` の `children` と、`useToast().showToast(options)` に渡す `variant` / `message` / `action` (型は `ToastOptions`。`action` は `{ label, onClick }`)。下の表は両方をまとめて載せる。
 
 <ArgTypes of={ToastStories.Playground} />
 

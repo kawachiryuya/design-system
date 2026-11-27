@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import type { ToastOptions, ToastProviderProps } from '../composites/Toast/Toast';
 
 /**
  * Toast の story だけが使う、内側の切り替え (公開しない。`components/index.ts` から出さない)。
@@ -18,3 +19,11 @@ export interface ToastStoryOptions {
 }
 
 export const ToastStoryContext = React.createContext<ToastStoryOptions>({});
+
+/**
+ * Toast の Props 表のための、描かない部品 (story の meta の `component`)。
+ * Toast の入口は `<ToastProvider>` (`children`) と `showToast(options)` の 2 つで、`showToast` に渡すもの
+ * (`ToastOptions`) は部品の props ではないので、そのままでは autodocs の表に出ない。両方の型をこの部品の props にして、
+ * `.tsx` の JSDoc (正本) を guideline の `<ArgTypes>` に流す (AGENTS §5-2 / §5-4)
+ */
+export const ToastPropsTable: React.FC<ToastOptions & ToastProviderProps> = () => null;

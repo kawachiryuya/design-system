@@ -11,6 +11,7 @@
 
 - **Toast を作り直した: 役目を「いまの操作の結果を一言で」に絞り、出し方は `useToast()` だけ、秒数・置き場所・枚数は部品が決める (props・名前・見た目・挙動・story の URL の変更、#91)**: 種類は `success` (できた、既定) と `error` (できなかった) の 2 つ。1 文 (`message`) + 操作 1 つまで、見出しは無い。非推奨の期間は置かずに消した (AGENTS §10-5 の例外。利用側は rail-demo だけ)
   - **消えるもの (型で落ちる)**: 単発の `<Toast open onClose>` と型 `ToastProps`・`ToastContent`・`ToastPosition` / `variant` の `warning`・`info`・`neutral` / `title` / `description` (→ `message`) / `showToast` の `duration` / `ToastProvider` の `position`・`defaultDuration`・`maxToasts`。`message` は `string` (以前の `description` は ReactNode)。新しい型: `ToastOptions` (`showToast` に渡すもの)・`ToastAction`
+  - **既定の種類が `info` から `success` に変わった**: `variant` を書かずに出していた所は、青い面の i の印から、濃い面のチェックの印 (できた) で出る。失敗を出していた所は `variant: 'error'` を書く
   - **秒数は部品が決める**: できた 5 秒、操作つきのできた 7 秒 (以前は操作つきは消えなかった)、できなかったは消えない。触れている間・マウスが乗っている間・中にフォーカスがある間は残り時間を止め、離れたら残りから再開する
   - **置き場所**: どの幅も画面の下の中央 (狭い幅は左右 16px の余白、広い幅は最大 28rem = `content.max-width.sm`)。下のもの (AppShell の下のナビ・FormDialog のフッター) は避けずに重ねる (以前の既定は右下)
   - **見た目**: 濃い面 (`surface.neutral-strong`) に白い文字、できなかったは赤い面 (`surface.error`)。先頭のアイコン (できた `check_circle`・できなかった `error`) も白で、文が 2 行以上でも 1 行目に固定。角丸 `rounded-md`・影 `shadow-lg` (以前は `shadow-md`)、文字は `type-supporting`。ボタンは文の右に置いても文が 1 行に収まるときだけ横並び、収まらなければ下の段に右寄せ (flex-wrap)。ボタンの高さ 44px、フォーカスの輪は白い内側の輪 (`focus-ring-on-fill`。`border.focus` は濃い面で 1.62:1・赤い面で 1.21:1 で見えないため)、ホバーは黒 8% (`state.hover`)
@@ -19,8 +20,10 @@
   - **下へ払うと消える**: 下へ 24px より多く動かして離す (指に付いて動く)。Toast の面に `touch-action: none` と `user-select: none` が付く。動きを減らす設定では出入りの動きを無くす
   - **枚数**: ふだん 1 枚で入れ替え。できなかったが出ている間はそれを残し、新しい 1 枚をその上に (最大 2 枚)。できなかったが続けて出たら新しいほうだけ残す (以前は最大 5 枚を積んだ)
   - **DOM・配信 (型では分からない)**: 置き場は `fixed z-toast inset-x-0 bottom-0 …` の div に `data-ds-toast-layer` (中に最大幅の入れ物 → `role="status"` / `role="alert"` の 2 つの入れ物)。1 枚の面に `data-variant="success" | "error"`・`data-state="entering" | "open" | "exiting"`・`data-dragging` (払っている間)・CSS 変数 `--ds-toast-drag` / `--ds-toast-fade` (払っている間の位置と薄さ)。dialog を開いている間に置き場を一番上の dialog の中へ移す仕組み (#169) はそのまま
+  - **読み上げの入れ物**: `role="status"` / `role="alert"` の 2 つは、今までどおり空でも常に置く (空の間も読み上げの木に残る)
+  - **置き場の下の余白**: iPhone のホームバーを避けるよう `env(safe-area-inset-bottom)` を見て決める (`max(16px, safe-area)`、広い幅は `max(24px, safe-area)`)
   - **直した不具合 (#176)**: Toast の中にフォーカスがあるまま閉じる・消えると、フォーカスが body に落ちていた。今は出したときにフォーカスがあった要素に戻す (その要素が消えた・dialog の後ろで押せないときは、Toast に入る直前の要素、それも無ければ Toast がいる dialog)。指・マウスで閉じたときは、戻した要素に次にキーが押されるまで輪を出さない
-  - **story の URL**: `composites-toast--overview` は中身が変わり `[375, 1280]` の 2 枚に。新しく `composites-toast--edge-cases` (撮影、置き場所)・`--auto-dismiss`・`--auto-dismiss-with-action`・`--pause-while-hovered`・`--stacking`・`--swipe-to-dismiss`・`--focus-return` (撮影しない)。`--scenarios` の `position` の Control は無くなった
+  - **story の URL**: `composites-toast--overview` は中身が変わり `[375, 1280]` の 2 枚に。新しく `composites-toast--edge-cases` (撮影、置き場所)・`--auto-dismiss`・`--auto-dismiss-with-action`・`--pause-while-hovered`・`--stacking`・`--swipe-to-dismiss`・`--focus-return` (撮影しない)。`--press-released-outside`・`--hover-replaced`・`--blur-to-other-window`・`--narrow-long-content` (撮影しない) も足した。`--scenarios` の `position` の Control は無くなった
   - Migration (前 → 後):
     ```tsx
     // 前

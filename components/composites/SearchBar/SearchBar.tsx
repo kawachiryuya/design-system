@@ -254,7 +254,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({
       />
 
       {/* トレイリング: ローディング or クリアボタン。
-          クリアボタンは Alert / Toast の close ボタンと同じ pattern (inline-flex + h-5 w-5)、
+          クリアボタンは Alert の close ボタンと同じ pattern (inline-flex + h-5 w-5)、
           hover overlay は NumberInput と同じ branded teal tint (state-hover-primary)。 */}
       <span className={trailingClass}>
         {isLoading ? (

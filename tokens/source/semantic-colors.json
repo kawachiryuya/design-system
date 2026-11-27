@@ -16,7 +16,7 @@
       "subtle": {
         "value": "{color.neutral.50}",
         "type": "color",
-        "description": "控えめな面。default の中に入れ子で置く区画 (Card filled / Alert・Toast の neutral 等)。値は bg.default と同じ neutral.50"
+        "description": "控えめな面。default の中に入れ子で置く区画 (Card filled / Alert の neutral 等)。値は bg.default と同じ neutral.50"
       },
       "overlay": {
         "value": "rgba(0, 0, 0, 0.5)",
@@ -217,7 +217,7 @@
       "hover": {
         "value": "rgba(0, 0, 0, 0.08)",
         "type": "color",
-        "description": "中性 hover overlay (8% black)。濃い塗り (Primary Button / 選択中の Toggle・Segmented) と役割色の面 (Alert・Toast の閉じるボタン) に重ねる。白地には使わず state.hover-primary を使う (ホバーの規則、AGENTS §3-2)"
+        "description": "中性 hover overlay (8% black)。濃い塗り (Primary Button / 選択中の Toggle・Segmented) と役割色の面 (Alert の閉じるボタン・Toast のボタン) に重ねる。白地には使わず state.hover-primary を使う (ホバーの規則、AGENTS §3-2)"
       },
       "active": {
         "value": "rgba(0, 0, 0, 0.12)",

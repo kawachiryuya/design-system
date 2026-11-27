@@ -1,9 +1,31 @@
-import { Meta } from '@storybook/addon-docs/blocks';
+import React from 'react';
+import { Meta, ArgTypes } from '@storybook/addon-docs/blocks';
 import * as ToastStories from './Toast.stories';
-import { Toast, ToastProvider, useToast } from './Toast';
-import { Button } from '../../primitives/Button';
+import { ToastProvider, useToast } from './Toast';
+import { ToastStoryContext } from '../../_internal/toastStory';
+import { Alert } from '../Alert';
 import { DoDontExample } from '@sb-blocks/DoDontExample';
 import { GuidelineToc } from '@sb-blocks/GuidelineToc';
+
+export const Still = ({ toasts }) => {
+  const Fire = () => {
+    const { showToast } = useToast();
+    const fired = React.useRef(false);
+    React.useEffect(() => {
+      if (fired.current) return;
+      fired.current = true;
+      toasts.forEach((t) => showToast(t));
+    }, [showToast]);
+    return null;
+  };
+  return (
+    <ToastStoryContext.Provider value={{ frozen: true, inline: true }}>
+      <ToastProvider>
+        <Fire />
+      </ToastProvider>
+    </ToastStoryContext.Provider>
+  );
+};
 
 <Meta of={ToastStories} name="Guideline" />
 
@@ -11,7 +33,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 <GuidelineToc items={[
   { label: '概要', href: '#概要' },
-  { label: '利用形態', href: '#利用形態' },
+  { label: 'Props', href: '#props' },
   { label: 'Do / Don\'t', href: '#do--dont' },
   { label: 'アクセシビリティ', href: '#アクセシビリティ' },
   { label: '関連', href: '#関連' },
@@ -19,124 +41,77 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-操作直後の **一時的なフィードバック通知**。「保存しました」「エラーが発生しました」のような短いメッセージを画面の端 (top / bottom / right) に表示し、`duration` 秒後に自動消滅する。永続的な画面内通知は `<Alert>`、確認が必要な操作は `<ConfirmDialog>`、空状態は `<EmptyState>` を使い分ける。
+**いまの操作の結果を一言で**伝える一時的な知らせ。「保存しました」「送信できませんでした」のような 1 文に、操作を 1 つまで (「元に戻す」「再試行」) 添えられる。種類は `success` (できた) と `error` (できなかった) の 2 つで、見出しは無い。アプリの root に `<ToastProvider>` を置き、`useToast().showToast({ message })` で出す。置き場所 (画面の下の中央)・秒数 (できた 5 秒・操作つき 7 秒・できなかったは消えない)・枚数は部品が決め、使う側は選べない。画面に残しておく知らせは `<Alert>`、実行する前に確かめるのは `<ConfirmDialog>` を使う。
 
 ---
 
-## 利用形態
+## Props
 
-Toast は 2 つの API を持つ:
+`<ToastProvider>` は `children` だけを受け取る。出す内容は `showToast()` に渡す (`variant` / `message` / `action`。型は `ToastOptions`)。
 
-**1. 単発 controlled** (`<Toast />` 直接利用): 親が `open` / `onClose` を管理。シンプルだが 1 つだけ。
-
-**2. ToastProvider + `useToast()`** (推奨): アプリ全体を `<ToastProvider>` でラップし、内部から `useToast().showToast({...})` で呼出。**複数 Toast のスタック管理 / 自動消滅 / 位置統一が自動**。
-
-```tsx
-// Provider (アプリ root)
-<ToastProvider position="top-right" maxToasts={3}>
-  <App />
-</ToastProvider>
-
-// 呼出 (任意 component 内)
-const { showToast } = useToast();
-<Button onClick={() => showToast({ variant: 'success', description: '保存しました' })}>保存</Button>
-```
+<ArgTypes of={ToastStories.Playground} />
 
 ---
 
 ## Do / Don't
 
 <DoDontExample
-  label="操作直後の一時的なフィードバックに使う"
-  doExample={
-    <div className="type-supporting space-y-2">
-      <Button onClick={() => alert('実際は Toast 表示: 保存しました')}>保存</Button>
-      <p className="text-onSurface-subtle">↑ 押下後に「保存しました」が右上に 5 秒表示されて消える想定</p>
-    </div>
-  }
-  doCaption="「保存しました」「コピーしました」のように、ユーザーが行動を起こした直後の確認に最適。視線を奪わず、自動で消えるので画面を埋めない。"
-  dontExample={
-    <div className="border border-border-success-muted bg-surface-success-muted p-3 rounded-md type-supporting">
-      ✓ 保存しました (画面上に永続表示)
-    </div>
-  }
-  dontCaption="永続的に画面に残したい通知 (利用規約変更のお知らせ等) を Toast にすると数秒で消えてしまい、ユーザーが見落とす。永続的な情報は `<Alert>`。"
+  label="いまの操作の結果を 1 文で"
+  doExample={<Still toasts={[{ message: '保存しました' }]} />}
+  doCaption="押した直後の結果を、主語を省いた短い 1 文で。できた、は 5 秒で自動で消えるので、画面を埋めない。"
+  dontExample={<Still toasts={[{ message: 'ご入力いただいた内容を保存しました。内容はマイページの「設定」からいつでも変更できます' }]} />}
+  dontCaption="説明や案内を足すと、消えるまでに読み終わらない。後から読む必要のある情報は画面の中 (Alert や本文) に置く。"
 />
 
 <DoDontExample
-  label="error variant で重要度を伝える"
-  doExample={
-    <div className="type-supporting space-y-2">
-      <Button onClick={() => alert('実際は error Toast 表示: 通信に失敗しました')}>送信</Button>
-      <p className="text-onSurface-subtle">↑ 失敗時に error variant の Toast。SR は role='alert' + aria-live='assertive' で即時読み上げ</p>
-    </div>
-  }
-  doCaption="error variant は role='alert' + aria-live='assertive' で SR が即時通知。他の variant は polite で「次の文末で」読まれる。"
-  dontExample={
-    <div className="type-supporting space-y-2">
-      <Button onClick={() => alert('実際は info Toast 表示: エラーが発生しました')}>送信</Button>
-      <p className="text-onSurface-subtle">↑ エラーなのに info variant にすると緊急度が落ち、SR の即時通知も得られない</p>
-    </div>
-  }
-  dontCaption="エラーを info variant で表示すると、視覚的にも SR にも重要度が伝わらない。「失敗」は error で。"
+  label="操作は 1 つ、短い動詞で"
+  doExample={<Still toasts={[{ message: 'アーカイブしました', action: { label: '元に戻す', onClick: () => {} } }]} />}
+  doCaption="その結果に対してすぐできる操作 (「元に戻す」「再試行」) を 1 つだけ。押すと操作を実行して Toast は閉じる。"
+  dontExample={<Still toasts={[{ message: 'アーカイブしました', action: { label: 'アーカイブ一覧を見る', onClick: () => {} } }]} />}
+  dontCaption="別の画面への案内には使わない。数秒で消えるボタンに移動の入口を置くと、押せなかった人は行き先を失う。画面への導線は本文の Link に置く。"
 />
 
 <DoDontExample
-  label="action ボタンで「元に戻す」を提供する"
-  doExample={
-    <div className="type-supporting space-y-2">
-      <Button onClick={() => alert('実際は Toast: タスクをアーカイブ [元に戻す]')}>アーカイブ</Button>
-      <p className="text-onSurface-subtle">↑ destructive 操作直後に「元に戻す」action 付き Toast、duration=0 で残す</p>
-    </div>
-  }
-  doCaption="削除・アーカイブ等の destructive 操作には action ボタンで「元に戻す」を提供し、duration=0 で手動で閉じるまで残すと安全。"
-  dontExample={
-    <Button onClick={() => alert('「本当に削除しますか?」(ConfirmDialog) → 削除 → Toast (元に戻すなし)')}>削除</Button>
-  }
-  dontCaption="毎回 ConfirmDialog で確認すると流れが分断される。元に戻せる操作は Toast + Undo が UX として優れる (Gmail / Twitter 等の慣習)。"
+  label="できなかった、は error で (消えない)"
+  doExample={<Still toasts={[{ variant: 'error', message: '送信できませんでした', action: { label: '再試行', onClick: () => {} } }]} />}
+  doCaption="error は赤い面で、閉じるまで残る。読み上げもすぐ伝える。直し方が 1 つなら「再試行」を添える。"
+  dontExample={<Still toasts={[{ message: '送信できませんでした' }]} />}
+  dontCaption="失敗を success で出すと、5 秒で消え、読み上げも区切りを待つので、失敗に気づかないまま先へ進んでしまう。"
 />
 
 <DoDontExample
-  label="同時表示数 (maxToasts) を絞る"
-  doExample={
-    <div className="type-caption text-onSurface-subtle">
-      &lt;ToastProvider maxToasts={3} /&gt; — 同時表示 3 つまで、古いものから消える
-    </div>
-  }
-  doCaption="多数同時に出すと画面が埋まり、ユーザーが読める前に新しいものが追加される。3〜5 個までに上限を設定。"
-  dontExample={
-    <div className="type-caption text-onSurface-subtle">
-      maxToasts={20} — 20 個積み上がって画面の半分を占有
-    </div>
-  }
-  dontCaption="上限なしで連打されると画面が Toast で埋まり、本来の content が見えなくなる。"
+  label="FormDialog の中の誤りは、dialog の中の Alert"
+  doExample={<Alert variant="error">保存できませんでした。通信を確かめて、もう一度お試しください</Alert>}
+  doCaption="入力の誤り・保存の失敗は、直す場所のそばに直すまで残す (dialog の中の Alert・欄のエラー)。"
+  dontExample={<Still toasts={[{ variant: 'error', message: '保存できませんでした' }]} />}
+  dontCaption="Toast は dialog から離れた画面の下に出るので、どこを直すか見失う。狭い幅では確定のボタンにも重なる。"
 />
 
 ### 別コンポーネントの方が適切な場面
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| **永続的な画面内通知** | `<Alert>` | Toast は自動消滅、永続表示は Alert |
-| **確認が必要な操作** ("削除しますか?") | `<ConfirmDialog>` | フォーカストラップ + 確定/取消 |
-| **データなしの代替表示** | `<EmptyState>` | 画面の一部を埋める用途 |
-| **ステータスを 1 単語で** | `<Badge>` | アクション通知ではなく状態表示 |
-| **FormDialog の中の入力の誤り・保存の失敗** ("保存できませんでした") | dialog の中の `<Alert>`・欄のエラー (`error`) | 直す場所のそばに、直すまで残す。Toast は数秒で消え、dialog から離れた画面の端に出るので、どこを直すか見失う。Toast は操作の結果の一時的な知らせ (dialog を開いている間に出しても、dialog の上に見えて押せる) |
+| **画面に残しておく知らせ** (お知らせ・注意・状態) | `<Alert>` | Toast は消える (できなかった、も閉じれば消える)。後から読み返すものは画面の中に置く |
+| **警告・お知らせ・進み具合** ("残り 1 件です" "同期しています") | `<Alert>` / `<ProgressBar>` / `<Spinner>` | Toast は操作の結果 (できた・できなかった) だけを伝える |
+| **実行する前に確かめる** ("削除しますか?") | `<ConfirmDialog>` | 元に戻せる操作は確かめずに実行し、Toast の「元に戻す」を出す方が流れを止めない |
+| **別の画面への案内** | 本文の `<Link>` | Toast の操作は、その結果に対する短い操作 (「元に戻す」「再試行」) だけ |
+| **FormDialog の中の入力の誤り・保存の失敗** | dialog の中の `<Alert>`・欄のエラー (`error`) | 直す場所のそばに、直すまで残す |
 
 ---
 
 ## アクセシビリティ
 
-- **常設の live region コンテナ**: Provider は `role="status"`/`aria-live="polite"` と `role="alert"`/`aria-live="assertive"` の **2 コンテナを空でも常設**し、Toast を variant で振り分けて注入する (live region のマウント遅延を避け、告知の確実性を上げる)。個別 Toast 自体は live 属性を持たない
-- **error は assertive、それ以外は polite**: error variant は alert コンテナで即時読み上げ、他は status コンテナで次の文末に読まれる (単発 `<Toast>` API はラッパに同等の role/aria-live を付与)
-- **close ボタン**: 読み上げ名は「通知を閉じる」(`aria-label`)。dialog の中に出たとき、dialog の × (「閉じる」) と同じ名前にならないため
-- **focus 管理**: 自動消滅 / overlay ではないため focus trap なし。トリガー (button 等) の focus はそのまま
-- **dialog を開いている間** (ConfirmDialog・FormDialog・狭い幅の Menu・Popover の下から出る面): ブラウザは一番上の dialog の外を押せなくし、読み上げからも外す。そこで Toast の置き場は、開いている間だけ**一番上の dialog の中**へ移り、一番上の層に出る (見える・押せる・フォーカスが入る・読み上げられる。使う側は何もしなくてよい)。Tab の巡りでは dialog の最後 (確定のボタンの後) に入る。dialog を閉じると置き場は元の場所へ戻り、出ている Toast と残り時間はそのまま。フォーカスは dialog のふつうの戻り先 (開く前の要素・`returnFocusRef`) へ戻る (Toast の中にあっても Toast には残らない)。dialog の中で Toast の閉じる・操作ボタンをキーボードで押して Toast が消えたら、フォーカスは dialog そのものへ移る (body に落ちない)。指・マウスで開いた dialog の中でも、Toast の中でキーを押せば輪が出る。下から出る面が閉じる動きの間 (200ms) だけは、中の Toast も押せない
-- **どの dialog が一番上か**: Toast は、ページで最初の Toast (ToastProvider か開いた単発の `<Toast>`) が描かれてから開いた dialog の順を覚える。それより前から開いていた dialog の順は分からないので、フォーカスを含む dialog を一番上とみなす (無ければ文書の後ろのもの)。ToastProvider をアプリの root に置けば、順はいつも正しい
-- **画面いっぱいの FormDialog を開いている間に、操作つきの Toast を出さない** (狭い幅): 右下・下の Toast は確定のボタン (「適用」など) に重なり、操作つきの Toast は自動で消えないので、Toast を閉じるまで確定が押せない。dialog の中の知らせは dialog の中の `<Alert>` に出す
-- **キーボード操作**: close ボタンに Tab で focus 可、Enter / Space で発火
-- **autohide の一時停止 (WCAG 2.2.1)**: hover / focus 中は自動消滅タイマーを停止し、離脱で残り時間から再開する。読んでいる / 操作しようとしている途中に消えない
-- **action 付きは無期限 + 明示 close**: `action` を持つ Toast は到達性 (キーボード / SR ユーザーが操作ボタンへ届く時間) のため自動消滅を無期限化する。明示 `duration` を渡しても最低 10000ms にクランプされる。確実に伝えたい / 操作させたい場合は close ボタンでの明示クローズを基本とする
-- **動画 / 強い色変化を避ける**: 視覚に敏感なユーザーへの配慮
+- **読み上げ**: Provider は `role="status"` (`aria-live="polite"`) と `role="alert"` (`aria-live="assertive"`) の 2 つの入れ物を空でも常に置き、できた、は status (区切りを待つ)、できなかった、は alert (すぐ) に入れる。見出しが無いので、文 1 つがそのまま読まれる
+- **秒数と止まる (WCAG 2.2.1)**: できた、は 5 秒・操作つきは 7 秒で消える。触れている間・マウスが乗っている間・中にフォーカスがある間は残り時間を止め、離れたら残りから再開する。できなかった、は消えない
+- **閉じる**: できなかった、にだけ「閉じる」の文字のボタンがあり、読み上げ名は「通知を閉じる」(dialog の中に出たとき、dialog の閉じると名前が重ならないように)。できた、は閉じるボタンを持たない (自動で消える。下へ払っても消える)
+- **下へ払う**: 下へ 24px より多く動かして離すと消える (できたも、できなかったも)。ボタンの上から始めた操作は払う動きにしない。動きを減らす設定では、出入りの動きを無くす
+- **フォーカスの戻り**: Toast の中にフォーカスがあるまま閉じる・消えるときは、出したときにフォーカスがあった要素に戻す。その要素が消えた・押せない (dialog の後ろ) ときは、Toast に入る直前の要素へ、それも無ければ Toast がいる dialog へ戻す (body に落とさない)。指・マウスで閉じたときは、戻した要素に、次にキーが押されるまで輪を出さない
+- **フォーカスの輪**: Toast の中のボタンは、濃い面・赤い面の上で見えるよう、白い内側の輪 (`focus-ring-on-fill`)
+- **押せる大きさ**: ボタンは高さ 44px 以上
+- **Tab の順**: Toast は Provider の位置 (アプリの root ならページの最後) に入る。出てもフォーカスは移さない
+- **dialog を開いている間** (ConfirmDialog・FormDialog・狭い幅の Menu・Popover の下から出る面): ブラウザは一番上の dialog の外を押せなくし、読み上げからも外す。そこで Toast の置き場は、開いている間だけ**一番上の dialog の中**へ移り、一番上の層に出る (見える・押せる・フォーカスが入る・読み上げられる。使う側は何もしなくてよい)。Tab の巡りでは dialog の最後に入る。dialog を閉じると置き場は元の場所へ戻り、出ている Toast と残り時間はそのまま。指・マウスで開いた dialog の中でも、Toast の中でキーを押せば輪が出る。下から出る面が閉じる動きの間 (200ms) だけは、中の Toast も押せない
+- **どの dialog が一番上か**: Toast は、ページで最初の ToastProvider が描かれてから開いた dialog の順を覚える。それより前から開いていた dialog の順は分からないので、フォーカスを含む dialog を一番上とみなす。ToastProvider をアプリの root に置けば、順はいつも正しい
+- **下のものに重なる**: 下のナビ (AppShell)・FormDialog のフッターは避けずに重ねる。できなかった、は閉じるまで残るので、狭い幅で画面いっぱいの FormDialog を開いている間は、確定のボタンに重なる。dialog の中の知らせは dialog の中の `<Alert>` に出す
 
 ---
 
@@ -144,5 +119,5 @@ const { showToast } = useToast();
 
 ### 内部で利用するコンポーネント
 
-- [`<Icon>`](?path=/docs/primitives-icon--guideline) — variant ごとの先頭アイコン (`check_circle` / `error` / `warning` / `info`) と close アイコン
-- [`<Button>`](?path=/docs/primitives-button--guideline) — action ボタン / close ボタン
+- [`<Icon>`](?path=/docs/primitives-icon--guideline) — 先頭のアイコン (できた `check_circle` / できなかった `error`)
+- [`<Button>`](?path=/docs/primitives-button--guideline) — 操作と「閉じる」

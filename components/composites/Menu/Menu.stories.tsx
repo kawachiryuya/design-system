@@ -25,6 +25,7 @@ type PlaygroundArgs = {
   title: string;
   kind: 'actions' | 'choice';
   placement: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
+  offset: number;
   onRename: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
@@ -38,6 +39,7 @@ const meta: Meta<PlaygroundArgs> = {
     title: { control: 'text' },
     kind: { control: 'radio', options: ['actions', 'choice'] },
     placement: { control: 'select', options: ['bottom-start', 'bottom-end', 'top-start', 'top-end'] },
+    offset: { control: { type: 'number' } },
   },
 };
 
@@ -45,7 +47,17 @@ export default meta;
 type Story = StoryObj<PlaygroundArgs>;
 
 /** 「1 つ選ぶ」の見本 (選んだ値を持つ) */
-function SortMenu({ title = '並び順', onPick }: { title?: string; onPick?: (label: string) => void }) {
+function SortMenu({
+  title = '並び順',
+  onPick,
+  placement,
+  offset,
+}: {
+  title?: string;
+  onPick?: (label: string) => void;
+  placement?: PlaygroundArgs['placement'];
+  offset?: number;
+}) {
   const [sort, setSort] = React.useState(SORTS[0]);
   return (
     <Menu
@@ -55,6 +67,8 @@ function SortMenu({ title = '並び順', onPick }: { title?: string; onPick?: (l
         </Button>
       }
       title={title}
+      placement={placement}
+      offset={offset}
       items={SORTS.map((label) => ({
         label,
         selected: label === sort,
@@ -75,7 +89,7 @@ export const Playground: Story = {
     docs: {
       description: {
         story:
-          '入口を押して開き、項目を押す (または矢印キーで移動して Enter) と選んで閉じる。`kind` で「操作の一覧」と「1 つ選ぶ」を切り替える。幅 640px 未満で開くと下から出る。play は広い幅で、役割・入口の属性・フォーカスの移動・無効な項目を飛ばす・Enter で選ぶ・Tab で閉じる・閉じ方 (ポインタかキーか) で入口の輪を出すか、を確かめる。',
+          '入口を押して開き、項目を押す (または矢印キーで移動して Enter) と選んで閉じる。`kind` で「操作の一覧」と「1 つ選ぶ」を切り替え、出す向き・入口との間隔を Controls で変えて試す (広い幅でだけ効く)。幅 640px 未満で開くと下から出る。play は広い幅で、役割・入口の属性・フォーカスの移動・無効な項目を飛ばす・Enter で選ぶ・Tab で閉じる・閉じ方 (ポインタかキーか) で入口の輪を出すか、を確かめる。',
       },
     },
   },
@@ -83,18 +97,20 @@ export const Playground: Story = {
     title: '予約を変更',
     kind: 'actions',
     placement: 'bottom-start',
+    offset: 8,
     onRename: fn(),
     onDuplicate: fn(),
     onDelete: fn(),
   },
-  render: ({ title, kind, placement, onRename, onDuplicate, onDelete }) =>
+  render: ({ title, kind, placement, offset, onRename, onDuplicate, onDelete }) =>
     kind === 'choice' ? (
-      <SortMenu title={title} />
+      <SortMenu title={title} placement={placement} offset={offset} />
     ) : (
       <Menu
         trigger={<Button>{title}</Button>}
         title={title}
         placement={placement}
+        offset={offset}
         items={[
           { label: '名前を変更', icon: <Icon name="mode" size="sm" />, onSelect: onRename },
           { label: '共有 (準備中)', disabled: true, onSelect: () => {} },

@@ -24,6 +24,8 @@ import { NARROW_RUN, expectRunWidth, afterOpenGuard, expectBottomSheet, pressBac
 type PlaygroundArgs = {
   title: string;
   placement: 'bottom-start' | 'bottom' | 'bottom-end' | 'top-start' | 'top' | 'right' | 'left';
+  offset: number;
+  children: string;
 };
 
 const meta: Meta<PlaygroundArgs> = {
@@ -31,6 +33,9 @@ const meta: Meta<PlaygroundArgs> = {
   argTypes: {
     title: { control: 'text' },
     placement: { control: 'select', options: ['bottom-start', 'bottom', 'bottom-end', 'top-start', 'top', 'right', 'left'] },
+    offset: { control: { type: 'number' } },
+    // 中身 (children) は ReactNode。Controls では文で書き換える
+    children: { control: 'text' },
   },
 };
 
@@ -45,14 +50,14 @@ export const Playground: Story = {
     docs: {
       description: {
         story:
-          '入口を押して開閉する。幅 640px 未満で開くと下から出る。play は広い幅で、入口の属性・中に押せるものが無いときはパネル自体にフォーカス・開き方と閉じ方 (ポインタかキーか) で輪を出すか、を確かめ、最後にキーボードで開いたまま残す (フォーカスの輪の検査がパネルの輪を見る、AGENTS §8-4)。',
+          '入口を押して開閉する。見出し・中身の文・出す向き・入口との間隔を Controls で変えて試す (向きと間隔は広い幅でだけ効く)。幅 640px 未満で開くと下から出る。play は広い幅で、入口の属性・中に押せるものが無いときはパネル自体にフォーカス・開き方と閉じ方 (ポインタかキーか) で輪を出すか、を確かめ、最後にキーボードで開いたまま残す (フォーカスの輪の検査がパネルの輪を見る、AGENTS §8-4)。',
       },
     },
   },
-  args: { title: '補足情報', placement: 'bottom-start' },
-  render: ({ title, placement }) => (
-    <Popover trigger={<Button>詳細</Button>} title={title} placement={placement}>
-      <p className="text-onSurface">このフィールドは公開プロフィールに表示されます。</p>
+  args: { title: '補足情報', placement: 'bottom-start', offset: 8, children: 'このフィールドは公開プロフィールに表示されます。' },
+  render: ({ title, placement, offset, children }) => (
+    <Popover trigger={<Button>詳細</Button>} title={title} placement={placement} offset={offset}>
+      <p className="text-onSurface">{children}</p>
     </Popover>
   ),
   play: async ({ canvasElement }) => {

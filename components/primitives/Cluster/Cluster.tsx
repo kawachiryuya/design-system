@@ -2,7 +2,7 @@ import React from 'react';
 import { tv } from '../../_internal/tv';
 
 /**
- * Cluster の gap 段階。Stack と同一 6 段。
+ * Cluster の gap 段階。Stack と同一 5 段 (xs..xl)。
  *
  * 段階ごとの想定用途 (horizontal context):
  * - `xs`  (4px)  — icon + label / breadcrumb separator / 密接した inline elements
@@ -10,12 +10,14 @@ import { tv } from '../../_internal/tv';
  * - `md`  (12px) — 中密度の inline list / 反復要素
  * - `lg`  (16px) — section header (title + actions) / 視覚的な分離
  * - `xl`  (24px) — 大ブロック inline / 余裕を持たせた配置
- * - `2xl` (48px) — Stack との API 対称性のため保持 (horizontal では稀な用途)
  *
  * Stack と同一スケールを採用することで、両 primitive を併用する場面で
  * gap の選定基準を統一できる。
+ *
+ * 注: 旧 `2xl` (48px) は Stack が 3.0.0 で消した後も残っていたが、使われていなかったため
+ *     8.0.0 で削除した (#51)。48px の横の間は `justify="between"` か別グループ化で表す。
  */
-export type ClusterGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+export type ClusterGap = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
  * Cluster が描画する HTML 要素。Stack より絞り、form / article は対象外 (用途が垂直方向)。
@@ -113,7 +115,7 @@ export interface ClusterProps extends React.HTMLAttributes<HTMLElement> {
  * Cluster のスタイル定義 — `tailwind-variants` で gap × align × justify を保持。
  *
  * - base: `flex flex-wrap` (horizontal stacking + 常に折り返す)
- * - gap: Stack と同じ Tailwind default `gap-{1,2,3,4,6,12}` の 6 段階
+ * - gap: Stack と同じ Tailwind default `gap-{1,2,3,4,6}` の 5 段階
  * - align: `items-*` で cross-axis (= vertical) 配置
  * - justify: `justify-*` で main-axis (= horizontal) 配置
  */
@@ -126,7 +128,6 @@ const clusterVariants = tv({
       md:    'gap-3',   // 12px
       lg:    'gap-4',   // 16px
       xl:    'gap-6',   // 24px
-      '2xl': 'gap-12',  // 48px
     },
     align: {
       start:    'items-start',

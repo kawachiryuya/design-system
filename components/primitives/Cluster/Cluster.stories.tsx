@@ -12,7 +12,7 @@ const meta: Meta<typeof Cluster> = {
   title: 'Primitives/Cluster',
   component: Cluster,
   argTypes: {
-    gap: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] },
+    gap: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl'] },
     as: { control: 'radio', options: ['div', 'section', 'ul', 'ol', 'nav'] },
     align: { control: 'radio', options: ['start', 'center', 'end', 'stretch', 'baseline'] },
     justify: { control: 'radio', options: ['start', 'center', 'end', 'between', 'around'] },
@@ -76,15 +76,15 @@ export const Overview: Story = {
   parameters: {
     docs: {
       description: {
-        story: '6 段階の gap、5 種の justify、5 種の align を順に比較。Cluster は常に flex-wrap、画面端で折り返す。',
+        story: '5 段階の gap、5 種の justify、5 種の align を順に比較。Cluster は常に flex-wrap、画面端で折り返す。',
       },
     },
   },
   render: () => (
     <div className="flex flex-col gap-6">
-      <Caption text="gap — xs (4px) から 2xl (48px) まで">
+      <Caption text="gap — xs (4px) から xl (24px) まで">
         <div className="flex flex-col gap-3">
-          {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const).map((g) => (
+          {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((g) => (
             <div key={g} className="flex items-center gap-2">
               <div className="w-16 type-caption text-onSurface-subtle font-mono">gap={g}</div>
               <div className="bg-surface-subtle border border-dashed border-border-subtle p-2 flex-1">

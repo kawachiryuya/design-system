@@ -19,7 +19,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-子要素を水平方向に並べ、画面端で自動折り返しする layout primitive。`gap` で 6 段階 (Stack と同じスケール) の間隔を選び、`align` で cross-axis (垂直) 配置、`justify` で main-axis (水平) 配置を制御する。**常に折り返す** (`flex-wrap` 固定) のが Cluster の定義的特徴。
+子要素を水平方向に並べ、画面端で自動折り返しする layout primitive。`gap` で 5 段階 (Stack と同じスケール、`xs`〜`xl`) の間隔を選び、`align` で cross-axis (垂直) 配置、`justify` で main-axis (水平) 配置を制御する。**常に折り返す** (`flex-wrap` 固定) のが Cluster の定義的特徴。
 
 **実装は `flex flex-wrap + gap-*`**。non-wrap 用途は plain な `flex items-center gap-N` を直接書いた方が簡潔。
 

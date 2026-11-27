@@ -19,7 +19,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - **Do**: 保存ボタン押下で `isLoading` 表示 → 完了で成功 Toast。
 - **Do**: 一覧読み込み中は `<Skeleton>` で形を見せる。
 - **Don't**: 送信後に無反応で、ユーザーに二重送信させる。
-- **Don't**: 5 秒で消える Toast に操作 (Undo) を入れ、到達前に消す ([Toast guideline 参照](?path=/docs/composites-toast--guideline))。
+- **Don't**: 失敗を「できた」の Toast で出す。5 秒で消え、読み上げも区切りを待つので気づかれない。失敗は `error` (消えない) で ([Toast guideline 参照](?path=/docs/composites-toast--guideline))。
 
 ## 関連コンポーネント
 

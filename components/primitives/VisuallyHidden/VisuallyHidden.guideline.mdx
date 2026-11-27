@@ -82,7 +82,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
       保存しました
     </VisuallyHidden>
   }
-  doCaption="状態変化の通知 (保存完了等) を視覚 Toast と並行して SR にも伝える。`role='status'` + `aria-live='polite'` で適切なタイミングで読まれる。"
+  doCaption="画面に文字を出さない状態変化 (絞り込みの件数が変わった等) を SR に伝える。`role='status'` + `aria-live='polite'` で適切なタイミングで読まれる。操作の結果を Toast (`useToast()`) で出すときは、Toast が自分で読み上げるので足さない。"
   dontExample={
     <p className="hidden">保存しました</p>
   }
@@ -136,4 +136,4 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 - `<Spinner>` の `.sr-only` 補助テキスト (Spinner 内部実装で同等パターン)
 - `<Label>` の `*` (必須) マーク補助
-- (将来) Toast / Notification 系の aria-live announce
+- Toast (`useToast()`) — 操作の結果は Toast が自分の live region (`role="status"` / `role="alert"`) で読み上げる。VisuallyHidden で二重に告知しない

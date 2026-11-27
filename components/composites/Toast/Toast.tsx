@@ -3,127 +3,115 @@
 import React from 'react';
 import { Icon } from '../../primitives/Icon';
 import { Button } from '../../primitives/Button';
-import { HIDE_FOCUS_RING_ATTR } from '../../_internal/useHideFocusRingUntilKey';
+import { tv } from '../../_internal/tv';
+import { HIDE_FOCUS_RING_ATTR, hideFocusRingUntilKeyOrBlur } from '../../_internal/useHideFocusRingUntilKey';
+import { ToastStoryContext } from '../../_internal/toastStory';
 
-/** Toast のセマンティックカラーバリアント */
-export type ToastVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral';
+/**
+ * Toast の種類。`success` (できた) と `error` (できなかった) の 2 つ。
+ * 秒数・色・アイコン・閉じるボタンの有無・読み上げの急ぎ方は、種類から部品が決める。
+ */
+export type ToastVariant = 'success' | 'error';
 
-/** Toast 表示位置 (Provider レベルで指定) */
-export type ToastPosition = 'top' | 'top-right' | 'bottom' | 'bottom-right';
+/** Toast に 1 つだけ置ける操作。「元に戻す」「再試行」のような短い言葉で */
+export interface ToastAction {
+  /** ボタンの文言 (短い動詞。「元に戻す」「再試行」)。別の画面への案内には使わない */
+  label: string;
+  /** 押したときに呼ぶ。呼んだ後、その Toast は閉じる */
+  onClick: () => void;
+}
 
-/** Toast の表示内容 (Provider 経由・直接利用の共通プロパティ) */
-export interface ToastContent {
+/** `showToast()` に渡すもの: いまの操作の結果を 1 文で + 操作 1 つまで */
+export interface ToastOptions {
   /**
-   * セマンティックカラーバリアント。`error` は aria-live="assertive" で即時通知、それ以外は polite。
-   * @default 'info'
+   * 種類。`success` は自動で消える (5 秒、操作つきは 7 秒)。`error` は消えず、「閉じる」を持つ。
+   * @default 'success'
    */
   variant?: ToastVariant;
-  /** タイトル (省略可、description のみでも成立)。 */
-  title?: React.ReactNode;
-  /** 本文 (必須)。 */
-  description: React.ReactNode;
-  /** action ボタン (省略可)。 */
-  action?: { label: string; onClick: () => void };
+  /** 結果の 1 文 (「保存しました」「送信できませんでした」)。見出しは持たない */
+  message: string;
+  /**
+   * 操作 (1 つまで)。`{ label, onClick }` の形: `label` は短い動詞 (「元に戻す」「再試行」)、`onClick` は押したときに呼ぶ。
+   * 押すと `onClick` を呼んでから、その Toast は閉じる。別の画面への案内には使わない
+   */
+  action?: ToastAction;
 }
 
-/**
- * Toast Props (controlled 単発利用版)
- *
- * 単独で `<Toast />` を描画する API。`open` と `onClose` を親が管理する。
- * 自動消滅やスタック管理が必要な場合は `ToastProvider` + `useToast()` を使う。
- *
- * @example
- *   const [open, setOpen] = useState(false);
- *   <Toast
- *     open={open}
- *     onClose={() => setOpen(false)}
- *     variant="success"
- *     description="保存しました"
- *   />
- */
-export interface ToastProps extends ToastContent {
-  /** 表示状態。 */
-  open: boolean;
-  /** 閉じる要求 (close ボタン / 自動消滅) で呼ばれる。 */
-  onClose: () => void;
-  /**
-   * 表示位置。
-   * @default 'bottom-right'
-   */
-  position?: ToastPosition;
-  /**
-   * 自動消滅までの ms。`0` で無期限。**`action` がある場合は到達性のため自動消滅を無期限化**し、
-   * 明示指定しても最低 10000ms にクランプする (WCAG 2.2.1)。hover / focus 中は一時停止する。
-   * @default 5000
-   */
-  duration?: number;
+/** 秒数は部品が決める: できた 5 秒・操作つき 7 秒・できなかったは消えない (#91) */
+function durationOf({ variant = 'success', action }: ToastOptions): number {
+  if (variant === 'error') return 0;
+  return action ? 7000 : 5000;
 }
 
-const variantConfig: Record<ToastVariant, {
-  container: string;
-  icon: string;
-  closeBtn: string;
-  iconName: 'check_circle' | 'error' | 'warning' | 'info';
-  ariaLive: 'polite' | 'assertive';
-  role: 'status' | 'alert';
-}> = {
-  success: {
-    container: 'bg-surface-success-muted border border-border-success-muted text-onSurface-success',
-    icon: 'text-onSurface-success',
-    closeBtn: 'text-onSurface-success hover:bg-state-hover',
-    iconName: 'check_circle',
-    ariaLive: 'polite',
-    role: 'status',
-  },
-  error: {
-    container: 'bg-surface-error-muted border border-border-error-muted text-onSurface-error',
-    icon: 'text-onSurface-error',
-    closeBtn: 'text-onSurface-error hover:bg-state-hover',
-    iconName: 'error',
-    ariaLive: 'assertive',
-    role: 'alert',
-  },
-  warning: {
-    container: 'bg-surface-warning-muted border border-border-warning-muted text-onSurface-warning',
-    icon: 'text-onSurface-warning',
-    closeBtn: 'text-onSurface-warning hover:bg-state-hover',
-    iconName: 'warning',
-    ariaLive: 'polite',
-    role: 'status',
-  },
-  info: {
-    container: 'bg-surface-info-muted border border-border-info-muted text-onSurface-info',
-    icon: 'text-onSurface-info',
-    closeBtn: 'text-onSurface-info hover:bg-state-hover',
-    iconName: 'info',
-    ariaLive: 'polite',
-    role: 'status',
-  },
-  neutral: {
-    container: 'bg-surface-subtle border border-border-subtle text-onSurface',
-    icon: 'text-onSurface-subtle',
-    closeBtn: 'text-onSurface-subtle hover:bg-state-hover',
-    iconName: 'info',
-    ariaLive: 'polite',
-    role: 'status',
-  },
-};
+/** 下へこれより多く動かして離すと消える */
+const SWIPE_PX = 24;
+/** 出入りの動き (duration.normal) */
+const MOTION_MS = 200;
+/** 払っている間の指の位置・薄さ (CSS 変数で渡す。スタイリング3規律 3) */
+const DRAG_VAR = '--ds-toast-drag';
+const FADE_VAR = '--ds-toast-fade';
 
-// 反対側の辺は `auto` と書く: dialog を開いている間は置き場が `popover` になり、ブラウザの既定 (`inset: 0`・`margin: auto`) が
-// 当たるため (#169)。ふだんの div では既定と同じ値なので、見た目は変わらない
-const positionStyles: Record<ToastPosition, string> = {
-  'top':          'top-4 bottom-auto left-1/2 right-auto -translate-x-1/2',
-  'top-right':    'top-4 bottom-auto right-4 left-auto',
-  'bottom':       'bottom-4 top-auto left-1/2 right-auto -translate-x-1/2',
-  'bottom-right': 'bottom-4 top-auto right-4 left-auto',
-};
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
-/**
- * 置き場 (固定して出す入れ物) の見た目。`popover` になったときのブラウザの既定 (余白・枠・背景・はみ出しの切り取り・文字色。
- * 位置の `inset: 0` は `positionStyles` の反対側の辺で消す) を打ち消す。ふだんの div では既定と同じ値なので、見た目は変わらない
- * (幅・高さの `fit-content` は、固定した div の中身なりの大きさと同じなので打ち消さない)
- */
-const layerStyles = 'fixed z-toast m-0 p-0 border-0 bg-transparent overflow-visible text-inherit';
+// ─────────────────────────────────────────────
+// 見た目
+// ─────────────────────────────────────────────
+
+const toastVariants = tv({
+  slots: {
+    root: [
+      'pointer-events-auto flex py-2 pl-4 rounded-md shadow-lg touch-none select-none',
+      // 濃い面に白い文字。できなかった、だけ赤い面 (#91)
+      'bg-surface-neutral-strong text-onSurface-inverse data-[variant=error]:bg-surface-error',
+      // 動き: 位置と薄さは払っている間の CSS 変数を読む。出る前・消えるときは data-state で決める
+      'translate-y-[var(--ds-toast-drag,0px)] opacity-[var(--ds-toast-fade,1)]',
+      'transition-[transform,opacity] duration-normal ease-out motion-reduce:transition-none data-[dragging]:transition-none',
+      'data-[state=entering]:translate-y-4 data-[state=entering]:opacity-0',
+      'data-[state=exiting]:translate-y-[calc(var(--ds-toast-drag,0px)+100%)] data-[state=exiting]:opacity-0 data-[state=exiting]:pointer-events-none',
+    ],
+    // 文とボタン (群) の並び: flex-wrap。文の箱は 1 行のときの幅 (basis auto)、ボタンは margin-left: auto。
+    // 両方が 1 行に入れば横並び (ボタンは右端)、入らなければボタンが次の行へ回って右に寄り、文は面の幅いっぱいで折り返す (測らない)
+    row: 'flex min-w-0 flex-1 flex-wrap items-center',
+    text: 'flex min-w-0 flex-[1_1_auto] items-start gap-3 py-2.5',
+    // アイコンは 1 行目に固定: 入れ物を 1 行の高さ (type-supporting の行間 1.5em) にして、その中で上下の真ん中
+    icon: 'type-supporting flex h-[1.5em] shrink-0 items-center',
+    // 長い 1 語 (URL・英数字の連続) も面の中で折り返す (anywhere は最小幅も縮めるので、面が広がらない)。最後の行に 1 文字だけ残さない (text-pretty)
+    message: 'type-supporting min-w-0 [overflow-wrap:anywhere] text-pretty',
+    // ボタンの群は面の幅を超えない: 下の段でも入らなければ、群の中で折り返す (max-w-full + flex-wrap)
+    buttons: 'ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-1 pl-2',
+    // 濃い面の上のボタン: 白い文字、ホバーは黒 8% (DDR-1 の「濃い塗り・役割色の面」)、
+    // フォーカスは白い内側の輪 (border.focus は濃い面で 1.62:1・赤い面で 1.21:1 で見えない、DDR-2)、押せる高さ 44px
+    button: [
+      // 文言は基本 1 行。1 つでも面の幅に入らないときだけ、ボタンの中で折り返す (max-w-full + overflow-wrap: anywhere)
+      'max-w-full [overflow-wrap:anywhere] min-h-[44px] text-onSurface-inverse focus-ring-on-fill',
+      'hover:shadow-[inset_0_0_0_9999px_var(--color-state-hover)] active:shadow-[inset_0_0_0_9999px_var(--color-state-active)]',
+    ],
+  },
+  variants: {
+    hasButtons: {
+      true: { root: 'pr-2' },
+      false: { root: 'pr-4' },
+    },
+  },
+});
+
+// ─────────────────────────────────────────────
+// 置き場 (画面の下の中央)
+// ─────────────────────────────────────────────
+
+// どの幅も下の中央。狭い幅は左右に余白、広い幅も中央で最大幅 28rem (content.max-width.sm)。
+// 下のもの (AppShell の下のナビ・FormDialog のフッター) は避けずに重ねる。使う側は選べない (#91)。
+// 反対側の辺は `auto`・幅と高さは `auto` と書く: dialog を開いている間は置き場が `popover` になり、ブラウザの既定
+// (`inset: 0`・`margin: auto`・`width/height: fit-content`・余白・枠・背景・はみ出しの切り取り・文字色) が当たるため (#169)。
+// ふだんの div では既定と同じ値なので、見た目は変わらない
+const layerStyles =
+  'fixed z-toast inset-x-0 bottom-0 top-auto w-auto h-auto m-0 border-0 bg-transparent overflow-visible text-inherit ' +
+  // 下の余白は iPhone のホームバー (safe-area) を見て決める。今の余白 (16px / 広い幅 24px) より小さくはしない
+  'pointer-events-none flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))] shell:px-6 shell:pb-[max(1.5rem,env(safe-area-inset-bottom))]';
+/** story だけの「その場に置く」(固定しない) 置き場 */
+const inlineLayerStyles = 'flex justify-center';
 
 /** layout effect はブラウザでだけ (サーバーでは何もしない effect にして、React の警告を出さない) */
 const useLayoutEffectOnClient = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
@@ -132,7 +120,7 @@ const useLayoutEffectOnClient = typeof document !== 'undefined' ? React.useLayou
 // dialog の上に出す (#169)
 // ─────────────────────────────────────────────
 
-/** 置き場 1 つ分 (ToastProvider 1 つ・開いている単発の Toast 1 つ) */
+/** 置き場 1 つ分 (ToastProvider 1 つ) */
 interface ToastLayer {
   /** 置き場 (固定して出す入れ物) */
   host: HTMLDivElement;
@@ -218,7 +206,7 @@ function stopWatch() {
  * ブラウザは一番上の dialog の外をすべて押せなくする (inert。一番上の層 `popover` に出しても同じ。#169 で測った)。
  * そこで、開いている間は置き場 (`host`) を**一番上の modal の dialog の中**へ移し、`popover="manual"` で一番上の層に出す
  * (dialog の中なので押せる・フォーカスが入る・読み上げられる。一番上の層なので、dialog の変形・はみ出しの切り取りに左右されない)。
- * 閉じたら元の場所 (`host` の親、描いた場所) へ戻し、`popover` を外す。dialog が無いときは何もしない (今までと同じ)。
+ * 閉じたら元の場所 (`host` の親、描いた場所) へ戻し、`popover` を外す。dialog が無いときは何もしない。
  * 動かすのは DOM の要素だけなので、React は描き直さない (出ている Toast・タイマーはそのまま)。
  *
  * 仕組み:
@@ -227,17 +215,17 @@ function stopWatch() {
  * - 置き場ごとの `keydown` (capture): Toast の中でキーが押されたら、今いる dialog の `data-ds-hide-focus-ring` を外す
  *   (指・マウスで開いた dialog の中は、キーが押されるまで輪を出さない決まり。AGENTS §3-2。
  *   Toast は React では dialog の外の部品なので、dialog の「キーが押されたら外す」が Toast の中のキーに届かない)
- * - 置き場ごとの `focusout`: dialog の中で、フォーカスを持ったまま Toast が消えたら (閉じる・操作ボタン・自動で消える)、
- *   フォーカスを dialog そのものに置く (body に落ちると、次の Tab でブラウザの外へ出る。DialogBase と同じ線)。
+ * - 置き場ごとの `focusout`: dialog の中で、フォーカスを持ったまま Toast が消えて body に落ちたら
+ *   (戻し先 `restoreFocus` が使えなかったとき)、フォーカスを dialog そのものに置く (DialogBase と同じ線)。
  *   残っている別の Toast へは移さない。dialog が無いページでは何もしない
  *
  * 外すとき (アンマウント) は置き場を元の場所へ戻す (dialog の中に置き去りにしない)。
  */
-function useAboveModalDialogs(hostRef: React.RefObject<HTMLDivElement | null>) {
+function useAboveModalDialogs(hostRef: React.RefObject<HTMLDivElement | null>, enabled: boolean) {
   useLayoutEffectOnClient(() => {
     const host = hostRef.current;
     const home = host?.parentElement;
-    if (!host || !home || typeof host.showPopover !== 'function') return;
+    if (!enabled || !host || !home || typeof host.showPopover !== 'function') return;
 
     const layer: ToastLayer = { host, home };
     if (watch.layers.size === 0) startWatch();
@@ -268,300 +256,406 @@ function useAboveModalDialogs(hostRef: React.RefObject<HTMLDivElement | null>) {
       placeLayer(layer, undefined);
       if (watch.layers.size === 0) stopWatch();
     };
-  }, [hostRef]);
+  }, [hostRef, enabled]);
 }
 
-/**
- * 実効 duration を解決する。`action` 付き Toast は SR / キーボードユーザーが操作ボタンへ
- * 到達するのに時間が要るため自動消滅を抑制する: 未指定 (または 0 以下) は無期限、明示指定でも
- * 最低 10 秒を保証する。`action` なしは従来どおり `raw ?? fallback`。
- */
-function resolveDuration(raw: number | undefined, hasAction: boolean, fallback: number): number {
-  if (hasAction) {
-    return raw === undefined || raw <= 0 ? 0 : Math.max(raw, 10000);
-  }
-  return raw ?? fallback;
-}
+// ─────────────────────────────────────────────
+// 残り時間
+// ─────────────────────────────────────────────
+
+type PauseReason = 'hover' | 'focus' | 'press';
 
 /**
- * 自動消滅タイマー。`duration <= 0` で無効。
- * hover / focus 中は `pause()` で停止し、離脱時の `resume()` で**残り時間から**再開する
- * (WCAG 2.2.1 Timing Adjustable: 読んでいる / 操作しようとしている途中に消えない)。
+ * 自動で消えるまでの残り時間。止める理由 (触れている・マウスが乗っている・中にフォーカスがある) が
+ * 1 つでもある間は止め、無くなったら残りから再開する (WCAG 2.2.1)。`duration` 0 は消えない
  */
-function useAutoDismiss(duration: number, onClose: () => void) {
-  const onCloseRef = React.useRef(onClose);
-  onCloseRef.current = onClose;
-  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const remainingRef = React.useRef(duration);
-  const startedAtRef = React.useRef(0);
+function useRemaining(duration: number, onTimeout: () => void) {
+  const onTimeoutRef = React.useRef(onTimeout);
+  onTimeoutRef.current = onTimeout;
+  const reasons = React.useRef(new Set<PauseReason>());
+  const remaining = React.useRef(duration);
+  const startedAt = React.useRef(0);
+  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clear = React.useCallback(() => {
-    if (timerRef.current !== null) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
+  const stop = React.useCallback(() => {
+    if (timer.current === null) return;
+    clearTimeout(timer.current);
+    timer.current = null;
+    remaining.current -= Date.now() - startedAt.current;
   }, []);
 
-  const run = React.useCallback(() => {
-    clear();
-    if (remainingRef.current <= 0) return;
-    startedAtRef.current = Date.now();
-    timerRef.current = setTimeout(() => onCloseRef.current(), remainingRef.current);
-  }, [clear]);
-
-  const pause = React.useCallback(() => {
-    if (timerRef.current === null) return;
-    clear();
-    remainingRef.current -= Date.now() - startedAtRef.current;
-  }, [clear]);
+  const start = React.useCallback(() => {
+    if (duration <= 0 || timer.current !== null || reasons.current.size > 0) return;
+    startedAt.current = Date.now();
+    timer.current = setTimeout(() => {
+      timer.current = null;
+      onTimeoutRef.current();
+    }, Math.max(0, remaining.current));
+  }, [duration]);
 
   React.useEffect(() => {
-    remainingRef.current = duration;
-    run();
-    return clear;
-  }, [duration, run, clear]);
+    remaining.current = duration;
+    start();
+    return () => {
+      if (timer.current !== null) clearTimeout(timer.current);
+      timer.current = null;
+    };
+  }, [duration, start]);
 
-  return { pause, resume: run };
+  const pause = React.useCallback((why: PauseReason) => {
+    reasons.current.add(why);
+    stop();
+  }, [stop]);
+  const resume = React.useCallback((why: PauseReason) => {
+    reasons.current.delete(why);
+    start();
+  }, [start]);
+
+  return { pause, resume };
 }
 
-/**
- * Toast 本体の見た目だけを描画する内部コンポーネント。Provider と単発 API 両方で使う。
- */
-const ToastBody: React.FC<ToastContent & {
-  onClose?: () => void;
-  /** hover / focus 中に自動消滅タイマーを止める / 再開するハンドラ (`useAutoDismiss` と連動)。 */
-  onPause?: () => void;
-  onResume?: () => void;
-}> = ({
-  variant = 'info',
-  title,
-  description,
-  action,
-  onClose,
-  onPause,
-  onResume,
-}) => {
-  const config = variantConfig[variant];
-  // role / aria-live は常設の live region コンテナ側に持たせる (告知の確実性向上)。
-  // ToastBody 自体は視覚表現のみを担う。
-  return (
-    <div data-ds-root
-      onMouseEnter={onPause}
-      onMouseLeave={onResume}
-      onFocus={onPause}
-      onBlur={onResume}
-      className={[
-        'relative flex gap-3 rounded-md p-4 shadow-md min-w-[20rem] max-w-[28rem]',
-        onClose ? 'pr-12' : '',
-        config.container,
-      ].join(' ')}
-    >
-      <span className={['flex-shrink-0 flex', config.icon].join(' ')}>
-        <Icon name={config.iconName} size="sm" />
-      </span>
+// ─────────────────────────────────────────────
+// 1 枚
+// ─────────────────────────────────────────────
 
-      <div className="flex-1 min-w-0">
-        {title && (
-          <p className="type-supporting font-bold mb-1">{title}</p>
-        )}
-        <div className="type-supporting">{description}</div>
-        {action && (
-          <div className="mt-2">
-            <Button variant="tertiary" size="sm" onClick={action.onClick}>
-              {action.label}
-            </Button>
+interface ToastEntry extends ToastOptions {
+  id: string;
+  /** 出したときにフォーカスがあった要素 (#176 の戻し先) */
+  returnFocus: HTMLElement | null;
+  /** 消える途中 (動きのあと、DOM から外す) */
+  exiting: boolean;
+}
+
+/** 消し方: 指・マウスで消したときは、戻したフォーカスにキーが押されるまで輪を出さない */
+type DismissBy = 'pointer' | 'keyboard' | 'program';
+
+/**
+ * Toast の中にフォーカスがあるまま消えるとき、フォーカスを body に落とさない (#176)。戻し先は順に:
+ * 1. 出したときにフォーカスがあった要素 (今も文書にあり、見えていて、フォーカスが入るもの)
+ * 2. Toast に入る直前にフォーカスがあった要素 (1 が消えた・押せない: 押した行が消えた・dialog の後ろになった等)
+ * 3. Toast が dialog の中にあるなら、その dialog そのもの (DialogBase と同じ線)
+ * どれも使えなければ何もしない (ブラウザは body に戻す)
+ */
+function restoreFocus(item: HTMLElement, candidates: (HTMLElement | null)[], by: DismissBy) {
+  if (!item.contains(document.activeElement)) return;
+  for (const el of candidates) {
+    if (!el || !el.isConnected || item.contains(el) || el.getClientRects().length === 0) continue;
+    const clear = by === 'pointer' ? hideFocusRingUntilKeyOrBlur(el) : () => {};
+    el.focus({ preventScroll: true });
+    if (document.activeElement === el) return;
+    clear();
+  }
+  const dialog = item.closest('dialog');
+  if (dialog?.open) dialog.focus();
+}
+
+const ToastItem: React.FC<{
+  entry: ToastEntry;
+  frozen: boolean;
+  onDismiss: (id: string) => void;
+}> = ({ entry, frozen, onDismiss }) => {
+  const { id, variant = 'success', message, action, exiting } = entry;
+  const ref = React.useRef<HTMLDivElement>(null);
+  /** Toast に入る直前にフォーカスがあった要素 (戻し先の 2 番目) */
+  const cameFrom = React.useRef<HTMLElement | null>(null);
+  const [shown, setShown] = React.useState(() => frozen || prefersReducedMotion());
+  const [dragging, setDragging] = React.useState(false);
+  const drag = React.useRef<{ pointerId: number; y0: number; dy: number } | null>(null);
+
+  const leave = React.useCallback(
+    (by: DismissBy) => {
+      if (ref.current) restoreFocus(ref.current, [entry.returnFocus, cameFrom.current], by);
+      onDismiss(id);
+    },
+    [entry.returnFocus, id, onDismiss],
+  );
+
+  const { pause, resume } = useRemaining(exiting || frozen ? 0 : durationOf(entry), () => leave('program'));
+
+  // 入れ替えで外れる (動かさずに外す) ときも、フォーカスは戻す。layout effect の後片付けは DOM から外す前に走る
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    return () => {
+      if (el) restoreFocus(el, [entry.returnFocus, cameFrom.current], 'program');
+    };
+  }, [entry.returnFocus]);
+
+  // マウスの下に出た (入れ替わった) Toast は、外から入る pointerenter が来ない。出た時点でポインタが上にあれば止める。
+  // 指の端末は離した後も :hover が残るので、マウスのある端末 (hover: hover) だけ
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el || !window.matchMedia('(hover: hover)').matches) return;
+    const check = () => {
+      if (el.matches(':hover')) pause('hover');
+    };
+    check();
+    const raf = requestAnimationFrame(check);
+    return () => cancelAnimationFrame(raf);
+  }, [pause]);
+
+  // 押下の止めは、Toast の外で離しても必ず解く (ボタンの上で押すとポインタを捕まえないので、pointerup が Toast に届かない)
+  const releasePress = React.useRef<(() => void) | null>(null);
+  React.useEffect(() => () => releasePress.current?.(), []);
+  const holdPress = () => {
+    pause('press');
+    if (releasePress.current) return;
+    const release = () => {
+      window.removeEventListener('pointerup', release, true);
+      window.removeEventListener('pointercancel', release, true);
+      releasePress.current = null;
+      resume('press');
+    };
+    window.addEventListener('pointerup', release, true);
+    window.addEventListener('pointercancel', release, true);
+    releasePress.current = release;
+  };
+
+  // 出る動き: 1 フレーム目は下にずらして透明、次のフレームで定位置へ (動きを減らす設定では最初から定位置)
+  React.useEffect(() => {
+    if (shown) return;
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setShown(true));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [shown]);
+
+  const setOffset = (dy: number) => {
+    const el = ref.current;
+    if (!el) return;
+    if (dy > 0) {
+      el.style.setProperty(DRAG_VAR, `${dy}px`);
+      el.style.setProperty(FADE_VAR, String(Math.max(0.3, 1 - dy / 120)));
+    } else {
+      el.style.removeProperty(DRAG_VAR);
+      el.style.removeProperty(FADE_VAR);
+    }
+  };
+
+  // 下へ払う: 指 (マウス) に付いて下へだけ動く。ボタンの上で始めた操作は払う動きにしない (押せるように)
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (exiting) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    holdPress();
+    if ((e.target as Element).closest('button')) return;
+    drag.current = { pointerId: e.pointerId, y0: e.clientY, dy: 0 };
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      // 合成の pointer (テスト) では捕まえられないことがある。動きは同じ要素の上で続く
+    }
+    setDragging(true);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    // マウスが上で動いたら止める (下に出た・入れ替わった Toast には pointerenter が来ない)
+    if (e.pointerType === 'mouse') pause('hover');
+    const d = drag.current;
+    if (!d || d.pointerId !== e.pointerId) return;
+    d.dy = Math.max(0, e.clientY - d.y0);
+    setOffset(d.dy);
+  };
+  const onPointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d || d.pointerId !== e.pointerId) return;
+    drag.current = null;
+    setDragging(false);
+    if (d.dy > SWIPE_PX && e.type === 'pointerup') leave('pointer');
+    else setOffset(0);
+  };
+
+  const isError = variant === 'error';
+  const hasButtons = isError || !!action;
+  const s = toastVariants({ hasButtons });
+  const byOf = (e: React.MouseEvent) => (e.detail > 0 ? 'pointer' : 'keyboard');
+
+  return (
+    <div
+      ref={ref}
+      data-ds-root
+      data-variant={variant}
+      data-state={exiting ? 'exiting' : shown ? 'open' : 'entering'}
+      data-dragging={dragging ? '' : undefined}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerEnd}
+      onPointerCancel={onPointerEnd}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && pause('hover')}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && resume('hover')}
+      onFocus={(e) => {
+        const from = e.relatedTarget;
+        if (from instanceof HTMLElement && !e.currentTarget.contains(from) && !from.closest('[data-ds-toast-layer]')) {
+          cameFrom.current = from;
+        }
+        pause('focus');
+      }}
+      onBlur={(e) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        // 窓からフォーカスが外れただけ (別のウィンドウへ移った) なら、フォーカスはまだ Toast の中にある。再開しない
+        if (!e.relatedTarget && e.currentTarget.contains(document.activeElement)) return;
+        resume('focus');
+      }}
+      className={s.root()}
+    >
+      <div className={s.row()}>
+        <div className={s.text()}>
+          <span className={s.icon()} aria-hidden="true">
+            <Icon name={isError ? 'error' : 'check_circle'} size="sm" />
+          </span>
+          <p className={s.message()}>{message}</p>
+        </div>
+        {hasButtons && (
+          <div className={s.buttons()}>
+            {/* 閉じるは、できなかった、にだけ。文字のボタンで、操作の左 (通常の太さ)。読み上げ名は dialog の × と分ける (§8-3) */}
+            {isError && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                aria-label="通知を閉じる"
+                className={s.button({ class: 'font-regular' })}
+                onClick={(e) => leave(byOf(e))}
+              >
+                閉じる
+              </Button>
+            )}
+            {action && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                className={s.button({ class: 'font-bold' })}
+                onClick={(e) => {
+                  action.onClick();
+                  leave(byOf(e));
+                }}
+              >
+                {action.label}
+              </Button>
+            )}
           </div>
         )}
       </div>
-
-      {/* 閉じるボタンは absolute 配置 (Alert と同じ pattern)。
-          Toast は description のみ (type-supporting) と title 付き両方で使われる。
-          top-4 (= 16px) で左 icon span (同じ y=16 offset) と左右対称にし、
-          icon center y=26 を description (leading-relaxed glyph center y≈27) /
-          title (leading-snug glyph center y≈25.6) いずれにも近づける。 */}
-      {onClose && (
-        <button
-          type="button"
-          aria-label="通知を閉じる"
-          onClick={onClose}
-          className={[
-            'absolute top-4 right-4 inline-flex items-center justify-center h-5 w-5 rounded',
-            // フォーカスの輪は面の色に合わせず border.focus の一色、すき間は塗らない (AGENTS §3-2「フォーカスの規則」)
-            'transition-colors focus-ring',
-            config.closeBtn,
-          ].join(' ')}
-        >
-          <Icon name="close" size="sm" />
-        </button>
-      )}
     </div>
   );
 };
 
-/**
- * Toast — Atomic Design: Molecule
- *
- * 単発 controlled API。自動消滅は `duration` (ms) で制御。
- *
- * @see ToastProps for usage examples.
- */
-export const Toast: React.FC<ToastProps> = ({
-  open,
-  onClose,
-  position = 'bottom-right',
-  duration,
-  ...content
-}) => {
-  const effectiveDuration = resolveDuration(duration, !!content.action, 5000);
-  // 閉じている間はタイマーを動かさない (duration <= 0 で useAutoDismiss が no-op)。
-  const { pause, resume } = useAutoDismiss(open ? effectiveDuration : 0, onClose);
-
-  if (!open) return null;
-  return <ToastSingleLayer {...content} position={position} onClose={onClose} onPause={pause} onResume={resume} />;
-};
-
-/** 単発 API の置き場 (開いている間だけ描く)。dialog を開いている間はその上に出す (`useAboveModalDialogs`) */
-const ToastSingleLayer: React.FC<React.ComponentProps<typeof ToastBody> & { position: ToastPosition }> = ({
-  position,
-  ...body
-}) => {
-  const hostRef = React.useRef<HTMLDivElement>(null);
-  useAboveModalDialogs(hostRef);
-  // 単発 API は live region コンテナを持たないため、ラッパに role/aria-live を付与する。
-  const liveConfig = variantConfig[body.variant ?? 'info'];
-  // 外側の div は元の場所の目印 (`display: contents` で箱を作らない)。dialog を閉じたら置き場をここへ戻す
-  return (
-    <div className="contents">
-      <div
-        ref={hostRef}
-        role={liveConfig.role}
-        aria-live={liveConfig.ariaLive}
-        aria-atomic="true"
-        className={[layerStyles, positionStyles[position]].join(' ')}
-      >
-        <ToastBody {...body} />
-      </div>
-    </div>
-  );
-};
-
-Toast.displayName = 'Toast';
-
 // ─────────────────────────────────────────────
-// Provider + useToast (複数管理 / 自動消滅)
+// Provider + useToast
 // ─────────────────────────────────────────────
-
-interface ToastEntry extends ToastContent {
-  id: string;
-  duration: number;
-}
 
 interface ToastContextValue {
   /**
-   * Toast を表示する。返り値の id で個別に dismiss 可能。
-   * `duration` 省略時は Provider のデフォルト (5000ms)。
-   * `action` 付きの場合は到達性のため自動消滅を無期限化する (明示 `duration` も最低 10000ms にクランプ)。
-   * hover / focus 中は自動消滅を一時停止する。
+   * Toast を出す。返り値の id で `dismissToast` から閉じられる。
+   * ふだんは 1 枚で入れ替え。できなかった (`error`) が出ている間はそれを残し、新しい 1 枚をその上に出す (最大 2 枚)。
+   * できなかったが続けて出たら、新しいほうだけ残す。
    */
-  showToast: (content: ToastContent & { duration?: number }) => string;
-  /** 指定 id の Toast を即座に閉じる。 */
+  showToast: (options: ToastOptions) => string;
+  /** 指定 id の Toast を閉じる。 */
   dismissToast: (id: string) => void;
 }
 
 const ToastContext = React.createContext<ToastContextValue | null>(null);
 
+/**
+ * 枚数: ふだん 1 枚で入れ替え。できなかった、が出ている間はそれを残し、新しい 1 枚をその上に (最大 2 枚)。
+ * できなかった、が続けて出たら新しいほうだけ残す (仮決め、#91)。消える途中のものは動きが終わるまで残す
+ */
+function nextStack(current: ToastEntry[], added: ToastEntry): ToastEntry[] {
+  const leaving = current.filter((t) => t.exiting);
+  const keptError = added.variant === 'error' ? undefined : current.find((t) => !t.exiting && t.variant === 'error');
+  return [...leaving, ...(keptError ? [keptError] : []), added];
+}
+
 export interface ToastProviderProps {
-  /**
-   * 表示位置 (この Provider 配下の Toast すべてに適用)。
-   * @default 'bottom-right'
-   */
-  position?: ToastPosition;
-  /**
-   * デフォルトの自動消滅 ms。個別 toast で `duration` 指定すれば上書き。`0` で無期限。
-   * @default 5000
-   */
-  defaultDuration?: number;
-  /**
-   * 同時に表示する最大件数。超過時は古いものから削除。
-   * @default 5
-   */
-  maxToasts?: number;
+  /** アプリ (の root)。この中の `useToast()` から Toast を出す */
   children: React.ReactNode;
 }
 
 /**
- * ToastProvider
+ * ToastProvider — 配下の `useToast()` から Toast を出す。アプリの root に 1 つ置く。
  *
- * 配下のコンポーネントから `useToast()` で複数 Toast を発火・管理できる。
+ * 置き場所 (下の中央)・秒数・枚数は部品が決め、使う側は選べない。
+ * modal の dialog を開いている間は、置き場を一番上の dialog の中へ移すので、dialog の上に見えて押せる (#169)。
  *
  * @example
- *   // 親
+ *   // アプリの root
  *   <ToastProvider>
  *     <App />
  *   </ToastProvider>
  *
- *   // 子のどこかで
+ * @example
+ *   // 子のどこかで: できた (5 秒で消える)
  *   const { showToast } = useToast();
- *   <Button onClick={() => showToast({ variant: 'success', description: '保存しました' })}>
- *     保存
- *   </Button>
+ *   showToast({ message: '保存しました' });
+ *
+ * @example
+ *   // 操作つき (7 秒) / できなかった (消えない、「閉じる」つき)
+ *   showToast({ message: 'アーカイブしました', action: { label: '元に戻す', onClick: undo } });
+ *   showToast({ variant: 'error', message: '送信できませんでした', action: { label: '再試行', onClick: retry } });
  */
-export const ToastProvider: React.FC<ToastProviderProps> = ({
-  position = 'bottom-right',
-  defaultDuration = 5000,
-  maxToasts = 5,
-  children,
-}) => {
+export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
+  const story = React.useContext(ToastStoryContext);
   const [toasts, setToasts] = React.useState<ToastEntry[]>([]);
-  const counterRef = React.useRef(0);
+  const counter = React.useRef(0);
   const hostRef = React.useRef<HTMLDivElement>(null);
-  useAboveModalDialogs(hostRef);
+  const timers = React.useRef(new Set<ReturnType<typeof setTimeout>>());
+  useAboveModalDialogs(hostRef, !story.inline);
 
-  const dismissToast = React.useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+  React.useEffect(() => {
+    const pending = timers.current;
+    return () => pending.forEach(clearTimeout);
   }, []);
 
-  const showToast = React.useCallback(
-    (content: ToastContent & { duration?: number }) => {
-      counterRef.current += 1;
-      const id = `toast-${counterRef.current}`;
-      const duration = resolveDuration(content.duration, !!content.action, defaultDuration);
-      setToasts((prev) => {
-        const next = [...prev, { ...content, id, duration }];
-        return next.length > maxToasts ? next.slice(next.length - maxToasts) : next;
-      });
-      return id;
-    },
-    [defaultDuration, maxToasts]
-  );
+  const dismissToast = React.useCallback((id: string) => {
+    setToasts((prev) => (prev.some((t) => t.id === id && !t.exiting) ? prev.map((t) => (t.id === id ? { ...t, exiting: true } : t)) : prev));
+    const delay = prefersReducedMotion() ? 0 : MOTION_MS;
+    const timer = setTimeout(() => {
+      timers.current.delete(timer);
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, delay);
+    timers.current.add(timer);
+  }, []);
+
+  const showToast = React.useCallback((options: ToastOptions) => {
+    counter.current += 1;
+    const id = `toast-${counter.current}`;
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    const entry: ToastEntry = {
+      variant: 'success',
+      ...options,
+      id,
+      exiting: false,
+      returnFocus: active instanceof HTMLElement && active !== document.body ? active : null,
+    };
+    setToasts((prev) => nextStack(prev, entry));
+    return id;
+  }, []);
 
   const value = React.useMemo(() => ({ showToast, dismissToast }), [showToast, dismissToast]);
 
-  // error は assertive (role=alert)、それ以外は polite (role=status) のコンテナへ振り分ける。
-  // 両コンテナは空でも DOM に常設し、内容注入を確実に告知させる (live region のマウント遅延を回避)。
-  const assertiveToasts = toasts.filter((t) => t.variant === 'error');
-  const politeToasts = toasts.filter((t) => t.variant !== 'error');
-  const stackClass = [
-    'flex flex-col gap-2',
-    position.startsWith('bottom') ? 'flex-col-reverse' : '',
-  ].filter(Boolean).join(' ');
-
-  const renderEntries = (entries: ToastEntry[]) =>
-    entries.map((t) => (
-      <ToastEntryView key={t.id} entry={t} onDismiss={() => dismissToast(t.id)} />
-    ));
+  // 読み上げ: できた = role="status" (polite、区切りを待つ)、できなかった = role="alert" (assertive、すぐ)。
+  // 入れ物は空でも常に置く (中身を足したときに確実に読まれるように)。
+  // 並び: 下に残る「できなかった」、その上に新しい「できた」。2 つの入れ物の順 (status が上) で決まる
+  const successes = toasts.filter((t) => t.variant !== 'error');
+  const errors = toasts.filter((t) => t.variant === 'error');
+  const render = (list: ToastEntry[]) =>
+    list.map((t) => <ToastItem key={t.id} entry={t} frozen={!!story.frozen} onDismiss={dismissToast} />);
 
   return (
     <ToastContext.Provider value={value}>
       {children}
       {/* 外側の div は元の場所の目印 (`display: contents` で箱を作らない)。dialog を開いている間、置き場はその中へ移り、閉じたらここへ戻る */}
       <div className="contents">
-        <div ref={hostRef} className={[layerStyles, 'flex flex-col gap-2', positionStyles[position]].join(' ')}>
-          <div role="status" aria-live="polite" aria-relevant="additions" className={stackClass}>
-            {renderEntries(politeToasts)}
-          </div>
-          <div role="alert" aria-live="assertive" aria-relevant="additions" className={stackClass}>
-            {renderEntries(assertiveToasts)}
+        <div ref={hostRef} data-ds-toast-layer="" className={story.inline ? inlineLayerStyles : layerStyles}>
+          {/* 読み上げの入れ物は空でも常に木に残す (display: none にしない)。空の入れ物は高さ 0 で、間のすき間は 2 つとも中身があるときだけ */}
+          <div className="flex w-full min-w-0 max-w-content-sm flex-col">
+            <div role="status" aria-live="polite" aria-relevant="additions" className="flex flex-col gap-2">
+              {render(successes)}
+            </div>
+            <div role="alert" aria-live="assertive" aria-relevant="additions" className="flex flex-col gap-2 [&:not(:empty)]:mt-2">
+              {render(errors)}
+            </div>
           </div>
         </div>
       </div>
@@ -571,13 +665,12 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 
 ToastProvider.displayName = 'ToastProvider';
 
-const ToastEntryView: React.FC<{ entry: ToastEntry; onDismiss: () => void }> = ({ entry, onDismiss }) => {
-  const { pause, resume } = useAutoDismiss(entry.duration, onDismiss);
-  return <ToastBody {...entry} onClose={onDismiss} onPause={pause} onResume={resume} />;
-};
-
 /**
- * ToastProvider 配下で使う Toast 発火フック。
+ * ToastProvider の中で使う、Toast を出すフック。
+ *
+ * @example
+ *   const { showToast } = useToast();
+ *   <Button onClick={() => { save(); showToast({ message: '保存しました' }); }}>保存</Button>
  */
 export const useToast = (): ToastContextValue => {
   const ctx = React.useContext(ToastContext);

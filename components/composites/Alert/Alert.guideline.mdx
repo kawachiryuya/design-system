@@ -24,7 +24,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 ## 概要
 
-ページ上に **永続的に表示するインラインの通知メッセージ**。状況 (success / error / warning / info / neutral) を色とアイコンで伝え、必要なら閉じるボタンで dismiss できる。**一時的な通知 (操作直後にスッと出てスッと消える)** には `<Toast>` を使う。
+ページ上に **永続的に表示するインラインの通知メッセージ**。状況 (success / error / warning / info / neutral) を色とアイコンで伝え、必要なら閉じるボタンで dismiss できる。**いまの操作の結果を一言で伝える一時的な知らせ** (「保存しました」「送信できませんでした」) には Toast (`useToast().showToast()`) を使う。
 
 ---
 
@@ -85,7 +85,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
   dontExample={
     <Alert variant="success">保存しました</Alert>
   }
-  dontCaption="操作直後の「保存しました」のような一時的フィードバックを Alert にすると、永続表示されて画面のノイズになる。Toast を使うのが正解。"
+  dontCaption="操作直後の「保存しました」のような一時的フィードバックを Alert にすると、永続表示されて画面のノイズになる。Toast (`useToast().showToast({ message: '保存しました' })`) で出す。"
 />
 
 <DoDontExample
@@ -126,7 +126,7 @@ import { GuidelineToc } from '@sb-blocks/GuidelineToc';
 
 | やろうとすること | 使うべき別コンポーネント | 理由 |
 |---|---|---|
-| **操作直後の一時的フィードバック** (「保存しました」等、数秒で消える) | `<Toast>` | 自動消失・通知スタック対応、画面を占有しない |
+| **操作直後の一時的フィードバック** (「保存しました」等、数秒で消える) | Toast (`useToast().showToast()`) | できた、は数秒で自動で消え、画面を占有しない。できなかった (`error`) は閉じるまで残る |
 | **戻せない操作の確認** ("削除しますか？") | `<ConfirmDialog>` | 背景を止めて確かめる。取り消しと確定のボタンを部品が持つ |
 | **ステータスを 1 単語で示す** ("完了" バッジ等) | `<Badge>` | コンパクトなラベル、文章ではない |
 | **空状態のメッセージ** (検索結果ゼロ件等) | `<EmptyState>` | 大きめの説明 + アクションへの誘導に最適化 |

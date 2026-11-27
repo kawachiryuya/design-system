@@ -7,6 +7,16 @@
 
 ## [Unreleased]
 
+## [8.0.0] - 2026-11-27
+
+**Toast を作り直した (#91)** 破壊的リリース。役目を「いまの操作の結果を一言で」に絞り、出し方は `useToast()` だけ、種類は `success`・`error` の 2 つ、秒数・置き場所・枚数は部品が決める。あわせて、Cluster・ActionBar の `gap` から使われていなかった `2xl` を消した (#51)。7.0.0 からの移行は、下の ⚠ BREAKING CHANGES の各項目の Migration を当てる。Toast・`gap="2xl"` を使っていなければ、直す所は無い。
+
+各項目は、移行に要る手順を落とさないよう、圧縮せずにそのまま残している (5.0.0〜7.0.0 と同じ)。
+
+### Added
+
+- **Popover・Menu の Playground に、足りなかった Controls を足した** (#91、#185): story だけの変更。部品・撮影する story は変えていない。consumer 影響なし
+
 ### ⚠ BREAKING CHANGES
 
 - **Toast を作り直した: 役目を「いまの操作の結果を一言で」に絞り、出し方は `useToast()` だけ、秒数・置き場所・枚数は部品が決める (props・名前・見た目・挙動・story の URL の変更、#91)**: 種類は `success` (できた、既定) と `error` (できなかった) の 2 つ。1 文 (`message`) + 操作 1 つまで、見出しは無い。非推奨の期間は置かずに消した (AGENTS §10-5 の例外。利用側は rail-demo だけ)
@@ -972,7 +982,8 @@ Storybook サイドバーから新 id を確認のうえ、外部ドキュメン
 
 CHANGELOG 整備前のバージョン。詳細は git log を参照。
 
-[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v7.0.0...HEAD
+[Unreleased]: https://github.com/kawachiryuya/design-system/compare/v8.0.0...HEAD
+[8.0.0]: https://github.com/kawachiryuya/design-system/compare/v7.0.0...v8.0.0
 [7.0.0]: https://github.com/kawachiryuya/design-system/compare/v6.0.1...v7.0.0
 [6.0.1]: https://github.com/kawachiryuya/design-system/compare/v6.0.0...v6.0.1
 [6.0.0]: https://github.com/kawachiryuya/design-system/compare/v5.0.0...v6.0.0

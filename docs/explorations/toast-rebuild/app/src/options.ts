@@ -1,20 +1,25 @@
-// 帯で切り替える案 (2 回目)。選んだ組は URL の hash に持つ (例 #error=A2&close=text&place=auto)。
-// 1 回目で決まったこと (11-27): 形は A「濃い面」がベース／アイコンは 1 行目に固定／広い幅は下の中央。これらは切り替えない。
+// 帯で切り替える案 (3 回目)。選んだ組は URL の hash に持つ (例 #close=text&place=fit)。
+// 決まったこと (11-27): 形は A「濃い面」がベース／アイコンは 1 行目に固定／広い幅は下の中央／
+// 「できなかった」は A2 (赤い面)。これらは切り替えない。
 
-/** 「できなかった」の色 (できた、はどれも A の濃い面) */
-export type ErrorColor = 'A1' | 'A2' | 'A3';
 /** 閉じるの形 */
 export type CloseShape = 'icon' | 'text';
-/** ボタンの位置 */
-export type ButtonPlace = 'right' | 'below' | 'auto';
+
+/**
+ * ボタン (群) の位置。× は並びに数えず、いつも右上 (1 行目)
+ * - below: いつも下の段
+ * - count: 1 つなら右端、2 つなら下の段
+ * - chars: 2 つなら下の段。1 つのとき、ラベルが 5 文字以上なら下の段、4 文字以下なら右端
+ * - fit:   ボタンを文の右に置いても文が 1 行に収まるときだけ右端 (CSS の flex-wrap で決まる)
+ */
+export type ButtonPlace = 'below' | 'count' | 'chars' | 'fit';
 
 export interface Look {
-  error: ErrorColor;
   close: CloseShape;
   place: ButtonPlace;
 }
 
-export const DEFAULT_LOOK: Look = { error: 'A2', close: 'text', place: 'auto' };
+export const DEFAULT_LOOK: Look = { close: 'text', place: 'fit' };
 
 interface Choice<T extends string> {
   value: T;
@@ -24,21 +29,16 @@ interface Choice<T extends string> {
   short: string;
 }
 
-export const ERROR_CHOICES: Choice<ErrorColor>[] = [
-  { value: 'A1', label: 'A1 濃い面のまま', short: 'A1' },
-  { value: 'A2', label: 'A2 できなかった、は赤い面', short: 'A2' },
-  { value: 'A3', label: 'A3 濃い面＋赤い印', short: 'A3' },
-];
-
 export const CLOSE_CHOICES: Choice<CloseShape>[] = [
   { value: 'icon', label: '×', short: '×' },
   { value: 'text', label: '閉じる（文字）', short: '文字' },
 ];
 
 export const PLACE_CHOICES: Choice<ButtonPlace>[] = [
-  { value: 'right', label: '右端', short: '右端' },
-  { value: 'below', label: '下の段', short: '下の段' },
-  { value: 'auto', label: '1 つなら右端、2 つなら下の段', short: '1 つなら右端' },
+  { value: 'below', label: 'いつも下の段', short: 'いつも下の段' },
+  { value: 'count', label: '1 つなら右端、2 つなら下の段', short: '1 つなら右端' },
+  { value: 'chars', label: '文字数で分ける（1 つのとき 4 文字以下なら右端）', short: '文字数で分ける' },
+  { value: 'fit', label: '1 行に収まるなら右端', short: '1 行に収まるなら右端' },
 ];
 
 function pick<T extends string>(choices: Choice<T>[], raw: string | null, fallback: T): T {
@@ -48,7 +48,6 @@ function pick<T extends string>(choices: Choice<T>[], raw: string | null, fallba
 export function readLook(hash: string): Look {
   const p = new URLSearchParams(hash.replace(/^#/, ''));
   return {
-    error: pick(ERROR_CHOICES, p.get('error'), DEFAULT_LOOK.error),
     close: pick(CLOSE_CHOICES, p.get('close'), DEFAULT_LOOK.close),
     place: pick(PLACE_CHOICES, p.get('place'), DEFAULT_LOOK.place),
   };
@@ -62,11 +61,7 @@ function shortOf<T extends string>(choices: Choice<T>[], value: T): string {
   return choices.find((c) => c.value === value)?.short ?? value;
 }
 
-/** 畳んだ帯の 1 行 (例「できなかった A2／閉じる 文字／ボタン 1 つなら右端」) */
+/** 畳んだ帯の 1 行 (例「閉じる 文字／ボタン：1 行に収まるなら右端」) */
 export function summaryOf(look: Look): string {
-  return [
-    `できなかった ${shortOf(ERROR_CHOICES, look.error)}`,
-    `閉じる ${shortOf(CLOSE_CHOICES, look.close)}`,
-    `ボタン ${shortOf(PLACE_CHOICES, look.place)}`,
-  ].join('／');
+  return `閉じる ${shortOf(CLOSE_CHOICES, look.close)}／ボタン：${shortOf(PLACE_CHOICES, look.place)}`;
 }

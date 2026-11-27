@@ -109,6 +109,16 @@ const SCENES: Scene[] = [
       }),
   },
   {
+    id: 'ok-short-long',
+    label: 'できた・短い文＋長い操作名',
+    run: (toast, log) =>
+      toast({
+        variant: 'success',
+        message: 'ファイルを保存しました',
+        action: { label: 'フォルダを開く', onClick: () => log('「フォルダを開く」を押しました') },
+      }),
+  },
+  {
     id: 'ng-1',
     label: 'できなかった・1 行',
     run: (toast) => toast({ variant: 'error', message: '保存できませんでした' }),
@@ -122,6 +132,12 @@ const SCENES: Scene[] = [
         message: '通信が切れたため、予約の変更を受け付けられませんでした',
         action: { label: 'もう一度試す', onClick: () => log('「もう一度試す」を押しました') },
       }),
+  },
+  {
+    id: 'ng-short-retry',
+    label: 'できなかった・短い文＋再試行',
+    run: (toast, log) =>
+      toast({ variant: 'error', message: '保存できませんでした', action: { label: '再試行', onClick: () => log('「再試行」を押しました') } }),
   },
   {
     id: 'two',

@@ -2,7 +2,6 @@ import React from 'react';
 import { Radio, RadioGroup } from '../../../../../components/composites/Radio';
 import {
   CLOSE_CHOICES,
-  ERROR_CHOICES,
   PLACE_CHOICES,
   summaryOf,
   type Look,
@@ -44,7 +43,6 @@ export const OptionsBand: React.FC<{ look: Look; onChange: (next: Look) => void 
       <span data-testid="band-summary">{summaryOf(look)}</span>
     </summary>
     <div className="flex flex-col gap-4 px-4 pb-4">
-      <Group name="error" legend="「できなかった」の色（できた、はどれも濃い面）" choices={ERROR_CHOICES} look={look} onChange={onChange} />
       <Group name="close" legend="閉じるの形" choices={CLOSE_CHOICES} look={look} onChange={onChange} />
       <Group name="place" legend="ボタンの位置" choices={PLACE_CHOICES} look={look} onChange={onChange} />
     </div>

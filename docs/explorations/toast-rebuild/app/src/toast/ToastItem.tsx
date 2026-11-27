@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '../../../../../../components/primitives/Button';
 import { Icon } from '../../../../../../components/primitives/Icon';
 import type { Look } from '../options';
-import { ERRORS, ON_FILL_BUTTON, SHAPE, SUCCESS } from './forms';
+import { ERROR, ON_FILL_BUTTON, SHAPE, SUCCESS } from './forms';
 import { durationOf, type DismissReason, type ToastEntry } from './types';
 
 /** 下へこれより多く動かして離すと消える (03-swipe.html と同じ) */
@@ -142,17 +142,23 @@ export const ToastItem: React.FC<ToastItemProps> = ({ entry, look, onDismiss }) 
   };
 
   const isError = variant === 'error';
-  const face = isError ? ERRORS[look.error].face : SUCCESS.face;
-  const iconColor = isError ? ERRORS[look.error].icon : SUCCESS.icon;
-  const disk = isError && ERRORS[look.error].disk;
+  const face = isError ? ERROR.face : SUCCESS.face;
+  const iconColor = isError ? ERROR.icon : SUCCESS.icon;
   const closeText = isError && look.close === 'text';
   const closeIcon = isError && look.close === 'icon';
   // 文字のボタンの並び: 「閉じる」が左、操作 (主) が右端
-  const buttonCount = (closeText ? 1 : 0) + (action ? 1 : 0);
-  // ボタンの位置。× は並びに数えず、いつも右上 (1 行目)
-  const below = buttonCount > 0 && (look.place === 'below' || (look.place === 'auto' && buttonCount >= 2));
-  const right = buttonCount > 0 && !below;
-  const trailingButton = right || closeIcon;
+  const labels = [...(closeText ? ['閉じる'] : []), ...(action ? [action.label] : [])];
+  const hasButtons = labels.length > 0;
+  // ボタンの位置 (× は並びに数えず、いつも右上)。fit はここでは決めず、CSS (flex-wrap) が幅から決める
+  const place: 'right' | 'below' | 'fit' = !hasButtons
+    ? 'right'
+    : look.place === 'fit'
+      ? 'fit'
+      : look.place === 'below' || labels.length >= 2
+        ? 'below'
+        : look.place === 'chars' && [...labels[0]].length >= 5
+          ? 'below'
+          : 'right';
   const state = exiting ? 'exiting' : shown ? 'open' : 'entering';
 
   const buttons = (
@@ -204,7 +210,7 @@ export const ToastItem: React.FC<ToastItemProps> = ({ entry, look, onDismiss }) 
       }}
       className={[
         'pointer-events-auto mt-2 flex gap-2 py-2 pl-4 touch-none select-none',
-        trailingButton ? 'pr-2' : 'pr-4',
+        hasButtons || closeIcon ? 'pr-2' : 'pr-4',
         face,
         SHAPE,
         // 動き: 位置は CSS 変数 (払っている間の指の位置) を読む。出る前・消えるときは data-state で決める
@@ -215,25 +221,30 @@ export const ToastItem: React.FC<ToastItemProps> = ({ entry, look, onDismiss }) 
         'data-[state=exiting]:[transform:translateY(calc(var(--toast-dy,0px)_+_100%))] data-[state=exiting]:opacity-0 data-[state=exiting]:pointer-events-none',
       ].join(' ')}
     >
-      <div className="flex min-w-0 flex-1 flex-col self-center">
-        <div className="flex items-start gap-3 py-2.5">
+      {/* 文とボタン (群) の並び。data-place で決める:
+          right = 1 行に横並び (文が縮んで折り返す) / below = ボタンはいつも次の行 /
+          fit = flex-wrap。文の basis は auto (= 1 行のときの幅)、ボタンは margin-left: auto。
+          両方が 1 行に入れば横並び、入らなければボタンが次の行へ回り、文は面の幅いっぱいで折り返す */}
+      <div
+        data-place={place}
+        className="group/row flex min-w-0 flex-1 items-center self-center data-[place=below]:flex-wrap data-[place=fit]:flex-wrap"
+      >
+        <div className="flex min-w-0 items-start gap-3 py-2.5 group-data-[place=right]/row:flex-1 group-data-[place=below]/row:flex-1 group-data-[place=fit]/row:flex-[1_1_auto]">
           {/* アイコンは 1 行目に固定: 入れ物を 1 行の高さ (type-supporting の行間 1.5em) にして、その中で上下の真ん中 */}
           <span className={['type-supporting flex h-[1.5em] shrink-0 items-center', iconColor].join(' ')}>
-            {disk ? (
-              // A3: 赤い塗りの丸 (surface.error) に白い「!」(onSurface.inverse)
-              <Icon size="sm" variant="fill">
-                <circle cx="12" cy="12" r="10" className="fill-[var(--color-surface-error)]" />
-                <path d="M13 17h-2v-2h2v2zm0-4h-2V7h2v6z" className="fill-[var(--color-on-surface-inverse)]" />
-              </Icon>
-            ) : (
-              <Icon name={isError ? 'error' : 'check_circle'} size="sm" />
-            )}
+            <Icon name={isError ? 'error' : 'check_circle'} size="sm" />
           </span>
-          <p className="type-supporting min-w-0 flex-1">{message}</p>
+          <p className="type-supporting min-w-0 flex-[1_1_auto]">{message}</p>
         </div>
-        {below && <div className="-mt-1 flex justify-end gap-1">{buttons}</div>}
+        {hasButtons && (
+          <div
+            data-toast-buttons
+            className="ml-auto flex shrink-0 items-center gap-1 pl-2 group-data-[place=below]/row:-mt-1 group-data-[place=below]/row:basis-full group-data-[place=below]/row:justify-end"
+          >
+            {buttons}
+          </div>
+        )}
       </div>
-      {right && <div className="flex shrink-0 items-center gap-1 self-center">{buttons}</div>}
       {closeIcon && (
         <Button
           variant="tertiary"
